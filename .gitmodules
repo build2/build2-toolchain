@@ -7,3 +7,6 @@
 [submodule "libbpkg"]
 	path = libbpkg
 	url = ../libbpkg.git
+[submodule "bpkg"]
+	path = bpkg
+	url = ../bpkg.git

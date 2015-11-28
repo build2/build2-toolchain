@@ -1,0 +1,19 @@
+This repository uses git submodules, so watch out! Before working with this
+repository, make sure you do:
+
+  git config --global fetch.recurseSubmodules on-demand
+  git config --global status.submoduleSummary true
+  git config --global diff.submodule log
+
+To clone this repository, use --recursive:
+
+  git clone --recursive ...
+
+To pull, you *must* run two commands:
+
+  git pull
+  git submodule update --init --recursive
+
+To update submodules to the latest master (remember to commit afterwards):
+
+  git submodule update --remote [submodule]

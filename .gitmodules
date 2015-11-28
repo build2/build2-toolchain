@@ -4,3 +4,6 @@
 [submodule "build2"]
 	path = build2
 	url = ../build2.git
+[submodule "libbpkg"]
+	path = libbpkg
+	url = ../libbpkg.git

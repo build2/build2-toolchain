@@ -1,3 +1,6 @@
 [submodule "libbutl"]
 	path = libbutl
 	url = ../libbutl.git
+[submodule "build2"]
+	path = build2
+	url = ../build2.git

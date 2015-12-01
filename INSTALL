@@ -1,0 +1,12 @@
+1. Bootstrap build2
+
+$ cd build2/
+$ ./bootstrap
+$ ./build/b-boot update
+
+2. Configure and build the rest:
+
+$ cd ../ # back to build2-toolchains
+$ ./build2/build/b configure update [test]
+
+config.install=/tmp/install

@@ -9,5 +9,6 @@ subprojects = libbutl build2 libbpkg bpkg
 using config
 using dist
 using test # Note: needed for dist to work in subprojects with tests.
+using install
 
 dist.package = $project-$version

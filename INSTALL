@@ -1,12 +1,78 @@
-1. Bootstrap build2
+The build2 toolchain requires a C++ compiler with C++11 support. GCC 4.9.0
+or later and Clang 3.5.0 or later are known to work. If you only need the
+build2 build system without the bpkg package manager, then the C++ compiler
+is all you need. If, however, you would also like to build bpkg, then you
+will first need to obtain SQLite and the libodb and libodb-sqlite libraries.
 
-$ cd build2/
-$ ./bootstrap
-$ ./build/b-boot update
+In this guide we install everything that we build into /usr/local. If you
+would like to use a different installation location, you will need to make
+adjustments to the commands below.
 
-2. Configure and build the rest:
 
-$ cd ../ # back to build2-toolchains
-$ ./build2/build/b configure update [test]
+1. Installing SQLite.
 
-config.install=/tmp/install
+   Skip this step if you are only interested in the build2 build system.
+
+   To install SQLite, use your distribution's package manager and make sure
+   you install both the libraries (most likely already installed) and the
+   development files.
+
+   For Debian/Ubuntu:
+
+   $ sudo apt-get install libsqlite3-dev
+
+   For RedHat/Fedora:
+
+   $ sudo yum install sqlite-devel
+
+
+2. Installing libodb and libodb-sqlite
+
+   Again, skip this step if you are only interested in the build2 build system.
+
+   [Currently we use pre-release versions of these libraries so they have to be
+   built from source.]
+
+   Download source packages for the two libraries from the same location as
+   build2-toolchain. Then unpack, build, and install:
+
+   $ cd libodb-X.Y.Z
+   $ ./configure --prefix=/usr/local
+   $ make
+   $ sudo make install
+
+   $ cd libodb-sqlite-X.Y.Z
+   $ ./configure --prefix=/usr/local
+   $ make
+   $ sudo make install
+
+   See the INSTALL file for each library for more information.
+
+
+3. Bootstrapping build2.
+
+   The first step is to bootstrap the build2 build system:
+
+   $ cd build2-toolchain-X.Y.Z
+   $ cd build2/
+   $ ./bootstrap
+   $ ./build/b-boot update
+
+   For more information on this step (for example, how to specify a C++
+   compiler, etc) refer to the INSTALL file in the build2/ subdirectory.
+
+
+2. Configuring, building, and installing the rest of the toolchain:
+
+   $ cd build2-toolchain-X.Y.Z
+   $ ./build2/build/b config.cxx.loptions=-L/usr/local/lib \
+    config.install.root=/usr/local configure
+   $ ./build2/build/b update
+   $ sudo ./build2/build/b install
+
+   $ sudo ldconfig
+
+   To test the installation:
+
+   $ b --version
+   $ bpkg --version

@@ -3,7 +3,7 @@
 # license   : MIT; see accompanying LICENSE file
 
 project = build2-toolchain
-version = 0.1.0
+version = 0.1.0.a1
 subprojects = libbutl build2 libbpkg bpkg
 
 using config

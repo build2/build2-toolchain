@@ -2,4 +2,8 @@
 # copyright : Copyright (c) 2014-2015 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-using cxx # For common configuration.
+# Load common modules that are used by subproject so that they use
+# common configuration.
+#
+using cxx
+using? cli

@@ -25,6 +25,9 @@ adjustments to the commands below.
 
    $ sudo yum install sqlite-devel
 
+   For FreeBSD:
+
+   # pkg install sqlite3
 
 2. Installing libodb and libodb-sqlite
 
@@ -46,7 +49,9 @@ adjustments to the commands below.
    $ make
    $ sudo make install
 
-   See the INSTALL file for each library for more information.
+   On some platforms you may have to add CPPFLAGS=-I/usr/local/include and
+   LDFLAGS=-L/usr/local/lib configure command line variables. See the INSTALL
+   file for each library for more information.
 
 
 3. Bootstrapping build2
@@ -59,13 +64,15 @@ adjustments to the commands below.
    $ ./build/b-boot update
 
    For more information on this step (for example, how to specify a C++
-   compiler, etc) refer to the INSTALL file in the build2/ subdirectory.
+   compiler, etc.) refer to the INSTALL file in the build2/ subdirectory.
 
 
 4. Configuring, building, and installing the rest of the toolchain
 
    $ cd .. # back to build2-toolchain-X.Y.Z
-   $ ./build2/build/b config.cxx.loptions=-L/usr/local/lib \
+   $ ./build2/build/b                        \
+    config.cxx.poptions=-I/usr/local/include \
+    config.cxx.loptions=-L/usr/local/lib     \
     config.install.root=/usr/local configure
    $ ./build2/build/b update
    $ sudo ./build2/build/b install

@@ -1,12 +1,21 @@
-The build2 toolchain requires a C++ compiler with C++11 support. GCC 4.9.0
-or later and Clang 3.5.0 or later are known to work. If you only need the
-build2 build system without the bpkg package manager, then the C++ compiler
-is all you need. If, however, you would also like to build bpkg, then you
-will first need to obtain SQLite and the libodb and libodb-sqlite libraries.
+The build2 toolchain requires a C++ compiler with C++11 support. GCC 4.9.0 or
+later and Clang 3.5.0 or later are known to work. If you only need the build2
+build system without the bpkg package manager, then the C++ compiler is all
+you will need. If, however, you would also like to build bpkg, then you will
+first need to obtain SQLite as well as the libodb and libodb-sqlite libraries.
 
 In this guide we install everything that we build into /usr/local. If you
 would like to use a different installation location, you will need to make
 adjustments to the commands below.
+
+Note on /usr/local: most distributions these days "cripple" this location by
+either not searching /usr/local/include for headers during compilation (so we
+add the -I option) or not searching /usr/local/lib for libraries either during
+linking (so we add the -L option) or at runtime (which we fix with the help of
+-rpath). If you know that your installation doesn't have (some of) these
+issues, you can adjust the commands below accordingly. Note that even if
+/usr/local/lib is searched at runtime, you may still have to run ldconfig(1)
+(as root) after the installation to refresh the library cache.
 
 
 1. Installing SQLite
@@ -29,6 +38,7 @@ adjustments to the commands below.
 
    # pkg install sqlite3
 
+
 2. Installing libodb and libodb-sqlite
 
    Again, skip this step if you are only interested in the build2 build system.
@@ -40,18 +50,18 @@ adjustments to the commands below.
    build2-toolchain. Then unpack, build, and install:
 
    $ cd libodb-X.Y.Z
-   $ ./configure --prefix=/usr/local
+   $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
+    --prefix=/usr/local
    $ make
    $ sudo make install
 
    $ cd libodb-sqlite-X.Y.Z
-   $ ./configure --prefix=/usr/local
+   $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
+     --prefix=/usr/local
    $ make
    $ sudo make install
 
-   On some platforms you may have to add CPPFLAGS=-I/usr/local/include and
-   LDFLAGS=-L/usr/local/lib configure command line variables. See the INSTALL
-   file for each library for more information.
+   See the INSTALL file for each library for more information.
 
 
 3. Bootstrapping build2
@@ -61,7 +71,7 @@ adjustments to the commands below.
    $ cd build2-toolchain-X.Y.Z
    $ cd build2/
    $ ./bootstrap
-   $ ./build/b-boot update
+   $ ./build/b-boot config.bin.rpath=/usr/local/lib update
 
    For more information on this step (for example, how to specify a C++
    compiler, etc.) refer to the INSTALL file in the build2/ subdirectory.
@@ -73,11 +83,10 @@ adjustments to the commands below.
    $ ./build2/build/b                        \
     config.cxx.poptions=-I/usr/local/include \
     config.cxx.loptions=-L/usr/local/lib     \
+    config.bin.rpath=/usr/local/lib          \
     config.install.root=/usr/local configure
    $ ./build2/build/b update
    $ sudo ./build2/build/b install
-
-   $ sudo ldconfig
 
    To test the installation:
 

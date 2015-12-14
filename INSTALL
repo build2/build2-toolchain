@@ -80,15 +80,58 @@ issues, you can adjust the commands below accordingly. Note that even if
 4. Configuring, building, and installing the rest of the toolchain
 
    $ cd .. # back to build2-toolchain-X.Y.Z
-   $ ./build2/build/b                        \
-    config.cxx.poptions=-I/usr/local/include \
-    config.cxx.loptions=-L/usr/local/lib     \
-    config.bin.rpath=/usr/local/lib          \
-    config.install.root=/usr/local configure
+
+   $ ./build2/build/b                         \
+     config.cxx.poptions=-I/usr/local/include \
+     config.cxx.loptions=-L/usr/local/lib     \
+     config.bin.rpath=/usr/local/lib          \
+     config.install.root=/usr/local           \
+     config.install.sudo=sudo                 \
+     configure
+
    $ ./build2/build/b update
-   $ sudo ./build2/build/b install
+   $ ./build2/build/b install
 
-   To test the installation:
+   To test the installation, run:
 
+   $ which b
    $ b --version
+
+   $ which bpkg
    $ bpkg --version
+
+
+5. Setting up updates with the package manager
+
+   If you only need to build this specific version of the toolchain, then you
+   are done and can skip this step. However, if you are planning to upgrade to
+   future versions, then going every time through the bootstrap steps will be
+   tedious. Instead, we can use the bpkg package manager to manage upgrades
+   automatically. Note also that without periodic upgrades your version of the
+   toolchain may become too old to be able to upgrade itself. In this case you
+   will have to fallback onto the bootstrap process.
+
+   First, choose a directory where you would like bpkg to build everything,
+   for example, build2-toolchain. Then:
+
+   $ mkdir build2-toolchain
+   $ cd build2-toolchain
+
+   $ bpkg create                               \
+     cxx                                       \
+     config.cxx.poptions=-I/usr/local/include  \
+     config.cxx.loptions=-L/usr/local/lib      \
+     config.bin.rpath=/usr/local/lib           \
+     config.install.root=/usr/local            \
+     config.install.root.sudo=sudo
+
+   $ bpkg add http://pkg.cppget.org/1/alpha
+   $ bpkg fetch
+   $ bpkg build build2 bpkg
+   $ bpkg install build2 bpkg
+
+   Later, to upgrade to new a new version of the toolchain, simply execute:
+
+   $ bpkg fetch
+   $ bpkg build build2 bpkg
+   $ bpkg install build2 bpkg

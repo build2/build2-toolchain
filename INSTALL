@@ -86,7 +86,7 @@ issues, you can adjust the commands below accordingly. Note that even if
      config.cxx.loptions=-L/usr/local/lib     \
      config.bin.rpath=/usr/local/lib          \
      config.install.root=/usr/local           \
-     config.install.sudo=sudo                 \
+     config.install.root.sudo=sudo            \
      configure
 
    $ ./build2/build/b update
@@ -100,6 +100,7 @@ issues, you can adjust the commands below accordingly. Note that even if
    $ which bpkg
    $ bpkg --version
 
+   $ cd # back to home directory
 
 5. Setting up updates with the package manager
 

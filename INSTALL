@@ -50,13 +50,7 @@ issues, you can adjust the commands below accordingly. Note that even if
    Download source packages for the two libraries from the same location as
    build2-toolchain. Then unpack, build, and install:
 
-   $ cd libodb-X.Y.Z
-   $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
-    --prefix=/usr/local
-   $ make
-   $ sudo make install
-
-   $ cd libodb-sqlite-X.Y.Z
+   $ cd libXXX-X.Y.Z
    $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
      --prefix=/usr/local
    $ make

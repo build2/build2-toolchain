@@ -3,7 +3,7 @@
 # license   : MIT; see accompanying LICENSE file
 
 d = libbutl/ build2/ libbpkg/ bpkg/
-./: $d doc{INSTALL} file{version}
+./: $d doc{INSTALL version}
 include $d
 
 $src_base/doc{INSTALL}: install = false

@@ -1,0 +1,164 @@
+// file      : INSTALL.cli
+// copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+// license   : MIT; see accompanying LICENSE file
+
+"
+The \c{build2} toolchain requires a C++11 compiler with limited C++14 support.
+GCC 4.8 or later and Clang 3.4 or later are known to work. If you only need the
+\c{build2} build system without the \c{bpkg} package manager, then the C++
+compiler is all you will need. If, however, you would also like to build
+\c{bpkg}, then you will first need to obtain SQLite as well as the \c{libodb}
+and \c{libodb-sqlite} libraries.
+
+In this guide we install everything that we build into \c{/usr/local}. If you
+would like to use a different installation location, you will need to make
+adjustments to the commands below.
+
+Note on \c{/usr/local}: most distributions these days \"cripple\" this location
+by either not searching \c{/usr/local/include} for headers during compilation
+(so we add the \c{-I} option) or not searching \c{/usr/local/lib} for libraries
+either during linking (so we add the \c{-L} option) or at runtime (which we fix
+with the help of \c{-rpath}). If you know that your installation doesn't suffer
+from (some of) these issues, then you can adjust the commands below
+accordingly. Note that even if \c{/usr/local/lib} is searched at runtime, you
+may still have to run \cb{ldconfig(1)} (as \c{root}) after the installation to
+refresh the library cache.
+
+\dl|
+
+\li|1. Installing SQLite\n
+
+    Skip this step if you are only interested in the \c{build2} build system.
+
+    To install SQLite, use your distribution's package manager and make sure
+    you install both the libraries (most likely already installed) and the
+    development files.
+
+    For Debian/Ubuntu:
+
+    \
+    $ sudo apt-get install libsqlite3-dev
+    \
+
+    For RedHat/Fedora:
+
+    \
+    $ sudo yum install sqlite-devel
+    \
+
+    For FreeBSD:
+
+    \
+    # pkg install sqlite3
+    \
+
+    |
+
+\li|\n2. Installing \c{libodb} and \c{libodb-sqlite}\n
+
+   Again, skip this step if you are only interested in the \c{build2} build
+   system.
+
+   [Currently we use pre-release versions of these libraries so they have to be
+   built from source.]
+
+   Download source packages for the two libraries from the same location as
+   \c{build2-toolchain}. Then unpack, build, and install:
+
+   \
+   $ cd libXXX-X.Y.Z
+   $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
+     --prefix=/usr/local
+   $ make
+   $ sudo make install
+   \
+
+   See the \c{INSTALL} file for each library for more information.|
+
+\li|\n3. Bootstrapping \c{build2}\n
+
+   The first step is to bootstrap the \c{build2} build system:
+
+   \
+   $ cd build2-toolchain-X.Y.Z
+   $ cd build2/
+   $ ./bootstrap
+   $ ./build/b-boot config.bin.rpath=/usr/local/lib update
+   \
+
+   For more information on this step (for example, how to specify the C++
+   compiler to use, etc.) refer to the \c{INSTALL} file in the \c{build2/}
+   subdirectory of \c{build2-toolchain}.|
+
+\li|\n4. Configuring, Building, and Installing the Rest of the Toolchain\n
+
+   \
+   $ cd .. # back to build2-toolchain-X.Y.Z
+
+   $ ./build2/build/b                         \
+     config.cxx.poptions=-I/usr/local/include \
+     config.cxx.loptions=-L/usr/local/lib     \
+     config.bin.rpath=/usr/local/lib          \
+     config.install.root=/usr/local           \
+     config.install.root.sudo=sudo            \
+     configure
+
+   $ ./build2/build/b update
+   $ ./build2/build/b install
+   \
+
+   To test the installation, run:
+
+   \
+   $ which b
+   $ b --version
+
+   $ which bpkg
+   $ bpkg --version
+
+   $ cd # back to home directory
+   \
+
+   |
+
+\li|\n5. Setting up updates with the package manager\n
+
+   If you only need to build this specific version of the toolchain, then you
+   are done and can skip this step. However, if you are planning to upgrade to
+   future versions, then going every time through the bootstrap steps will be
+   tedious. Instead, we can use the \c{bpkg} package manager to manage upgrades
+   automatically. Note also that without periodic upgrades your version of the
+   toolchain may become too old to be able to upgrade itself. In this case you
+   will have to fall back onto the bootstrap process.
+
+   First, choose a directory where you would like \c{bpkg} to build everything,
+   for example, \c{build2-toolchain}. Then:
+
+   \
+   $ mkdir build2-toolchain
+   $ cd build2-toolchain
+
+   $ bpkg create                               \
+     cxx                                       \
+     config.cxx.poptions=-I/usr/local/include  \
+     config.cxx.loptions=-L/usr/local/lib      \
+     config.bin.rpath=/usr/local/lib           \
+     config.install.root=/usr/local            \
+     config.install.root.sudo=sudo
+
+   $ bpkg add http://pkg.cppget.org/1/alpha
+   $ bpkg fetch
+   $ bpkg build build2 bpkg
+   $ bpkg install build2 bpkg
+   \
+
+   Later, to upgrade to new a new version of the toolchain, simply execute:
+
+   \
+   $ bpkg fetch
+   $ bpkg build build2 bpkg
+   $ bpkg install build2 bpkg
+   \
+
+   ||
+"

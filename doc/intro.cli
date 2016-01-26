@@ -240,8 +240,7 @@ build from scratch:
 
 \
 $ bpkg drop hello
-following prerequisite packages were automatically built and will no
-longer be necessary:
+following prerequisite packages were automatically built and will no longer be necessary:
   libhello
 drop prerequisite packages? [Y/n] y
 drop hello
@@ -282,13 +281,10 @@ config::save hello-1.0.0/build/config.build
 configured hello 1.0.0
 hold package hello
 b -v update(./hello-1.0.0/)
-g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -o hello-1.0.0/hello.o -c hell
-o-1.0.0/hello.cxx
-g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -fPIC -o libhello-1.0.0+1/hell
-o/hello-so.o -c libhello-1.0.0+1/hello/hello.cxx
+g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -o hello-1.0.0/hello.o -c hello-1.0.0/hello.cxx
+g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -fPIC -o libhello-1.0.0+1/hello/hello-so.o -c libhello-1.0.0+1/hello/hello.cxx
 g++-5 -O3 -std=c++11 -shared -o libhello-1.0.0+1/hello/libhello.so
-g++-5 -O3 -std=c++11 -o hello-1.0.0/hello hello-1.0.0/hello.o libhello
--1.0.0+1/hello/libhello.so
+g++-5 -O3 -std=c++11 -o hello-1.0.0/hello hello-1.0.0/hello.o libhello-1.0.0+1/hello/libhello.so
 updated hello 1.0.0
 \
 
@@ -652,8 +648,7 @@ Let's try to build it and see what happens \- maybe it will magically work
 $ b
 test g++
 error: unable to import target libhello%lib{hello}
-  info: consider explicitly specifying its project out_root via the
-        config.import.libhello command line variable
+  info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
 info: while applying rule cxx.compile to update obja{hello}
 info: while applying rule cxx.link to update exe{hello}
 info: while applying rule alias to update dir{./}
@@ -696,8 +691,7 @@ $ touch hello.cpp
 $ b
 test g++
 error: unable to import target libhello%lib{hello}
-  info: consider explicitly specifying its project out_root via the
-        config.import.libhello command line variable
+  info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
 info: while applying rule cxx.compile to update obja{hello}
 info: while applying rule cxx.link to update exe{hello}
 info: while applying rule alias to update dir{./}
@@ -750,10 +744,8 @@ rm exe{hello}
 rm obja{hello}
 
 $ b -v
-g++-5 -I/tmp/hello-gcc5-release/libhello-1.0.0+1 -O3 -std=c++11 -o hel
-lo.o -c ../hello2/hello.cpp
-g++-5 -O3 -std=c++11 -o hello hello.o /tmp/hello-gcc5-release/libhello
--1.0.0+1/hello/libhello.so
+g++-5 -I/tmp/hello-gcc5-release/libhello-1.0.0+1 -O3 -std=c++11 -o hello.o -c ../hello2/hello.cpp
+g++-5 -O3 -std=c++11 -o hello hello.o /tmp/hello-gcc5-release/libhello-1.0.0+1/hello/libhello.so
 \
 
 Some of you might have noticed that \c{hello2-gcc5-release/} and

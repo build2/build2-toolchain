@@ -63,12 +63,16 @@ refresh the library cache.
    built from source.]
 
    Download source packages for the two libraries from the same location as
-   \c{build2-toolchain}. Then unpack, build, and install:
+   \l{https://download.build2.org \c{build2-toolchain}}. Then unpack, build,
+   and install:
 
    \
-   $ cd libXXX-X.Y.Z
-   $ ./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib \
-     --prefix=/usr/local
+   $ cd lib*-X.Y.Z
+
+   $ ./configure --prefix=/usr/local \
+   CPPFLAGS=-I/usr/local/include     \
+   LDFLAGS=-L/usr/local/lib
+
    $ make
    $ sudo make install
    \
@@ -77,7 +81,8 @@ refresh the library cache.
 
 \li|\n3. Bootstrapping \c{build2}\n
 
-   The first step is to bootstrap the \c{build2} build system:
+   Download \l{https://download.build2.org \c{build2-toolchain}} then unpack
+   and bootstrap the \c{build2} build system:
 
    \
    $ cd build2-toolchain-X.Y.Z
@@ -87,7 +92,7 @@ refresh the library cache.
    \
 
    For more information on this step (for example, how to specify the C++
-   compiler to use, etc.) refer to the \c{INSTALL} file in the \c{build2/}
+   compiler, options, etc.), refer to the \c{INSTALL} file in the \c{build2/}
    subdirectory of \c{build2-toolchain}.|
 
 \li|\n4. Configuring, Building, and Installing the Rest of the Toolchain\n
@@ -95,13 +100,13 @@ refresh the library cache.
    \
    $ cd .. # back to build2-toolchain-X.Y.Z
 
-   $ ./build2/build/b                         \
-     config.cxx.poptions=-I/usr/local/include \
-     config.cxx.loptions=-L/usr/local/lib     \
-     config.bin.rpath=/usr/local/lib          \
-     config.install.root=/usr/local           \
-     config.install.root.sudo=sudo            \
-     configure
+   $ ./build2/build/b                       \
+   config.cxx.poptions=-I/usr/local/include \
+   config.cxx.loptions=-L/usr/local/lib     \
+   config.bin.rpath=/usr/local/lib          \
+   config.install.root=/usr/local           \
+   config.install.root.sudo=sudo            \
+   configure
 
    $ ./build2/build/b update
    $ ./build2/build/b install
@@ -111,12 +116,12 @@ refresh the library cache.
 
    \
    $ which b
+   /usr/local/bin/b
    $ b --version
 
    $ which bpkg
+   /usr/local/bin/bpkg
    $ bpkg --version
-
-   $ cd # back to home directory
    \
 
    |
@@ -135,16 +140,17 @@ refresh the library cache.
    for example, \c{build2-toolchain}. Then:
 
    \
+   $ cd # back to home directory
    $ mkdir build2-toolchain
    $ cd build2-toolchain
 
-   $ bpkg create                               \
-     cxx                                       \
-     config.cxx.poptions=-I/usr/local/include  \
-     config.cxx.loptions=-L/usr/local/lib      \
-     config.bin.rpath=/usr/local/lib           \
-     config.install.root=/usr/local            \
-     config.install.root.sudo=sudo
+   $ bpkg create                             \
+   cxx                                       \
+   config.cxx.poptions=-I/usr/local/include  \
+   config.cxx.loptions=-L/usr/local/lib      \
+   config.bin.rpath=/usr/local/lib           \
+   config.install.root=/usr/local            \
+   config.install.root.sudo=sudo
 
    $ bpkg add http://pkg.cppget.org/1/alpha
    $ bpkg fetch
@@ -152,10 +158,11 @@ refresh the library cache.
    $ bpkg install build2 bpkg
    \
 
-   Later, to upgrade to new a new version of the toolchain, simply execute:
+   Later, to upgrade to a new version of the toolchain, simply do:
 
    \
    $ bpkg fetch
+   $ bpkg status build2 bpkg   # See if any upgrades are available.
    $ bpkg build build2 bpkg
    $ bpkg install build2 bpkg
    \

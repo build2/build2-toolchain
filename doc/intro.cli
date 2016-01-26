@@ -29,7 +29,7 @@
 
 \
 $ bpkg create -d hello cxx
-created new configuration in /tmp/hello/
+created new configuration in hello/
 
 $ cd hello
 $ bpkg add https://build2.org/pkg/1/hello/stable
@@ -68,11 +68,11 @@ more of a technology preview rather than anything final. But if you want to
 start playing with it, welcome and join the \l{https://lists.build2.org
 mailing list}!
 
-Our approach to developing \c{build2} is to first get the hard parts (like
-auto-generated source code) right before focusing on completeness. In other
-words, we go depth rather than breadth-first. As a result, there are plenty of
-limitations and missing pieces, especially in the build system. The most
-notable ones are:
+Our approach to developing \c{build2} is to first get the hard parts (such as
+header dependency extraction combined with auto-generated source code) right
+before focusing on completeness. In other words, we go depth rather than
+breadth-first. As a result, there are plenty of limitations and missing pieces,
+especially in the build system. The most notable ones are:
 
 \ul|
 

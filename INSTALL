@@ -18,6 +18,16 @@ issues, then you can adjust the commands below accordingly. Note that even if
 /usr/local/lib is searched at runtime, you may still have to run ldconfig(1)
 (as root) after the installation to refresh the library cache.
 
+Note for Mac OS users: you will need version 10.5 (Leopard) or later. We will
+also be using the system C++ toolchain that comes with the Xcode Command Line
+Tools. To verify it is installed, run:
+
+$ g++ --version
+
+To install Command Line Tools, run:
+
+$ xcode-select --install
+
 1. Installing SQLite
 
     Skip this step if you are only interested in the build2 build system.
@@ -37,6 +47,20 @@ issues, then you can adjust the commands below accordingly. Note that even if
     For FreeBSD:
 
     # pkg install sqlite3
+
+    For Mac OS:
+
+    You should already have a system-default version installed. To verify:
+
+    $ ls /usr/include/sqlite3.h /usr/lib/libsqlite3.dylib
+
+    To see which version you have, run:
+
+    $ grep '#define SQLITE_VERSION' /usr/include/sqlite3.h
+
+    Any recent version (i.e., greater than 3.5.0) should work. If for some
+    reason you don't seem to have SQLite, download the source code then build
+    and install it into /usr/local.
 
 2. Installing libodb and libodb-sqlite
 
@@ -69,7 +93,7 @@ issues, then you can adjust the commands below accordingly. Note that even if
     $ cd build2-toolchain-X.Y.Z
     $ cd build2/
     $ ./bootstrap
-    $ ./build/b-boot config.bin.rpath=/usr/local/lib update
+    $ ./build2/b-boot config.bin.rpath=/usr/local/lib update
 
     For more information on this step (for example, how to specify the C++
     compiler, options, etc.), refer to the INSTALL file in the build2/
@@ -79,7 +103,7 @@ issues, then you can adjust the commands below accordingly. Note that even if
 
     $ cd .. # back to build2-toolchain-X.Y.Z
 
-    $ ./build2/build/b                       \
+    $ ./build2/build2/b                      \
     config.cxx.poptions=-I/usr/local/include \
     config.cxx.loptions=-L/usr/local/lib     \
     config.bin.rpath=/usr/local/lib          \
@@ -87,8 +111,8 @@ issues, then you can adjust the commands below accordingly. Note that even if
     config.install.root.sudo=sudo            \
     configure
 
-    $ ./build2/build/b update
-    $ ./build2/build/b install
+    $ ./build2/build2/b update
+    $ ./build2/build2/b install
 
     To test the installation, run:
 

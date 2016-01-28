@@ -18,7 +18,7 @@ issues, then you can adjust the commands below accordingly. Note that even if
 /usr/local/lib is searched at runtime, you may still have to run ldconfig(1)
 (as root) after the installation to refresh the library cache.
 
-Note for Mac OS users: you will need version 10.5 (Leopard) or later. We will
+Note to Mac OS users: you will need version 10.5 (Leopard) or later. We will
 also be using the system C++ toolchain that comes with the Xcode Command Line
 Tools. To verify it is installed, run:
 

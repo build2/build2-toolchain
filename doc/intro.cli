@@ -14,8 +14,6 @@
 //
 // STYLE
 //
-// @@ letter spacing
-// @@ links in <code> have underline in spaces.
 // @@ section boundary page breaks (<hr class="page-break"/>)
 // @@ when printed, code background is gone, but spaces still there
 
@@ -23,6 +21,28 @@
 //
 // - Maximum <pre> line is 70 characters.
 //
+
+/*
+
+$ mkdir hello-mingw32
+$ cd hello-mingw32
+$ bpkg create cxx config.cxx=i686-w64-mingw32-g++ config.bin.ar=i686-w64-mingw32-ar config.bin.lib=static config.cxx.loptions=-static
+bpkg create -d . --wipe cxx config.cxx=x86_64-w64-mingw32-g++ config.bin.ar=x86_64-w64-mingw32-ar config.bin.lib=static config.cxx.loptions=-static
+created new configuration in /tmp/hello-mingw32/
+
+$ bpkg add https://build2.org/pkg/1/hello/stable
+added repository build2.org/hello/stable
+
+$ bpkg fetch
+fetching build2.org/hello/stable
+2 package(s) in 1 repository(s)
+
+$ bpkg build -y hello
+
+$ wine hello-1.0.0/hello.exe Windows
+Hello, Windows!
+
+*/
 
 "
 \h|TL;DR|

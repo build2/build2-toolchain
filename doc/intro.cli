@@ -6,7 +6,6 @@
 
 // TODO
 //
-// @@ STL christmass egg?
 // @@ refs to further docs
 //
 // STYLE
@@ -18,28 +17,6 @@
 //
 // - Maximum <pre> line is 70 characters.
 //
-
-/*
-
-$ mkdir hello-mingw32
-$ cd hello-mingw32
-$ bpkg create cxx config.cxx=i686-w64-mingw32-g++ config.bin.ar=i686-w64-mingw32-ar config.bin.lib=static config.cxx.loptions=-static
-bpkg create -d . --wipe cxx config.cxx=x86_64-w64-mingw32-g++ config.bin.ar=x86_64-w64-mingw32-ar config.bin.lib=static config.cxx.loptions=-static
-created new configuration in /tmp/hello-mingw32/
-
-$ bpkg add https://build2.org/pkg/1/hello/stable
-added repository build2.org/hello/stable
-
-$ bpkg fetch
-fetching build2.org/hello/stable
-2 package(s) in 1 repository(s)
-
-$ bpkg build -y hello
-
-$ wine hello-1.0.0/hello.exe Windows
-Hello, Windows!
-
-*/
 
 "
 \h|TL;DR|
@@ -939,6 +916,52 @@ updated libhello 1.0.0+1
 c++ ~/work/build2/hello/hello2/cxx{hello}
 ld hello2-1.0.0/exe{hello}
 updated hello2 1.0.0
+\
+
+Are you still here? Ok, one last example. This one is for \i{STL} (for those
+missing the connection, Stephan T. Lavavej, said, and I am paraphrasing, that
+he will never build a shared library and will never use a build system/package
+manager more complex than a single makefile; got to respect the man's
+convictions).
+
+The Warning section above said there is no Windows support yet. But nobody
+said anything about cross-compilers:
+
+\
+$ mkdir hello-mingw32
+$ cd hello-mingw32
+
+$ bpkg create cxx                   \
+config.cxx=x86_64-w64-mingw32-g++   \
+config.bin.ar=x86_64-w64-mingw32-ar \
+config.bin.lib=static config.cxx.loptions=-static
+created new configuration in /tmp/hello-mingw32/
+
+$ bpkg add https://build2.org/pkg/1/hello/stable
+added repository build2.org/hello/stable
+
+$ bpkg fetch
+fetching build2.org/hello/stable
+2 package(s) in 1 repository(s)
+
+$ bpkg build -y hello
+bpkg build -y hello
+libhello-1.0.0+1.tar.gz      100% of 1489  B  983 kBps 00m01s
+fetched libhello 1.0.0+1
+unpacked libhello 1.0.0+1
+hello-1.0.0.tar.gz           100% of 1030  B 6882 kBps 00m01s
+fetched hello 1.0.0
+unpacked hello 1.0.0
+configured libhello 1.0.0+1
+configured hello 1.0.0
+c++ hello-1.0.0/cxx{hello}
+c++ libhello-1.0.0+1/hello/cxx{hello}
+ld libhello-1.0.0+1/hello/libso{hello}
+ld hello-1.0.0/exe{hello}
+updated hello 1.0.0
+
+$ wine hello-1.0.0/hello.exe Windows
+Hello, Windows!
 \
 "
 

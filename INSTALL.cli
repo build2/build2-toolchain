@@ -184,7 +184,7 @@ $ xcode-select --install
    config.install.root=/usr/local            \
    config.install.root.sudo=sudo
 
-   $ bpkg add http://pkg.cppget.org/1/alpha
+   $ bpkg add https://pkg.cppget.org/1/alpha
    $ bpkg fetch
    $ bpkg build build2 bpkg
    $ bpkg install build2 bpkg

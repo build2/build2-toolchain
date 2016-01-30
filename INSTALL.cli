@@ -20,9 +20,9 @@ by either not searching \c{/usr/local/include} for headers during compilation
 either during linking (so we add the \c{-L} option) or at runtime (which we fix
 with the help of \c{-rpath}). If you know that your installation doesn't suffer
 from (some of) these issues, then you can adjust the commands below
-accordingly. Note that even if \c{/usr/local/lib} is searched at runtime, you
-may still have to run \cb{ldconfig(1)} (as \c{root}) after the installation to
-refresh the library cache.
+accordingly. Note that even if \c{/usr/local/lib} is searched in at runtime,
+you may still have to run \cb{ldconfig(1)} (as \c{root}) after the installation
+to refresh the library cache.
 
 Note to Mac OS users: you will need version 10.5 (Leopard) or later. We will
 also be using the system C++ toolchain that comes with the Xcode Command Line

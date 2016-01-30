@@ -15,7 +15,7 @@ add the -I option) or not searching /usr/local/lib for libraries either during
 linking (so we add the -L option) or at runtime (which we fix with the help of
 -rpath). If you know that your installation doesn't suffer from (some of) these
 issues, then you can adjust the commands below accordingly. Note that even if
-/usr/local/lib is searched at runtime, you may still have to run ldconfig(1)
+/usr/local/lib is searched in at runtime, you may still have to run ldconfig(1)
 (as root) after the installation to refresh the library cache.
 
 Note to Mac OS users: you will need version 10.5 (Leopard) or later. We will

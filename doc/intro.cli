@@ -643,7 +643,7 @@ $ tree -F
 \
 
 Let's try to build it and see what happens \- maybe it will magically work
-(\c{b} is for \c{build2} build system).
+(\l{b(1)} is the \c{build2} build system driver).
 
 \
 $ b

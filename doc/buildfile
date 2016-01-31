@@ -1,0 +1,16 @@
+# file      : doc/buildfile
+# copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+# license   : MIT; see accompanying LICENSE file
+
+define css: file
+css{*}: extension = css
+
+./: doc{build2-toolchain-intro.xhtml               \
+        build2-toolchain-intro-a4.pdf              \
+	build2-toolchain-intro-a4.ps               \
+        build2-toolchain-intro-letter.pdf          \
+	build2-toolchain-intro-letter.ps}          \
+    css{common code-box pre-box intro} 	           \
+    file{a4.html2ps letter.html2ps intro.html2ps}  \
+    file{intro-prologue.xhtml intro-epilogue.xhtml \
+         intro.cli cli.sh}

@@ -2,8 +2,8 @@
 # copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-d = libbutl/ build2/ libbpkg/ bpkg/
-./: $d doc{INSTALL version}
+d = libbutl/ build2/ libbpkg/ bpkg/ doc/
+./: $d doc{INSTALL version} file{INSTALL.cli}
 include $d
 
-$src_base/doc{INSTALL}: install = false
+doc{INSTALL*}: install = false

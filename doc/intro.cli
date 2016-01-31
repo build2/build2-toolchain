@@ -137,7 +137,7 @@ to get help for any \c{bpkg} command, run \c{bpkg help <command>}. To see a
 list of commands, run just \l{bpkg-help(1) \c{bpkg help}} (or see
 \l{bpkg(1)}). While we are at it, if you ever want to see what \c{bpkg} is
 running underneath, there is the \c{-v} option. And if you really want to get
-under the hood, use \l{bpkg-common(1) \c{--verbose <level>}}.
+under the hood, use \l{bpkg-common-options(1) \c{--verbose <level>}}.
 
 After the command we have \c{cxx} which is the name of the \c{build2} build
 system module. As you might have guessed, \c{cxx} provides support for the C++

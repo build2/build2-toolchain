@@ -22,10 +22,13 @@ build2-toolchain-intro.pdf
   esac
 done
 
-cli -I .. -v version="$version" -v date="$date" --generate-html \
+cli -I .. -v version="$version" -v date="$date" \
+--generate-html --html-suffix .xhtml \
 --html-prologue-file intro-prologue.xhtml \
 --html-epilogue-file intro-epilogue.xhtml \
---html-suffix .xhtml --output-prefix build2-toolchain- intro.cli
+--link-regex '%b([-.].+)%../../build2/doc/b$1%' \
+--link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
+--output-prefix build2-toolchain- intro.cli
 
 #html2ps -f intro.html2ps -o build2-toolchain-intro.ps build2-toolchain-intro.xhtml
 #ps2pdf14 build2-toolchain-intro.ps build2-toolchain-intro.pdf

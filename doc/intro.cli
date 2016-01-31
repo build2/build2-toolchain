@@ -12,6 +12,13 @@
 //
 // @@ section boundary page breaks (<hr class="page-break"/>)
 // @@ when printed, code background is gone, but spaces still there
+//
+// PDF
+//
+// @@ tree output is garbled
+// @@ Install list margins missing
+// @@ Could we use a nicer font, seeing that we embed them?
+//
 
 // NOTES
 //

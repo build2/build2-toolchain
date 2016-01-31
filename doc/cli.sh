@@ -12,8 +12,8 @@ function error () { info "$*"; exit 1; }
 while [ $# -gt 0 ]; do
   case $1 in
     --clean)
-      rm -f build2-toolchain-intro.xhtml build2-toolchain-intro.ps \
-build2-toolchain-intro.pdf
+      rm -f build2-toolchain-intro.xhtml build2-toolchain-intro*.ps \
+build2-toolchain-intro*.pdf
       exit 0
       ;;
     *)
@@ -30,5 +30,8 @@ cli -I .. -v version="$version" -v date="$date" \
 --link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
 --output-prefix build2-toolchain- intro.cli
 
-#html2ps -f intro.html2ps -o build2-toolchain-intro.ps build2-toolchain-intro.xhtml
-#ps2pdf14 build2-toolchain-intro.ps build2-toolchain-intro.pdf
+html2ps -f intro.html2ps:a4.html2ps -o build2-toolchain-intro-a4.ps build2-toolchain-intro.xhtml
+ps2pdf14 -sPAPERSIZE=a4 -dOptimize=true -dEmbedAllFonts=true build2-toolchain-intro-a4.ps build2-toolchain-intro-a4.pdf
+
+html2ps -f intro.html2ps:letter.html2ps -o build2-toolchain-intro-letter.ps build2-toolchain-intro.xhtml
+ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-intro-letter.ps build2-toolchain-intro-letter.pdf

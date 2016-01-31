@@ -1,6 +1,6 @@
 @html2ps {
   option {
-    toc: hb;
+    /*toc: hb;*/
     colour: 1;
     hyphenate: 1;
     titlepage: 1;
@@ -26,7 +26,7 @@
   Permission is granted to copy, distribute and/or modify this document under
   the terms of the MIT License.</p>
 
-  <p>Revision $[version], $D<br/>
+  <p>Revision <code>$[version]</code>, $D<br/>
   This revision of the document describes the <code>build2</code> toolchain
   <code>$[version].x</code> series.</p>";
   }
@@ -54,8 +54,13 @@
 body {
   font-size: 12pt;
   text-align: justify;
+  background: white;
+}
+
+code {
+  font-size: 9pt;
 }
 
 pre {
-  font-size: 10pt;
+  font-size: 9pt;
 }

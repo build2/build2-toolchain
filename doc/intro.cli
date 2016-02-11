@@ -26,7 +26,7 @@
 //
 
 "
-\h|TL;DR|
+\h#tldr|TL;DR|
 
 \
 $ bpkg create -d hello cxx
@@ -61,7 +61,7 @@ updated hello 1.0.0
 "
 
 "
-\h|Warning|
+\h#warning|Warning|
 
 The \c{build2} toolchain \c{0.x.y} series are alpha releases. Interfaces
 \i{will} change in backwards-incompatible ways, guaranteed. Currently, it is
@@ -92,7 +92,7 @@ especially in the build system. The most notable ones are:
 "
 
 "
-\h|Introduction|
+\h#intro|Introduction|
 
 The \c{build2} toolchain is a set of tools designed for building and packaging
 C++ code (though, if it can handle C++ it can handle anything, right?). The
@@ -663,7 +663,7 @@ info: while applying rule alias to update dir{./}
 \
 
 No magic but we got a hint: looks like we need to tell \c{build2} where
-\c{libhello} using \c{config.import.libhello}. Without fretting too much
+\c{libhello} is using \c{config.import.libhello}. Without fretting too much
 about what exactly \c{out_root} means, let's point \c{build2} to our \c{bpkg}
 configuration and see what happens. After all, that's where, more or less,
 our \i{out} for \c{libhello} is.
@@ -973,6 +973,6 @@ Hello, Windows!
 "
 
 "
-\h|Installation|
+\h#install|Installation|
 "
 source "../INSTALL.cli";

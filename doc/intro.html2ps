@@ -1,6 +1,6 @@
 @html2ps {
   option {
-    /*toc: hb;*/
+    toc: hb;
     colour: 1;
     hyphenate: 1;
     titlepage: 1;

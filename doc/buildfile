@@ -10,7 +10,7 @@ css{*}: extension = css
 	build2-toolchain-intro-a4.ps               \
         build2-toolchain-intro-letter.pdf          \
 	build2-toolchain-intro-letter.ps}          \
-    css{common code-box pre-box intro} 	           \
-    file{a4.html2ps letter.html2ps intro.html2ps}  \
-    file{intro-prologue.xhtml intro-epilogue.xhtml \
+    css{code-box common doc pre-box toc} 	   \
+    file{a4.html2ps letter.html2ps doc.html2ps}    \
+    file{doc-prologue.xhtml doc-epilogue.xhtml     \
          intro.cli cli.sh}

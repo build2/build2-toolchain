@@ -24,14 +24,14 @@ done
 
 cli -I .. -v version="$version" -v date="$date" \
 --generate-html --html-suffix .xhtml \
---html-prologue-file intro-prologue.xhtml \
---html-epilogue-file intro-epilogue.xhtml \
+--html-prologue-file doc-prologue.xhtml \
+--html-epilogue-file doc-epilogue.xhtml \
 --link-regex '%b([-.].+)%../../build2/doc/b$1%' \
 --link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
 --output-prefix build2-toolchain- intro.cli
 
-html2ps -f intro.html2ps:a4.html2ps -o build2-toolchain-intro-a4.ps build2-toolchain-intro.xhtml
+html2ps -f doc.html2ps:a4.html2ps -o build2-toolchain-intro-a4.ps build2-toolchain-intro.xhtml
 ps2pdf14 -sPAPERSIZE=a4 -dOptimize=true -dEmbedAllFonts=true build2-toolchain-intro-a4.ps build2-toolchain-intro-a4.pdf
 
-html2ps -f intro.html2ps:letter.html2ps -o build2-toolchain-intro-letter.ps build2-toolchain-intro.xhtml
+html2ps -f doc.html2ps:letter.html2ps -o build2-toolchain-intro-letter.ps build2-toolchain-intro.xhtml
 ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-intro-letter.ps build2-toolchain-intro-letter.pdf

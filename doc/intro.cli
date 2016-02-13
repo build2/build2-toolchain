@@ -463,6 +463,14 @@ fetched libhello 1.0.0+1
 unpacked libhello 1.0.0+1
 configured libhello 1.0.0+1
 configured hello 1.0.0
+following prerequisite packages were automatically built and will no longer be necessary:
+  libprint
+  libformat
+drop prerequisite packages? [Y/n] y
+disfigured libprint
+disfigured libformat
+purged libprint
+purged libformat
 c++ libhello-1.0.0+1/hello/cxx{hello}
 ld libhello-1.0.0+1/hello/liba{hello}
 c++ libhello-1.0.0+1/hello/cxx{hello}
@@ -477,7 +485,8 @@ updated hello 1.0.0
 
 Notice how this time we updated \c{hello} as part of the \c{libhello} downgrade
 \- yes, you can do that. Perhaps there should be an option to automatically
-update all the dependents?
+update all the dependents? Also, \c{bpkg} helpfully offered to get rid of
+\c{libprint} and \c{libformat} which we won't be needing anymore.
 
 Ok, so all this might look nice and all, but we haven't actually seen anything
 of what we've presumably built (it can all be a charade, for all we know). Can

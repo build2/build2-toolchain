@@ -477,9 +477,9 @@ c++ libhello-1.0.0+1/hello/cxx{hello}
 ld libhello-1.0.0+1/hello/libso{hello}
 c++ libhello-1.0.0+1/tests/test/cxx{driver}
 ld libhello-1.0.0+1/tests/test/exe{driver}
-updated libhello 1.0.0+1
 c++ hello-1.0.0/cxx{hello}
 ld hello-1.0.0/exe{hello}
+updated libhello 1.0.0+1
 updated hello 1.0.0
 \
 
@@ -930,9 +930,9 @@ c++ libhello-1.0.0+1/hello/cxx{hello}
 ld libhello-1.0.0+1/hello/libso{hello}
 c++ libhello-1.0.0+1/tests/test/cxx{driver}
 ld libhello-1.0.0+1/tests/test/exe{driver}
-updated libhello 1.0.0+1
 c++ ~/work/build2/hello/hello2/cxx{hello}
 ld hello2-1.0.0/exe{hello}
+updated libhello 1.0.0+1
 updated hello2 1.0.0
 \
 

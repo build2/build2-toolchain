@@ -188,7 +188,7 @@ added repository build2.org/hello/stable
 \
 
 If we want to add several repositories, we just execute the \l{bpkg-cfg-add(1)
-\c{brep add}} command for each of them. Once this is done, we fetch the list of
+\c{bpkg add}} command for each of them. Once this is done, we fetch the list of
 available packages for all the added repositories:
 
 \

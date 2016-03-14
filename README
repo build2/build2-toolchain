@@ -1,0 +1,18 @@
+This is the build2 toolchain amalgamation. It includes the build system
+(build2), package manager (bpkg), and their prerequisite libraries (libbutl
+and libbpkg).
+
+build2 is an open source, cross-platform toolchain for building and packaging
+C++ code. Its aim is a modern build system and package manager for the C++
+language that provide a consistent, out of the box interface across multiple
+platforms and compilers. For more information see:
+
+https://build2.org/
+
+See the INSTALL file for the prerequisites and installation instructions.
+
+See the doc/ directory for documentation.
+
+Send questions, bug reports, or any other feedback to the users@build2.org
+mailing list. You can post without subscribing. See https://lists.build2.org
+for searchable archives, posting guidelines, etc.

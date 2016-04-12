@@ -2,8 +2,8 @@ The build2 toolchain requires a C++11 compiler with limited C++14 support. GCC
 4.8 or later and Clang 3.4 or later are known to work. If you only need the
 build2 build system without the bpkg package manager, then the C++ compiler is
 all you will need. If, however, you would also like to build bpkg, then you
-will first need to obtain SQLite as well as the libodb and libodb-sqlite
-libraries.
+will also need to obtain SQLite as well as the libodb and libodb-sqlite
+libraries (discussed below).
 
 In this guide we install everything that we build into /usr/local. If you would
 like to use a different installation location, you will need to make
@@ -93,7 +93,7 @@ $ xcode-select --install
     $ cd build2-toolchain-X.Y.Z
     $ cd build2/
     $ ./bootstrap
-    $ ./build2/b-boot config.bin.rpath=/usr/local/lib update
+    $ ./build2/b-boot update
 
     For more information on this step (for example, how to specify the C++
     compiler, options, etc.), refer to the INSTALL file in the build2/

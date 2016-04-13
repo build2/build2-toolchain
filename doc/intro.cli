@@ -40,23 +40,23 @@ added repository build2.org/hello/stable
 
 $ bpkg fetch
 fetching build2.org/hello/stable
-2 package(s) in 1 repository(s)
+3 package(s) in 1 repository(s)
 
 $ bpkg build hello
-build libhello 1.0.0+1 (required by hello)
+build libhello 1.0.1 (required by hello)
 build hello 1.0.0
 continue? [Y/n] y
-libhello-1.0.0+1.tar.gz      100% of 1489  B  983 kBps 00m01s
-fetched libhello 1.0.0+1
-unpacked libhello 1.0.0+1
+libhello-1.0.1.tar.gz        100% of 1489  B  983 kBps 00m01s
+fetched libhello 1.0.1
+unpacked libhello 1.0.1
 hello-1.0.0.tar.gz           100% of 1030  B 6882 kBps 00m01s
 fetched hello 1.0.0
 unpacked hello 1.0.0
-configured libhello 1.0.0+1
+configured libhello 1.0.1
 configured hello 1.0.0
 c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/libso{hello}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/libso{hello}
 ld hello-1.0.0/exe{hello}
 updated hello 1.0.0
 \
@@ -142,7 +142,7 @@ created new configuration in /tmp/hello-gcc5-release/
 
 Let's discuss that last command line: \l{bpkg-cfg-create(1) \c{bpkg create}} is
 the command for creating a new configuration. As a side note, if you ever want
-to get help for any \c{bpkg} command, run \c{bpkg help <command>}. To see a
+to get help for any \c{bpkg} command, run \c{bpkg help <command>}. To see the
 list of commands, run just \l{bpkg-help(1) \c{bpkg help}} (or see
 \l{bpkg(1)}). While we are at it, if you ever want to see what \c{bpkg} is
 running underneath, there is the \c{-v} option. And if you really want to get
@@ -153,7 +153,8 @@ system module. As you might have guessed, \c{cxx} provides support for the C++
 compilation. By specifying this module during the configuration creation we
 configure it (yes, with those \c{config.cxx...} variables that follow) for the
 entire configuration. That is, every package that we will build in this
-configuration and that uses the \c{cxx} module will inherit these settings.
+configuration and that uses the \c{cxx} module will by default inherit these
+settings.
 
 The rest of the command line are the configuration variables for the \c{cxx}
 module with \c{coptions} standing for \i{compile options} (there are also
@@ -174,6 +175,7 @@ $ bpkg rep-info https://build2.org/pkg/1/hello/stable
 build2.org/hello/stable https://build2.org/pkg/1/hello/stable
 hello 1.0.0
 libhello 1.0.0+1
+libhello 1.0.1
 \
 
 Or we could use the repository's web interface (implemented by \c{brep}). Our
@@ -194,7 +196,7 @@ available packages for all the added repositories:
 \
 $ bpkg fetch
 fetching build2.org/hello/stable
-2 package(s) in 1 repository(s)
+3 package(s) in 1 repository(s)
 \
 
 You would normally re-run the \l{bpkg-cfg-fetch(1) \c{bpkg fetch}} command
@@ -206,7 +208,7 @@ business:
 
 \
 $ bpkg build hello
-build libhello 1.0.0+1 (required by hello)
+build libhello 1.0.1 (required by hello)
 build hello 1.0.0
 continue? [Y/n]
 \
@@ -221,17 +223,17 @@ confirmation). Let's answer \i{yes} and see what happens:
 \
 ...
 continue? [Y/n] y
-libhello-1.0.0+1.tar.gz      100% of 1489  B 1364 kBps 00m01s
-fetched libhello 1.0.0+1
-unpacked libhello 1.0.0+1
+libhello-1.0.1.tar.gz        100% of 1489  B 1364 kBps 00m01s
+fetched libhello 1.0.1
+unpacked libhello 1.0.1
 hello-1.0.0.tar.gz           100% of 1030  B   20 MBps 00m01s
 fetched hello 1.0.0
 unpacked hello 1.0.0
-configured libhello 1.0.0+1
+configured libhello 1.0.1
 configured hello 1.0.0
 c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/libso{hello}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/libso{hello}
 ld hello-1.0.0/exe{hello}
 updated hello 1.0.0
 \
@@ -264,14 +266,14 @@ if not interested.
 
 \
 $ bpkg build -v -y hello
-fetching libhello-1.0.0+1.tar.gz from build2.org/hello/stable
-curl ... https://build2.org/pkg/1/hello/stable/libhello-1.0.0+1.tar.gz
+fetching libhello-1.0.1.tar.gz from build2.org/hello/stable
+curl ... https://build2.org/pkg/1/hello/stable/libhello-1.0.1.tar.gz
   % Total    % Received Average Speed   Time    Time     Time  Current
                         Dload  Upload   Total   Spent    Left  Speed
 100  1489  100  1489      1121      0  0:00:01  0:00:01 --:--:--  1122
-fetched libhello 1.0.0+1
-tar -xf libhello-1.0.0+1.tar.gz
-unpacked libhello 1.0.0+1
+fetched libhello 1.0.1
+tar -xf libhello-1.0.1.tar.gz
+unpacked libhello 1.0.1
 fetching hello-1.0.0.tar.gz from build2.org/hello/stable
 curl ... https://build2.org/pkg/1/hello/stable/hello-1.0.0.tar.gz
   % Total    % Received Average Speed   Time    Time     Time  Current
@@ -280,18 +282,18 @@ curl ... https://build2.org/pkg/1/hello/stable/hello-1.0.0.tar.gz
 fetched hello 1.0.0
 tar -xf hello-1.0.0.tar.gz
 unpacked hello 1.0.0
-b -v configure(./libhello-1.0.0+1/)
-config::save libhello-1.0.0+1/build/config.build
-configured libhello 1.0.0+1
+b -v configure(./libhello-1.0.1/)
+config::save libhello-1.0.1/build/config.build
+configured libhello 1.0.1
 b -v configure(./hello-1.0.0/)
 config::save hello-1.0.0/build/config.build
 configured hello 1.0.0
 hold package hello
 b -v update(./hello-1.0.0/)
-g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -o hello-1.0.0/hello.o -c hello-1.0.0/hello.cxx
-g++-5 -Ilibhello-1.0.0+1 -O3 -std=c++11 -fPIC -o libhello-1.0.0+1/hello/hello-so.o -c libhello-1.0.0+1/hello/hello.cxx
-g++-5 -O3 -std=c++11 -shared -o libhello-1.0.0+1/hello/libhello.so
-g++-5 -O3 -std=c++11 -o hello-1.0.0/hello hello-1.0.0/hello.o libhello-1.0.0+1/hello/libhello.so
+g++-5 -Ilibhello-1.0.1 -O3 -std=c++11 -o hello-1.0.0/hello.o -c hello-1.0.0/hello.cxx
+g++-5 -Ilibhello-1.0.1 -O3 -std=c++11 -fPIC -o libhello-1.0.1/hello/hello-so.o -c libhello-1.0.1/hello/hello.cxx
+g++-5 -O3 -std=c++11 -shared -o libhello-1.0.1/hello/libhello.so
+g++-5 -O3 -std=c++11 -o hello-1.0.0/hello hello-1.0.0/hello.o libhello-1.0.1/hello/libhello.so
 updated hello 1.0.0
 \
 
@@ -302,7 +304,7 @@ command's documentation):
 
 \
 $ bpkg status libhello
-configured 1.0.0+1
+configured 1.0.1
 
 $ bpkg status hello
 configured 1.0.0 hold_package
@@ -347,14 +349,14 @@ added repository build2.org/hello/testing
 $ bpkg fetch
 fetching build2.org/hello/stable
 fetching build2.org/hello/testing
-5 package(s) in 2 repository(s)
+7 package(s) in 2 repository(s)
 
 $ bpkg status libhello
-configured 1.0.0+1; available 1.1.0
+configured 1.0.1; available 1.1.1 1.1.0
 \
 
-Ok, \c{libhello 1.1.0} is now available. How do we upgrade? We can try to build
-\c{hello} again:
+Ok, \c{libhello 1.1.x} is now available. How do we upgrade? We can try to
+build \c{hello} again:
 
 \
 $ bpkg build -y hello
@@ -371,7 +373,7 @@ new version if we explicitly ask it to. As it is now, all dependencies for
 $ bpkg build libhello
 build libformat 1.0.0 (required by libhello)
 build libprint 1.0.0 (required by libhello)
-upgrade libhello 1.1.0
+upgrade libhello 1.1.1
 reconfigure hello (required by libhello)
 continue? [Y/n]
 \
@@ -391,35 +393,35 @@ Let's answer \i{yes} if only to see what happens:
 ...
 continue? [Y/n] y
 disfigured hello 1.0.0
-disfigured libhello 1.0.0+1
+disfigured libhello 1.0.1
 libformat-1.0.0.tar.gz       100% of 1064  B   11 MBps 00m01s
 fetched libformat 1.0.0
 unpacked libformat 1.0.0
 libprint-1.0.0.tar.gz        100% of 1040  B    9 MBps 00m01s
 fetched libprint 1.0.0
 unpacked libprint 1.0.0
-libhello-1.1.0.tar.gz        100% of 1564  B 4672 kBps 00m01s
-fetched libhello 1.1.0
-unpacked libhello 1.1.0
+libhello-1.1.1.tar.gz        100% of 1564  B 4672 kBps 00m01s
+fetched libhello 1.1.1
+unpacked libhello 1.1.1
 configured libformat 1.0.0
 configured libprint 1.0.0
-configured libhello 1.1.0
+configured libhello 1.1.1
 configured hello 1.0.0
-c++ libhello-1.1.0/hello/cxx{hello}
+c++ libhello-1.1.1/hello/cxx{hello}
 c++ libformat-1.0.0/format/cxx{format}
 ld libformat-1.0.0/format/liba{format}
 c++ libprint-1.0.0/print/cxx{print}
 ld libprint-1.0.0/print/liba{print}
-ld libhello-1.1.0/hello/liba{hello}
-c++ libhello-1.1.0/hello/cxx{hello}
+ld libhello-1.1.1/hello/liba{hello}
+c++ libhello-1.1.1/hello/cxx{hello}
 c++ libformat-1.0.0/format/cxx{format}
 ld libformat-1.0.0/format/libso{format}
 c++ libprint-1.0.0/print/cxx{print}
 ld libprint-1.0.0/print/libso{print}
-ld libhello-1.1.0/hello/libso{hello}
-c++ libhello-1.1.0/tests/test/cxx{driver}
-ld libhello-1.1.0/tests/test/exe{driver}
-updated libhello 1.1.0
+ld libhello-1.1.1/hello/libso{hello}
+c++ libhello-1.1.1/tests/test/cxx{driver}
+ld libhello-1.1.1/tests/test/exe{driver}
+updated libhello 1.1.1
 \
 
 If you paid really close attention, you might have noticed something
@@ -452,16 +454,16 @@ explicit plus, in this case, we need to specify the version (you
 can also specify desired version for upgrades, in case you are wondering).
 
 \
-$ bpkg build libhello/1.0.0 hello
-downgrade libhello 1.0.0+1
+$ bpkg build libhello/1.0.1 hello
+downgrade libhello 1.0.1
 reconfigure/build hello 1.0.0
 continue? [Y/n] y
 disfigured hello 1.0.0
-disfigured libhello 1.1.0
-libhello-1.0.0+1.tar.gz      100% of 1489  B  983 kBps 00m01s
-fetched libhello 1.0.0+1
-unpacked libhello 1.0.0+1
-configured libhello 1.0.0+1
+disfigured libhello 1.1.1
+libhello-1.0.1.tar.gz        100% of 1489  B  983 kBps 00m01s
+fetched libhello 1.0.1
+unpacked libhello 1.0.1
+configured libhello 1.0.1
 configured hello 1.0.0
 following prerequisite packages were automatically built and will no longer be necessary:
   libprint
@@ -471,15 +473,15 @@ disfigured libprint
 disfigured libformat
 purged libprint
 purged libformat
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/liba{hello}
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/libso{hello}
-c++ libhello-1.0.0+1/tests/test/cxx{driver}
-ld libhello-1.0.0+1/tests/test/exe{driver}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/liba{hello}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/libso{hello}
+c++ libhello-1.0.1/tests/test/cxx{driver}
+ld libhello-1.0.1/tests/test/exe{driver}
 c++ hello-1.0.0/cxx{hello}
 ld hello-1.0.0/exe{hello}
-updated libhello 1.0.0+1
+updated libhello 1.0.1
 updated hello 1.0.0
 \
 
@@ -498,9 +500,9 @@ test}} command:
 
 \
 $ bpkg test libhello hello
-test libhello-1.0.0+1/tests/test/exe{driver}
+test libhello-1.0.1/tests/test/exe{driver}
 test hello-1.0.0/exe{hello}
-tested libhello 1.0.0+1
+tested libhello 1.0.1
 tested hello 1.0.0
 \
 
@@ -515,11 +517,11 @@ packages that we've built:
 $ ls -1F
 build/
 hello-1.0.0/
-libhello-1.0.0+1/
+libhello-1.0.1/
 bpkg.sqlite3
 buildfile
 hello-1.0.0.tar.gz
-libhello-1.0.0+1.tar.gz
+libhello-1.0.1.tar.gz
 \
 
 And if we look inside \c{hello-1.0.0/} we will see what looks like the
@@ -530,8 +532,10 @@ $ ls -1F hello-1.0.0/
 build/
 buildfile
 hello*
+hello.d
 hello.cxx
 hello.o
+hello.o.d
 manifest
 test.out
 version
@@ -554,11 +558,12 @@ Another way to get hold of a package's goodies is to install it with
 \
 $ bpkg install config.install.root=/opt/hello \
 config.install.root.sudo=sudo hello
+
 install /opt/hello/
 install /opt/hello/include/hello/
-install libhello-1.0.0+1/hello/hxx{hello}
+install libhello-1.0.1/hello/hxx{hello}
 install /opt/hello/lib/
-install libhello-1.0.0+1/hello/libso{hello}
+install libhello-1.0.1/hello/libso{hello}
 install /opt/hello/bin/
 install hello-1.0.0/exe{hello}
 install /opt/hello/share/doc/hello/
@@ -578,23 +583,57 @@ $ tree -F /opt/hello/
     └── doc/
         └── hello/
             └── version
-
-$ /opt/hello/bin/hello World
-Hello, World!
 \
 
 The \c{config.install.root.sudo} value is the optional \i{sudo}-like program
 that should be used to run the \c{install} program. For those feeling queasy
 running \c{sudo make install}, here is your answer. If you are wondering
 whether you could have specified those \c{config.install.*} values during the
-configuration creation, the answer is yes, indeed!
+configuration creation, the answer is yes, indeed! Let's try to run the
+installed program:
+
+\
+$ /opt/hello/bin/hello World
+/opt/hello/bin/hello: error while loading shared libraries: libhello.so: cannot open shared object file: No such file or directory
+\
+
+Not what we hoped to see. The problem is with our installation location: the
+runtime linker won't look for \c{libhello.so} in \c{/opt/hello/lib} unless we
+somehow tell it to, for example, using \c{LD_LIBRARY_PATH} or equivalent.
+There are several way we can resolve this. We could give up on shared
+libraries and link our prerequisite libraries statically
+(\c{config.bin.exe.lib=static}). Or we could use the \i{rpath} mechanism:
+
+\
+$ bpkg install config.install.root=/opt/hello \
+config.install.root.sudo=sudo                 \
+config.bin.rpath=/opt/hello/lib hello
+
+ld hello-1.0.0/exe{hello}
+install /opt/hello/
+install /opt/hello/include/hello/
+install libhello-1.0.1/hello/hxx{hello}
+install /opt/hello/lib/
+install libhello-1.0.1/hello/libso{hello}
+install /opt/hello/bin/
+install hello-1.0.0/exe{hello}
+install /opt/hello/share/doc/hello/
+install hello-1.0.0/doc{version}
+installed hello 1.0.0
+
+$ /opt/hello/bin/hello World
+Hello, World!
+\
+
+Notice that \c{ld} line above \- this is where our executable is re-linked
+with the \c{-rpath} option.
 
 What if we wanted to use \c{libhello} in our own project? While the installed
 version is always an option, it may not be convenient when we develop our code.
 We may have multiple builds per project, for example, with GCC and Clang to
 catch all the warnings. We may also want to make sure our application works
 well with various versions of \c{libhello} (and maybe even with that heinous
-\c{1.1.0}). While we can install different configurations into different
+\c{1.1.x}). While we can install different configurations into different
 directories, it's hard to deny things are getting a bit hairy: multiple
 configurations, multiple installations... I guess we will have to get our hands
 into that cookie jar, I mean, configuration, again.
@@ -664,8 +703,7 @@ Let's try to build it and see what happens \- maybe it will magically work
 (\l{b(1)} is the \c{build2} build system driver).
 
 \
-$ b
-test g++
+$ b config.cxx=g++-5
 error: unable to import target libhello%lib{hello}
   info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
 info: while applying rule cxx.compile to update obja{hello}
@@ -680,8 +718,7 @@ configuration and see what happens. After all, that's where, more or less,
 our \i{out} for \c{libhello} is.
 
 \
-$ b config.import.libhello=/tmp/hello-gcc5-release
-test g++
+$ b config.cxx=g++-5 config.import.libhello=/tmp/hello-gcc5-release
 c++ cxx{hello}
 ld exe{hello}
 \
@@ -696,8 +733,10 @@ $ tree -F
 │   └── root.build
 ├── buildfile
 ├── hello*
+├── hello.d
 ├── hello.cpp
-└── hello.o
+├── hello.o
+└── hello.o.d
 
 $ ./hello
 Hello, World!
@@ -709,7 +748,6 @@ Let's change something in our source code and try to update:
 $ touch hello.cpp
 
 $ b
-test g++
 error: unable to import target libhello%lib{hello}
   info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
 info: while applying rule cxx.compile to update obja{hello}
@@ -717,11 +755,11 @@ info: while applying rule cxx.link to update exe{hello}
 info: while applying rule alias to update dir{./}
 \
 
-Looks like we have to keep repeating that \c{config.import.libhello} and who
-wants that? Also, the \c{test g++} line is getting annoying. To get rid of both
-we have to make our configuration \i{permanent}. Also, seeing that we plan to
-have several of them (GCC/Clang, different version of \c{libhello}), it makes
-sense to create them \i{out of source tree}. Let's get to it:
+Looks like we have to keep repeating those \c{config.*} values and who wants
+that? To get rid of this annoyance we have to make our configuration
+\i{permanent}. Also, seeing that we plan to have several of them (GCC/Clang,
+different version of \c{libhello}), it makes sense to create them \i{out of
+source tree}. Let's get to it:
 
 \
 $ cd ..
@@ -730,10 +768,10 @@ $ ls -1F
 hello2/
 hello2-gcc5-release/
 
-$ b config.cxx=g++-5 config.cxx.coptions=-O3 \
+$ b config.cxx=g++-5 config.cxx.coptions=-O3   \
 config.import.libhello=/tmp/hello-gcc5-release \
 'configure(hello2/@hello2-gcc5-release/)'
-test g++-5
+
 mkdir hello2-gcc5-release/build/
 mkdir hello2-gcc5-release/build/bootstrap/
 save hello2-gcc5-release/build/bootstrap/src-root.build
@@ -764,8 +802,8 @@ rm exe{hello}
 rm obja{hello}
 
 $ b -v
-g++-5 -I/tmp/hello-gcc5-release/libhello-1.0.0+1 -O3 -std=c++11 -o hello.o -c ../hello2/hello.cpp
-g++-5 -O3 -std=c++11 -o hello hello.o /tmp/hello-gcc5-release/libhello-1.0.0+1/hello/libhello.so
+g++-5 -I/tmp/hello-gcc5-release/libhello-1.0.1 -O3 -std=c++11 -o hello.o -c ../hello2/hello.cpp
+g++-5 -O3 -std=c++11 -o hello hello.o /tmp/hello-gcc5-release/libhello-1.0.1/hello/libhello.so
 \
 
 Some of you might have noticed that \c{hello2-gcc5-release/} and
@@ -793,11 +831,10 @@ ld /tmp/hello-gcc5-release/hello2/exe{hello}
 
 Now that might seem like magic, but it's actually pretty logical. Why don't we
 need to specify any of the \c{config.cxx} values this time? Because they are
-inherited from the set specified for \c{/tmp/hello-gcc5-release} when we
-created this configuration with \c{bpkg create}. What about
-\c{config.import.libhello}, don't we need at least that? Not really \-
-\c{libhello} will be found automatically since it is part of the same
-amalgamation as we now are.
+inherited from those specified for \c{/tmp/hello-gcc5-release} when we created
+the configuration with \c{bpkg create}. What about \c{config.import.libhello},
+don't we need at least that? Not really \- \c{libhello} will be found
+automatically since it is part of the same amalgamation as we now are.
 
 Of course, \c{bpkg} has no idea \c{hello2} is now part of its configuration:
 
@@ -867,20 +904,20 @@ Let's upgrade \c{libhello} and see what happens:
 
 \
 $ bpkg build -d /tmp/hello-gcc5-release/ libhello
-upgrade libhello 1.1.0
+upgrade libhello 1.1.1
 reconfigure hello2 (required by libhello)
 continue? [Y/n] y
 disfigured hello2 1.0.0
-disfigured libhello 1.0.0+1
-unpacked libhello 1.1.0
-configured libhello 1.1.0
+disfigured libhello 1.0.1
+unpacked libhello 1.1.1
+configured libhello 1.1.1
 configured hello2 1.0.0
-mkdir fsdir{/tmp/hello-gcc5-release/libhello-1.1.0/hello/}
+mkdir fsdir{/tmp/hello-gcc5-release/libhello-1.1.1/hello/}
 c++ libhello/hello/cxx{hello}
-ld /tmp/hello-gcc5-release/libhello-1.1.0/hello/liba{hello}
+ld /tmp/hello-gcc5-release/libhello-1.1.1/hello/liba{hello}
 c++ libhello/hello/cxx{hello}
-ld /tmp/hello-gcc5-release/libhello-1.1.0/hello/libso{hello}
-updated libhello 1.1.0
+ld /tmp/hello-gcc5-release/libhello-1.1.1/hello/libso{hello}
+updated libhello 1.1.1
 \
 
 As promised, \c{hello2} got reconfigured. We can now update it and give it a
@@ -915,24 +952,24 @@ fetching build2.org/hello/stable (complements build2.org/hello/testing)
 5 package(s) in 2 repository(s)
 
 $ bpkg build libhello/1.0.0 .../hello2/
-build libhello 1.0.0+1
+build libhello 1.0.1
 build hello2 1.0.0
 continue? [Y/n] y
-libhello-1.0.0+1.tar.gz      100% of 1489  B  983 kBps 00m01s
-fetched libhello 1.0.0+1
-unpacked libhello 1.0.0+1
+libhello-1.0.1.tar.gz        100% of 1489  B  983 kBps 00m01s
+fetched libhello 1.0.1
+unpacked libhello 1.0.1
 unpacked hello2 1.0.0
-configured libhello 1.0.0+1
+configured libhello 1.0.1
 configured hello2 1.0.0
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/liba{hello}
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/libso{hello}
-c++ libhello-1.0.0+1/tests/test/cxx{driver}
-ld libhello-1.0.0+1/tests/test/exe{driver}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/liba{hello}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/libso{hello}
+c++ libhello-1.0.1/tests/test/cxx{driver}
+ld libhello-1.0.1/tests/test/exe{driver}
 c++ ~/work/build2/hello/hello2/cxx{hello}
 ld hello2-1.0.0/exe{hello}
-updated libhello 1.0.0+1
+updated libhello 1.0.1
 updated hello2 1.0.0
 \
 
@@ -953,6 +990,7 @@ $ bpkg create cxx                   \
 config.cxx=x86_64-w64-mingw32-g++   \
 config.bin.ar=x86_64-w64-mingw32-ar \
 config.bin.lib=static config.cxx.loptions=-static
+
 created new configuration in /tmp/hello-mingw32/
 
 $ bpkg add https://build2.org/pkg/1/hello/stable
@@ -964,17 +1002,17 @@ fetching build2.org/hello/stable
 
 $ bpkg build -y hello
 bpkg build -y hello
-libhello-1.0.0+1.tar.gz      100% of 1489  B  983 kBps 00m01s
-fetched libhello 1.0.0+1
-unpacked libhello 1.0.0+1
+libhello-1.0.1.tar.gz        100% of 1489  B  983 kBps 00m01s
+fetched libhello 1.0.1
+unpacked libhello 1.0.1
 hello-1.0.0.tar.gz           100% of 1030  B 6882 kBps 00m01s
 fetched hello 1.0.0
 unpacked hello 1.0.0
-configured libhello 1.0.0+1
+configured libhello 1.0.1
 configured hello 1.0.0
 c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0+1/hello/cxx{hello}
-ld libhello-1.0.0+1/hello/libso{hello}
+c++ libhello-1.0.1/hello/cxx{hello}
+ld libhello-1.0.1/hello/libso{hello}
 ld hello-1.0.0/exe{hello}
 updated hello 1.0.0
 

@@ -93,15 +93,14 @@ $ xcode-select --install
     $ cd build2-toolchain-X.Y.Z
     $ cd build2/
     $ ./bootstrap
-    $ ./build2/b-boot update
+    $ cd ..
+    $ ./build2/build2/b-boot update
 
     For more information on this step (for example, how to specify the C++
     compiler, options, etc.), refer to the INSTALL file in the build2/
     subdirectory of build2-toolchain.
 
 4. Configuring, Building, and Installing the Rest of the Toolchain
-
-    $ cd .. # back to build2-toolchain-X.Y.Z
 
     $ ./build2/build2/b                      \
     config.cxx.poptions=-I/usr/local/include \

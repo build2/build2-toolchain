@@ -121,12 +121,20 @@ $ xcode-select --install
    $ cd build2/
    $ ./bootstrap
    $ cd ..
-   $ ./build2/build2/b-boot update
+   $ ./build2/build2/b-boot build2/
    \
 
    For more information on this step (for example, how to specify the C++
    compiler, options, etc.), refer to the \c{INSTALL} file in the \c{build2/}
-   subdirectory of \c{build2-toolchain}.|
+   subdirectory of \c{build2-toolchain}. Note that you must use global
+   overrides (\c{!}) if specifying any \c{config.*} variables on the last
+   line. For example:
+
+   \
+   $ ./build2/build2/b-boot '!config.cxx=clang++' build2/
+   \
+
+   |
 
 \li|\n4. Configuring, Building, and Installing the Rest of the Toolchain\n
 

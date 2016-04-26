@@ -3,10 +3,10 @@
 # license   : MIT; see accompanying LICENSE file
 
 project = build2-toolchain
-version = 0.3.0
+version = 0.4.0-a1
 subprojects = libbutl build2 libbpkg bpkg
 
-using build@0.2.0
+using build@0.3.0
 using config
 using dist
 using test # Note: needed for dist to work in subprojects with tests.

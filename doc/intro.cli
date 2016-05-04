@@ -117,7 +117,7 @@ customary \i{\"Hello, World!\"} example which you won't yet be able to try
 yourself (but don't worry, complete terminal output will be shown). If at the
 end you find \c{build2} appealing, the following section jumps right into
 bootstrapping and installation (and, yes, you get to run that coveted \c{bpkg
-update bpkg}). Once the \c{build2} installation is complete, you can come back
+build bpkg}). Once the \c{build2} installation is complete, you can come back
 to the \i{\"Hello, World!\"} example and try all of the steps for yourself.
 
 This introduction explores the \i{consumer} side of \i{\"Hello, World!\"}.

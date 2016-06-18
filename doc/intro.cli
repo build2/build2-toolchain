@@ -189,7 +189,7 @@ $ bpkg add https://build2.org/pkg/1/hello/stable
 added repository build2.org/hello/stable
 \
 
-If we want to add several repositories, we just execute the \l{bpkg-cfg-add(1)
+If we want to add several repositories, we just execute the \l{bpkg-rep-add(1)
 \c{bpkg add}} command for each of them. Once this is done, we fetch the list of
 available packages for all the added repositories:
 
@@ -199,7 +199,7 @@ fetching build2.org/hello/stable
 3 package(s) in 1 repository(s)
 \
 
-You would normally re-run the \l{bpkg-cfg-fetch(1) \c{bpkg fetch}} command
+You would normally re-run the \l{bpkg-rep-fetch(1) \c{bpkg fetch}} command
 after you've added another repository or to refresh the list of available
 packages.
 

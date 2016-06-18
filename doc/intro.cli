@@ -374,7 +374,7 @@ $ bpkg build libhello
 build libformat 1.0.0 (required by libhello)
 build libprint 1.0.0 (required by libhello)
 upgrade libhello 1.1.1
-reconfigure hello (required by libhello)
+reconfigure hello (dependent of libhello)
 continue? [Y/n]
 \
 
@@ -392,6 +392,23 @@ Let's answer \i{yes} if only to see what happens:
 \
 ...
 continue? [Y/n] y
+update dependent packages? [Y/n]
+\
+
+Another question. This one has to do with that \c{reconfigure hello} line we
+just talked about. If you were wondering why we were only offered to
+reconfigure and not actually update the dependent package, you should realize
+that \c{bpkg} is a very lazy package manager, it only does what it must do.
+It must reconfigure but it doesn't really have to update. And this could be a
+good thing if, for example, you have a hundred dependents in your configuration
+but right now you only want to build just those specific packages. However,
+quite often, you do want to keep all the packages in your configuration up
+to date and \c{bpkg} graciously offers to take care of this task. Ok, let's
+answer \i{yes} again:
+
+\
+...
+update dependent packages? [Y/n] y
 disfigured hello 1.0.0
 disfigured libhello 1.0.1
 libformat-1.0.0.tar.gz       100% of 1064  B   11 MBps 00m01s
@@ -421,27 +438,23 @@ ld libprint-1.0.0/print/libso{print}
 ld libhello-1.1.1/hello/libso{hello}
 c++ libhello-1.1.1/tests/test/cxx{driver}
 ld libhello-1.1.1/tests/test/exe{driver}
+c++ hello-1.0.0/cxx{hello}
+ld hello-1.0.0/exe{hello}
 updated libhello 1.1.1
+updated hello 1.0.0
 \
 
-If you paid really close attention, you might have noticed something
-surprising: the \c{hello} package wasn't \i{updated}. Yes, it was reconfigured,
-but we didn't see any compile or link commands for this project. In fact,
-\c{hello} is now pretty \i{out-of-date}.
-
-While it may sound surprising, \c{bpkg} doesn't try to keep your packages
-\i{up-to-date}. Configured \- yes, but not up-to-date. Trying to guarantee
-up-to-date-ness of packages is in the end futile. For example, if you upgrade
-your compiler or system headers, \c{bpkg} has no way of realizing that some
-packages are now out-of-date. Only the build system, which has the complete
-information about all the dependencies, can make such a realization (and
-correct it).
-
-But it is easy to make sure a package is up-to-date at any given time with the
-\l{bpkg-pkg-update(1) \c{bpkg update}} command (there is also
+If you were to answer \i{no} to the \"update dependent packages?\" question
+above, it is easy to make sure a package is up-to-date at a later time with
+the \l{bpkg-pkg-update(1) \c{bpkg update}} command (there is also
 \l{bpkg-pkg-clean(1) \c{bpkg clean}}), for example:
 
 \
+$ bpkg clean hello
+rm hello-1.0.0/exe{hello}
+rm hello-1.0.0/obja{hello}
+cleaned hello 1.0.0
+
 $ bpkg update hello
 c++ hello-1.0.0/cxx{hello.cxx}
 ld hello-1.0.0/exe{hello}
@@ -454,10 +467,11 @@ explicit plus, in this case, we need to specify the version (you
 can also specify desired version for upgrades, in case you are wondering).
 
 \
-$ bpkg build libhello/1.0.1 hello
+$ bpkg build libhello/1.0.1
 downgrade libhello 1.0.1
-reconfigure/build hello 1.0.0
+reconfigure hello (dependent of libhello)
 continue? [Y/n] y
+update dependent packages? [Y/n] y
 disfigured hello 1.0.0
 disfigured libhello 1.1.1
 libhello-1.0.1.tar.gz        100% of 1489  B  983 kBps 00m01s
@@ -485,10 +499,16 @@ updated libhello 1.0.1
 updated hello 1.0.0
 \
 
-Notice how this time we updated \c{hello} as part of the \c{libhello} downgrade
-\- yes, you can do that. Perhaps there should be an option to automatically
-update all the dependents? Also, \c{bpkg} helpfully offered to get rid of
-\c{libprint} and \c{libformat} which we won't be needing anymore.
+Notice how \c{bpkg} helpfully offered to get rid of \c{libprint} and
+\c{libformat} which we won't be needing anymore. Note also that while we
+can use \c{--yes|y} as an answer to all the numerous prompts, there are
+also more granular options. For example, this is how we can instruct
+\c{bpkg} to drop prerequisites (\c{--drop-prerequisite|-D}) but leave
+dependents just reconfigured (\c{--leave-dependent|-L}):
+
+\
+$ bpkg build -D -L libhello/1.0.1
+\
 
 Ok, so all this might look nice and all, but we haven't actually seen anything
 of what we've presumably built (it can all be a charade, for all we know). Can
@@ -903,9 +923,9 @@ updated hello2 1.0.0
 Let's upgrade \c{libhello} and see what happens:
 
 \
-$ bpkg build -d /tmp/hello-gcc5-release/ libhello
+$ bpkg build -d /tmp/hello-gcc5-release/ -L libhello
 upgrade libhello 1.1.1
-reconfigure hello2 (required by libhello)
+reconfigure hello2 (dependent of libhello)
 continue? [Y/n] y
 disfigured hello2 1.0.0
 disfigured libhello 1.0.1
@@ -920,8 +940,8 @@ ld /tmp/hello-gcc5-release/libhello-1.1.1/hello/libso{hello}
 updated libhello 1.1.1
 \
 
-As promised, \c{hello2} got reconfigured. We can now update it and give it a
-try:
+As promised, \c{hello2} got reconfigured (it didn't get update because of the
+\c{-L} option). We can now update it and give it a try:
 
 \
 $ bpkg update -d /tmp/hello-gcc5-release/ hello2

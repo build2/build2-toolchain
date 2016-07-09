@@ -1008,7 +1008,6 @@ $ cd hello-mingw32
 
 $ bpkg create cxx                   \
 config.cxx=x86_64-w64-mingw32-g++   \
-config.bin.ar=x86_64-w64-mingw32-ar \
 config.bin.lib=static config.cxx.loptions=-static
 
 created new configuration in /tmp/hello-mingw32/

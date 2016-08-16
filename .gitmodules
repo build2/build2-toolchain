@@ -16,3 +16,9 @@
 [submodule "libsqlite3"]
 	path = libsqlite3
 	url = git://git.build2.org/packaging/sqlite/libsqlite3.git
+[submodule "libodb"]
+	path = libodb
+	url = git://scm.codesynthesis.com/odb/libodb.git
+[submodule "libodb-sqlite"]
+	path = libodb-sqlite
+	url = git://scm.codesynthesis.com/odb/libodb-sqlite.git

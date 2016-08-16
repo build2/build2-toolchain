@@ -1,0 +1,35 @@
+This project is essentially a collection of other projects organized as git
+submodules. Some of those projects also use submodules. As a result, things
+can get "non-trivial", to put it mildly. Make sure you have good grasp of git
+submodules before doing anything here (even cloning this project requires
+special steps). In particular, make sure you have read on submodules in the
+git/cheatsheet.txt file.
+
+A few additional notes:
+
+1. This project is not automatically updated by the modup script since you
+   normally need to update and commit member projects before updating here.
+   So normally the procedure is:
+
+   ./modup
+   ./commit
+   cd build2-toolchain
+   git submodule update --remote
+   git submodule foreach git submodule update --init --recursive
+   git ci -a
+
+   The foreach command updates submodules (if any) of member projects to the
+   commits that were "fetched" by the previous command. Failed that, you will
+   see the '(new commits, modified content)' status instead of just '(new
+   commits)' next to submodules (i.e., git "thinks" you have modified the
+   member project by "setting back" its subproject commit).
+
+2. The libsqlite3 and libodb* submodules are not updated by default (e.g.,
+   with the above command). This is achieved with:
+
+   git config --file .gitmodules submodule.libsqlite3.update none
+
+   Instead, their updates (normally to something tagged) must be requested
+   explicitly:
+
+   git submodule update --remote --checkout libsqlite3

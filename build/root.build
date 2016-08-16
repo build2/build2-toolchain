@@ -6,4 +6,5 @@
 # common configuration.
 #
 using cxx
+using c
 using? cli

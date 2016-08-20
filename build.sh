@@ -1,0 +1,166 @@
+#!/bin/sh
+
+# file      : build.sh
+# copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+# license   : MIT; see accompanying LICENSE file
+
+# @@ Should we add sys:sqlite by default? Or add option?
+# @@ Need to note that script will ask for repository verification.
+# @@ Perhaps a fingerprint to pass to fetch? Once repo is signed?
+# @@ Option for alternative bpkg config dir?
+
+usage="Usage: $0 [-h] [--install-dir <dir>] [--sudo <prog>] <cxx>"
+
+diag ()
+{
+  echo "$*" 1>&2
+}
+
+# Note that this function will execute a command with arguments that contain
+# spaces but it will not print them as quoted (and neither does set -x).
+#
+run ()
+{
+  diag "+ $@"
+  "$@"
+  if test "$?" -ne "0"; then
+    exit 1;
+  fi
+}
+
+owd="$(pwd)"
+
+cxx=
+idir="/usr/local"
+sudo="sudo"
+
+while test $# -ne 0; do
+  case $1 in
+    -h|--help)
+      diag
+      diag "$usage"
+      diag
+      diag "By default the script will install into /usr/local using sudo. To"
+      diag "instruct the script not to use a sudo program, pass empty value to"
+      diag "the --sudo option, for example:"
+      diag
+      diag "$0 --install-dir /tmp/build2 --sudo '' g++"
+      diag
+      diag "See the INSTALL file for details."
+      diag
+      exit 0
+      ;;
+    --install-dir)
+      shift
+      if test $# -eq 0; then
+	diag "error: installation directory expected after --install-dir"
+	diag "$usage"
+	exit 1
+      fi
+      idir="$1"
+      shift
+      ;;
+    --sudo)
+      shift
+      if test $# -eq 0; then
+	diag "error: sudo program expected after --sudo"
+	diag "$usage"
+	exit 1
+      fi
+      sudo="$1"
+      shift
+      ;;
+    *)
+      cxx="$1"
+      break
+      ;;
+  esac
+done
+
+if test -z "$cxx"; then
+  diag "error: compiler executable expected"
+  diag "$usage"
+  exit 1
+fi
+
+if test -f build/config.build; then
+  diag "current directory already configured, start with clean source"
+  exit 1
+fi
+
+if test -d ../build2-toolchain; then
+  diag "../build2-toolchain/ bpkg configuration directory already exists"
+  exit 1
+fi
+
+# Add $idir/bin to PATH in case it is not already there.
+#
+PATH="$idir/bin:$PATH"
+export PATH
+
+sdir="$idir/stage"
+
+# Bootstrap, stage 1.
+#
+run cd build2
+run ./bootstrap.sh "$cxx"
+run build2/b-boot --version
+
+# Bootstrap, stage 2.
+#
+run build2/b-boot config.cxx="$cxx" config.bin.lib=static
+mv build2/b build2/b-boot
+run build2/b-boot --version
+
+# Stage.
+#
+run cd ..
+
+run build2/build2/b-boot configure \
+config.cxx="$cxx" \
+config.bin.lib=shared \
+config.bin.suffix=-stage \
+config.bin.rpath="$idir/lib" \
+config.install.data_root="$sdir" \
+config.install.exec_root="$idir" \
+config.install.sudo="$sudo"
+
+run build2/build2/b-boot install
+
+run b-stage --version
+run bpkg-stage --version
+
+# Install.
+#
+run cd ..
+run mkdir build2-toolchain
+run cd build2-toolchain
+cdir="$(pwd)"
+
+run bpkg-stage create \
+cc \
+config.cxx="$cxx" \
+config.cc.coptions=-O3 \
+config.bin.lib=shared \
+config.bin.rpath="$idir/lib" \
+config.install.root="$idir" \
+config.install.sudo="$sudo"
+
+#@@ TMP: queue
+run bpkg-stage add https://pkg.cppget.org/1/queue
+run bpkg-stage fetch
+run bpkg-stage build --yes build2 bpkg
+run bpkg-stage install build2 bpkg
+
+run b --version
+run bpkg --version
+
+# Clean up.
+#
+run cd "$owd"
+run b uninstall
+
+diag
+diag "Toolchain installation: $idir/bin"
+diag "Upgrade configuration:  $cdir"
+diag

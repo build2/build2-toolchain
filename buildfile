@@ -3,7 +3,8 @@
 # license   : MIT; see accompanying LICENSE file
 
 d = libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ doc/
-./: $d doc{INSTALL README version} file{INSTALL.cli}
+./: $d doc{INSTALL README version} file{INSTALL.cli} \
+file{build.sh build-msvc.bat build-mingw.bat}
 include $d
 
 doc{INSTALL*}: install = false

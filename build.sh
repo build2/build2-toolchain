@@ -11,6 +11,13 @@
 
 usage="Usage: $0 [-h] [--install-dir <dir>] [--sudo <prog>] <cxx>"
 
+# Package repository URL (or path).
+#
+if test -z "$BUILD2_REPO"; then
+  BUILD2_REPO="https://stage.build2.org/1"
+#  BUILD2_REPO="https://pkg.cppget.org/1/alpha"
+fi
+
 diag ()
 {
   echo "$*" 1>&2
@@ -146,8 +153,7 @@ config.bin.rpath="$idir/lib" \
 config.install.root="$idir" \
 config.install.sudo="$sudo"
 
-#@@ TMP: queue
-run bpkg-stage add https://pkg.cppget.org/1/queue
+run bpkg-stage add "$BUILD2_REPO"
 run bpkg-stage fetch
 run bpkg-stage build --yes build2 bpkg
 run bpkg-stage install build2 bpkg

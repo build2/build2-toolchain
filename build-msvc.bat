@@ -29,6 +29,13 @@ set "owd=%CD%"
 
 if "_%1_" == "_/?_" goto usage
 
+rem Package repository URL (or path).
+rem
+if "_%BUILD2_REPO%_" == "__" (
+set "BUILD2_REPO=https://stage.build2.org/1"
+rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
+)
+
 rem Installation directory.
 rem
 if "_%1_" == "__" (
@@ -124,8 +131,7 @@ bpkg-stage create^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 
-@rem @@ TMP: queue
-bpkg-stage add https://pkg.cppget.org/1/queue
+bpkg-stage add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
 bpkg-stage fetch

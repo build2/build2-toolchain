@@ -7,10 +7,10 @@ css{*}: extension = css
 
 ./: doc{build2-toolchain-intro.xhtml               \
         build2-toolchain-intro-a4.pdf              \
-	build2-toolchain-intro-a4.ps               \
+        build2-toolchain-intro-a4.ps               \
         build2-toolchain-intro-letter.pdf          \
-	build2-toolchain-intro-letter.ps}          \
-    css{code-box common doc pre-box toc} 	   \
+        build2-toolchain-intro-letter.ps}          \
+    css{code-box common doc pre-box toc}           \
     file{a4.html2ps letter.html2ps doc.html2ps}    \
     file{doc-prologue.xhtml doc-epilogue.xhtml     \
          intro.cli cli.sh}

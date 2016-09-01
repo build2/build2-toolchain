@@ -2,9 +2,9 @@
 # copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-# Load common modules that are used by subproject so that they use
-# common configuration.
+# Load common modules that are used by subproject so that they use common
+# configuration.
 #
-using cxx
-using c
-using? cli
+using cxx.config
+using c.config
+using? cli.config

@@ -3,13 +3,14 @@
 # license   : MIT; see accompanying LICENSE file
 
 project = build2-toolchain
-version = 0.4.0-a1
 subprojects = libbutl build2 libsqlite3 libodb libodb-sqlite libbpkg bpkg
 
 using build@0.4.0-a1
+
+version = 0.4.0-a1
+dist.package = $project-$version
+
 using config
 using dist
 using test # Note: needed for dist to work in subprojects with tests.
 using install
-
-dist.package = $project-$version

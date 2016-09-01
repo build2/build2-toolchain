@@ -7,4 +7,6 @@ d = libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ doc/
 file{build.sh build-msvc.bat build-mingw.bat}
 include $d
 
-doc{INSTALL*}: install = false
+# Don't install the INSTALL file.
+#
+doc{INSTALL}@./: install = false

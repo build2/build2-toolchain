@@ -118,6 +118,8 @@ fi
 PATH="$idir/bin:$PATH"
 export PATH
 
+sys="$(build2/config.guess | sed -n 's/^[^-]*-[^-]*-\(.*\)$/\1/p')"
+
 # Bootstrap, stage 1.
 #
 run cd build2
@@ -130,6 +132,17 @@ run build2/b-boot config.cxx="$cxx" config.bin.lib=static
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
+case "$sys" in
+  mingw32 | mingw64 | msys | msys2 | cygwin)
+    conf_rpath="[null]"
+    conf_sudo="[null]"
+    ;;
+  *)
+    conf_rpath="$idir/lib"
+    conf_sudo="$sudo"
+    ;;
+esac
+
 # Stage.
 #
 run cd ..
@@ -138,10 +151,10 @@ run build2/build2/b-boot configure \
 config.cxx="$cxx" \
 config.bin.lib=shared \
 config.bin.suffix=-stage \
-config.bin.rpath="$idir/lib" \
+config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.data_root=root/stage \
-config.install.sudo="$sudo"
+config.install.sudo="$conf_sudo"
 
 run build2/build2/b-boot install
 
@@ -160,9 +173,9 @@ cc \
 config.cxx="$cxx" \
 config.cc.coptions=-O3 \
 config.bin.lib=shared \
-config.bin.rpath="$idir/lib" \
+config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
-config.install.sudo="$sudo"
+config.install.sudo="$conf_sudo"
 
 run bpkg-stage add "$BUILD2_REPO"
 run bpkg-stage fetch

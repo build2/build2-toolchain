@@ -118,8 +118,6 @@ fi
 PATH="$idir/bin:$PATH"
 export PATH
 
-sdir="$idir/stage"
-
 # Bootstrap, stage 1.
 #
 run cd build2
@@ -141,8 +139,8 @@ config.cxx="$cxx" \
 config.bin.lib=shared \
 config.bin.suffix=-stage \
 config.bin.rpath="$idir/lib" \
-config.install.data_root="$sdir" \
-config.install.exec_root="$idir" \
+config.install.root="$idir" \
+config.install.data_root=root/stage \
 config.install.sudo="$sudo"
 
 run build2/build2/b-boot install

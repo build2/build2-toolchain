@@ -1,0 +1,29 @@
+// file      : BOOTSTRAP-MSVC.cli
+// copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+// license   : MIT; see accompanying LICENSE file
+
+"
+Continuing with Windows Bootstrap, if you have already started an appropriate
+Visual Studio command prompt, then you can continue using it. Otherwise, start
+the \"x64 Native Tools Command Prompt\" if you are on 64-bit Windows or \"x86
+Native Tools Command Prompt\" if you are on 32-bit. Also set the \c{PATH}
+environment variable:
+
+\
+> set PATH=C:\build2\bin;%PATH%
+\
+
+To build with MSVC you can either perform the following steps manually or, if
+you are happy with using the defaults, run the \c{build-msvc.bat} batch file.
+It performs (and echoes) the same set of steps as outline below but only
+allows you to customization the installation directory (run \c{build-msvc.bat
+/?} for usage) and you can also specify an alternative package repository with
+the \c{BUILD2_REPO} environment variable.
+
+For example, you could run thsi batch file (from the above-mentioned command
+prompt) like this:
+
+\
+> build-msvc.bat
+\
+"

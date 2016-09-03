@@ -1,0 +1,175 @@
+// file      : UPGRADE.cli
+// copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+// license   : MIT; see accompanying LICENSE file
+
+"
+At this point we assume that you have the build2 toolchain installed and would
+like to upgrade it to a newer version. We also expect that you have the
+toolchain \c{bpkg} configuration in the \c{build2-toolchain} directory, as
+produced by the bootstrap process. If you don't have the \c{bpkg}
+configuration but do have the toolchain installed somehow (for example, using
+your distribution's package manager), then you can create one as shown at the
+end. If you have neither, then you will need to go through the bootstrap
+process.
+
+There are two ways to upgrade: dirty (but quick) and staged (but more involved). In
+the \i{dirty upgrade} we override the existing installation without first
+uninstalling it. If some installed files no longer exist in the new version,
+they will remain \"installed\" until cleaned up manually.  Also, with this
+approach we never get a chance to make sure the new build is functional.
+
+In the \i{staged upgrade} we first install a \c{-stage} build of the new
+toolchain (similar to what we did during bootstrap), test it, uninstall the
+old toolchain, install the new toolchain as non-staged, and finally uninstall
+the \c{-stage} installation.
+
+We recommend that you use a dirty upgrade for a bugfix-only release (the same
+\c{MAJOR.MINOR} version) and a staged upgrade otherwise. With bugfix-only
+releases we guarantee not to alter the installation file set. Note also that
+without periodic upgrades your version of the toolchain may become too old to
+be able to upgrade itself. In this case you will have to fall back onto the
+bootstrap process.
+
+The dirty upgrade is fairly simple:
+
+\
+$ cd build2-toolchain
+$ bpkg fetch
+$ bpkg build build2 bpkg
+$ bpkg install build2 bpkg
+\
+
+You may also want to issue the \c{status} command after \c{fetch} to examine
+which versions are available. By default \c{bpkg} will upgrade to the latest
+available but you can override this by specifying the desired version
+explicitly, for example:
+
+\
+$ bpkg status build2 bpkg
+build2: configured 1.0.0; available 1.0.1 2.0.0
+bpkg: configured 1.0.0; available 1.0.1 2.0.0
+$ bpkg build build2/1.0.1 bpkg/1.0.1
+\
+
+The staged upgrade consists of several steps:
+
+\dl|
+
+\li|1. Save Old Configuration\n
+
+First we make a copy of the old configuration. We will need it later to
+cleanly uninstall the old toolchain.
+
+\
+$ rm -r build2-toolchain-old
+$ cp -r build2-toolchain build2-toolchain-old
+\
+
+Or, using Windows command prompt:
+
+\
+> rmdir /s /q build2-toolchain-old
+> xcopy /s /q /i build2-toolchain build2-toolchain-old
+\
+
+|
+
+\li|\n2. Build and Install as \c{-stage}\n
+
+This step is similar to the dirty upgrade except we install the toolchain with
+the \c{-stage} suffix.
+
+\
+$ cd build2-toolchain
+$ bpkg fetch
+$ bpkg build build2 bpkg
+$ bpkg install                        \
+  config.bin.suffix=-stage            \
+  config.install.data_root=root/stage \
+  build2 bpkg
+\
+
+|
+
+\li|\n3. Test Staged\n
+
+Now you can optionally test the new toolchain on your projects, etc. Remember
+to use the \c{-stage}-suffixed binaries (\c{bpkg-stage} will automatically use
+\c{b-stage}):
+
+\
+$ b-stage --version
+$ bpkg-stage --version
+\
+
+|
+
+\li|\n4. Uninstall Old, Install New\n
+
+Once we are satisfied the new toolchain works, we can uninstall the old
+one and install the new:
+
+\
+$ cd ../build2-toolchain-old
+$ bpkg uninstall build2 bpkg
+
+$ cd ../build2-toolchain
+$ bpkg-stage install build2 bpkg
+\
+
+|
+
+\li|\n5. Uninstall Staged\n
+
+Finally we clean up by removing the staged toolchain (hint: use command line
+history to find the corresponding \cb{install} command change it to
+uninstall):
+
+\
+$ bpkg uninstall                      \
+  config.bin.suffix=-stage            \
+  config.install.data_root=root/stage \
+  build2 bpkg
+\
+
+||
+
+If you ever need to (re-)create the \c{bpkg} configuration for the toolchain
+from scratch, it is fairly simple (you may need to adjust the compiler,
+options, installation directory, etc):
+
+For UNIX-like operating systems (GNU/Linux, Mac OS X, FreeBSD, etc):
+
+\
+$ bpkg-stage create             \
+cc                              \
+config.cxx=g++                  \
+config.cc.coptions=-O3          \
+config.bin.lib=shared           \
+config.bin.rpath=/usr/local/lib \
+config.install.root=/usr/local  \
+config.install.sudo=sudo
+\
+
+For Windows with MSVC (from the Visual Studio command prompt):
+
+\
+> bpkg-stage create              ^
+  cc                             ^
+  config.cxx=cl                  ^
+  \"config.cc.coptions=/O2 /Oi\"   ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\build2
+\
+
+For Windows with MinGW (from the command prompt):
+
+\
+> bpkg-stage create             ^
+  cc                            ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2
+\
+"

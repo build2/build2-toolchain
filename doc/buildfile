@@ -5,12 +5,13 @@
 define css: file
 css{*}: extension = css
 
-./: doc{build2-toolchain-intro.xhtml               \
-        build2-toolchain-intro-a4.pdf              \
-        build2-toolchain-intro-a4.ps               \
-        build2-toolchain-intro-letter.pdf          \
-        build2-toolchain-intro-letter.ps}          \
-    css{code-box common doc pre-box toc}           \
-    file{a4.html2ps letter.html2ps doc.html2ps}    \
-    file{doc-prologue.xhtml doc-epilogue.xhtml     \
-         intro.cli cli.sh}
+intr = build2-toolchain-intro
+inst = build2-toolchain-install
+
+./: \
+doc{$(intr).xhtml $intr-a4.pdf $intr-a4.ps $intr-letter.pdf $intr-letter.ps} \
+doc{$(inst).xhtml $inst-a4.pdf $inst-a4.ps $inst-letter.pdf $inst-letter.ps} \
+css{code-box common doc pre-box toc}                                         \
+file{a4.html2ps letter.html2ps doc.html2ps}                                  \
+file{doc-prologue.xhtml doc-epilogue.xhtml}                                  \
+cli{intro.cli install.cli} file{cli.sh}

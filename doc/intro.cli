@@ -1039,8 +1039,3 @@ $ wine hello-1.0.0/hello.exe Windows
 Hello, Windows!
 \
 "
-
-"
-\h#install|Installation|
-"
-source "../INSTALL.cli";

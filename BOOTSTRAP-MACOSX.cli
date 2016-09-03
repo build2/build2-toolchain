@@ -1,0 +1,30 @@
+// file      : BOOTSTRAP-MACOSX.cli
+// copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
+// license   : MIT; see accompanying LICENSE file
+
+"
+The \c{build2} toolchain requires Mac OS version 10.5 (Leopard) or later. We
+will also be using the system C++ toolchain that comes with the Xcode Command
+Line Tools (you should be able to use a custom C++ toolchain, however, this
+is the only configuration that is tested and guaranteed to work).
+
+To verify Command Line Tools are installed, run:
+
+\
+$ clang++ --version
+\
+
+It should produce something along these lines:
+
+\
+Apple LLVM version X.Y.Z (clang-A.B.C) (based on LLVM M.N.P)
+\
+
+To install Command Line Tools, run:
+
+\
+$ xcode-select --install
+\
+
+Once this is done continue with \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
+"

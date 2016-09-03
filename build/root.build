@@ -5,6 +5,16 @@
 # Load common modules that are used by subproject so that they use common
 # configuration.
 #
-using cxx.config
-using c.config
-using? cli.config
+using cxx
+using c
+
+# Load the cli module but only if it's available. This way a distribution
+# that includes pre-generated files can be built without installing cli.
+#
+using? cli
+
+if! $cli.configured
+{
+  define cli: file
+  cli{*}: extension = cli
+}

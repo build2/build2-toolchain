@@ -3,208 +3,68 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-The \c{build2} toolchain requires a C++11 compiler with limited C++14 support.
-GCC 4.8 or later and Clang 3.4 or later are known to work. If you only need the
-\c{build2} build system without the \c{bpkg} package manager, then the C++
-compiler is all you will need. If, however, you would also like to build
-\c{bpkg}, then you will also need to obtain SQLite as well as the \c{libodb}
-and \c{libodb-sqlite} libraries (discussed below).
+One of the primary goals of the \c{build2} toolchain is to provide a uniform
+build interface across all the platforms and compilers. If you already have
+the toolchain installed and would like to upgrade to a newer version, then
+there is a single set of \l{#UPGRADE upgrade instructions} for all the
+platforms.
 
-In this guide we install everything that we build into \c{/usr/local}. If you
-would like to use a different installation location, you will need to make
-adjustments to the commands below.
+If, however, you need to install the toolchain for the first time, then it has
+to be bootstrapped and that process is platform-specific. The rest of this
+section discusses a few general bootstrap considerations and then directs
+you to appropriate platform-specific instructions.
 
-Note on \c{/usr/local}: most distributions these days \"cripple\" this location
-by either not searching \c{/usr/local/include} for headers during compilation
-(so we add the \c{-I} option) or not searching \c{/usr/local/lib} for libraries
-either during linking (so we add the \c{-L} option) or at runtime (which we fix
-with the help of \c{-rpath}). If you know that your installation doesn't suffer
-from (some of) these issues, then you can adjust the commands below
-accordingly. Note that even if \c{/usr/local/lib} is searched in at runtime,
-you may still have to run \cb{ldconfig(1)} (as \c{root}) after the installation
-to refresh the library cache.
+The \c{build2} toolchain requires a C++14 compiler. From the commonly-used
+options, GCC 4.8, Clang 3.4, and MSVC 2015/14 Update 2 or later
+versions are known to work. Note also that the C++ compiler that you use to
+build the \c{build2} toolchain and the one that you will use to build your
+projects need not be the same. For example, if you are using MSVC 2013/12
+(which cannot build \c{build2}), it is perfectly fine to get a minimal
+MinGW toolchain and use that to build \c{build2}; you will still be able
+to use MSVC to build your own projects.
 
-Note to Mac OS users: you will need version 10.5 (Leopard) or later. We will
-also be using the system C++ toolchain that comes with the Xcode Command Line
-Tools. To verify it is installed, run:
-
-\
-$ g++ --version
-\
-
-To install Command Line Tools, run:
-
-\
-$ xcode-select --install
-\
+At the high level, the bootstrap process involves the following 5 steps.
 
 \dl|
 
-\li|1. Installing SQLite\n
+\li|1. Bootstrap, Phase 1\n
 
-    Skip this step if you are only interested in the \c{build2} build system.
+First, a minimal build system executable is built using provided shell
+scripts/batch files. The result is only guaranteed to be able to rebuild the
+build system itself.|
 
-    To install SQLite, use your distribution's package manager and make sure
-    you install both the libraries (most likely already installed) and the
-    development files.
+\li|\n2. Bootstrap, Phase 2\n
 
-    For Debian/Ubuntu:
+Then, the build system is rebuilt with static libraries. The result is only
+guaranteed to be able to build the toolchain.|
 
-    \
-    $ sudo apt-get install libsqlite3-dev
-    \
+\li|\n3. Stage\n
 
-    For RedHat/Fedora:
+On this step the entire toolchain is built and staged.|
 
-    \
-    $ sudo yum install sqlite-devel
-    \
+\li|\n4. Install\n
 
-    For FreeBSD:
+Next, the staged toolchain is used to build and install the toolchain from
+the package repository and using the \c{bpkg} package manager.|
 
-    \
-    # pkg install sqlite3
-    \
+\li|\n5. Clean\n
 
-    For Mac OS:
+Finally, the staged toolchain is uninstalled.||
 
-    You should already have a system-default version installed. To verify:
+The end result of the bootstrap process is the installed toolchain as well as
+the \c{bpkg} configuration (created on step 4) that can be used to upgrade to
+newer versions. You can also skip step 4 and instead install on step 3 if
+you would prefer not to use the package manager (for example, because the
+machine is offline).
 
-    \
-    $ ls /usr/include/sqlite3.h /usr/lib/libsqlite3.dylib
-    \
 
-    To see which version you have, run:
+For Windows, if using either MSVC or MinGW, continue with
+\l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}. If using MSYS or Cygwin,
+then instead refer to \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
 
-    \
-    $ grep '#define SQLITE_VERSION' /usr/include/sqlite3.h
-    \
+For Mac OS X, continue with \l{#BOOTSTRAP-MACOSX Bootstrapping on Mac OS X}.
 
-    Any recent version (i.e., greater than 3.5.0) should work. If for some
-    reason you don't seem to have SQLite, download the source code then build
-    and install it into \c{/usr/local}.
-
-    |
-
-\li|\n2. Installing \c{libodb} and \c{libodb-sqlite}\n
-
-   Again, skip this step if you are only interested in the \c{build2} build
-   system.
-
-   [Currently we use pre-release versions of these libraries so they have to be
-   built from source.]
-
-   Download source packages for the two libraries from the same location as
-   \l{https://download.build2.org \c{build2-toolchain}}. Then unpack, build,
-   and install:
-
-   \
-   $ cd lib*-X.Y.Z
-
-   $ ./configure --prefix=/usr/local \
-   CPPFLAGS=-I/usr/local/include     \
-   LDFLAGS=-L/usr/local/lib
-
-   $ make
-   $ sudo make install
-   \
-
-   See the \c{INSTALL} file for each library for more information.|
-
-\li|\n3. Bootstrapping \c{build2}\n
-
-   Download \l{https://download.build2.org \c{build2-toolchain}} then unpack
-   and bootstrap the \c{build2} build system:
-
-   \
-   $ cd build2-toolchain-X.Y.Z
-   $ cd build2/
-   $ ./bootstrap
-   $ cd ..
-   $ ./build2/build2/b-boot build2/
-   \
-
-   For more information on this step (for example, how to specify the C++
-   compiler, options, etc.), refer to the \c{INSTALL} file in the \c{build2/}
-   subdirectory of \c{build2-toolchain}. Note that you must use global
-   overrides (\c{!}) if specifying any \c{config.*} variables on the last
-   line. For example:
-
-   \
-   $ ./build2/build2/b-boot '!config.cxx=clang++' build2/
-   \
-
-   |
-
-\li|\n4. Configuring, Building, and Installing the Rest of the Toolchain\n
-
-   \
-   $ ./build2/build2/b                      \
-   config.cxx.poptions=-I/usr/local/include \
-   config.cxx.loptions=-L/usr/local/lib     \
-   config.bin.rpath=/usr/local/lib          \
-   config.install.root=/usr/local           \
-   config.install.root.sudo=sudo            \
-   configure
-
-   $ ./build2/build2/b update
-   $ ./build2/build2/b install
-   \
-
-   To test the installation, run:
-
-   \
-   $ which b
-   /usr/local/bin/b
-   $ b --version
-
-   $ which bpkg
-   /usr/local/bin/bpkg
-   $ bpkg --version
-   \
-
-   |
-
-\li|\n5. Setting up updates with the package manager\n
-
-   If you only need to build this specific version of the toolchain, then you
-   are done and can skip this step. However, if you are planning to upgrade to
-   future versions, then going every time through the bootstrap steps will be
-   tedious. Instead, we can use the \c{bpkg} package manager to manage upgrades
-   automatically. Note also that without periodic upgrades your version of the
-   toolchain may become too old to be able to upgrade itself. In this case you
-   will have to fall back onto the bootstrap process.
-
-   First, choose a directory where you would like \c{bpkg} to build everything,
-   for example, \c{build2-toolchain}. Then:
-
-   \
-   $ cd # back to home directory
-   $ mkdir build2-toolchain
-   $ cd build2-toolchain
-
-   $ bpkg create                             \
-   cxx                                       \
-   config.cxx.poptions=-I/usr/local/include  \
-   config.cxx.loptions=-L/usr/local/lib      \
-   config.bin.rpath=/usr/local/lib           \
-   config.install.root=/usr/local            \
-   config.install.root.sudo=sudo
-
-   $ bpkg add https://pkg.cppget.org/1/alpha
-   $ bpkg fetch
-   $ bpkg build build2 bpkg
-   $ bpkg install build2 bpkg
-   \
-
-   Later, to upgrade to a new version of the toolchain, simply do:
-
-   \
-   $ bpkg fetch
-   $ bpkg status build2 bpkg   # See if any upgrades are available.
-   $ bpkg build build2 bpkg
-   $ bpkg install build2 bpkg
-   \
-
-   ||
+For other UNIX-like operating systems (GNU/Linux, FreeBSD, etc; this also
+includes MSYS/Cygwin), continue with \l{#BOOTSTRAP-UNIX Bootstrapping on
+UNIX}.
 "

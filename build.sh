@@ -38,8 +38,9 @@ run ()
 owd="$(pwd)"
 
 cxx=
-idir="/usr/local"
-sudo="sudo"
+idir=
+sudo=
+sudo_set=
 
 while test $# -ne 0; do
   case $1 in
@@ -47,11 +48,11 @@ while test $# -ne 0; do
       diag
       diag "$usage"
       diag
-      diag "By default the script will install into /usr/local using sudo. To"
-      diag "instruct the script not to use a sudo program, pass empty value to"
-      diag "the --sudo option, for example:"
+      diag "By default the script will install into /usr/local using sudo (1)."
+      diag "To use sudo for a custom installation directory you need to specify"
+      diag "the sudo program explicitly, for example:"
       diag
-      diag "$0 --install-dir /tmp/build2 --sudo '' g++"
+      diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
       diag "See the INSTALL file for details."
       diag
@@ -75,6 +76,7 @@ while test $# -ne 0; do
 	exit 1
       fi
       sudo="$1"
+      sudo_set="y"
       shift
       ;;
     *)
@@ -88,6 +90,17 @@ if test -z "$cxx"; then
   diag "error: compiler executable expected"
   diag "$usage"
   exit 1
+fi
+
+# Only use default sudo for the default installation directory and only if
+# it wasn't specified by the user.
+#
+if test -z "$idir"; then
+  idir="/usr/local"
+
+  if test -z "$sudo_set"; then
+    sudo="sudo"
+  fi
 fi
 
 if test -f build/config.build; then

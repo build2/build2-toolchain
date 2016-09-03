@@ -139,7 +139,12 @@ case "$sys" in
     ;;
   *)
     conf_rpath="$idir/lib"
-    conf_sudo="$sudo"
+
+    if test -n "$sudo"; then
+      conf_sudo="$sudo"
+    else
+      conf_sudo="[null]"
+    fi
     ;;
 esac
 

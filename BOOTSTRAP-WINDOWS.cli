@@ -68,7 +68,7 @@ build2-toolchain-X.Y.Z.tar.xz
 
 \li|\n4. Verify Archive Checksums\n
 
-Verify archive checksums match:
+Verify archive checksums match (compare visually):
 
 \
 > type *.sha256

@@ -1016,9 +1016,6 @@ $ b '{clean disfigure}(/tmp/hello-gcc5-release/hello2/)'
 rm /tmp/hello-gcc5-release/hello2/exe{hello}
 rm /tmp/hello-gcc5-release/hello2/obje{hello}
 rm /tmp/hello-gcc5-release/hello2/build/config.build
-rm /tmp/hello-gcc5-release/hello2/build/bootstrap/src-root.build
-rmdir /tmp/hello-gcc5-release/hello2/build/bootstrap/
-rmdir /tmp/hello-gcc5-release/hello2/build/
 rmdir /tmp/hello-gcc5-release/hello2/
 \
 

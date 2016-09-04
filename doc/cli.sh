@@ -32,8 +32,8 @@ function gen () # <name>
 --generate-html --html-suffix .xhtml \
 --html-prologue-file doc-prologue.xhtml \
 --html-epilogue-file doc-epilogue.xhtml \
---link-regex '%b([-.].+)%../../build2/doc/b$n%' \
---link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$n%' \
+--link-regex '%b([-.].+)%../../build2/doc/b$1%' \
+--link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
 --output-prefix build2-toolchain- "${@}" $n.cli
 
 html2ps -f doc.html2ps:a4.html2ps -o build2-toolchain-$n-a4.ps build2-toolchain-$n.xhtml

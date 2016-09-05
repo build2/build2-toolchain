@@ -62,7 +62,7 @@ cleanly uninstall the old toolchain.
 
 \
 $ rm -r build2-toolchain-old
-$ cp -r build2-toolchain build2-toolchain-old
+$ cp -rp build2-toolchain build2-toolchain-old
 \
 
 Or, using Windows command prompt:

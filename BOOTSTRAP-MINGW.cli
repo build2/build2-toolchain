@@ -15,13 +15,13 @@ For example, if your MinGW distribution is in \c{C:\\mingw\\}, then you could
 run it (from the command prompt that we have started earlier) like this:
 
 \
-> build-mingw.bat C:\mingw\bin\g++
+> .\build-mingw.bat C:\mingw\bin\g++
 \
 
 If you are using the \c{build2-mingw} package then you should be able to
 use just \c{g++} for the compiler:
 
 \
-> build-mingw.bat g++
+> .\build-mingw.bat g++
 \
 "

@@ -24,6 +24,6 @@ For example, you could run thsi batch file (from the above-mentioned command
 prompt) like this:
 
 \
-> build-msvc.bat
+> .\build-msvc.bat
 \
 "

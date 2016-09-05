@@ -69,12 +69,12 @@ For example, this command will use \c{g++-5} and install the toolchain into
 \c{/usr/local/}.
 
 \
-$ build.sh g++-5
+$ ./build.sh g++-5
 \
 
 While this will use Clang and install into \c{/opt/build2}:
 
 \
-$ build.sh --install-dir /opt/build2 --sudo sudo clang++
+$ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
 \
 "

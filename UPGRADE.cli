@@ -5,18 +5,19 @@
 "
 At this point we assume that you have the build2 toolchain installed and would
 like to upgrade it to a newer version. We also expect that you have the
-toolchain \c{bpkg} configuration in the \c{build2-toolchain} directory, as
+toolchain \c{bpkg} configuration in the \c{build2-toolchain-X.Y} directory, as
 produced by the bootstrap process. If you don't have the \c{bpkg}
 configuration but do have the toolchain installed somehow (for example, using
 your distribution's package manager), then you can create one as shown at the
 end. If you have neither, then you will need to go through the bootstrap
 process.
 
-There are two ways to upgrade: dirty (but quick) and staged (but more involved). In
-the \i{dirty upgrade} we override the existing installation without first
-uninstalling it. If some installed files no longer exist in the new version,
-they will remain \"installed\" until cleaned up manually.  Also, with this
-approach we never get a chance to make sure the new build is functional.
+There are two ways to upgrade: dirty (but quick) and staged (but more
+involved). In the \i{dirty upgrade} we override the existing installation
+without first uninstalling it. If some installed files no longer exist in the
+new version, they will remain \"installed\" until cleaned up manually. Also,
+with this approach we never get a chance to make sure the new build is
+functional.
 
 In the \i{staged upgrade} we first install a \c{-stage} build of the new
 toolchain (similar to what we did during bootstrap), test it, uninstall the
@@ -33,7 +34,7 @@ bootstrap process.
 The dirty upgrade is fairly simple:
 
 \
-$ cd build2-toolchain
+$ cd build2-toolchain-X.Y
 $ bpkg fetch
 $ bpkg build build2 bpkg
 $ bpkg install build2 bpkg
@@ -55,33 +56,49 @@ The staged upgrade consists of several steps:
 
 \dl|
 
-\li|1. Save Old Configuration\n
+\li|0. Check for Updates\n
 
-First we make a copy of the old configuration. We will need it later to
-cleanly uninstall the old toolchain.
+There is no harm in running \c{bpkg fetch} in the existing configuration so
+we can use it to determine if any updates are available, whether we can use
+the simpler dirty upgrade, and, if not, the target \c{MAJOR.MINOR} version
+for a staged upgrade:
 
 \
-$ rm -r build2-toolchain-old
-$ cp -rp build2-toolchain build2-toolchain-old
+$ cd build2-toolchain-X.Y
+$ bpkg fetch
+$ bpkg status build2 bpkg
+\
+
+Let's say the new version is X.Z.
+|
+
+\li|\n1. Create New Configuration\n
+
+First we make a copy of the old configuration. We will need the original later
+to cleanly uninstall the old toolchain, and, maybe, to rollback the
+installation if the new version doesn't work out.
+
+\
+$ cd ..
+$ cp -rp build2-toolchain-X.Y build2-toolchain-X.Z
 \
 
 Or, using Windows command prompt:
 
 \
-> rmdir /s /q build2-toolchain-old
-> xcopy /s /q /i build2-toolchain build2-toolchain-old
+> cd ..
+> xcopy /s /q /i build2-toolchain-X.Y build2-toolchain-X.Z
 \
 
 |
 
 \li|\n2. Build and Install as \c{-stage}\n
 
-This step is similar to the dirty upgrade except we install the toolchain with
-the \c{-stage} suffix.
+This step is similar to the dirty upgrade except we use the copied
+configuration and install the toolchain with the \c{-stage} suffix.
 
 \
-$ cd build2-toolchain
-$ bpkg fetch
+$ cd build2-toolchain-X.Z
 $ bpkg build build2 bpkg
 $ bpkg install                        \
   config.bin.suffix=-stage            \
@@ -93,8 +110,8 @@ $ bpkg install                        \
 
 \li|\n3. Test Staged\n
 
-Now you can optionally test the new toolchain on your projects, etc. Remember
-to use the \c{-stage}-suffixed binaries (\c{bpkg-stage} will automatically use
+Now you can test the new toolchain on your projects, etc. Remember to use the
+\c{-stage}-suffixed binaries (\c{bpkg-stage} will automatically use
 \c{b-stage}):
 
 \
@@ -110,10 +127,10 @@ Once we are satisfied the new toolchain works, we can uninstall the old
 one and install the new:
 
 \
-$ cd ../build2-toolchain-old
+$ cd ../build2-toolchain-X.Y
 $ bpkg uninstall build2 bpkg
 
-$ cd ../build2-toolchain
+$ cd ../build2-toolchain-X.Z
 $ bpkg-stage install build2 bpkg
 \
 
@@ -122,8 +139,8 @@ $ bpkg-stage install build2 bpkg
 \li|\n5. Uninstall Staged\n
 
 Finally we clean up by removing the staged toolchain (hint: use command line
-history to find the corresponding \cb{install} command change it to
-uninstall):
+history to find the corresponding \c{install} command and change it to
+\c{uninstall}):
 
 \
 $ bpkg uninstall                      \
@@ -131,6 +148,9 @@ $ bpkg uninstall                      \
   config.install.data_root=root/stage \
   build2 bpkg
 \
+
+You can also remove the old configuration in \c{build2-toolchain-X.Y} if you
+think you no longer need it.
 
 ||
 

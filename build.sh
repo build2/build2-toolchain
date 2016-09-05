@@ -9,7 +9,7 @@
 # @@ Perhaps a fingerprint to pass to fetch? Once repo is signed?
 # @@ Option for alternative bpkg config dir?
 
-usage="Usage: $0 [-h] [--install-dir <dir>] [--sudo <prog>] <cxx>"
+usage="Usage: $0 [-h|--help] [<options>] <cxx>"
 
 # Package repository URL (or path).
 #
@@ -41,14 +41,20 @@ cxx=
 idir=
 sudo=
 sudo_set=
+trust=
 
 while test $# -ne 0; do
   case $1 in
     -h|--help)
       diag
       diag "$usage"
+      diag "Options:"
+      diag "  --install-dir <dir>  Alternative installation directory."
+      diag "  --sudo <prog>        Optional sudo program to use."
+      diag "  --repo <loc>         Alternative package repository location."
+      diag "  --trust <fp>         Certificate fingerprint to trust."
       diag
-      diag "By default the script will install into /usr/local using sudo (1)."
+      diag "By default the script will install into /usr/local using sudo(1)."
       diag "To use sudo for a custom installation directory you need to specify"
       diag "the sudo program explicitly, for example:"
       diag
@@ -77,6 +83,26 @@ while test $# -ne 0; do
       fi
       sudo="$1"
       sudo_set="y"
+      shift
+      ;;
+    --repo)
+      shift
+      if test $# -eq 0; then
+	diag "error: repository location expected after --repo"
+	diag "$usage"
+	exit 1
+      fi
+      BUILD2_REPO="$1"
+      shift
+      ;;
+    --trust)
+      shift
+      if test $# -eq 0; then
+	diag "error: certificate fingerprint expected after --trust"
+	diag "$usage"
+	exit 1
+      fi
+      trust="$1"
       shift
       ;;
     *)
@@ -183,7 +209,11 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo"
 
 run bpkg-stage add "$BUILD2_REPO"
-run bpkg-stage fetch
+if test -n "$trust"; then
+  run bpkg-stage --trust "$trust" fetch
+else
+  run bpkg-stage fetch
+fi
 run bpkg-stage build --yes build2 bpkg
 run bpkg-stage install build2 bpkg
 

@@ -36,6 +36,11 @@ set "BUILD2_REPO=https://stage.build2.org/1"
 rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
 )
 
+rem Bpkg configuration directory.
+rem
+set "cver=0.4"
+set "cdir=build2-toolchain-%cver%"
+
 rem Compiler.
 rem
 if "_%1_" == "__" (
@@ -63,8 +68,8 @@ if exist build\config.build (
   goto error
 )
 
-if exist ..\build2-toolchain\ (
-  echo ..\build2-toolchain\ bpkg configuration directory already exists
+if exist ..\%cdir%\ (
+  echo ..\%cdir%\ bpkg configuration directory already exists
   goto error
 )
 
@@ -125,11 +130,10 @@ bpkg-stage --version
 @rem
 cd ..
 
-md build2-toolchain
+md %cdir%
 @if errorlevel 1 goto error
 
-cd build2-toolchain
-@set "cdir=%CD%"
+cd %cdir%
 
 bpkg-stage create^
  cc^

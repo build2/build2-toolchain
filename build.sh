@@ -18,6 +18,11 @@ if test -z "$BUILD2_REPO"; then
 #  BUILD2_REPO="https://pkg.cppget.org/1/alpha"
 fi
 
+# Bpkg configuration directory.
+#
+cver="0.4"
+cdir="build2-toolchain-$cver"
+
 diag ()
 {
   echo "$*" 1>&2
@@ -134,8 +139,8 @@ if test -f build/config.build; then
   exit 1
 fi
 
-if test -d ../build2-toolchain; then
-  diag "../build2-toolchain/ bpkg configuration directory already exists"
+if test -d "../$cdir"; then
+  diag "../$cdir/ bpkg configuration directory already exists"
   exit 1
 fi
 
@@ -195,9 +200,8 @@ run bpkg-stage --version
 # Install.
 #
 run cd ..
-run mkdir build2-toolchain
-run cd build2-toolchain
-cdir="$(pwd)"
+run mkdir "$cdir"
+run cd "$cdir"
 
 run bpkg-stage create \
 cc \

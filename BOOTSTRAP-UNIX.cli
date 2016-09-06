@@ -7,7 +7,7 @@ The following instructions are for bootstrapping \c{build2} on UNIX-like
 operating systems (GNU/Linux, FreeBSD, etc). For Mac OS X first see
 \l{#BOOTSTRAP-MACOSX Bootstrapping on Mac OS X}. These instructions should
 also be used for UNIX emulation layers on Windows (for example, MSYS2 or
-Cygwin) where you already have a UNIX shell with standard utilitis.
+Cygwin) where you already have a UNIX shell with standard utilities.
 
 \dl|
 
@@ -58,12 +58,13 @@ Unpack the archive and change to its directory:
 
 ||
 
-Next you can either perform the rest of the steps manually or, if you are
-happy with using the defaults, run the \c{build.sh} shell script. It performs
-(and echoes) the same set of steps as outline below but only allows you to
-customization the compiler and installation directory (run \c{build.sh -h} for
-usage) and you can also specify an alternative package repository with the
-\c{BUILD2_REPO} environment variable.
+Next you can either perform the rest of the steps manually or, if after
+reviewing the steps, you are happy with using the defaults, run the
+\c{build.sh} shell script. It performs (and echoes) the same set of steps as
+outline below but only allows you to customization the compiler, installation
+directory, and a few other things (run \c{build.sh -h} for usage). You can
+also specify an alternative package repository with the \c{BUILD2_REPO}
+environment variable.
 
 For example, this command will use \c{g++-5} and install the toolchain into
 \c{/usr/local/}.
@@ -77,4 +78,176 @@ While this will use Clang and install into \c{/opt/build2}:
 \
 $ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
 \
+
+Note also that about half way (\c{bpkg fetch} on step 6 below) the script will
+stop and prompt you to verify the authenticity of the repository certificate.
+To run the script unattended you can specify the certificate fingerprint with
+the \c{--trust} option.
+
+The end result of the bootstrap process (performed either with the script or
+manually) is the installed toolchain as well as the \c{bpkg} configuration in
+\c{build2-toolchain-X.Y} that can be used to \l{#UPGRADE upgrade} to newer
+versions. It can also be used to uninstall the toolchain:
+
+\
+$ cd build2-toolchain-X.Y
+$ bpkg uninstall build2 bpkg
+\
+
+The rest of this section outlines the manual bootstrap with the step numbering
+continued from the above list.
+
+\dl|
+
+\li|3. Bootstrap, Phase 1\n
+
+First, we build a minimal build system with the provided \c{bootstrap.sh}
+script. Normally the only argument you will pass to this script is the
+C++ compiler to use but there is also a way to specify compile options
+and a few other things; run \c{bootstrap.sh -h} and see the \c{build2/INSTALL}
+file for details.
+
+\
+$ cd build2
+$ ./bootstrap.sh g++
+
+$ build2/b-boot --version
+\
+
+|
+
+\li|\n4. Bootstrap, Phase 2\n
+
+Then, we rebuild the build system with the result of Phase 1 linking
+libraries statically.
+
+\
+$ build2/b-boot config.cxx=g++ config.bin.lib=static
+$ mv build2/b build2/b-boot
+
+$ build2/b-boot --version
+\
+
+|
+
+\li|\n5. Stage\n
+
+On this step the entire toolchain is built and staged. Here you may want
+to adjust a few things, such as the installation directory or the \c{sudo}
+program (remove the \c{config.install.sudo} line if you don't need one).
+
+The strange-looking \c{config.install.data_root=root/stage} means install
+data files (as opposed to executable files) into the \c{stage/} subdirectory
+of wherever \c{config.install.root} points (so in our case it will be
+/usr/local/stage). Note that this subdirectory is temporary and will be
+removed in a few steps. But if you don't like the default location, feel
+free to change it (for example, to \c{/tmp/stage}).
+
+You may also need to remove the \c{config.bin.rpath} line if your target
+doesn't support \i{rpath}. Specifically, if building on Windows (with MSYS or
+Cygwin), remove both \c{.rpath} and \c{.sudo}. But if unsure, leave \c{.rpath}
+in \- if your target doesn't support it, you will get an error and will just
+need to reconfigure without it.
+
+\
+$ run cd ..  # Back to build2-toolchain-X.Y.Z/
+
+$ build2/build2/b-boot configure      \
+  config.cxx=g++                      \
+  config.bin.lib=shared               \
+  config.bin.suffix=-stage            \
+  config.bin.rpath=/usr/local/lib     \
+  config.install.root=/usr/local      \
+  config.install.data_root=root/stage \
+  config.install.sudo=sudo
+
+$ build2/build2/b-boot install
+\
+
+Depending on the installation directory, the installed \c{build2} binaries
+may not be automatically found. On most platforms \c{/usr/local/bin/} is in
+the \c{PATH} environment variable by default and you should be able to run:
+
+\
+$ which b-stage
+/usr/local/bin/b-stage
+
+$ which bpkg-stage
+/usr/local/bin/bpkg-stage
+
+$ b-stage --version
+$ bpkg-stage --version
+\
+
+If, however, you installed, say, into \c{/opt/build2}, then you will need to
+add its \c{bin/} subdirectory to \c{PATH} (re-run the above commands to
+verify):
+
+\
+$ export PATH=\"/opt/build2/bin:$PATH\"
+\
+
+Strictly speaking this is not absolutely necessary and you can adjust
+the rest of the commands to use absolute paths. This, however, does not make
+for very readable examples so below we assume the installation's \c{bin/}
+subdirectory is in \c{PATH}.
+|
+
+\li|\n6. Install\n
+
+Next, we use the staged toolchain to build and install the \"final\" toolchain
+from the package repository using the \c{bpkg} package manager. First, we
+create the \c{bpkg} configuration. The configuration values are pretty similar
+to the previous step and you may want/need to make similar adjustments.
+
+\
+$ cd ..  # Back to build2-build/
+$ mkdir build2-toolchain-X.Y
+$ cd build2-toolchain-X.Y
+
+$ bpkg-stage create \
+  cc \
+  config.cxx=g++ \
+  config.cc.coptions=-O3 \
+  config.bin.lib=shared \
+  config.bin.rpath=/usr/local/lib \
+  config.install.root=/usr/local \
+  config.install.sudo=sudo
+\
+
+Next, we add the package repository, build, and install:
+
+\
+$ bpkg-stage add https://pkg.cppget.org/1/alpha
+$ bpkg-stage fetch
+$ bpkg-stage build build2 bpkg
+$ bpkg-stage install build2 bpkg
+\
+
+Finally, we verify the result:
+
+\
+$ which b
+/usr/local/bin/b
+
+$ which bpkg
+/usr/local/bin/bpkg
+
+$ b-stage --version
+$ bpkg-stage --version
+\
+
+|
+
+\li|\n7. Clean\n
+
+The last thing we need to do is uninstall the staged toolchain:
+
+\
+$ cd ../build2-toolchain-X.Y.Z/  # Back to the bootstrap directory.
+$ b uninstall
+\
+
+||
+
 "

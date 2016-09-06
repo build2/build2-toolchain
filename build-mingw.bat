@@ -19,7 +19,7 @@ echo Example usage:
 echo.
 echo %0 C:\mingw\bin\g++ D:\build2
 echo.
-echo See the INSTALL file for details.
+echo See the BOOTSTRAP-MINGW file for details.
 echo.
 goto end
 
@@ -120,6 +120,12 @@ build2\build2\b-boot configure^
 build2\build2\b-boot install
 @if errorlevel 1 goto error
 
+where b-stage
+@if errorlevel 1 goto error
+
+where bpkg-stage
+@if errorlevel 1 goto error
+
 b-stage --version
 @if errorlevel 1 goto error
 
@@ -153,6 +159,12 @@ bpkg-stage build --yes build2 bpkg
 @if errorlevel 1 goto error
 
 bpkg-stage install build2 bpkg
+@if errorlevel 1 goto error
+
+where b
+@if errorlevel 1 goto error
+
+where bpkg
 @if errorlevel 1 goto error
 
 b --version

@@ -4,11 +4,6 @@
 # copyright : Copyright (c) 2014-2016 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-# @@ Should we add sys:sqlite by default? Or add option?
-# @@ Need to note that script will ask for repository verification.
-# @@ Perhaps a fingerprint to pass to fetch? Once repo is signed?
-# @@ Option for alternative bpkg config dir?
-
 usage="Usage: $0 [-h|--help] [<options>] <cxx>"
 
 # Package repository URL (or path).
@@ -65,7 +60,7 @@ while test $# -ne 0; do
       diag
       diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
-      diag "See the INSTALL file for details."
+      diag "See the BOOTSTRAP-UNIX file for details."
       diag
       exit 0
       ;;
@@ -151,18 +146,6 @@ export PATH
 
 sys="$(build2/config.guess | sed -n 's/^[^-]*-[^-]*-\(.*\)$/\1/p')"
 
-# Bootstrap, stage 1.
-#
-run cd build2
-run ./bootstrap.sh "$cxx"
-run build2/b-boot --version
-
-# Bootstrap, stage 2.
-#
-run build2/b-boot config.cxx="$cxx" config.bin.lib=static
-mv build2/b build2/b-boot
-run build2/b-boot --version
-
 case "$sys" in
   mingw32 | mingw64 | msys | msys2 | cygwin)
     conf_rpath="[null]"
@@ -179,6 +162,18 @@ case "$sys" in
     ;;
 esac
 
+# Bootstrap, stage 1.
+#
+run cd build2
+run ./bootstrap.sh "$cxx"
+run build2/b-boot --version
+
+# Bootstrap, stage 2.
+#
+run build2/b-boot config.cxx="$cxx" config.bin.lib=static
+mv build2/b build2/b-boot
+run build2/b-boot --version
+
 # Stage.
 #
 run cd ..
@@ -193,6 +188,9 @@ config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
 
 run build2/build2/b-boot install
+
+run which b-stage
+run which bpkg-stage
 
 run b-stage --version
 run bpkg-stage --version
@@ -220,6 +218,9 @@ else
 fi
 run bpkg-stage build --yes build2 bpkg
 run bpkg-stage install build2 bpkg
+
+run which b-stage
+run which bpkg-stage
 
 run b --version
 run bpkg --version

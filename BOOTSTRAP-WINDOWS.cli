@@ -6,7 +6,7 @@
 The following instructions are for bootstrapping \c{build2} with either MSVC
 or MinGW using the Windows command prompt. If you are using any kind of UNIX
 emulation layer (for example, MSYS2 or Cygwin) and already have a UNIX shell
-with standard utilitis, then you most likely should follow \l{#BOOTSTRAP-UNIX
+with standard utilities, then you most likely should follow \l{#BOOTSTRAP-UNIX
 Bootstrapping on UNIX} instead.
 
 The \c{build2} toolchain on Windows requires a set of extra utilities

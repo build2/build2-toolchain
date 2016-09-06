@@ -14,6 +14,16 @@ to be bootstrapped and that process is platform-specific. The rest of this
 section discusses a few general bootstrap considerations and then directs
 you to the appropriate platform-specific instructions.
 
+In the rest of this guide we use the \c{$} symbol for a UNIX shell prompt and
+\c{>} for the Windows command prompt. Similarly, we use \c{\\} for UNIX
+command line continuations and \c{^} for Windows. Usually you should be able
+to copy and paste (sans the prompt) example commands in order to execute them
+but sometimes you might need to change a thing or two (for example, replace
+\c{X.Y.Z} with the actual version). Once we are able to use the \c{build2}
+toolchain, the command line interface becomes regular and we usually only show
+the UNIX version of the commands. In this case making a Windows version is
+a simple matter of adjusting paths and, if used, line continuations.
+
 The \c{build2} toolchain requires a C++14 compiler. From the commonly-used
 options, GCC 4.8, Clang 3.4, and MSVC 2015/14 Update 2 or any later versions
 of these compilers should work. Note also that the C++ compiler that you use

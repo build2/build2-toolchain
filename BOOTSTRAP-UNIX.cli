@@ -80,7 +80,7 @@ While this will use Clang and install into \c{/opt/build2}:
 $ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
 \
 
-Note also that about half way (\c{bpkg fetch} on step 6 below) the script will
+Note also that about half way (\c{bpkg fetch} on step 4 below) the script will
 stop and prompt you to verify the authenticity of the repository certificate.
 To run the script unattended you can specify the certificate fingerprint with
 the \c{--trust} option.
@@ -95,12 +95,11 @@ $ cd build2-toolchain-X.Y
 $ bpkg uninstall build2 bpkg
 \
 
-The rest of this section outlines the manual bootstrap with the step numbering
-continued from the above list.
+The rest of this section outlines the manual bootstrap process.
 
 \dl|
 
-\li|3. Bootstrap, Phase 1\n
+\li|1. Bootstrap, Phase 1\n
 
 First, we build a minimal build system with the provided \c{bootstrap.sh}
 script. Normally, the only argument you will pass to this script is the
@@ -117,7 +116,7 @@ $ build2/b-boot --version
 
 |
 
-\li|\n4. Bootstrap, Phase 2\n
+\li|\n2. Bootstrap, Phase 2\n
 
 Then, we rebuild the build system with the result of Phase 1 linking
 libraries statically.
@@ -131,18 +130,11 @@ $ build2/b-boot --version
 
 |
 
-\li|\n5. Stage\n
+\li|\n3. Stage\n
 
 On this step the entire toolchain is built and staged. Here you may want
 to adjust a few things, such as the installation directory or the \c{sudo}
 program (remove the \c{config.install.sudo} line if you don't need one).
-
-The strange-looking \c{config.install.data_root=root/stage} means install
-data files (as opposed to executable files) into the \c{stage/} subdirectory
-of wherever \c{config.install.root} points (so in our case it will be
-\c{/usr/local/stage/}). Note that this subdirectory is temporary and will be
-removed in a few steps. But if you don't like the default location, feel
-free to change it (for example, to \c{/tmp/stage}).
 
 You may also need to remove the \c{config.bin.rpath} line if your target
 doesn't support \i{rpath}. Specifically, if building on Windows (with MSYS or
@@ -164,6 +156,13 @@ $ build2/build2/b-boot configure      \
 
 $ build2/build2/b-boot install
 \
+
+The strange-looking \c{config.install.data_root=root/stage} means install
+data files (as opposed to executable files) into the \c{stage/} subdirectory
+of wherever \c{config.install.root} points to (so in our case it will be
+\c{/usr/local/stage/}). Note that this subdirectory is temporary and will be
+removed in a few steps. But if you don't like the default location, feel
+free to change it (for example, to \c{/tmp/stage}).
 
 Depending on the installation directory, the installed \c{build2} binaries
 may not be automatically found. On most platforms \c{/usr/local/bin/} is in
@@ -212,7 +211,7 @@ $ build2/build2/b-boot configure  \
 |
 
 
-\li|\n6. Install\n
+\li|\n4. Install\n
 
 Next, we use the staged toolchain to build and install the \"final\" toolchain
 from the package repository using the \c{bpkg} package manager. First, we
@@ -252,21 +251,20 @@ $ which b
 $ which bpkg
 /usr/local/bin/bpkg
 
-$ b-stage --version
-$ bpkg-stage --version
+$ b --version
+$ bpkg --version
 \
 
 |
 
-\li|\n7. Clean\n
+\li|\n5. Clean\n
 
 The last thing we need to do is uninstall the staged toolchain:
 
 \
-$ cd ../build2-toolchain-X.Y.Z/  # Back to bootstrap.
+$ cd ../build2-toolchain-X.Y.Z  # Back to bootstrap.
 $ b uninstall
 \
 
 ||
-
 "

@@ -26,4 +26,160 @@ prompt) like this:
 \
 > .\build-msvc.bat
 \
+
+Note also that about half way (\c{bpkg fetch} on step 4 below) the script will
+stop and prompt you to verify the authenticity of the repository certificate.
+
+The end result of the bootstrap process (performed either with the script or
+manually) is the installed toolchain as well as the \c{bpkg} configuration in
+\c{build2-toolchain-X.Y\\} that can be used to \l{#UPGRADE upgrade} to newer
+versions. It can also be used to uninstall the toolchain:
+
+\
+> cd build2-toolchain-X.Y
+> bpkg uninstall build2 bpkg
+\
+
+The rest of this section outlines the manual bootstrap process.
+
+\dl|
+
+\li|1. Bootstrap, Phase 1\n
+
+First, we build a minimal build system with the provided
+\c{bootstrap-msvc.bat} batch file. Normally, the only argument you will pass
+to this script is the C++ compiler to use but there is also a way to specify
+compile options; run \c{bootstrap-msvc.bat /?} and see the \c{build2\\INSTALL}
+file for details.
+
+\
+> cd build2
+> .\bootstrap-msvc.bat cl
+
+> build2\b-boot --version
+\
+
+|
+
+\li|\n2. Bootstrap, Phase 2\n
+
+Then, we rebuild the build system with the result of Phase 1 linking libraries
+statically.
+
+\
+> build2\b-boot config.cxx=cl config.bin.lib=static
+> move /y build2\b.exe build2\b-boot.exe
+
+> build2\b-boot --version
+\
+
+|
+
+\li|\n3. Stage\n
+
+On this step the entire toolchain is built and staged:
+
+\
+> run cd ..  # Back to build2-toolchain-X.Y.Z\
+
+> build2\build2\b-boot configure      ^
+  config.cxx=cl                       ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\build2       ^
+  config.install.data_root=root\stage
+
+> build2\build2\b-boot install
+\
+
+The strange-looking \c{config.install.data_root=root\\stage} means install
+data files (as opposed to executable files) into the \c{stage\\} subdirectory
+of wherever \c{config.install.root} points to (so in our case it will be
+\c{C:\\build2\\stage\\}). This subdirectory is temporary and will be removed
+in a few steps.
+
+Verify the toolchain binaries can be found and work (this relies on the
+\c{PATH} environment variable we have set earlier):
+
+\
+> where b-stage
+C:\build2\bin\b-stage.exe
+
+> where bpkg-stage
+C:\build2\bin\bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version
+\
+
+On the next step we will use \c{bpkg} to build and install the \"final\"
+toolchain. If for some reason you prefer not to build from packages (for
+example, because the machine is offline), then you can convert this step into
+the \"final\" installation and skip the rest. For this your will need to
+change the \c{configure} command line above along these lines:
+
+\
+> build2\build2\b-boot configure ^
+  config.cxx=cl                  ^
+  \"config.cc.coptions=/O2 /Oi\"   ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\build2
+\
+
+|
+
+\li|\n4. Install\n
+
+Next, we use the staged toolchain to build and install the \"final\" toolchain
+from the package repository using the \c{bpkg} package manager. First, we
+create the \c{bpkg} configuration. The configuration values are pretty similar
+to the previous step and you may want/need to make similar adjustments.
+
+\
+> cd ..  # Back to build2-build\
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.cxx=cl                 ^
+  \"config.cc.coptions=/O2 /Oi\"  ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2
+\
+
+Next, we add the package repository, build, and install:
+
+\
+> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build build2 bpkg
+> bpkg-stage install build2 bpkg
+\
+
+Finally, we verify the result:
+
+\
+> where b
+C:\build2\bin\b.exe
+
+> where bpkg
+C:\build2\bin\bpkg.exe
+
+> b --version
+> bpkg --version
+\
+
+|
+
+\li|\n5. Clean\n
+
+The last thing we need to do is uninstall the staged toolchain:
+
+\
+> cd ..\build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall
+\
+
+||
 "

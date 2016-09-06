@@ -5,12 +5,12 @@
 "
 At this point we assume that you have the build2 toolchain installed and would
 like to upgrade it to a newer version. We also expect that you have the
-toolchain \c{bpkg} configuration in the \c{build2-toolchain-X.Y} directory, as
-produced by the bootstrap process. If you don't have the \c{bpkg}
+toolchain \c{bpkg} configuration in the \c{build2-toolchain-X.Y/} directory,
+as produced by the bootstrap process. If you don't have the \c{bpkg}
 configuration but do have the toolchain installed somehow (for example, using
-your distribution's package manager), then you can create one as shown at the
-end. If you have neither, then you will need to go through the bootstrap
-process.
+your distribution's package manager), then you can create the configuration as
+shown at the end. If you have neither, then you will need to go through the
+bootstrap process.
 
 There are two ways to upgrade: dirty (but quick) and staged (but more
 involved). In the \i{dirty upgrade} we override the existing installation
@@ -21,15 +21,15 @@ functional.
 
 In the \i{staged upgrade} we first install a \c{-stage} build of the new
 toolchain (similar to what we did during bootstrap), test it, uninstall the
-old toolchain, install the new toolchain as non-staged, and finally uninstall
-the \c{-stage} installation.
+old toolchain, install the new toolchain as \"final\", and finally uninstall
+\c{-stage}.
 
-We recommend that you use a dirty upgrade for a bugfix-only release (the same
-\c{MAJOR.MINOR} version) and a staged upgrade otherwise. With bugfix-only
-releases we guarantee not to alter the installation file set. Note also that
-without periodic upgrades your version of the toolchain may become too old to
-be able to upgrade itself. In this case you will have to fall back onto the
-bootstrap process.
+We recommend that you use a dirty upgrade for  bugfix-only releases (the same
+\c{X.Y} (\c{MAJOR.MINOR}) version) and a staged upgrade otherwise. With
+bugfix-only releases we guarantee not to alter the installation file set. Note
+also that without periodic upgrades your version of the toolchain may become
+too old to be able to upgrade itself. In this case you will have to fall back
+onto the bootstrap process.
 
 The dirty upgrade is fairly simple:
 
@@ -60,8 +60,8 @@ The staged upgrade consists of several steps:
 
 There is no harm in running \c{bpkg fetch} in the existing configuration so
 we can use it to determine if any updates are available, whether we can use
-the simpler dirty upgrade, and, if not, the target \c{MAJOR.MINOR} version
-for a staged upgrade:
+the simpler dirty upgrade, and, if not, the target \c{X.Y} (\c{MAJOR.MINOR})
+version for the staged upgrade:
 
 \
 $ cd build2-toolchain-X.Y
@@ -95,7 +95,7 @@ Or, using Windows command prompt:
 \li|\n2. Build and Install as \c{-stage}\n
 
 This step is similar to the dirty upgrade except we use the copied
-configuration and install the toolchain with the \c{-stage} suffix.
+configuration and install the toolchain with the \c{-stage} suffix:
 
 \
 $ cd build2-toolchain-X.Z
@@ -138,8 +138,8 @@ $ bpkg-stage install build2 bpkg
 
 \li|\n5. Uninstall Staged\n
 
-Finally we clean up by removing the staged toolchain (hint: use command line
-history to find the corresponding \c{install} command and change it to
+Finally, we clean up by removing the staged toolchain (hint: use the command
+line history to find the corresponding \c{install} command and change it to
 \c{uninstall}):
 
 \
@@ -149,14 +149,14 @@ $ bpkg uninstall                      \
   build2 bpkg
 \
 
-You can also remove the old configuration in \c{build2-toolchain-X.Y} if you
+You can also remove the old configuration in \c{build2-toolchain-X.Y/} if you
 think you no longer need it.
 
 ||
 
 If you ever need to (re-)create the \c{bpkg} configuration for the toolchain
 from scratch, it is fairly simple (you may need to adjust the compiler,
-options, installation directory, etc):
+options, installation directory, etc; see the bootstrap steps for details):
 
 For UNIX-like operating systems (GNU/Linux, Mac OS X, FreeBSD, etc):
 

@@ -43,8 +43,8 @@ fetching build2.org/hello/stable
 2 package(s) in 1 repository(s)
 
 $ bpkg build hello
-build libhello/1.0.0 (required by hello)
-build hello/1.0.0
+  build libhello/1.0.0 (required by hello)
+  build hello/1.0.0
 continue? [Y/n] y
 libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
 fetched libhello/1.0.0
@@ -273,8 +273,8 @@ business:
 
 \
 $ bpkg build hello
-build libhello/1.0.0 (required by hello)
-build hello/1.0.0
+  build libhello/1.0.0 (required by hello)
+  build hello/1.0.0
 continue? [Y/n]
 \
 
@@ -318,8 +318,8 @@ $ bpkg drop hello
 following prerequisite packages were automatically built and will no longer be necessary:
   libhello
 drop prerequisite packages? [Y/n] y
-drop hello
-drop libhello
+  drop hello
+  drop libhello
 continue? [Y/n] y
 disfigured hello
 disfigured libhello
@@ -445,10 +445,10 @@ thumbs. Let's tell \c{bpkg} to build us \c{libhello} instead:
 
 \
 $ bpkg build libhello
-build libformat/1.0.0 (required by libhello)
-build libprint/1.0.0 (required by libhello)
-upgrade libhello/1.1.0
-reconfigure hello (dependent of libhello)
+  build libformat/1.0.0 (required by libhello)
+  build libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  reconfigure hello (dependent of libhello)
 continue? [Y/n]
 \
 
@@ -541,8 +541,8 @@ the desired version for upgrades).
 
 \
 $ bpkg build libhello/1.0.0
-downgrade libhello/1.0.0
-reconfigure hello (dependent of libhello)
+  downgrade libhello/1.0.0
+  reconfigure hello (dependent of libhello)
 continue? [Y/n] y
 update dependent packages? [Y/n] y
 disfigured hello/1.0.0
@@ -1029,7 +1029,7 @@ archives or package directories):
 
 \
 $ bpkg build -d /tmp/hello-gcc5-release/ ./hello2/
-build hello2/1.0.0
+  build hello2/1.0.0
 continue? [Y/n] y
 unpacked hello2/1.0.0
 configured hello2/1.0.0
@@ -1042,10 +1042,10 @@ Let's upgrade \c{libhello} and see what happens:
 
 \
 $ bpkg build -d /tmp/hello-gcc5-release/ -L libhello
-build libformat/1.0.0 (required by libhello)
-build libprint/1.0.0 (required by libhello)
-upgrade libhello/1.1.0
-reconfigure hello2 (dependent of libhello)
+  build libformat/1.0.0 (required by libhello)
+  build libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  reconfigure hello2 (dependent of libhello)
 continue? [Y/n] y
 disfigured hello2/1.0.0
 disfigured libhello/1.0.0
@@ -1091,8 +1091,8 @@ fetching build2.org/hello/stable (complements build2.org/hello/testing)
 5 package(s) in 2 repository(s)
 
 $ bpkg build libhello/1.0.0 path/to/hello2/
-build libhello/1.0.0
-build hello2/1.0.0
+  build libhello/1.0.0
+  build hello2/1.0.0
 continue? [Y/n] y
 libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
 fetched libhello/1.0.0

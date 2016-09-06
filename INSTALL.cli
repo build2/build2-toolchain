@@ -4,24 +4,24 @@
 
 "
 One of the primary goals of the \c{build2} toolchain is to provide a uniform
-build interface across all the platforms and compilers. If you already have
-the toolchain installed and would like to upgrade to a newer version, then
-there is a single set of \l{#UPGRADE upgrade instructions} for all the
-platforms.
+build interface across all the platforms and compilers. As a result, if you
+already have the toolchain installed and would like to upgrade to a newer
+version, then there is a single set of \l{#UPGRADE upgrade instructions} for
+all the platforms.
 
 If, however, you need to install the toolchain for the first time, then it has
 to be bootstrapped and that process is platform-specific. The rest of this
 section discusses a few general bootstrap considerations and then directs
-you to appropriate platform-specific instructions.
+you to the appropriate platform-specific instructions.
 
 The \c{build2} toolchain requires a C++14 compiler. From the commonly-used
-options, GCC 4.8, Clang 3.4, and MSVC 2015/14 Update 2 or later
-versions are known to work. Note also that the C++ compiler that you use to
-build the \c{build2} toolchain and the one that you will use to build your
+options, GCC 4.8, Clang 3.4, and MSVC 2015/14 Update 2 or any later versions
+of these compilers should work. Note also that the C++ compiler that you use
+to build the \c{build2} toolchain and the one that you will use to build your
 projects need not be the same. For example, if you are using MSVC 2013/12
-(which cannot build \c{build2}), it is perfectly fine to get a minimal
-MinGW toolchain and use that to build \c{build2}; you will still be able
-to use MSVC to build your own projects.
+(which cannot build \c{build2}), it is perfectly fine to get a minimal MinGW
+toolchain and use that to build \c{build2}; you will still be able to use MSVC
+to build your own code.
 
 At the high level, the bootstrap process involves the following 5 steps.
 
@@ -44,8 +44,8 @@ On this step the entire toolchain is built and staged.|
 
 \li|\n4. Install\n
 
-Next, the staged toolchain is used to build and install the toolchain from
-the package repository and using the \c{bpkg} package manager.|
+Next, the staged toolchain is used to build and install the \"final\"
+toolchain from the package repository and using the \c{bpkg} package manager.|
 
 \li|\n5. Clean\n
 
@@ -53,12 +53,12 @@ Finally, the staged toolchain is uninstalled.||
 
 The end result of the bootstrap process is the installed toolchain as well as
 the \c{bpkg} configuration (created on step 4) that can be used to upgrade to
-newer versions. You can also skip step 4 and instead install on step 3 if
-you would prefer not to use the package manager (for example, because the
-machine is offline).
+newer versions. You can also skip step 4 and instead install on step 3 if for
+some reason you prefer not to use the package manager (for example, because
+the machine is offline).
 
 
-For Windows, if using either MSVC or MinGW, continue with
+For Windows, if you are using either MSVC or MinGW, continue with
 \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}. If using MSYS or Cygwin,
 then instead refer to \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
 

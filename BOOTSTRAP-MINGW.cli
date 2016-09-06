@@ -3,7 +3,7 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing with \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you are
+Continuing from \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you are
 using your own MinGW distribution, then the resulting \c{build2} binaries will
 most likely required a number of DLLs in order to run. It is therefore
 recommended that you copy the following files from your MinGW \c{bin\\}

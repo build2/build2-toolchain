@@ -3,7 +3,7 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing with \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you have
+Continuing from \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you have
 already started an appropriate Visual Studio command prompt, then you can
 continue using it. Otherwise, start the \"x64 Native Tools Command Prompt\" if
 you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
@@ -14,7 +14,7 @@ you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
 \
 
 To build with MSVC you can either perform the following steps manually or, if
-if after reviewing the steps you are happy with using the defaults, run the
+after reviewing the steps you are happy with using the defaults, run the
 \c{build-msvc.bat} batch file. It performs (and echoes) the same set of steps
 as outline below but only allows you to customization the installation
 directory (run \c{build-msvc.bat /?} for usage). You can also specify an

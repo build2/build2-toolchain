@@ -105,13 +105,13 @@ toolchain can do so that you can decide if you are interested and want to learn
 more. Further documentation is referenced at the end of this introduction.
 
 The \c{build2} toolchain is self-hosted and self-packaged (and, yes, it is on
-\l{https://cppget.org/ cppget.org}). It could have then served as its own
-example.  However, before the toolchain can build itself, we have to bootstrap
-it (that chicken and egg problem again). And this step wouldn't serve our goal
-of quickly learning what \c{build2} is about. So, instead, we will start with
-a customary \i{\"Hello, World!\"} example which you won't yet be able to try
+\l{https://cppget.org/ cppget.org}). It could have served as its own example,
+however, before the toolchain can build itself, we have to bootstrap it (that
+chicken and egg problem again). And this step wouldn't serve our goal of
+quickly learning what \c{build2} is about. So, instead, we will start with a
+customary \i{\"Hello, World!\"} example which you won't yet be able to try
 yourself (but don't worry, complete terminal output will be shown). If at the
-end you find \c{build2} appealing, you can jump right to the
+end you find \c{build2} appealing, you can jump right to
 \l{build2-toolchain-install.xhtml The \c{build2} Toolchain Installation and
 Upgrade} (and, yes, there you get to run that coveted \c{bpkg build bpkg}).
 Once the \c{build2} installation is complete, you can come back to the
@@ -119,10 +119,10 @@ Once the \c{build2} installation is complete, you can come back to the
 
 This introduction explores the \i{consumer} side of \i{\"Hello, World!\"}.
 That is, we assume that someone was kind enough to create and package the
-\c{libhello} library and the \c{hello} program and we will learn how to obtain
-and build them as well as keep up with their updates. At the end we will
-also see how to write our own, \c{hello2}, program that depends on \c{libhello}.
-And so, without further ado, let's begin.
+\c{libhello} library as well as the \c{hello} program and we will learn how to
+obtain and build them as well as keep up with their updates. At the end we
+will also see how to write our own, \c{hello2}, program that depends on
+\c{libhello}.  And so, without further ado, let's begin.
 
 The first step in using \c{bpkg} is to create a \i{configuration}. A
 configuration is a directory where packages that require similar compile
@@ -178,7 +178,7 @@ module with \c{coptions} standing for \i{compile options} (there are also
 \c{libs} for extra libraries to link).
 
 There is also the \c{c} module for the C compilation. So if we were planning
-to build both C and C++ projects, then we could have ran:
+to build both C and C++ projects, then we could have run:
 
 \
 $ bpkg create c cxx ...
@@ -282,7 +282,7 @@ Let's see what's going on here. We ran \l{bpkg-pkg-build(1) \c{bpkg build}} to
 build the \c{hello} program which happens to depend on the \c{libhello}
 library. So \c{bpkg} presents us with a \i{plan of action}, that is, the steps
 it will have to perform in order to build us \c{hello} and then asks us to
-confirm that's what we want to do (you can add \c{--yes|-y} to skip the
+confirm if that's what we want to do (you can add \c{--yes|-y} to skip the
 confirmation). In the real-world usage the plan will be more complex, with
 upgrades/downgrades, reconfigurations, etc.
 
@@ -328,7 +328,7 @@ purged libhello
 \
 
 Ok, ready for some \c{-v} details? Feel free to skip the following listing
-if not interested.
+if you are not interested.
 
 \
 $ bpkg build -v -y hello
@@ -389,9 +389,9 @@ unknown
 \
 
 Let's say we got wind of a new development: the \c{libhello} author released a
-new version of the library. It is such an advance in the state of the
-\i{\"Hello, World!\"} art, it's only currently available from \c{testing}. Of
-course, we must check it out.
+new version of the library. It is such an advance in the art of \i{\"Hello,
+World!\"}, it's only currently available from \c{testing}. Of course, we must
+check it out.
 
 Now, what exactly is \c{testing}? You must have noticed that the repository
 location that we've been using so far ended with \c{/stable}. Quite often it is
@@ -438,10 +438,10 @@ info: dir{hello-1.0.0/} is up to date
 updated hello/1.0.0
 \
 
-Why nothing happenned..? That's because \c{bpkg} will only upgrade (or
-downgrade) to a new version if we explicitly ask it to. As things stand, all
-dependencies for \c{hello} are satisfied and \c{bpkg} is happy to twiddle its
-thumbs. Let's tell \c{bpkg} to build us \c{libhello} instead:
+Why did nothing happenned? Because \c{bpkg} will only upgrade (or downgrade)
+to a new version if we explicitly ask it to. As things stand, all dependencies
+for \c{hello} are satisfied and \c{bpkg} is happy to twiddle its thumbs. Let's
+tell \c{bpkg} to build us \c{libhello} instead:
 
 \
 $ bpkg build libhello
@@ -640,7 +640,7 @@ Hello, World!
 \
 
 The important point here is this: the \c{bpkg} configuration is not some black
-box that you should never look inside. On the contrary, it is a normal and
+box that you should never look inside of. On the contrary, it is a normal and
 predictable concept of the build system and as long as you understand what you
 are doing, feel free to muck around.
 
@@ -708,8 +708,8 @@ executable; for once things are working better on Windows.
 
 The problem is with our installation location: the runtime linker won't look
 for \c{libhello-1.0.so} in \c{/opt/hello/lib} unless we somehow tell it to
-(for example, using \c{LD_LIBRARY_PATH} or equivalent).  There are several way
-we can resolve this. We could give up on shared libraries and link our
+(for example, using \c{LD_LIBRARY_PATH} or equivalent).  There are several
+ways we can resolve this. We could give up on shared libraries and link our
 prerequisite libraries statically (\c{config.bin.exe.lib=static}). Or we could
 use the \i{rpath} mechanism:
 
@@ -1112,7 +1112,7 @@ updated libhello/1.0.0
 updated hello2/1.0.0
 \
 
-Are you still here? Ok, one last example. Let's see how hard it is to
+Are you still there? Ok, one last example. Let's see how hard it is to
 cross-compile.
 
 \

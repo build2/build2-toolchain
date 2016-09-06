@@ -60,8 +60,8 @@ Download the following files as well as their \c{.sha256} checksums from
 64-bin Windows and with \c{i686} for 32-bit.
 
 \
-build2-baseutils-X.Y.Z-<arch>.zip
-build2-mingw-X.Y.Z-<arch>.tar.xz    (if required)
+build2-baseutils-X.Y.Z-<arch>-windows.zip
+build2-mingw-X.Y.Z-<arch>-windows.tar.xz   (if required)
 build2-toolchain-X.Y.Z.tar.xz
 \
 
@@ -80,11 +80,10 @@ Verify archive checksums match (compare visually):
 
 \li|\n5. Unpack \c{build2-baseutils}\n
 
-Unpack the \c{build2-baseutils-X.Y.Z-<arch>.zip} archive into \c{C:\\} using
-Windows Explorer (for example, copy the archive directory and then paste it).
-Rename it to \c{C:\\build2\\}. This will be the toolchain installation
-directory.
-|
+Unpack the \c{build2-baseutils-X.Y.Z-<arch>-windows.zip} archive into \c{C:\\}
+using Windows Explorer (for example, copy the archive directory and then paste
+it). Rename it to \c{C:\\build2\\}. This will be the toolchain installation
+directory.  |
 
 \li|\n6. Set \c{PATH}\n
 
@@ -101,8 +100,8 @@ work:
 
 \li|\n7. Unpack \c{build2-mingw}\n
 
-If required, unpack the \c{build2-mingw-X.Y.Z-<arch>.tar.xz} archive into
-\c{C:\\build2\\}:
+If required, unpack the \c{build2-mingw-X.Y.Z-<arch>-windows.tar.xz} archive
+into \c{C:\\build2\\}:
 
 \
 > tar xf build2-mingw-X.Y.Z-<arch>-windows.tar.xz ^

@@ -123,8 +123,8 @@ $ bpkg-stage --version
 
 \li|\n4. Uninstall Old, Install New\n
 
-Once we are satisfied the new toolchain works, we can uninstall the old
-one and install the new:
+Once we are satisfied that the new toolchain works, we can uninstall the old
+one and install the new one:
 
 \
 $ cd ../build2-toolchain-X.Y

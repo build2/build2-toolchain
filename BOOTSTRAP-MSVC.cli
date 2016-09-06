@@ -16,7 +16,7 @@ you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
 To build with MSVC you can either perform the following steps manually or, if
 after reviewing the steps you are happy with using the defaults, run the
 \c{build-msvc.bat} batch file. It performs (and echoes) the same set of steps
-as outline below but only allows you to customization the installation
+as outlined below but only allows you to customize the installation
 directory (run \c{build-msvc.bat /?} for usage). You can also specify an
 alternative package repository with the \c{BUILD2_REPO} environment variable.
 
@@ -27,8 +27,9 @@ prompt) like this:
 > .\build-msvc.bat
 \
 
-Note also that about half way (\c{bpkg fetch} on step 4 below) the script will
-stop and prompt you to verify the authenticity of the repository certificate.
+Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
+script will stop and prompt you to verify the authenticity of the repository
+certificate.
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
@@ -77,10 +78,10 @@ statically.
 
 \li|\n3. Stage\n
 
-On this step the entire toolchain is built and staged:
+At this step the entire toolchain is built and staged:
 
 \
-> run cd ..  # Back to build2-toolchain-X.Y.Z\
+> cd ..  # Back to build2-toolchain-X.Y.Z\
 
 > build2\build2\b-boot configure      ^
   config.cxx=cl                       ^
@@ -97,7 +98,7 @@ of wherever \c{config.install.root} points to (so in our case it will be
 \c{C:\\build2\\stage\\}). This subdirectory is temporary and will be removed
 in a few steps.
 
-Verify the toolchain binaries can be found and work (this relies on the
+Verify that the toolchain binaries can be found and work (this relies on the
 \c{PATH} environment variable we have set earlier):
 
 \
@@ -111,10 +112,10 @@ C:\build2\bin\bpkg-stage.exe
 > bpkg-stage --version
 \
 
-On the next step we will use \c{bpkg} to build and install the \"final\"
+At the next step we will use \c{bpkg} to build and install the \"final\"
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
-the \"final\" installation and skip the rest. For this your will need to
+the \"final\" installation and skip the rest. For this you will need to
 change the \c{configure} command line above along these lines:
 
 \

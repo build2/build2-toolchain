@@ -34,7 +34,7 @@ common steps:
 
 Start the standard Windows Command Prompt. If you plan to build with MSVC,
 then you may go ahead and start the Visual Studio Command Prompt (or wait
-until MSVC-specific instructions).
+for MSVC-specific instructions).
 |
 
 \li|\n2. Create Build Directory\n
@@ -87,8 +87,8 @@ directory.  |
 
 \li|\n6. Set \c{PATH}\n
 
-Set the \c{PATH} environment variable and verify the utilities are found and
-work:
+Set the \c{PATH} environment variable and verify that the utilities are found
+and work:
 
 \
 > set PATH=C:\build2\bin;%PATH%
@@ -108,7 +108,7 @@ into \c{C:\\build2\\}:
   --one-top-level=C:\build2 --strip-components=1
 \
 
-Verify the MinGW GCC is found and works:
+Verify that the MinGW GCC is found and works:
 
 \
 > where g++

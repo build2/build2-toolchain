@@ -50,7 +50,7 @@ guaranteed to be able to build the toolchain.|
 
 \li|\n3. Stage\n
 
-On this step the entire toolchain is built and staged.|
+At this step the entire toolchain is built and staged.|
 
 \li|\n4. Install\n
 
@@ -62,8 +62,8 @@ toolchain from the package repository and using the \c{bpkg} package manager.|
 Finally, the staged toolchain is uninstalled.||
 
 The end result of the bootstrap process is the installed toolchain as well as
-the \c{bpkg} configuration (created on step 4) that can be used to upgrade to
-newer versions. You can also skip step 4 and instead install on step 3 if for
+the \c{bpkg} configuration (created at step 4) that can be used to upgrade to
+newer versions. You can also skip step 4 and instead install at step 3 if for
 some reason you prefer not to use the package manager (for example, because
 the machine is offline).
 

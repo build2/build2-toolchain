@@ -62,7 +62,7 @@ Unpack the archive and change to its directory:
 Next you can either perform the rest of the steps manually or, if after
 reviewing the steps, you are happy with using the defaults, run the
 \c{build.sh} shell script. It performs (and echoes) the same set of steps as
-outline below but only allows you to customization the compiler, installation
+outlined below but only allows you to customize the compiler, installation
 directory, and a few other things (run \c{build.sh -h} for usage). You can
 also specify an alternative package repository with the \c{BUILD2_REPO}
 environment variable.
@@ -80,10 +80,10 @@ While this will use Clang and install into \c{/opt/build2}:
 $ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
 \
 
-Note also that about half way (\c{bpkg fetch} on step 4 below) the script will
-stop and prompt you to verify the authenticity of the repository certificate.
-To run the script unattended you can specify the certificate fingerprint with
-the \c{--trust} option.
+Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
+script will stop and prompt you to verify the authenticity of the repository
+certificate. To run the script unattended you can specify the certificate
+fingerprint with the \c{--trust} option.
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
@@ -132,7 +132,7 @@ $ build2/b-boot --version
 
 \li|\n3. Stage\n
 
-On this step the entire toolchain is built and staged. Here you may want
+At this step the entire toolchain is built and staged. Here you may want
 to adjust a few things, such as the installation directory or the \c{sudo}
 program (remove the \c{config.install.sudo} line if you don't need one).
 
@@ -143,7 +143,7 @@ in \- if your target doesn't support it, you will get an error and will need
 to reconfigure without it.
 
 \
-$ run cd ..  # Back to build2-toolchain-X.Y.Z/
+$ cd ..  # Back to build2-toolchain-X.Y.Z/
 
 $ build2/build2/b-boot configure      \
   config.cxx=g++                      \
@@ -191,7 +191,7 @@ the rest of the commands to use absolute paths. This, however, does not make
 for very readable examples so below we assume the installation's \c{bin/}
 subdirectory is in \c{PATH}.
 
-On the next step we will use \c{bpkg} to build and install the \"final\"
+At the next step we will use \c{bpkg} to build and install the \"final\"
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
 the \"final\" installation and skip the rest. For this your will need to

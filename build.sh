@@ -219,8 +219,8 @@ fi
 run bpkg-stage build --yes build2 bpkg
 run bpkg-stage install build2 bpkg
 
-run which b-stage
-run which bpkg-stage
+run which b
+run which bpkg
 
 run b --version
 run bpkg --version

@@ -111,7 +111,6 @@ cd ..
 
 build2\build2\b-boot configure^
  config.cxx=%cxx%^
- config.bin.lib=shared^
  config.bin.suffix=-stage^
  config.install.root=%idir%^
  config.install.data_root=root\stage
@@ -145,7 +144,6 @@ bpkg-stage create^
  cc^
  config.cxx=%cxx%^
  config.cc.coptions=-O3^
- config.bin.lib=shared^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 

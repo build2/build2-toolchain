@@ -95,7 +95,6 @@ On this step the entire toolchain is built and staged:
 
 > build2\build2\b-boot configure      ^
   config.cxx=g++                      ^
-  config.bin.lib=shared               ^
   config.bin.suffix=-stage            ^
   config.install.root=C:\build2       ^
   config.install.data_root=root\stage
@@ -133,7 +132,6 @@ change the \c{configure} command line above along these lines:
 > build2\build2\b-boot configure ^
   config.cxx=g++                 ^
   config.cc.coptions=-O3         ^
-  config.bin.lib=shared          ^
   config.install.root=C:\build2
 \
 
@@ -155,7 +153,6 @@ to the previous step and you may want/need to make similar adjustments.
   cc                            ^
   config.cxx=g++                ^
   config.cc.coptions=-O3        ^
-  config.bin.lib=shared         ^
   config.install.root=C:\build2
 \
 

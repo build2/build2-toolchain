@@ -180,7 +180,6 @@ run cd ..
 
 run build2/build2/b-boot configure \
 config.cxx="$cxx" \
-config.bin.lib=shared \
 config.bin.suffix=-stage \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
@@ -205,7 +204,6 @@ run bpkg-stage create \
 cc \
 config.cxx="$cxx" \
 config.cc.coptions=-O3 \
-config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo"

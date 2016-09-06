@@ -165,7 +165,6 @@ $ bpkg-stage create             \
 cc                              \
 config.cxx=g++                  \
 config.cc.coptions=-O3          \
-config.bin.lib=shared           \
 config.bin.rpath=/usr/local/lib \
 config.install.root=/usr/local  \
 config.install.sudo=sudo
@@ -178,7 +177,6 @@ For Windows with MSVC (from the Visual Studio command prompt):
   cc                             ^
   config.cxx=cl                  ^
   \"config.cc.coptions=/O2 /Oi\"   ^
-  config.bin.lib=shared          ^
   config.install.root=C:\build2
 \
 
@@ -189,7 +187,6 @@ For Windows with MinGW (from the command prompt):
   cc                            ^
   config.cxx=g++                ^
   config.cc.coptions=-O3        ^
-  config.bin.lib=shared         ^
   config.install.root=C:\build2
 \
 "

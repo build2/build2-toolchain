@@ -310,7 +310,7 @@ unpacked, and configured both packages and then proceeded to building the
 library. Note that the download progress may look differently on your machine
 depending on which \i{fetch tool} (\c{wget}, \c{curl}, or \c{fetch}) is
 used. If you ever considered giving that \c{-v} option a try, now would be a
-good time. But let's first drop (\l{bpkg-pkg-build(1) \c{bpkg drop}}) the
+good time. But let's first drop (\l{bpkg-pkg-drop(1) \c{bpkg drop}}) the
 \c{hello} package so that we get the same build from scratch:
 
 \
@@ -749,7 +749,7 @@ We can also uninstall what we have installed with \l{bpkg-pkg-uninstall(1)
 \
 $ bpkg uninstall                  \
   config.install.root=/opt/hello  \
-  config.install.sudo=sudo
+  config.install.sudo=sudo        \
   hello
 
 uninstall hello-1.0.0/doc{version}
@@ -1078,7 +1078,7 @@ $ cd /tmp
 $ mkdir hello-clang36-release
 $ cd hello-clang36-release
 
-$ bpkg create c config.cxx=clang++-3.6 config.cc.coptions=-O3
+$ bpkg create cc config.cxx=clang++-3.6 config.cc.coptions=-O3
 created new configuration in /tmp/hello-clang36-release/
 
 $ bpkg add https://build2.org/pkg/1/hello/testing

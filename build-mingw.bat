@@ -120,11 +120,13 @@ build2\build2\b-boot configure^
 build2\build2\b-boot install
 @if errorlevel 1 goto error
 
+@rem The where command is not available on XP without the resource kit.
+@rem
 where b-stage
-@if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 where bpkg-stage
-@if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 b-stage --version
 @if errorlevel 1 goto error
@@ -161,10 +163,10 @@ bpkg-stage install build2 bpkg
 @if errorlevel 1 goto error
 
 where b
-@if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 where bpkg
-@if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 b --version
 @if errorlevel 1 goto error

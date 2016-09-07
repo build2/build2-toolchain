@@ -166,7 +166,8 @@ Next, we add the package repository, build, and install:
 > bpkg-stage install build2 bpkg
 \
 
-Finally, we verify the result:
+Finally, we verify the result (note that the \c{where} command is not
+available on Windows XP without the Resource Kit installed):
 
 \
 > where b

@@ -37,27 +37,27 @@ At the high level, the bootstrap process involves the following 5 steps.
 
 \dl|
 
-\li|1. Bootstrap, Phase 1\n
+\li|\b{1. Bootstrap, Phase 1}\n
 
 First, a minimal build system executable is built using provided shell
 scripts/batch files. The result is only guaranteed to be able to rebuild the
 build system itself.|
 
-\li|\n2. Bootstrap, Phase 2\n
+\li|\n\b{2. Bootstrap, Phase 2}\n
 
 Then, the build system is rebuilt with static libraries. The result is only
 guaranteed to be able to build the toolchain.|
 
-\li|\n3. Stage\n
+\li|\n\b{3. Stage}\n
 
 At this step the entire toolchain is built and staged.|
 
-\li|\n4. Install\n
+\li|\n\b{4. Install}\n
 
 Next, the staged toolchain is used to build and install the \"final\"
 toolchain from the package repository and using the \c{bpkg} package manager.|
 
-\li|\n5. Clean\n
+\li|\n\b{5. Clean}\n
 
 Finally, the staged toolchain is uninstalled.||
 

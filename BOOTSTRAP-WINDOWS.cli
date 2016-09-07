@@ -18,7 +18,7 @@ as the utilities in order to produce the  combined installation.
 To build on Windows you will need either MSVC 14 Update 2 or later or MinGW
 GCC 4.8 or later. Note also that MinGW GCC must be configured with the
 \c{posix} threading model (this is currently the only configuration that
-implements C++11 threads; run \c{g++ --version} to verify).
+implements C++11 threads; run \c{g++ -v} to verify).
 
 If you don't already have a suitable C++ compiler, then you can use the
 \c{build2-mingw} package which provides a minimal MinGW-W64 GCC distribution
@@ -30,14 +30,14 @@ common steps:
 
 \dl|
 
-\li|1. Open Command Prompt\n
+\li|\b{1. Open Command Prompt}\n
 
 Start the standard Windows Command Prompt. If you plan to build with MSVC,
 then you may go ahead and start the Visual Studio Command Prompt (or wait
 for MSVC-specific instructions).
 |
 
-\li|\n2. Create Build Directory\n
+\li|\n\b{2. Create Build Directory}\n
 
 Note that you will want to keep this directory around in order to upgrade
 to new toolchain versions in the future. In this guide we will use
@@ -53,7 +53,7 @@ installation directory but you can use other paths.
 
 |
 
-\li|\n3. Download Archives\n
+\li|\n\b{3. Download Archives}\n
 
 Download the following files as well as their \c{.sha256} checksums from
 \l{https://download.build2.org}, replacing \i{<arch>} with \c{x86_64} for
@@ -67,7 +67,7 @@ build2-toolchain-X.Y.Z.tar.xz
 
 Place everything into \c{C:\\build2-build\\} (build directory).|
 
-\li|\n4. Verify Archive Checksums\n
+\li|\n\b{4. Verify Archive Checksums}\n
 
 Verify archive checksums match (compare visually):
 
@@ -78,14 +78,14 @@ Verify archive checksums match (compare visually):
 
 |
 
-\li|\n5. Unpack \c{build2-baseutils}\n
+\li|\n\b{5. Unpack \c{build2-baseutils}}\n
 
 Unpack the \c{build2-baseutils-X.Y.Z-<arch>-windows.zip} archive into \c{C:\\}
 using Windows Explorer (for example, copy the archive directory and then paste
 it). Rename it to \c{C:\\build2\\}. This will be the toolchain installation
 directory.  |
 
-\li|\n6. Set \c{PATH}\n
+\li|\n\b{6. Set \c{PATH}}\n
 
 Set the \c{PATH} environment variable and verify that the utilities are found
 and work:
@@ -98,7 +98,7 @@ and work:
 
 |
 
-\li|\n7. Unpack \c{build2-mingw}\n
+\li|\n\b{7. Unpack \c{build2-mingw}}\n
 
 If required, unpack the \c{build2-mingw-X.Y.Z-<arch>-windows.tar.xz} archive
 into \c{C:\\build2\\}:
@@ -117,7 +117,7 @@ Verify that the MinGW GCC is found and works:
 
 |
 
-\li|\n8. Unpack \c{build2-toolchain}\n
+\li|\n\b{8. Unpack \c{build2-toolchain}}\n
 
 Unpack the \c{build2-toolchain-X.Y.Z.tar.xz} archive and change to its
 directory:

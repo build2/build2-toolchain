@@ -45,7 +45,7 @@ The rest of this section outlines the manual bootstrap process.
 
 \dl|
 
-\li|1. Bootstrap, Phase 1\n
+\li|\b{1. Bootstrap, Phase 1}\n
 
 First, we build a minimal build system with the provided
 \c{bootstrap-msvc.bat} batch file. Normally, the only argument you will pass
@@ -62,7 +62,7 @@ file for details.
 
 |
 
-\li|\n2. Bootstrap, Phase 2\n
+\li|\n\b{2. Bootstrap, Phase 2}\n
 
 Then, we rebuild the build system with the result of Phase 1 linking libraries
 statically.
@@ -76,7 +76,7 @@ statically.
 
 |
 
-\li|\n3. Stage\n
+\li|\n\b{3. Stage}\n
 
 At this step the entire toolchain is built and staged:
 
@@ -127,7 +127,7 @@ change the \c{configure} command line above along these lines:
 
 |
 
-\li|\n4. Install\n
+\li|\n\b{4. Install}\n
 
 Next, we use the staged toolchain to build and install the \"final\" toolchain
 from the package repository using the \c{bpkg} package manager. First, we
@@ -170,7 +170,7 @@ C:\build2\bin\bpkg.exe
 
 |
 
-\li|\n5. Clean\n
+\li|\n\b{5. Clean}\n
 
 The last thing we need to do is uninstall the staged toolchain:
 

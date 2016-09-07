@@ -56,7 +56,7 @@ The staged upgrade consists of several steps:
 
 \dl|
 
-\li|0. Check for Updates\n
+\li|\b{0. Check for Updates}\n
 
 There is no harm in running \c{bpkg fetch} in the existing configuration so
 we can use it to determine if any updates are available, whether we can use
@@ -72,7 +72,7 @@ $ bpkg status build2 bpkg
 Let's say the new version is X.Z.
 |
 
-\li|\n1. Create New Configuration\n
+\li|\n\b{1. Create New Configuration}\n
 
 First we make a copy of the old configuration. We will need the original later
 to cleanly uninstall the old toolchain, and, maybe, to rollback the
@@ -92,7 +92,7 @@ Or, using Windows command prompt:
 
 |
 
-\li|\n2. Build and Install as \c{-stage}\n
+\li|\n\b{2. Build and Install as \c{-stage}}\n
 
 This step is similar to the dirty upgrade except we use the copied
 configuration and install the toolchain with the \c{-stage} suffix:
@@ -108,7 +108,7 @@ $ bpkg install                        \
 
 |
 
-\li|\n3. Test Staged\n
+\li|\n\b{3. Test Staged}\n
 
 Now you can test the new toolchain on your projects, etc. Remember to use the
 \c{-stage}-suffixed binaries (\c{bpkg-stage} will automatically use
@@ -121,7 +121,7 @@ $ bpkg-stage --version
 
 |
 
-\li|\n4. Uninstall Old, Install New\n
+\li|\n\b{4. Uninstall Old, Install New}\n
 
 Once we are satisfied that the new toolchain works, we can uninstall the old
 one and install the new one:
@@ -136,7 +136,7 @@ $ bpkg-stage install build2 bpkg
 
 |
 
-\li|\n5. Uninstall Staged\n
+\li|\n\b{5. Uninstall Staged}\n
 
 Finally, we clean up by removing the staged toolchain (hint: use the command
 line history to find the corresponding \c{install} command and change it to

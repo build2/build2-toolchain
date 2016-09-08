@@ -7,7 +7,7 @@ subprojects = libbutl build2 libsqlite3 libodb libodb-sqlite libbpkg bpkg
 
 using build@0.4.0
 
-version = 0.4.0
+version = 0.5.0-a1
 dist.package = $project-$version
 
 using config

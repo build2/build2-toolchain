@@ -33,3 +33,6 @@ A few additional notes:
    explicitly:
 
    git submodule update --remote --checkout libsqlite3
+
+   Note that you need a fairly recent git (e.g., 2.9) for this enforcement
+   to work.

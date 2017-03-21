@@ -9,6 +9,11 @@ emulation layer (for example, MSYS or Cygwin) and already have a UNIX shell
 with standard utilities, then you most likely should follow \l{#BOOTSTRAP-UNIX
 Bootstrapping on UNIX} instead.
 
+Note also that if you continue with these instructions but you already have
+your own installation of MSYS and/or MinGW, then make sure that their paths
+are not in your \c{PATH} environment variable when building and using
+\c{build2} since they may provide conflicting DLLs.
+
 The \c{build2} toolchain on Windows requires a set of extra utilities
 (\c{install}, \c{diff}, \c{wget}, \c{tar}, etc). These are provided by the
 \c{build2-baseutils} package (see the \c{README} file inside for details).

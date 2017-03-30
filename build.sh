@@ -238,5 +238,5 @@ run b uninstall
 
 diag
 diag "Toolchain installation: $idir/bin"
-diag "Upgrade configuration:  $cdir"
+diag "Upgrade configuration:  $owd/$cdir"
 diag

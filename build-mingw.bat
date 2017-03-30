@@ -184,7 +184,7 @@ b uninstall
 
 echo.
 echo Toolchain installation: %idir%\bin
-echo Upgrade configuration:  %cdir%
+echo Upgrade configuration:  %owd%\%cdir%
 echo.
 
 goto end

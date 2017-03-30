@@ -61,6 +61,9 @@ while test $# -ne 0; do
       diag
       diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
+      diag "The --trust option recognizes two special values: 'yes' (trust"
+      diag "everything) and 'no' (trust nothing)."
+      diag
       diag "See the BOOTSTRAP-UNIX file for details."
       diag
       exit 0
@@ -210,10 +213,14 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo"
 
 run bpkg-stage add "$BUILD2_REPO"
-if test -n "$trust"; then
-  run bpkg-stage --trust "$trust" fetch
-else
+if test -z "$trust"; then
   run bpkg-stage fetch
+elif test "$trust" = "yes"; then
+  run bpkg-stage --trust-yes fetch
+elif test "$trust" = "no"; then
+  run bpkg-stage --trust-no fetch
+else
+  run bpkg-stage --trust "$trust" fetch
 fi
 run bpkg-stage build --yes build2 bpkg
 run bpkg-stage install build2 bpkg

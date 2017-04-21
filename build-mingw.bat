@@ -9,11 +9,15 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] ^<cxx^> [^<install-dir^>]
+echo Usage: %0 [/?] ^<cxx^> [^<install-dir^>] [^<trust^>]
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
 echo directory (C:\build2\bin\ by default).
+echo.
+echo The ^<trust^> argument can be used to specify the repository certificate
+echo fingerprint to trust. Two special values are also recognized: 'yes'
+echo (trust everything) and 'no' (trust nothing).
 echo.
 echo Example usage:
 echo.
@@ -57,6 +61,22 @@ if "_%2_" == "__" (
   set "idir=C:\build2"
 ) else (
   set "idir=%2"
+)
+
+rem Certificate to trust.
+rem
+if "_%3_" == "__" (
+  set "trust="
+) else (
+  if "_%3_" == "_yes_" (
+    set "trust=--trust-yes"
+  ) else (
+    if "_%3_" == "_no_" (
+      set "trust=--trust-no"
+    ) else (
+      set "trust=--trust %3"
+    )
+  )
 )
 
 if not exist %idir%\bin\ (
@@ -153,7 +173,7 @@ bpkg-stage create^
 bpkg-stage add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage fetch
+bpkg-stage fetch %trust%
 @if errorlevel 1 goto error
 
 bpkg-stage build --yes build2 bpkg

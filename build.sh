@@ -16,7 +16,7 @@ fi
 
 # Bpkg configuration directory.
 #
-cver="0.5-a1"
+cver="0.5-b.0"
 cdir="build2-toolchain-$cver"
 
 diag ()

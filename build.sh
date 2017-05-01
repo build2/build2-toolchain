@@ -203,6 +203,7 @@ run bpkg-stage --version
 run cd ..
 run mkdir "$cdir"
 run cd "$cdir"
+cdir="$(pwd)" # Save full path for later.
 
 run bpkg-stage create \
 cc \
@@ -238,5 +239,5 @@ run b uninstall
 
 diag
 diag "Toolchain installation: $idir/bin"
-diag "Upgrade configuration:  $owd/$cdir"
+diag "Upgrade configuration:  $cdir"
 diag

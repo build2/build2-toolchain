@@ -153,6 +153,10 @@ md %cdir%
 
 cd %cdir%
 
+@rem Save full path for later.
+@rem
+@set "cdir=%CD%"
+
 bpkg-stage create^
  cc^
  config.cxx=cl^
@@ -194,7 +198,7 @@ b uninstall
 
 echo.
 echo Toolchain installation: %idir%\bin
-echo Upgrade configuration:  %owd%\%cdir%
+echo Upgrade configuration:  %cdir%
 echo.
 
 goto end

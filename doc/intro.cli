@@ -217,7 +217,7 @@ warning: authenticity of the certificate for repository build2.org/hello/stable 
 certificate is for build2.org, \"Code Synthesis\" <admin@build2.org>
 certificate SHA256 fingerprint:
 FF:DF:7D:38:67:4E:C3:82:[...]:30:56:B9:77:B9:F2:01:94
-trust this certificate? [y/N]
+trust this certificate? [y/n]
 \
 
 The \c{bpkg} repositories are normally signed to prevent tampering with

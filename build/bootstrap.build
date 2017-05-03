@@ -6,11 +6,6 @@ project = build2-toolchain
 subprojects = libbutl build2 libsqlite3 libodb libodb-sqlite libbpkg bpkg
 
 using version
-
-# Since we are not a package, omit snapshot sn.
-#
-dist.package = $project-$version.project_id
-
 using config
 using dist
 using test # Note: needed for dist to work in subprojects with tests.

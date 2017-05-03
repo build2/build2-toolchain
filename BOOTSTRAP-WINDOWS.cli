@@ -20,8 +20,8 @@ The \c{build2} toolchain on Windows requires a set of extra utilities
 Normally, the \c{build2} toolchain itself is installed into the same directory
 as the utilities in order to produce the  combined installation.
 
-To build on Windows you will need either MSVC 14 Update 2 or later or MinGW
-GCC 4.8 or later. Note also that MinGW GCC must be configured with the
+To build on Windows you will need either MSVC 14 Update 3 or later or MinGW
+GCC 4.9 or later. Note also that MinGW GCC must be configured with the
 \c{posix} threading model (this is currently the only configuration that
 implements C++11 threads; run \c{g++ -v} to verify).
 
@@ -29,6 +29,10 @@ If you don't already have a suitable C++ compiler, then you can use the
 \c{build2-mingw} package which provides a minimal MinGW-W64 GCC distribution
 (see the \c{README} file inside for details). If used, then it should be
 unpacked into the same directory as \c{build2-baseutils}.
+
+Note also that it is strongly recommended that you use 64-bit (x86_64)
+versions of the \c{baseutils} and \c{mingw} packages if running 64-bit
+Windows.
 
 To bootstrap on Windows with either MSVC or MinGW start with the following
 common steps:
@@ -109,7 +113,8 @@ If required, unpack the \c{build2-mingw-X.Y.Z-<arch>-windows.tar.xz} archive
 into \c{C:\\build2\\}:
 
 \
-> tar xf build2-mingw-X.Y.Z-<arch>-windows.tar.xz ^
+> xz -d build2-mingw-X.Y.Z-<arch>-windows.tar.xz
+> tar -xf build2-mingw-X.Y.Z-<arch>-windows.tar ^
   --one-top-level=C:\build2 --strip-components=1
 \
 
@@ -128,7 +133,8 @@ Unpack the \c{build2-toolchain-X.Y.Z.tar.xz} archive and change to its
 directory:
 
 \
-> tar xf build2-toolchain-X.Y.Z.tar.xz
+> xz -d build2-toolchain-X.Y.Z.tar.xz
+> tar -xf build2-toolchain-X.Y.Z.tar
 > cd build2-toolchain-X.Y.Z
 \
 

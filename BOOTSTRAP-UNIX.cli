@@ -53,7 +53,7 @@ $ sha256 -r build2-toolchain-X.Y.Z.tar.xz
 Unpack the archive and change to its directory:
 
 \
-> tar xf build2-toolchain-X.Y.Z.tar.xz
+> tar -xf build2-toolchain-X.Y.Z.tar.xz
 > cd build2-toolchain-X.Y.Z
 \
 

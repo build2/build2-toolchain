@@ -46,18 +46,23 @@ $ bpkg build hello
   build libhello/1.0.0 (required by hello)
   build hello/1.0.0
 continue? [Y/n] y
+
 libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
 fetched libhello/1.0.0
 unpacked libhello/1.0.0
+
 hello-1.0.0.tar.gz           100% of 1057  B 6882 kBps 00m01s
 fetched hello/1.0.0
 unpacked hello/1.0.0
+
 configured libhello/1.0.0
 configured hello/1.0.0
+
 c++ hello-1.0.0/cxx{hello}
 c++ libhello-1.0.0/hello/cxx{hello}
 ld libhello-1.0.0/hello/libs{hello}
 ld hello-1.0.0/exe{hello}
+
 updated hello/1.0.0
 \
 "
@@ -66,23 +71,20 @@ updated hello/1.0.0
 \h#warning|Warning|
 
 The \c{build2} toolchain \c{0.X.Y} series are alpha releases. Interfaces
-\i{will} change in backwards-incompatible ways, guaranteed. Currently, it is
-more of a technology preview rather than anything final. But if you want to
-start playing with it, welcome and join the \l{https://lists.build2.org
+\i{will} most likely change in backwards-incompatible ways. But if you want
+to start playing with it, welcome and join the \l{https://lists.build2.org
 mailing list}!
 
 Our approach to developing \c{build2} is to first get the hard parts right
-before focusing on completeness. So while we might still only be building
-serially, we do handle auto-generated source code (and, in particular,
-headers) properly. In other words, we go depth rather than breadth-first. As a
-result, there are plenty of limitations and missing pieces, especially in the
-build system. The most notable ones are:
+before focusing on completeness. So while we might still have no support for
+custom build rules, we do handle auto-generated source code (and, in
+particular, headers) properly. In other words, we go depth rather than
+breadth-first. As a result, there are some limitations and missing pieces,
+especially in the build system. The most notable ones are:
 
 \ul|
 
-\li|Very limited documentation.|
-
-\li|No support for parallel builds.|
+\li|Limited documentation.|
 
 \li|No support for custom build system rules/modules.|
 
@@ -683,7 +685,7 @@ $ tree -F /opt/hello/
 ├── bin/
 │   └── hello*
 ├── include/
-│   └── hello/
+│   └── libhello/
 │       ├── export
 │       └── hello
 ├── lib/
@@ -790,7 +792,7 @@ $ cd hello2
 
 $ cat >hello.cpp
 
-#include <hello/hello>
+#include <libhello/hello>
 
 int main ()
 {
@@ -847,10 +849,9 @@ Let's try to build it and see what happens \- maybe it will magically work
 \
 $ b config.cxx=g++-5
 error: unable to import target libhello%lib{hello}
-  info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
-info: while applying rule cxx.compile to update obje{hello}
-info: while applying rule cxx.link to update exe{hello}
-info: while applying rule alias to update dir{./}
+  info: use config.import.libhello command line variable to specifying its project out_root
+  info: while applying rule cxx.link to update exe{hello}
+  info: while applying rule alias to update dir{./}
 \
 
 No magic, unfortunately (or fortunately). But we got a hint: looks like we
@@ -893,10 +894,9 @@ $ touch hello.cpp
 
 $ b
 error: unable to import target libhello%lib{hello}
-  info: consider explicitly specifying its project out_root via the config.import.libhello command line variable
-info: while applying rule cxx.compile to update obje{hello}
-info: while applying rule cxx.link to update exe{hello}
-info: while applying rule alias to update dir{./}
+  info: use config.import.libhello command line variable to specifying its project out_root
+  info: while applying rule cxx.link to update exe{hello}
+  info: while applying rule alias to update dir{./}
 \
 
 Looks like we have to keep repeating those \c{config.*} values and who wants

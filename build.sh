@@ -10,8 +10,8 @@ usage="Usage: $0 [-h|--help] [<options>] <cxx>"
 #
 if test -z "$BUILD2_REPO"; then
 #  BUILD2_REPO="https://stage.build2.org/1"
-   BUILD2_REPO="https://pkg.cppget.org/1/queue"
-#  BUILD2_REPO="https://pkg.cppget.org/1/alpha"
+#  BUILD2_REPO="https://pkg.cppget.org/1/queue"
+   BUILD2_REPO="https://pkg.cppget.org/1/alpha"
 fi
 
 # Bpkg configuration directory.

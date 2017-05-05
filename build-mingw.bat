@@ -36,14 +36,14 @@ if "_%1_" == "_/?_" goto usage
 rem Package repository URL (or path).
 rem
 if "_%BUILD2_REPO%_" == "__" (
-rem set "BUILD2_REPO=https://stage.build2.org/1"
+    set "BUILD2_REPO=https://stage.build2.org/1"
 rem set "BUILD2_REPO=https://pkg.cppget.org/1/queue"
-    set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
+rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
 )
 
 rem Bpkg configuration directory.
 rem
-set "cver=0.5"
+set "cver=0.6-a.0"
 set "cdir=build2-toolchain-%cver%"
 
 rem Compiler.

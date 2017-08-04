@@ -30,11 +30,11 @@ If you don't already have a suitable C++ compiler, then you can use the
 (see the \c{README} file inside for details). If used, then it should be
 unpacked into the same directory as \c{build2-baseutils}.
 
-Note also that you \i{must} match the width (32/64-bit) of the toolchain build
-to the \c{baseutils} and \c{mingw} packages. They must all be 32-bit or all
-64-bit. If you are running 64-bit Windows, it is strongly recommended that you
-build the 64-bit (x86_64) version of the toolchain as well as use the 64-bit
-versions of the \c{baseutils} and \c{mingw} packages.
+Note also that you \b{absolutely must} match the width (32/64-bit) of the
+toolchain build to the \c{baseutils} and \c{mingw} packages. They must all be
+32-bit or all 64-bit. If you are running 64-bit Windows, it is strongly
+recommended that you build the 64-bit (x86_64) version of the toolchain as
+well as use the 64-bit versions of the \c{baseutils} and \c{mingw} packages.
 
 To bootstrap on Windows with either MSVC or MinGW start with the following
 common steps:

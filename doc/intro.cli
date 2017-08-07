@@ -113,7 +113,7 @@ chicken and egg problem again). And this step wouldn't serve our goal of
 quickly learning what \c{build2} is about. So, instead, we will start with a
 customary \i{\"Hello, World!\"} example which you won't yet be able to try
 yourself (but don't worry, complete terminal output will be shown). If at the
-end you find \c{build2} appealing, you can jump right to
+end you find \c{build2} appealing, you can jump straight to
 \l{build2-toolchain-install.xhtml The \c{build2} Toolchain Installation and
 Upgrade} (and, yes, there you get to run that coveted \c{bpkg build bpkg}).
 Once the \c{build2} installation is complete, you can come back to the
@@ -125,6 +125,11 @@ That is, we assume that someone was kind enough to create and package the
 obtain and build them as well as keep up with their updates. At the end we
 will also see how to write our own, \c{hello2}, program that depends on
 \c{libhello}.  And so, without further ado, let's begin.
+
+Actually, one more thing: if you have a recent enough compiler and would like
+to try the new C++ Modules support, then you can instead use the modularized
+variants of these packages: simply replace \c{hello} with \c{mhello} and
+\c{libhello} with \c{libmhello} in the commands below.
 
 The first step in using \c{bpkg} is to create a \i{configuration}. A
 configuration is a directory where packages that require similar compile

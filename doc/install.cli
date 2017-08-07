@@ -27,7 +27,7 @@ source "../BOOTSTRAP-WINDOWS.cli";
 source "../BOOTSTRAP-MSVC.cli";
 
 "
-\h2#BOOTSTRAP-MINGW|Bootstrapping with MINGW|
+\h2#BOOTSTRAP-MINGW|Bootstrapping with MinGW|
 "
 source "../BOOTSTRAP-MINGW.cli";
 

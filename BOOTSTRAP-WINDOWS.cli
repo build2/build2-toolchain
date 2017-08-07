@@ -146,5 +146,5 @@ If building with MSVC, continue with \l{#BOOTSTRAP-MSVC Bootstrapping with
 MSVC}.
 
 If building with MinGW, continue with \l{#BOOTSTRAP-MINGW Bootstrapping with
-MINGW}.
+MinGW}.
 "

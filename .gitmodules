@@ -1,15 +1,19 @@
 [submodule "libbutl"]
 	path = libbutl
 	url = ../libbutl.git
+	branch = 0.6
 [submodule "build2"]
 	path = build2
 	url = ../build2.git
+	branch = 0.6
 [submodule "libbpkg"]
 	path = libbpkg
 	url = ../libbpkg.git
+	branch = 0.6
 [submodule "bpkg"]
 	path = bpkg
 	url = ../bpkg.git
+	branch = 0.6
 [submodule "doc/style"]
 	path = doc/style
 	url = ../etc/style.git

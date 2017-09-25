@@ -28,3 +28,4 @@
 [submodule "libpkgconf"]
 	path = libpkgconf
 	url = http://git.build2.org/packaging/pkgconf/libpkgconf.git
+	update = none

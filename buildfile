@@ -5,7 +5,8 @@
 # Note that the project directories order is important (prerequisites goes
 # first).
 #
-d = libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ doc/
+d = libpkgconf/ libbutl/ build2/ \
+libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ doc/
 
 i =               \
 INSTALL           \

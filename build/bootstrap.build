@@ -3,7 +3,8 @@
 # license   : MIT; see accompanying LICENSE file
 
 project = build2-toolchain
-subprojects = libbutl build2 libsqlite3 libodb libodb-sqlite libbpkg bpkg
+subprojects = libpkgconf libbutl build2 \
+libsqlite3 libodb libodb-sqlite libbpkg bpkg
 
 using version
 using config

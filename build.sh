@@ -43,6 +43,7 @@ idir=
 sudo=
 sudo_set=
 trust=
+make=
 
 while test $# -ne 0; do
   case $1 in
@@ -54,6 +55,7 @@ while test $# -ne 0; do
       diag "  --sudo <prog>        Optional sudo program to use."
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Certificate fingerprint to trust."
+      diag "  --make <jobs>        Bootstrap using GNU make instead of script."
       diag
       diag "By default the script will install into /usr/local using sudo(1)."
       diag "To use sudo for a custom installation directory you need to specify"
@@ -109,6 +111,16 @@ while test $# -ne 0; do
       trust="$1"
       shift
       ;;
+    --make)
+      shift
+      if test $# -eq 0; then
+	diag "error: number of jobs expected after --make"
+	diag "$usage"
+	exit 1
+      fi
+      make="$1"
+      shift
+      ;;
     *)
       cxx="$1"
       break
@@ -134,12 +146,12 @@ if test -z "$idir"; then
 fi
 
 if test -f build/config.build; then
-  diag "current directory already configured, start with clean source"
+  diag "error: current directory already configured, start with clean source"
   exit 1
 fi
 
 if test -d "../$cdir"; then
-  diag "../$cdir/ bpkg configuration directory already exists"
+  diag "error: ../$cdir/ bpkg configuration directory already exists"
   exit 1
 fi
 
@@ -169,7 +181,11 @@ esac
 # Bootstrap, stage 1.
 #
 run cd build2
-run ./bootstrap.sh "$cxx"
+if test -z "$make"; then
+  run ./bootstrap.sh "$cxx"
+else
+  run make -f ./bootstrap.gmake -j "$make" "CXX=$cxx"
+fi
 run build2/b-boot --version
 
 # Bootstrap, stage 2.

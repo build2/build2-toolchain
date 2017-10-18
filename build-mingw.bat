@@ -85,12 +85,12 @@ if not exist %idir%\bin\ (
 )
 
 if exist build\config.build (
-  echo current directory already configured, start with clean source
+  echo error: current directory already configured, start with clean source
   goto error
 )
 
 if exist ..\%cdir%\ (
-  echo ..\%cdir%\ bpkg configuration directory already exists
+  echo error: ..\%cdir%\ bpkg configuration directory already exists
   goto error
 )
 

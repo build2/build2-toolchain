@@ -56,6 +56,7 @@ while test $# -ne 0; do
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Certificate fingerprint to trust."
       diag "  --make <jobs>        Bootstrap using GNU make instead of script."
+      diag "  --timeout <sec>      Network operations timeout in seconds."
       diag
       diag "By default the script will install into /usr/local using sudo(1)."
       diag "To use sudo for a custom installation directory you need to specify"
@@ -121,6 +122,16 @@ while test $# -ne 0; do
       make="$1"
       shift
       ;;
+    --timeout)
+      shift
+      if test $# -eq 0; then
+	diag "error: value in seconds expected after --timeout"
+	diag "$usage"
+	exit 1
+      fi
+      timeout="$1"
+      shift
+      ;;
     *)
       cxx="$1"
       break
@@ -178,6 +189,26 @@ case "$sys" in
     ;;
 esac
 
+# We don't have arrays in POSIX shell but we should be ok as well as none of
+# the option values contain spaces. Note also that the expansion must be
+# unquoted.
+#
+bpkg_fetch_ops=
+bpkg_build_ops=
+
+if test -n "$timeout"; then
+  bpkg_fetch_ops="--fetch-timeout $timeout"
+  bpkg_build_ops="--fetch-timeout $timeout"
+fi
+
+if test "$trust" = "yes"; then
+  bpkg_fetch_ops="$bpkg_fetch_ops --trust-yes"
+elif test "$trust" = "no"; then
+  bpkg_fetch_ops="$bpkg_fetch_ops --trust-no"
+elif test -n "$trust"; then
+  bpkg_fetch_ops="$bpkg_fetch_ops --trust $trust"
+fi
+
 # Bootstrap, stage 1.
 #
 run cd build2
@@ -230,16 +261,8 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo"
 
 run bpkg-stage add "$BUILD2_REPO"
-if test -z "$trust"; then
-  run bpkg-stage fetch
-elif test "$trust" = "yes"; then
-  run bpkg-stage --trust-yes fetch
-elif test "$trust" = "no"; then
-  run bpkg-stage --trust-no fetch
-else
-  run bpkg-stage --trust "$trust" fetch
-fi
-run bpkg-stage build --yes build2 bpkg
+run bpkg-stage $bpkg_fetch_ops fetch
+run bpkg-stage $bpkg_build_ops build --yes build2 bpkg
 run bpkg-stage install build2 bpkg
 
 run which b

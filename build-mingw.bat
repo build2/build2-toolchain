@@ -9,7 +9,9 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] ^<cxx^> [^<install-dir^>] [^<trust^>]
+echo Usage: %0 [/?] [^<options^>] ^<cxx^> [^<install-dir^>] [^<trust^>]
+echo Options:
+echo   --timeout ^<sec^>  Network operations timeout in seconds.
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
@@ -31,8 +33,6 @@ goto end
 
 set "owd=%CD%"
 
-if "_%1_" == "_/?_" goto usage
-
 rem Package repository URL (or path).
 rem
 if "_%BUILD2_REPO%_" == "__" (
@@ -45,6 +45,33 @@ rem Bpkg configuration directory.
 rem
 set "cver=0.7-a.0"
 set "cdir=build2-toolchain-%cver%"
+
+rem Parse options.
+rem
+set "timeout="
+
+:options
+if "_%~1_" == "_/?_"     goto usage
+if "_%~1_" == "_-h_"     goto usage
+if "_%~1_" == "_--help_" goto usage
+
+if "_%~1_" == "_--timeout_" (
+  if "_%~2_" == "__" (
+    echo error: value in seconds expected after --timeout
+    goto error
+  )
+  set "timeout=%~2"
+  shift
+  shift
+  goto options
+)
+if "_%~1_" == "_--_" shift
+
+rem Validate options and arguments.
+rem
+if not "_%timeout%_" == "__" (
+  set "timeout=--fetch-timeout %timeout%"
+)
 
 rem Compiler.
 rem
@@ -177,10 +204,10 @@ bpkg-stage create^
 bpkg-stage add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage fetch %trust%
+bpkg-stage fetch %timeout% %trust%
 @if errorlevel 1 goto error
 
-bpkg-stage build --yes build2 bpkg
+bpkg-stage build %timeout% --yes build2 bpkg
 @if errorlevel 1 goto error
 
 bpkg-stage install build2 bpkg

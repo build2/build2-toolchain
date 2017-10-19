@@ -55,8 +55,8 @@ while test $# -ne 0; do
       diag "  --sudo <prog>        Optional sudo program to use."
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Certificate fingerprint to trust."
-      diag "  --make <jobs>        Bootstrap using GNU make instead of script."
       diag "  --timeout <sec>      Network operations timeout in seconds."
+      diag "  --make <arg>         Bootstrap using GNU make instead of script."
       diag
       diag "By default the script will install into /usr/local using sudo(1)."
       diag "To use sudo for a custom installation directory you need to specify"
@@ -66,6 +66,12 @@ while test $# -ne 0; do
       diag
       diag "The --trust option recognizes two special values: 'yes' (trust"
       diag "everything) and 'no' (trust nothing)."
+      diag
+      diag "The --make option can be used to bootstrap using GNU make. The"
+      diag "first --make value should specify the make executable optionally"
+      diag "followed by additional make arguments, for example:"
+      diag
+      diag "$0 --make gmake --make -j8 g++"
       diag
       diag "See the BOOTSTRAP-UNIX file for details."
       diag
@@ -115,11 +121,11 @@ while test $# -ne 0; do
     --make)
       shift
       if test $# -eq 0; then
-	diag "error: number of jobs expected after --make"
+	diag "error: argument expected after --make"
 	diag "$usage"
 	exit 1
       fi
-      make="$1"
+      make="$make $1"
       shift
       ;;
     --timeout)
@@ -215,7 +221,7 @@ run cd build2
 if test -z "$make"; then
   run ./bootstrap.sh "$cxx"
 else
-  run make -f ./bootstrap.gmake -j "$make" "CXX=$cxx"
+  run $make -f ./bootstrap.gmake "CXX=$cxx"
 fi
 run build2/b-boot --version
 

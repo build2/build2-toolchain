@@ -12,6 +12,7 @@ echo.
 echo Usage: %0 [/?] [^<options^>] ^<cxx^> [^<install-dir^>] [^<trust^>]
 echo Options:
 echo   --timeout ^<sec^>  Network operations timeout in seconds.
+echo   --make ^<arg^>     Bootstrap using GNU make instead of batch file.
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
@@ -21,9 +22,11 @@ echo The ^<trust^> argument can be used to specify the repository certificate
 echo fingerprint to trust. Two special values are also recognized: 'yes'
 echo (trust everything) and 'no' (trust nothing).
 echo.
-echo Example usage:
+echo The --make option can be used to bootstrap using GNU make. The first
+echo --make value should specify the make executable optionally followed by
+echo additional make arguments, for example:
 echo.
-echo %0 C:\mingw\bin\g++ D:\build2
+echo %0 --make mingw32-make --make -j8 g++
 echo.
 echo See the BOOTSTRAP-MINGW file for details.
 echo.
@@ -49,6 +52,7 @@ set "cdir=build2-toolchain-%cver%"
 rem Parse options.
 rem
 set "timeout="
+set "make="
 
 :options
 if "_%~1_" == "_/?_"     goto usage
@@ -65,6 +69,18 @@ if "_%~1_" == "_--timeout_" (
   shift
   goto options
 )
+
+if "_%~1_" == "_--make_" (
+  if "_%~2_" == "__" (
+    echo error: argument expected after --make
+    goto error
+  )
+  set "make=%make% %~2"
+  shift
+  shift
+  goto options
+)
+
 if "_%~1_" == "_--_" shift
 
 rem Validate options and arguments.
@@ -136,11 +152,25 @@ rem
 @rem
 cd build2
 
+@if "_%make%_" == "__" (
+  goto batchfile
+) else (
+  goto makefile
+)
+
+:batchfile
 @rem Execute in a separate cmd.exe to preserve the echo mode.
 @rem
 cmd /C bootstrap-mingw.bat %cxx% -static
 @if errorlevel 1 goto error
+@goto endfile
 
+:makefile
+%make% -f bootstrap.gmake CXX=%cxx% LDFLAGS=-static
+@if errorlevel 1 goto error
+@goto endfile
+
+:endfile
 build2\b-boot --version
 @if errorlevel 1 goto error
 

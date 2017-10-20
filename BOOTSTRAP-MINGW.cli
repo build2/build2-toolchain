@@ -19,10 +19,8 @@ libgcc_s_*.dll
 To build with MinGW you can either perform the following steps manually or, if
 after reviewing the steps, you are happy with using the defaults, run the
 \c{build-mingw.bat} batch file. It performs (and echoes) the same set of steps
-as outlined below but only allows you to customize the compiler and
-installation directory (run \c{build-mingw.bat /?} for usage). You can also
-specify an alternative package repository with the \c{BUILD2_REPO} environment
-variable.
+as outlined below but only allows you to customize the compiler, installation
+directory, and a few other things (run \c{build-mingw.bat /?} for usage).
 
 For example, if your MinGW distribution is in \c{C:\\mingw\\}, then you could
 run it (from the command prompt that we have started earlier) like this:
@@ -38,11 +36,19 @@ use just \c{g++} for the compiler:
 > .\build-mingw.bat g++
 \
 
+If you would like to speed the process up by compiling in parallel, then you
+can instruct \c{build-mingw.bat} to bootstrap using GNU make (comes in
+the \c{build2-mingw} package), for example:
+
+\
+> .\build-mingw.bat --make mingw32-make --make -j8 g++
+\
+
 Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
 script will stop and prompt you to verify the authenticity of the repository
-certificate. To run the script unattended you can specify the repository
-fingerprint as a second argument, after the installation directory (see
-\c{build-mingw.bat /?} for details).
+certificate. To run the script unattended you can specify the certificate
+fingerprint with the \c{--trust} option (see \c{build-mingw.bat /?} for
+details).
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
@@ -73,6 +79,16 @@ compile options; run \c{bootstrap-mingw.bat /?} and see the
 \
 > cd build2
 > .\bootstrap-mingw.bat g++ -static
+
+> build2\b-boot --version
+\
+
+Alternatively, we can use the \c{bootstrap.gmake} GNU makefile to bootstrap
+in parallel:
+
+\
+> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=g++ LDFLAGS=-static
 
 > build2\b-boot --version
 \

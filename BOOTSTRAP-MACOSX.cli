@@ -26,21 +26,5 @@ To install Command Line Tools, run:
 $ xcode-select --install
 \
 
-Also, if you plan to install your own or use system-installed libraries, it
-is recommended to install the \c{pkg-config} utility available from
-\l{https://pkg-config.freedesktop.org pkg-config.freedesktop.org}. For
-example, to download, build, and install version \c{0.29.2} (the latest
-available at the time of writing), run:
-
-\
-$ curl -O https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-$ tar xfz pkg-config-0.29.2.tar.gz
-$ cd pkg-config-0.29.2
-$ ./configure --prefix=/usr/local CC=clang --with-internal-glib
-$ make
-$ sudo make install
-$ pkg-config --version
-\
-
 Once this is done continue with \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
 "

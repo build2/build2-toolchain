@@ -63,9 +63,7 @@ Next you can either perform the rest of the steps manually or, if after
 reviewing the steps, you are happy with using the defaults, run the
 \c{build.sh} shell script. It performs (and echoes) the same set of steps as
 outlined below but only allows you to customize the compiler, installation
-directory, and a few other things (run \c{build.sh -h} for usage). You can
-also specify an alternative package repository with the \c{BUILD2_REPO}
-environment variable.
+directory, and a few other things (run \c{build.sh -h} for usage).
 
 For example, this command will use \c{g++-5} and install the toolchain into
 \c{/usr/local/}.
@@ -78,6 +76,14 @@ While this will use Clang and install into \c{/opt/build2}:
 
 \
 $ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
+\
+
+If you would like to speed the process up by compiling in parallel, then you
+can instruct \c{build.sh} to bootstrap using GNU make (can be called \c{gmake}
+instead of \c{make} on some platforms), for example:
+
+\
+$ ./build.sh --make make --make -j8 g++
 \
 
 Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
@@ -114,6 +120,16 @@ file for details.
 \
 $ cd build2
 $ ./bootstrap.sh g++
+
+$ build2/b-boot --version
+\
+
+Alternatively, we can use the \c{bootstrap.gmake} GNU makefile to bootstrap
+in parallel:
+
+\
+$ cd build2
+$ make -f bootstrap.gmake -j 8 CXX=g++
 
 $ build2/b-boot --version
 \

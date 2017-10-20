@@ -16,9 +16,8 @@ you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
 To build with MSVC you can either perform the following steps manually or, if
 after reviewing the steps you are happy with using the defaults, run the
 \c{build-msvc.bat} batch file. It performs (and echoes) the same set of steps
-as outlined below but only allows you to customize the installation
-directory (run \c{build-msvc.bat /?} for usage). You can also specify an
-alternative package repository with the \c{BUILD2_REPO} environment variable.
+as outlined below but only allows you to customize the installation directory
+and a few other things (run \c{build-msvc.bat /?} for usage).
 
 For example, you could run this batch file (from the above-mentioned command
 prompt) like this:
@@ -29,9 +28,9 @@ prompt) like this:
 
 Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
 script will stop and prompt you to verify the authenticity of the repository
-certificate. To run the script unattended you can specify the repository
-fingerprint as a second argument, after the installation directory (see
-\c{build-msvc.bat /?} for details).
+certificate. To run the script unattended you can specify the certificate
+fingerprint with the \c{--trust} option (see \c{build-msvc.bat /?} for
+details).
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in

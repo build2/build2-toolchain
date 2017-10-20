@@ -40,8 +40,8 @@ At the high level, the bootstrap process involves the following 5 steps.
 \li|\b{1. Bootstrap, Phase 1}\n
 
 First, a minimal build system executable is built using provided shell
-scripts/batch files. The result is only guaranteed to be able to rebuild the
-build system itself.|
+scripts/batch files or a GNU makefile. The result is only guaranteed to be
+able to rebuild the build system itself.|
 
 \li|\n\b{2. Bootstrap, Phase 2}\n
 

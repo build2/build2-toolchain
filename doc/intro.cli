@@ -445,7 +445,7 @@ info: dir{hello-1.0.0/} is up to date
 updated hello/1.0.0
 \
 
-Why did nothing happenned? Because \c{bpkg} will only upgrade (or downgrade)
+Why did nothing happen? Because \c{bpkg} will only upgrade (or downgrade)
 to a new version if we explicitly ask it to. As things stand, all dependencies
 for \c{hello} are satisfied and \c{bpkg} is happy to twiddle its thumbs. Let's
 tell \c{bpkg} to build us \c{libhello} instead:

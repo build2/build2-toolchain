@@ -9,18 +9,20 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] ^<cxx^> [^<install-dir^>] [^<trust^>]
+echo Usage: %0 [/?] [^<options^>] ^<cxx^>
 echo Options:
-echo   --timeout ^<sec^>  Network operations timeout in seconds.
-echo   --make ^<arg^>     Bootstrap using GNU make instead of batch file.
+echo   --install-dir ^<dir^>  Alternative installation directory.
+echo   --repo ^<loc^>         Alternative package repository location.
+echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
+echo   --timeout ^<sec^>      Network operations timeout in seconds.
+echo   --make ^<arg^>         Bootstrap using GNU make instead of batch file.
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
 echo directory (C:\build2\bin\ by default).
 echo.
-echo The ^<trust^> argument can be used to specify the repository certificate
-echo fingerprint to trust. Two special values are also recognized: 'yes'
-echo (trust everything) and 'no' (trust nothing).
+echo The --trust option recognizes two special values: 'yes' (trust everything)
+echo and 'no' (trust nothing).
 echo.
 echo The --make option can be used to bootstrap using GNU make. The first
 echo --make value should specify the make executable optionally followed by
@@ -51,6 +53,8 @@ set "cdir=build2-toolchain-%cver%"
 
 rem Parse options.
 rem
+set "idir=C:\build2"
+set "trust="
 set "timeout="
 set "make="
 
@@ -58,6 +62,39 @@ set "make="
 if "_%~1_" == "_/?_"     goto usage
 if "_%~1_" == "_-h_"     goto usage
 if "_%~1_" == "_--help_" goto usage
+
+if "_%~1_" == "_--install-dir_" (
+  if "_%~2_" == "__" (
+    echo error: installation directory expected after --install-dir
+    goto error
+  )
+  set "idir=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--trust_" (
+  if "_%~2_" == "__" (
+    echo error: certificate fingerprint expected after --trust
+    goto error
+  )
+  set "trust=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--repo_" (
+  if "_%~2_" == "__" (
+    echo error: repository location expected after --repo
+    goto error
+  )
+  set "BUILD2_REPO=%~2"
+  shift
+  shift
+  goto options
+)
 
 if "_%~1_" == "_--timeout_" (
   if "_%~2_" == "__" (
@@ -85,9 +122,6 @@ if "_%~1_" == "_--_" shift
 
 rem Validate options and arguments.
 rem
-if not "_%timeout%_" == "__" (
-  set "timeout=--fetch-timeout %timeout%"
-)
 
 rem Compiler.
 rem
@@ -98,28 +132,33 @@ if "_%1_" == "__" (
   set "cxx=%1"
 )
 
-rem Installation directory.
+rem @@ Temporarily retained for backwards compatibility.
 rem
-if "_%2_" == "__" (
-  set "idir=C:\build2"
-) else (
+if not "_%2_" == "__" (
   set "idir=%2"
+)
+if not "_%3_" == "__" (
+  set "trust=%3"
 )
 
 rem Certificate to trust.
 rem
-if "_%3_" == "__" (
-  set "trust="
-) else (
-  if "_%3_" == "_yes_" (
+if not "_%trust%_" == "__" (
+  if "_%trust%_" == "_yes_" (
     set "trust=--trust-yes"
   ) else (
-    if "_%3_" == "_no_" (
+    if "_%trust%_" == "_no_" (
       set "trust=--trust-no"
     ) else (
-      set "trust=--trust %3"
+      set "trust=--trust %trust%"
     )
   )
+)
+
+rem Network timeout.
+rem
+if not "_%timeout%_" == "__" (
+  set "timeout=--fetch-timeout %timeout%"
 )
 
 if not exist %idir%\bin\ (

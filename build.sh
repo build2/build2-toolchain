@@ -54,7 +54,7 @@ while test $# -ne 0; do
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use."
       diag "  --repo <loc>         Alternative package repository location."
-      diag "  --trust <fp>         Certificate fingerprint to trust."
+      diag "  --trust <fp>         Repository certificate fingerprint to trust."
       diag "  --timeout <sec>      Network operations timeout in seconds."
       diag "  --make <arg>         Bootstrap using GNU make instead of script."
       diag

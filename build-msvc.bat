@@ -9,21 +9,19 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] [^<install-dir^>] [^<trust^>]
+echo Usage: %0 [/?] [^<options^>] [^<cxx^>]
 echo Options:
-echo   --timeout ^<sec^>  Network operations timeout in seconds.
+echo   --install-dir ^<dir^>  Alternative installation directory.
+echo   --repo ^<loc^>         Alternative package repository location.
+echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
+echo   --timeout ^<sec^>      Network operations timeout in seconds.
 echo.
-echo By default the batch file will install into C:\build2. It also expects
-echo to find the base utilities in the bin\ subdirectory of the installation
-echo directory (C:\build2\bin\ by default).
+echo By default the batch file will use cl.exe as the C++ compiler and install
+echo into C:\build2. It also expects to find the base utilities in the bin\
+echo subdirectory of the installation directory (C:\build2\bin\ by default).
 echo.
-echo The ^<trust^> argument can be used to specify the repository certificate
-echo fingerprint to trust. Two special values are also recognized: 'yes'
-echo (trust everything) and 'no' (trust nothing).
-echo.
-echo Example usage:
-echo.
-echo %0 D:\build2
+echo The --trust option recognizes two special values: 'yes' (trust everything)
+echo and 'no' (trust nothing).
 echo.
 echo See the BOOTSTRAP-MSVC file for details.
 echo.
@@ -48,12 +46,47 @@ set "cdir=build2-toolchain-%cver%"
 
 rem Parse options.
 rem
+set "idir=C:\build2"
+set "trust="
 set "timeout="
 
 :options
 if "_%~1_" == "_/?_"     goto usage
 if "_%~1_" == "_-h_"     goto usage
 if "_%~1_" == "_--help_" goto usage
+
+if "_%~1_" == "_--install-dir_" (
+  if "_%~2_" == "__" (
+    echo error: installation directory expected after --install-dir
+    goto error
+  )
+  set "idir=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--trust_" (
+  if "_%~2_" == "__" (
+    echo error: certificate fingerprint expected after --trust
+    goto error
+  )
+  set "trust=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--repo_" (
+  if "_%~2_" == "__" (
+    echo error: repository location expected after --repo
+    goto error
+  )
+  set "BUILD2_REPO=%~2"
+  shift
+  shift
+  goto options
+)
 
 if "_%~1_" == "_--timeout_" (
   if "_%~2_" == "__" (
@@ -65,36 +98,46 @@ if "_%~1_" == "_--timeout_" (
   shift
   goto options
 )
+
 if "_%~1_" == "_--_" shift
 
 rem Validate options and arguments.
 rem
-if not "_%timeout%_" == "__" (
-  set "timeout=--fetch-timeout %timeout%"
-)
 
-rem Installation directory.
+rem @@ Temporarily retained for backwards compatibility.
 rem
-if "_%1_" == "__" (
-  set "idir=C:\build2"
-) else (
+if not "_%1_" == "__" (
   set "idir=%1"
 )
+if not "_%2_" == "__" (
+  set "trust=%2"
+)
+rem Compiler.
+rem
+rem if "_%1_" == "__" (
+  set "cxx=cl"
+rem ) else (
+rem  set "cxx=%1"
+rem )
 
 rem Certificate to trust.
 rem
-if "_%2_" == "__" (
-  set "trust="
-) else (
-  if "_%2_" == "_yes_" (
+if not "_%trust%_" == "__" (
+  if "_%trust%_" == "_yes_" (
     set "trust=--trust-yes"
   ) else (
-    if "_%2_" == "_no_" (
+    if "_%trust%_" == "_no_" (
       set "trust=--trust-no"
     ) else (
-      set "trust=--trust %2"
+      set "trust=--trust %trust%"
     )
   )
+)
+
+rem Network timeout.
+rem
+if not "_%timeout%_" == "__" (
+  set "timeout=--fetch-timeout %timeout%"
 )
 
 if not exist %idir%\bin\ (
@@ -121,7 +164,7 @@ rem
 
 @rem Verify the compiler works.
 @rem
-cl
+%cxx%
 @if errorlevel 1 goto error
 
 @rem Bootstrap.
@@ -130,13 +173,13 @@ cd build2
 
 @rem Execute in a separate cmd.exe to preserve the echo mode.
 @rem
-cmd /C bootstrap-msvc.bat cl
+cmd /C bootstrap-msvc.bat %cxx%
 @if errorlevel 1 goto error
 
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot config.cxx=cl config.bin.lib=static
+build2\b-boot config.cxx=%cxx% config.bin.lib=static
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -150,7 +193,7 @@ build2\b-boot --version
 cd ..
 
 build2\build2\b-boot configure^
- config.cxx=cl^
+ config.cxx=%cxx%^
  config.bin.suffix=-stage^
  config.install.root=%idir%^
  config.install.data_root=root\stage
@@ -186,7 +229,7 @@ cd %cdir%
 
 bpkg-stage create^
  cc^
- config.cxx=cl^
+ config.cxx=%cxx%^
  "config.cc.coptions=/O2 /Oi"^
  config.install.root=%idir%
 @if errorlevel 1 goto error

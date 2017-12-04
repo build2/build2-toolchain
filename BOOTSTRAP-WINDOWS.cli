@@ -15,7 +15,7 @@ are not in your \c{PATH} environment variable when building and using
 \c{build2} since they may provide conflicting DLLs.
 
 The \c{build2} toolchain on Windows requires a set of extra utilities
-(\c{install}, \c{diff}, \c{wget}, \c{tar}, etc). These are provided by the
+(\c{install}, \c{diff}, \c{curl}, \c{tar}, etc). These are provided by the
 \c{build2-baseutils} package (see the \c{README} file inside for details).
 Normally, the \c{build2} toolchain itself is installed into the same directory
 as the utilities in order to produce the  combined installation.

@@ -4,7 +4,7 @@
 # copyright : Copyright (c) 2014-2017 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-usage="Usage: $0 [-h|--help] [<options>] <cxx>"
+usage="Usage: $0 [-h|--help] [<options>] <c++-compiler>"
 
 # Package repository URL (or path).
 #

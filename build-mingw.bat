@@ -9,7 +9,7 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] ^<cxx^>
+echo Usage: %0 [/?] [^<options^>] ^<c++-compiler^>
 echo Options:
 echo   --install-dir ^<dir^>  Alternative installation directory.
 echo   --repo ^<loc^>         Alternative package repository location.

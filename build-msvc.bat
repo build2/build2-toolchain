@@ -15,6 +15,7 @@ echo   --install-dir ^<dir^>  Alternative installation directory.
 echo   --repo ^<loc^>         Alternative package repository location.
 echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
 echo   --timeout ^<sec^>      Network operations timeout in seconds.
+echo   --verbose ^<level^>    Diagnostics verbosity level between 0 and 6.
 echo.
 echo By default the batch file will use cl.exe as the C++ compiler and install
 echo into C:\build2. It also expects to find the base utilities in the bin\
@@ -49,6 +50,7 @@ rem
 set "idir=C:\build2"
 set "trust="
 set "timeout="
+set "verbose="
 
 :options
 if "_%~1_" == "_/?_"     goto usage
@@ -99,6 +101,17 @@ if "_%~1_" == "_--timeout_" (
   goto options
 )
 
+if "_%~1_" == "_--verbose_" (
+  if "_%~2_" == "__" (
+    echo error: diagnostics level between 0 and 6 expected after --verbose
+    goto error
+  )
+  set "verbose=%~2"
+  shift
+  shift
+  goto options
+)
+
 if "_%~1_" == "_--_" shift
 
 rem Validate options and arguments.
@@ -140,6 +153,12 @@ if not "_%timeout%_" == "__" (
   set "timeout=--fetch-timeout %timeout%"
 )
 
+rem Diagnostics verbosity.
+rem
+if not "_%verbose%_" == "__" (
+  set "verbose=--verbose %verbose%"
+)
+
 if not exist %idir%\bin\ (
   echo error: %idir%\bin\ does not exist
   goto error
@@ -151,7 +170,7 @@ if exist build\config.build (
 )
 
 if exist ..\%cdir%\ (
-  echo error: ..\%cdir%\ bpkg configuration directory already exists
+  echo error: ..\%cdir%\ bpkg configuration directory already exists, remove it
   goto error
 )
 
@@ -179,7 +198,7 @@ cmd /C bootstrap-msvc.bat %cxx%
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot config.cxx=%cxx% config.bin.lib=static
+build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -192,14 +211,14 @@ build2\b-boot --version
 @rem
 cd ..
 
-build2\build2\b-boot configure^
+build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
  config.bin.suffix=-stage^
  config.install.root=%idir%^
  config.install.data_root=root\stage
 @if errorlevel 1 goto error
 
-build2\build2\b-boot install
+build2\build2\b-boot %verbose% install
 @if errorlevel 1 goto error
 
 where b-stage
@@ -227,23 +246,23 @@ cd %cdir%
 @rem
 @set "cdir=%CD%"
 
-bpkg-stage create^
+bpkg-stage %verbose% create^
  cc^
  config.cxx=%cxx%^
  "config.cc.coptions=/O2 /Oi"^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 
-bpkg-stage add %BUILD2_REPO%
+bpkg-stage %verbose% add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage fetch %timeout% %trust%
+bpkg-stage %verbose% fetch %timeout% %trust%
 @if errorlevel 1 goto error
 
-bpkg-stage build %timeout% --yes build2 bpkg
+bpkg-stage %verbose% build %timeout% --yes build2 bpkg
 @if errorlevel 1 goto error
 
-bpkg-stage install build2 bpkg
+bpkg-stage %verbose% install build2 bpkg
 @if errorlevel 1 goto error
 
 where b
@@ -261,7 +280,7 @@ bpkg --version
 @rem Clean up stage.
 @rem
 cd %owd%
-b uninstall
+b %verbose% uninstall
 @if errorlevel 1 goto error
 
 @echo off

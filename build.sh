@@ -43,7 +43,9 @@ idir=
 sudo=
 sudo_set=
 trust=
+timeout=
 make=
+verbose=
 
 while test $# -ne 0; do
   case $1 in
@@ -57,6 +59,7 @@ while test $# -ne 0; do
       diag "  --trust <fp>         Repository certificate fingerprint to trust."
       diag "  --timeout <sec>      Network operations timeout in seconds."
       diag "  --make <arg>         Bootstrap using GNU make instead of script."
+      diag "  --verbose <level>    Diagnostics verbosity level between 0 and 6."
       diag
       diag "By default the script will install into /usr/local using sudo(1)."
       diag "To use sudo for a custom installation directory you need to specify"
@@ -118,6 +121,16 @@ while test $# -ne 0; do
       trust="$1"
       shift
       ;;
+    --timeout)
+      shift
+      if test $# -eq 0; then
+	diag "error: value in seconds expected after --timeout"
+	diag "$usage"
+	exit 1
+      fi
+      timeout="$1"
+      shift
+      ;;
     --make)
       shift
       if test $# -eq 0; then
@@ -128,14 +141,14 @@ while test $# -ne 0; do
       make="$make $1"
       shift
       ;;
-    --timeout)
+    --verbose)
       shift
       if test $# -eq 0; then
-	diag "error: value in seconds expected after --timeout"
+	diag "error: diagnostics level between 0 and 6 expected after --verbose"
 	diag "$usage"
 	exit 1
       fi
-      timeout="$1"
+      verbose="$1"
       shift
       ;;
     *)
@@ -168,7 +181,7 @@ if test -f build/config.build; then
 fi
 
 if test -d "../$cdir"; then
-  diag "error: ../$cdir/ bpkg configuration directory already exists"
+  diag "error: ../$cdir/ bpkg configuration directory already exists, remove it"
   exit 1
 fi
 
@@ -195,7 +208,7 @@ case "$sys" in
     ;;
 esac
 
-# We don't have arrays in POSIX shell but we should be ok as well as none of
+# We don't have arrays in POSIX shell but we should be ok as long as none of
 # the option values contain spaces. Note also that the expansion must be
 # unquoted.
 #
@@ -215,6 +228,10 @@ elif test -n "$trust"; then
   bpkg_fetch_ops="$bpkg_fetch_ops --trust $trust"
 fi
 
+if test -n "$verbose"; then
+  verbose="--verbose $verbose"
+fi
+
 # Bootstrap, stage 1.
 #
 run cd build2
@@ -227,7 +244,7 @@ run build2/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run build2/b-boot config.cxx="$cxx" config.bin.lib=static
+run build2/b-boot $verbose config.cxx="$cxx" config.bin.lib=static
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
@@ -235,7 +252,7 @@ run build2/b-boot --version
 #
 run cd ..
 
-run build2/build2/b-boot configure \
+run build2/build2/b-boot $verbose configure \
 config.cxx="$cxx" \
 config.bin.suffix=-stage \
 config.bin.rpath="$conf_rpath" \
@@ -243,7 +260,7 @@ config.install.root="$idir" \
 config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
 
-run build2/build2/b-boot install
+run build2/build2/b-boot $verbose install
 
 run which b-stage
 run which bpkg-stage
@@ -258,7 +275,7 @@ run mkdir "$cdir"
 run cd "$cdir"
 cdir="$(pwd)" # Save full path for later.
 
-run bpkg-stage create \
+run bpkg-stage $verbose create \
 cc \
 config.cxx="$cxx" \
 config.cc.coptions=-O3 \
@@ -266,10 +283,10 @@ config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo"
 
-run bpkg-stage add "$BUILD2_REPO"
-run bpkg-stage $bpkg_fetch_ops fetch
-run bpkg-stage $bpkg_build_ops build --yes build2 bpkg
-run bpkg-stage install build2 bpkg
+run bpkg-stage $verbose add "$BUILD2_REPO"
+run bpkg-stage $verbose $bpkg_fetch_ops fetch
+run bpkg-stage $verbose $bpkg_build_ops build --yes build2 bpkg
+run bpkg-stage $verbose install build2 bpkg
 
 run which b
 run which bpkg
@@ -280,7 +297,7 @@ run bpkg --version
 # Clean up.
 #
 run cd "$owd"
-run b uninstall
+run b $verbose uninstall
 
 diag
 diag "Toolchain installation: $idir/bin"

@@ -232,7 +232,7 @@ cmd /C bootstrap-mingw.bat %cxx% -static
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static
+build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -295,7 +295,7 @@ bpkg-stage %verbose% add %BUILD2_REPO%
 bpkg-stage %verbose% fetch %timeout% %trust%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% build %timeout% --yes build2 bpkg
+bpkg-stage %verbose% build %timeout% --for install --yes build2 bpkg
 @if errorlevel 1 goto error
 
 bpkg-stage %verbose% install build2 bpkg

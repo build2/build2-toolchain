@@ -244,7 +244,7 @@ run build2/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run build2/b-boot $verbose config.cxx="$cxx" config.bin.lib=static
+run build2/b-boot $verbose config.cxx="$cxx" config.bin.lib=static build2/exe{b}
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
@@ -285,7 +285,7 @@ config.install.sudo="$conf_sudo"
 
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $bpkg_build_ops build --yes build2 bpkg
+run bpkg-stage $verbose $bpkg_build_ops build --for install --yes build2 bpkg
 run bpkg-stage $verbose install build2 bpkg
 
 run which b

@@ -142,7 +142,7 @@ Then, we rebuild the build system with the result of Phase 1 linking
 libraries statically.
 
 \
-$ build2/b-boot config.cxx=g++ config.bin.lib=static
+$ build2/b-boot config.cxx=g++ config.bin.lib=static build2/exe{b}
 $ mv build2/b build2/b-boot
 
 $ build2/b-boot --version
@@ -255,7 +255,7 @@ Next, we add the package repository, build, and install:
 \
 $ bpkg-stage add https://pkg.cppget.org/1/alpha
 $ bpkg-stage fetch
-$ bpkg-stage build build2 bpkg
+$ bpkg-stage build --for install build2 bpkg
 $ bpkg-stage install build2 bpkg
 \
 

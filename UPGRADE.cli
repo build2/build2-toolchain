@@ -36,7 +36,7 @@ The dirty upgrade is fairly simple:
 \
 $ cd build2-toolchain-X.Y
 $ bpkg fetch
-$ bpkg build build2 bpkg
+$ bpkg build --for install build2 bpkg
 $ bpkg install build2 bpkg
 \
 
@@ -49,7 +49,7 @@ explicitly, for example:
 $ bpkg status build2 bpkg
 build2: configured 1.0.0; available 1.0.1 2.0.0
 bpkg: configured 1.0.0; available 1.0.1 2.0.0
-$ bpkg build build2/1.0.1 bpkg/1.0.1
+$ bpkg build --for install build2/1.0.1 bpkg/1.0.1
 \
 
 The staged upgrade consists of several steps:
@@ -99,7 +99,7 @@ configuration and install the toolchain with the \c{-stage} suffix:
 
 \
 $ cd build2-toolchain-X.Z
-$ bpkg build build2 bpkg
+$ bpkg build --for install build2 bpkg
 $ bpkg install                        \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \

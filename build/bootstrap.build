@@ -4,7 +4,7 @@
 
 project = build2-toolchain
 subprojects = libpkgconf libbutl build2 \
-libsqlite3 libodb libodb-sqlite libbpkg bpkg
+libsqlite3 libodb libodb-sqlite libbpkg bpkg bdep
 
 using version
 using config

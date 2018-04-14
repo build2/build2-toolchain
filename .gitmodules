@@ -10,6 +10,9 @@
 [submodule "bpkg"]
 	path = bpkg
 	url = ../bpkg.git
+[submodule "bdep"]
+	path = bdep
+	url = ../bdep.git
 [submodule "doc/style"]
 	path = doc/style
 	url = ../etc/style.git

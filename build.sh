@@ -14,7 +14,7 @@ if test -z "$BUILD2_REPO"; then
 # BUILD2_REPO="https://pkg.cppget.org/1/alpha"
 fi
 
-# Bpkg configuration directory.
+# The bpkg configuration directory.
 #
 cver="0.7-a.0"
 cdir="build2-toolchain-$cver"
@@ -248,7 +248,7 @@ run build2/b-boot $verbose config.cxx="$cxx" config.bin.lib=static build2/exe{b}
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
-# Stage.
+# Build and stage the build system and the package manager.
 #
 run cd ..
 
@@ -260,7 +260,7 @@ config.install.root="$idir" \
 config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
 
-run build2/build2/b-boot $verbose install
+run build2/build2/b-boot $verbose install: build2/ bpkg/
 
 run which b-stage
 run which bpkg-stage
@@ -268,7 +268,7 @@ run which bpkg-stage
 run b-stage --version
 run bpkg-stage --version
 
-# Install.
+# Build the entire toolchain from packages.
 #
 run cd ..
 run mkdir "$cdir"
@@ -285,19 +285,21 @@ config.install.sudo="$conf_sudo"
 
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $bpkg_build_ops build --for install --yes build2 bpkg
-run bpkg-stage $verbose install build2 bpkg
+run bpkg-stage $verbose $bpkg_build_ops build --for install --yes build2 bpkg bdep
+run bpkg-stage $verbose install build2 bpkg bdep
 
 run which b
 run which bpkg
+run which bdep
 
 run b --version
 run bpkg --version
+run bdep --version
 
-# Clean up.
+# Clean up stage.
 #
 run cd "$owd"
-run b $verbose uninstall
+run b $verbose uninstall: build2/ bpkg/
 
 diag
 diag "Toolchain installation: $idir/bin"

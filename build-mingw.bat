@@ -47,7 +47,7 @@ rem set "BUILD2_REPO=https://pkg.cppget.org/1/queue"
 rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
 )
 
-rem Bpkg configuration directory.
+rem The bpkg configuration directory.
 rem
 set "cver=0.7-a.0"
 set "cdir=build2-toolchain-%cver%"
@@ -241,7 +241,7 @@ move /y build2\b.exe build2\b-boot.exe
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-@rem Build and stage the toolchain.
+@rem Build and stage the build system and the package manager.
 @rem
 cd ..
 
@@ -252,7 +252,7 @@ build2\build2\b-boot %verbose% configure^
  config.install.data_root=root\stage
 @if errorlevel 1 goto error
 
-build2\build2\b-boot %verbose% install
+build2\build2\b-boot %verbose% install: build2\ bpkg\
 @if errorlevel 1 goto error
 
 @rem The where command is not available on XP without the resource kit.
@@ -269,7 +269,7 @@ b-stage --version
 bpkg-stage --version
 @if errorlevel 1 goto error
 
-@rem Rebuild via package manager.
+@rem Build the entire toolchain from packages.
 @rem
 cd ..
 
@@ -295,10 +295,10 @@ bpkg-stage %verbose% add %BUILD2_REPO%
 bpkg-stage %verbose% fetch %timeout% %trust%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% build %timeout% --for install --yes build2 bpkg
+bpkg-stage %verbose% build %timeout% --for install --yes build2 bpkg bdep
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% install build2 bpkg
+bpkg-stage %verbose% install build2 bpkg bdep
 @if errorlevel 1 goto error
 
 where b
@@ -307,16 +307,22 @@ where b
 where bpkg
 @rem @if errorlevel 1 goto error
 
+where bdep
+@rem @if errorlevel 1 goto error
+
 b --version
 @if errorlevel 1 goto error
 
 bpkg --version
 @if errorlevel 1 goto error
 
+bdep --version
+@if errorlevel 1 goto error
+
 @rem Clean up stage.
 @rem
 cd %owd%
-b %verbose% uninstall
+b %verbose% uninstall: build2\ bpkg\
 @if errorlevel 1 goto error
 
 @echo off

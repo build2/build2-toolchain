@@ -46,26 +46,27 @@ able to rebuild the build system itself.|
 \li|\n\b{2. Bootstrap, Phase 2}\n
 
 Then, the build system is rebuilt with static libraries. The result is only
-guaranteed to be able to build the toolchain.|
+guaranteed to be able to build the build system and the package manager.|
 
 \li|\n\b{3. Stage}\n
 
-At this step the entire toolchain is built and staged.|
+At this step the build system and package manager are built with shared
+libraries and then staged.|
 
 \li|\n\b{4. Install}\n
 
-Next, the staged toolchain is used to build and install the \"final\"
-toolchain from the package repository and using the \c{bpkg} package manager.|
+Next, the staged tools are used to build and install the entire toolchain
+from the package repository with the \cb{bpkg} package manager.|
 
 \li|\n\b{5. Clean}\n
 
-Finally, the staged toolchain is uninstalled.||
+Finally, the staged at step 3 tools are uninstalled.||
 
 The end result of the bootstrap process is the installed toolchain as well as
 the \c{bpkg} configuration (created at step 4) that can be used to upgrade to
 newer versions. You can also skip step 4 and instead install at step 3 if for
-some reason you prefer not to use the package manager (for example, because
-the machine is offline).
+some reason you prefer not to build from packages (for example, because the
+machine is offline).
 
 
 For Windows, if you are using either MSVC or MinGW, continue with

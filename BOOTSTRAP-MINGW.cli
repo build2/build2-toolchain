@@ -111,7 +111,8 @@ libraries statically.
 
 \li|\n\b{3. Stage}\n
 
-At this step the entire toolchain is built and staged:
+At this step the build system and package manager are built with shared
+libraries and then staged:
 
 \
 > cd ..  # Back to build2-toolchain-X.Y.Z\
@@ -122,7 +123,7 @@ At this step the entire toolchain is built and staged:
   config.install.root=C:\build2       ^
   config.install.data_root=root\stage
 
-> build2\build2\b-boot install
+> build2\build2\b-boot install: build2/ bpkg/
 \
 
 The strange-looking \c{config.install.data_root=root\\stage} means install
@@ -145,27 +146,29 @@ C:\build2\bin\bpkg-stage.exe
 > bpkg-stage --version
 \
 
-At the next step we will use \c{bpkg} to build and install the \"final\"
+At the next step we will use \c{bpkg} to build and install the entire
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
-the \"final\" installation and skip the rest. For this you will need to
-change the \c{configure} command line above along these lines:
+the \"final\" installation and skip the rest. For this you will need to change
+the \c{configure} and \c{install} command lines above along these lines:
 
 \
 > build2\build2\b-boot configure ^
   config.cxx=g++                 ^
   config.cc.coptions=-O3         ^
   config.install.root=C:\build2
+
+> build2\build2\b-boot install: build2/ bpkg/ bdep/
 \
 
 |
 
 \li|\n\b{4. Install}\n
 
-Next, we use the staged toolchain to build and install the \"final\" toolchain
-from the package repository using the \c{bpkg} package manager. First, we
-create the \c{bpkg} configuration. The configuration values are pretty similar
-to the previous step and you may want/need to make similar adjustments.
+Next, we use the staged tools to build and install the entire toolchain from
+the package repository with the \c{bpkg} package manager. First, we create
+the \c{bpkg} configuration. The configuration values are pretty similar to the
+previous step and you may want/need to make similar adjustments.
 
 \
 > cd ..  # Back to build2-build\
@@ -184,8 +187,8 @@ Next, we add the package repository, build, and install:
 \
 > bpkg-stage add https://pkg.cppget.org/1/alpha
 > bpkg-stage fetch
-> bpkg-stage build --for install build2 bpkg
-> bpkg-stage install build2 bpkg
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install build2 bpkg bdep
 \
 
 Finally, we verify the result (note that the \c{where} command is not
@@ -198,19 +201,23 @@ C:\build2\bin\b.exe
 > where bpkg
 C:\build2\bin\bpkg.exe
 
+> where bdep
+C:\build2\bin\bdep.exe
+
 > b --version
 > bpkg --version
+> bdep --version
 \
 
 |
 
 \li|\n\b{5. Clean}\n
 
-The last thing we need to do is uninstall the staged toolchain:
+The last thing we need to do is uninstall the staged tools:
 
 \
 > cd ..\build2-toolchain-X.Y.Z  # Back to bootstrap.
-> b uninstall
+> b uninstall: build2/ bpkg/
 \
 
 ||

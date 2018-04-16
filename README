@@ -1,6 +1,12 @@
 This is the build2 toolchain amalgamation. It includes the build system
-(build2), package manager (bpkg), and their prerequisite libraries (libbutl
-and libbpkg).
+(build2), package dependency manager (bpkg), project dependency manager
+(bdep), and their prerequisite libraries as subprojects.
+
+Note that while the MAJOR.MINIOR version components in the amalgamation and
+subprojects always match, the PATCH components are incremented more or less
+independently. Specifically, whenever a new patch release of a subproject is
+published, an updated amalgamation with an incremented PATCH component is
+released as well.
 
 build2 is an open source, cross-platform toolchain for building and packaging
 C++ code. Its aim is a modern build system and package manager for the C++

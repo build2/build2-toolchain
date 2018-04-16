@@ -24,20 +24,20 @@ toolchain (similar to what we did during bootstrap), test it, uninstall the
 old toolchain, install the new toolchain as \"final\", and finally uninstall
 \c{-stage}.
 
-We recommend that you use a dirty upgrade for  bugfix-only releases (the same
-\c{X.Y} (\c{MAJOR.MINOR}) version) and a staged upgrade otherwise. With
-bugfix-only releases we guarantee not to alter the installation file set. Note
-also that without periodic upgrades your version of the toolchain may become
-too old to be able to upgrade itself. In this case you will have to fall back
-onto the bootstrap process.
+We recommend that you use a dirty upgrade for patch releases with the same
+\c{X.Y} (\c{MAJOR.MINOR}) version and a staged upgrade otherwise. With patch
+releases we guarantee not to alter the installation file set. Note also that
+without periodic upgrades your version of the toolchain may become too old to
+be able to upgrade itself. In this case you will have to fall back onto the
+bootstrap process.
 
-The dirty upgrade is fairly simple:
+The dirty upgrade is straightforward:
 
 \
 $ cd build2-toolchain-X.Y
 $ bpkg fetch
-$ bpkg build --for install build2 bpkg
-$ bpkg install build2 bpkg
+$ bpkg build --for install build2 bpkg bdep
+$ bpkg install build2 bpkg bdep
 \
 
 You may also want to issue the \c{status} command after \c{fetch} to examine
@@ -46,10 +46,12 @@ available but you can override this by specifying the desired version
 explicitly, for example:
 
 \
-$ bpkg status build2 bpkg
-build2: configured 1.0.0; available 1.0.1 2.0.0
-bpkg: configured 1.0.0; available 1.0.1 2.0.0
-$ bpkg build --for install build2/1.0.1 bpkg/1.0.1
+$ bpkg status build2 bpkg bdep
+!build2 configured 1.0.0 available 1.0.1 2.0.0
+!bpkg configured 1.0.0 available 1.0.1 2.0.0
+!bdep configured 1.0.0 available 1.0.1 2.0.0
+
+$ bpkg build --for install build2/1.0.1 bpkg/1.0.1 bdep/1.0.1
 \
 
 The staged upgrade consists of several steps:
@@ -66,7 +68,7 @@ version for the staged upgrade:
 \
 $ cd build2-toolchain-X.Y
 $ bpkg fetch
-$ bpkg status build2 bpkg
+$ bpkg status build2 bpkg bdep
 \
 
 Let's say the new version is X.Z.
@@ -95,15 +97,15 @@ Or, using Windows command prompt:
 \li|\n\b{2. Build and Install as \c{-stage}}\n
 
 This step is similar to the dirty upgrade except we use the copied
-configuration and install the toolchain with the \c{-stage} suffix:
+configuration and install the new toolchain with the \c{-stage} suffix:
 
 \
 $ cd build2-toolchain-X.Z
-$ bpkg build --for install build2 bpkg
+$ bpkg build --for install build2 bpkg bdep
 $ bpkg install                        \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \
-  build2 bpkg
+  build2 bpkg bdep
 \
 
 |
@@ -111,12 +113,13 @@ $ bpkg install                        \
 \li|\n\b{3. Test Staged}\n
 
 Now you can test the new toolchain on your projects, etc. Remember to use the
-\c{-stage}-suffixed binaries (\c{bpkg-stage} will automatically use
-\c{b-stage}):
+\c{-stage}-suffixed binaries (\c{bdep-stage} will automatically use
+\c{bpkg-stage} which in turn will use \c{b-stage}):
 
 \
 $ b-stage --version
 $ bpkg-stage --version
+$ bdep-stage --version
 \
 
 |
@@ -128,10 +131,10 @@ one and install the new one:
 
 \
 $ cd ../build2-toolchain-X.Y
-$ bpkg uninstall build2 bpkg
+$ bpkg uninstall build2 bpkg bdep
 
 $ cd ../build2-toolchain-X.Z
-$ bpkg-stage install build2 bpkg
+$ bpkg-stage install build2 bpkg bdep
 \
 
 |
@@ -146,7 +149,7 @@ line history to find the corresponding \c{install} command and change it to
 $ bpkg uninstall                      \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \
-  build2 bpkg
+  build2 bpkg bdep
 \
 
 You can also remove the old configuration in \c{build2-toolchain-X.Y/} if you

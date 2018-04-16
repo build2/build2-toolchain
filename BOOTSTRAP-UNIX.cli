@@ -152,9 +152,10 @@ $ build2/b-boot --version
 
 \li|\n\b{3. Stage}\n
 
-At this step the entire toolchain is built and staged. Here you may want
-to adjust a few things, such as the installation directory or the \c{sudo}
-program (remove the \c{config.install.sudo} line if you don't need one).
+At this step the build system and package manager are built with shared
+libraries and then staged. Here you may want to adjust a few things, such as
+the installation directory or the \c{sudo} program (remove the
+\c{config.install.sudo} line if you don't need one).
 
 You may also need to remove the \c{config.bin.rpath} line if your target
 doesn't support \i{rpath}. Specifically, if building on Windows (with MSYS or
@@ -173,7 +174,7 @@ $ build2/build2/b-boot configure      \
   config.install.data_root=root/stage \
   config.install.sudo=sudo
 
-$ build2/build2/b-boot install
+$ build2/build2/b-boot install build2/ bpkg/
 \
 
 The strange-looking \c{config.install.data_root=root/stage} means install
@@ -211,11 +212,11 @@ the rest of the commands to use absolute paths. This, however, does not make
 for very readable examples so below we assume the installation's \c{bin/}
 subdirectory is in \c{PATH}.
 
-At the next step we will use \c{bpkg} to build and install the \"final\"
+At the next step we will use \c{bpkg} to build and install the entire
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
-the \"final\" installation and skip the rest. For this your will need to
-change the \c{configure} command line above along these lines:
+the \"final\" installation and skip the rest. For this you will need to change
+the \c{configure} and \c{install} command lines above along these lines:
 
 \
 $ build2/build2/b-boot configure  \
@@ -224,6 +225,8 @@ $ build2/build2/b-boot configure  \
   config.bin.rpath=/usr/local/lib \
   config.install.root=/usr/local  \
   config.install.sudo=sudo
+
+$ build2/build2/b-boot install: build2/ bpkg/ bdep/
 \
 
 |
@@ -231,10 +234,10 @@ $ build2/build2/b-boot configure  \
 
 \li|\n\b{4. Install}\n
 
-Next, we use the staged toolchain to build and install the \"final\" toolchain
-from the package repository using the \c{bpkg} package manager. First, we
-create the \c{bpkg} configuration. The configuration values are pretty similar
-to the previous step and you may want/need to make similar adjustments.
+Next, we use the staged tools to build and install the entire toolchain from
+the package repository with the \c{bpkg} package manager. First, we create
+the \c{bpkg} configuration. The configuration values are pretty similar to the
+previous step and you may want/need to make similar adjustments.
 
 \
 $ cd ..  # Back to build2-build/
@@ -255,8 +258,8 @@ Next, we add the package repository, build, and install:
 \
 $ bpkg-stage add https://pkg.cppget.org/1/alpha
 $ bpkg-stage fetch
-$ bpkg-stage build --for install build2 bpkg
-$ bpkg-stage install build2 bpkg
+$ bpkg-stage build --for install build2 bpkg bdep
+$ bpkg-stage install build2 bpkg bdep
 \
 
 Finally, we verify the result:
@@ -268,19 +271,23 @@ $ which b
 $ which bpkg
 /usr/local/bin/bpkg
 
+$ which bdep
+/usr/local/bin/bdep
+
 $ b --version
 $ bpkg --version
+$ bdep --version
 \
 
 |
 
 \li|\n\b{5. Clean}\n
 
-The last thing we need to do is uninstall the staged toolchain:
+The last thing we need to do is uninstall the staged tools:
 
 \
 $ cd ../build2-toolchain-X.Y.Z  # Back to bootstrap.
-$ b uninstall
+$ b uninstall: build2/ bpkg/
 \
 
 ||

@@ -9,10 +9,10 @@ emulation layer (for example, MSYS or Cygwin) and already have a UNIX shell
 with standard utilities, then you most likely should follow \l{#BOOTSTRAP-UNIX
 Bootstrapping on UNIX} instead.
 
-Note also that if you continue with these instructions but you already have
-your own installation of MSYS and/or MinGW, then make sure that their paths
-are not in your \c{PATH} environment variable when building and using
-\c{build2} since they may provide conflicting DLLs.
+\N|Note that if you continue with these instructions but you already have your
+own installation of MSYS and/or MinGW, then make sure that their paths are not
+in your \c{PATH} environment variable when building and using \c{build2} since
+they may provide conflicting DLLs.|
 
 The \c{build2} toolchain on Windows requires a set of extra utilities
 (\c{install}, \c{diff}, \c{curl}, \c{tar}, etc). These are provided by the
@@ -21,20 +21,20 @@ Normally, the \c{build2} toolchain itself is installed into the same directory
 as the utilities in order to produce the  combined installation.
 
 To build on Windows you will need either MSVC 14 Update 3 or later or MinGW
-GCC 4.9 or later. Note also that MinGW GCC must be configured with the
-\c{posix} threading model (this is currently the only configuration that
-implements C++11 threads; run \c{g++ -v} to verify).
+GCC 4.9 or later. If you don't already have a suitable C++ compiler, then you
+can use the \c{build2-mingw} package which provides a minimal MinGW-W64 GCC
+distribution (see the \c{README} file inside for details). If used, then it
+should be unpacked into the same directory as \c{build2-baseutils}.
 
-If you don't already have a suitable C++ compiler, then you can use the
-\c{build2-mingw} package which provides a minimal MinGW-W64 GCC distribution
-(see the \c{README} file inside for details). If used, then it should be
-unpacked into the same directory as \c{build2-baseutils}.
+\N|If using your own MinGW GCC installation, make sure it is configured with
+the \c{posix} threading model (this is currently the only configuration that
+implements C++11 threads; run \c{g++ -v} to verify).|
 
-Note also that you \b{absolutely must} match the width (32/64-bit) of the
-toolchain build to the \c{baseutils} and \c{mingw} packages. They must all be
-32-bit or all 64-bit. If you are running 64-bit Windows, it is strongly
-recommended that you build the 64-bit (x86_64) version of the toolchain as
-well as use the 64-bit versions of the \c{baseutils} and \c{mingw} packages.
+\N|Note that you \b{must} match the width (32/64-bit) of the toolchain to the
+\c{baseutils} and \c{mingw} packages. They must all be 32-bit or all 64-bit.
+If you are running 64-bit Windows, it is strongly recommended that you build
+the 64-bit (x86_64) version of the toolchain and use the 64-bit versions of
+the \c{baseutils} and \c{mingw} packages.|
 
 To bootstrap on Windows with either MSVC or MinGW start with the following
 common steps:
@@ -50,10 +50,10 @@ for MSVC-specific instructions).
 
 \li|\n\b{2. Create Build Directory}\n
 
-Note that you will want to keep this directory around in order to upgrade
-to new toolchain versions in the future. In this guide we will use
-\c{C:\\build2-build\\} as the build directory and \c{C:\\build2\\} as the
-installation directory but you can use other paths.
+You will want to keep this directory around in order to upgrade to new
+toolchain versions in the future. In this guide we use \c{C:\\build2-build\\}
+as the build directory and \c{C:\\build2\\} as the installation directory but
+you can use other paths.
 
 \
 > C:
@@ -68,7 +68,7 @@ installation directory but you can use other paths.
 
 Download the following files as well as their \c{.sha256} checksums from
 \l{https://download.build2.org}, replacing \i{<arch>} with \c{x86_64} for
-64-bin Windows and with \c{i686} for 32-bit.
+64-bit Windows and with \c{i686} for 32-bit:
 
 \
 build2-baseutils-X.Y.Z-<arch>-windows.zip
@@ -109,7 +109,7 @@ and work:
 
 |
 
-\li|\n\b{7. Unpack \c{build2-mingw}}\n
+\li|\n\b{7. Unpack \c{build2-mingw} (optional)}\n
 
 If required, unpack the \c{build2-mingw-X.Y.Z-<arch>-windows.tar.xz} archive
 into \c{C:\\build2\\}:

@@ -13,10 +13,10 @@ Cygwin) where you already have a UNIX shell with standard utilities.
 
 \li|\b{1. Create Build Directory}\n
 
-Note that you will want to keep this directory around in order to upgrade to
-new toolchain versions in the future. In this guide we will use
-\c{~/build2-build/} as the build directory and \c{/usr/local/} as the
-installation directory but you can use other paths.
+You will want to keep this directory around in order to upgrade to new
+toolchain versions in the future. In this guide we use \c{~/build2-build/} as
+the build directory and \c{/usr/local/} as the installation directory but you
+can use other paths.
 
 \
 $ cd
@@ -86,10 +86,10 @@ instead of \c{make} on some platforms), for example:
 $ ./build.sh --make make --make -j8 g++
 \
 
-Note also that at about half way through (\c{bpkg fetch} at step 4 below) the
+\N|Note that at about half way through (\c{bpkg fetch} at step 4 below) the
 script will stop and prompt you to verify the authenticity of the repository
 certificate. To run the script unattended you can specify the certificate
-fingerprint with the \c{--trust} option (see \c{build.sh -h} for details).
+fingerprint with the \c{--trust} option (see \c{build.sh -h} for details).|
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
@@ -101,9 +101,9 @@ $ cd build2-toolchain-X.Y
 $ bpkg uninstall build2 bpkg
 \
 
-Note also that in both cases (manual or scripted bootstrap), if something
-goes wrong and you need to restart the process, you \b{must} start with a
-clean toolchain source by unpacking it afresh from the archive.
+\N|Note that in both cases (manual or scripted bootstrap), if something goes
+wrong and you need to restart the process, you \b{must} start with a clean
+toolchain source by unpacking it afresh from the archive.|
 
 The rest of this section outlines the manual bootstrap process.
 

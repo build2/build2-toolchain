@@ -26,10 +26,11 @@ old toolchain, install the new toolchain as \"final\", and finally uninstall
 
 We recommend that you use a dirty upgrade for patch releases with the same
 \c{X.Y} (\c{MAJOR.MINOR}) version and a staged upgrade otherwise. With patch
-releases we guarantee not to alter the installation file set. Note also that
-without periodic upgrades your version of the toolchain may become too old to
-be able to upgrade itself. In this case you will have to fall back onto the
-bootstrap process.
+releases we guarantee not to alter the installation file set.
+
+\N|Note that without periodic upgrades your version of the toolchain may
+become too old to be able to upgrade itself. In this case you will have to
+fall back onto the bootstrap process.|
 
 The dirty upgrade is straightforward:
 

@@ -26,12 +26,13 @@ a simple matter of adjusting paths and, if used, line continuations.
 
 The \c{build2} toolchain requires a C++14 compiler. From the commonly-used
 options, GCC 4.9, Clang 3.4, and MSVC 14 (2015) Update 3 or any later versions
-of these compilers should work. Note also that the C++ compiler that you use
-to build the \c{build2} toolchain and the one that you will use to build your
-projects need not be the same. For example, if you are using MSVC 12 (2013)
-(which cannot build \c{build2}), it is perfectly fine to get a minimal MinGW
-toolchain and use that to build \c{build2}; you will still be able to use MSVC
-to build your own code.
+of these compilers should work.
+
+\N|Note that the C++ compiler that you use to build the \c{build2} toolchain
+and the one that you will use to build your projects need not be the same. For
+example, if you are using MSVC 12 (2013) (which cannot build \c{build2}), it
+is perfectly fine to get a minimal MinGW toolchain and use that to build
+\c{build2}; you will still be able to use MSVC to build your own code.|
 
 At the high level, the bootstrap process involves the following 5 steps.
 
@@ -64,10 +65,11 @@ Finally, the staged at step 3 tools are uninstalled.||
 
 The end result of the bootstrap process is the installed toolchain as well as
 the \c{bpkg} configuration (created at step 4) that can be used to upgrade to
-newer versions. You can also skip step 4 and instead install at step 3 if for
-some reason you prefer not to build from packages (for example, because the
-machine is offline).
+newer versions.
 
+\N|You can skip step 4 and instead install at step 3 if for some reason you
+prefer not to build from packages (for example, because the machine is
+offline).|
 
 For Windows, if you are using either MSVC or MinGW, continue with
 \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}. If using MSYS or Cygwin,

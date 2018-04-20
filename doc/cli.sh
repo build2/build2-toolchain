@@ -36,6 +36,9 @@ function gen () # <name>
 --html-epilogue-file doc-epilogue.xhtml \
 --link-regex '%b([-.].+)%../../build2/doc/b$1%' \
 --link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
+--link-regex '%bdep([-.].+)%../../bdep/doc/bdep$1%' \
+--link-regex '%b(#.+)?%../../build2/doc/build2-build-system-manual.xhtml$1%' \
+--link-regex '%bpkg(#.+)?%../../bpkg/doc/build2-package-manager-manual.xhtml$1%' \
 --output-prefix build2-toolchain- "${@}" $n.cli
 
 html2ps -f doc.html2ps:a4.html2ps -o build2-toolchain-$n-a4.ps build2-toolchain-$n.xhtml
@@ -45,10 +48,12 @@ html2ps -f doc.html2ps:letter.html2ps -o build2-toolchain-$n-letter.ps build2-to
 ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
 }
 
+gen intro2
+gen intro
+
 # Auto-heading doesn't work since it is broken into multiple doc strings.
 #
 gen install --html-heading-map 2=h2
-gen intro
 
 # Generate INSTALL/BOOTSTRAP/UPGRADE file in ../
 #

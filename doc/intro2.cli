@@ -39,7 +39,7 @@ $ b
 $ ./hello
 
 $ edit repositories.manifest   # add https://example.org/libhello.git
-$ edit manifest                # add 'depends: libhello ^ 1.0.0'
+$ edit manifest                # add 'depends: libhello ^1.0.0'
 $ edit buildfile               # import libhello
 $ edit hello.cxx               # use libhello
 $ b
@@ -108,8 +108,9 @@ hello/
 ├── .bdep/
 ├── build/
 ├── hello/
+│   ├── hello.cxx
 │   ├── buildfile
-│   └── hello.cxx
+│   └── testscript
 ├── buildfile
 ├── manifest
 └── repositories.manifest
@@ -135,9 +136,17 @@ $ cat hello/hello.cxx
 
 #include <iostream>
 
-int main ()
+using namespace std;
+
+int main (int argc, char* argv[])
 {
-  std::cout << \"Hello, World!\" << std::endl;
+  if (argc < 2)
+  {
+    cerr << \"error: missing name\" << endl;
+    return 1;
+  }
+
+  cout << \"Hello, \" << argv[1] << '!' << endl;
 }
 \
 
@@ -153,7 +162,7 @@ $ cat hello/buildfile
 libs =
 #import libs += libhello%lib{hello}
 
-exe{hello}: {hxx ixx txx cxx}{*} $libs
+exe{hello}: {hxx ixx txx cxx}{*} $libs test{testscript}
 \
 
 As the name suggests, this file describes how to build things. While its
@@ -161,12 +170,33 @@ content might look a bit cryptic, let's try infer a couple of points without
 going into too much detail (the details are discussed in the following
 sections). That \c{exe{hello\}} on the left of \c{:} is a \i{target}
 (executable named \c{hello}) and what we have on the right are
-\i{prerequisites} (C++ sources files). This \c{buildfile} uses
+\i{prerequisites} (C++ sources files, libraries, etc). This \c{buildfile} uses
 \l{b#name-patterns wildcard patterns} (that \c{*}) to automatically locate all
-the source files. This means we don't have to edit our \c{buildfile} every
+the C++ source files. This means we don't have to edit our \c{buildfile} every
 time we add a source file to our project. There also appears to be some
 infrastructure for importing (commented out) and linking libraries (that
-\c{libs} variable). We will see how to use it in a moment.
+\c{libs} variable). We will see how to use it in a moment. Finally,
+\c{buildfile} also lists \c{testscript} as a prerequisite of \c{hello}. This
+file tests our program. Let's take a look inside:
+
+\
+: basics
+:
+$* 'World' >'Hello, World!'
+
+: missing-name
+:
+$* 2>>EOE != 0
+error: missing name
+EOE
+\
+
+Again, we are not going into detail here (see \l{testscript#intro Testscript
+Introduction} for a proper introduction), but to give you an idea, here we
+have two tests: the first (with id \c{basics}) verifies that our program
+prints the expected greeting while the second makes sure it handles the
+missing name error condition. Tests written in Testscript are concise,
+portable, and executed in parallel.
 
 Next up is \c{manifest}:
 
@@ -179,7 +209,7 @@ summary: hello executable project
 license: proprietary
 url: https://example.org/hello
 email: you@example.org
-#depends: libhello >= 1.0.0
+#depends: libhello ^1.0.0
 \
 
 The \c{manifest} file is what makes a build system project a \i{package}. It
@@ -301,6 +331,9 @@ hello configured 0.1.0-a.0.19700101000000
 $ b
 <...>
 
+$ b test
+<...>
+
 $ hello/hello
 Hello, World!
 \
@@ -312,6 +345,9 @@ $ bdep status @clang
 hello configured 0.1.0-a.0.19700101000000
 
 $ b ../hello-clang/hello/
+...
+
+$ b test: ../hello-clang/hello/
 ...
 
 $ ../hello-clang/hello/hello/hello
@@ -399,11 +435,11 @@ build system and package manager (for example, when a build bot is building a
 package for CI).
 
 Note also that strictly speaking \c{build2} is not C/C++-specific; its build
-system is general enough to handle any DAG-based operations and its
-package/project dependency managers can be used for any compiled language.|
+model is general enough to handle any DAG-based operations and its
+package/project dependency management can be used for any compiled language.|
 
-\N|As we will see in moment, \c{build2} also integrates with your VCS in order
-to automate project versioning. Note that currently only \c{git(1)} is
+\N|As we will see in a moment, \c{build2} also integrates with your VCS in
+order to automate project versioning. Note that currently only \c{git(1)} is
 supported.|
 
 Let's now move on to the reason why there is \i{dep} in the \c{bdep} name:
@@ -510,14 +546,53 @@ $ bdep new -t lib -l c++ libhello
 |
 
 Next we edit the \c{manifest} file (again, found in the root of our project)
-and specify the version constraint for \c{libhello}:
+and specify the dependency on \c{libhello} with optional version constraint.
+For example:
 
 \
-depends: libhello >= 1.0.0 (@@ ^)
+depends: libhello ^1.0.0
 \
 
-Next we edit \c{hello/buildfile} and import the \c{libhello} library into our
-build:
+Let's discuss briefly version constraints (for details see the
+\l{bpkg#manifest-package-depends \c{depends}} value documentation). A version
+constraint can be expressed with a comparison operator (\c{==}, \c{>},
+\c{<}, \c{>=}, \c{<=}), a range shortcut operator (\c{~} and \c{^}), or a
+range. Here are a few examples:
+
+\
+depends: libhello == 1.2.3
+depends: libhello >= 1.2.3
+
+depends: libhello ~1.2.3
+depends: libhello ^1.2.3
+
+depends: libhello [1.2.3 1.2.9)
+\
+
+You may already be familiar with the tilda (\c{~}) and caret (\c{^})
+constraints from dependency managers for other languages. To recap, tilda
+allows upgrades to any further patch versions while caret also allows upgrade
+to further minor versions. They are equivalent to the following ranges:
+
+\
+~X.Y.Z  [X.Y.Z  X.Y+1.0)
+
+^X.Y.Z  [X.Y.Z  X+1.0.0)  if X >  0
+^0.Y.Z  [0.Y.Z  0.Y+1.0)  if X == 0
+\
+
+\N|Zero major version component is customarily used during early development
+where the minor version effectively becomes major. As a result, the tilde
+constraint has a special treatment of this case.|
+
+Unless you have good reasons not to (for example, a dependency does not use
+semantic versioning) we suggest that you use the \c{^} constraint which
+provides a good balance between compatibility and upgrdability with \c{~}
+being a more conservative option.
+
+Ok, we've specified where our package comes from (\c{repositories.manifest})
+and which versions we find acceptable (\c{manifest}). The next step is to edit
+\c{hello/buildfile} and import the \c{libhello} library into our build:
 
 \
 import libs += libhello%lib{hello}
@@ -534,7 +609,7 @@ int main ()
 }
 \
 
-\N|You are probably wondering why we have to specify this often repeating
+\N|You are probably wondering why we have to specify this somewhat repeating
 information in so many places. Let's start with the source code: we can't
 specify the version constraint and location there because  it will have
 to be repeated in every source file that uses the dependency.
@@ -563,7 +638,7 @@ to your project:
 
 \
 repositories.manifest   # add https://example.org/libhello.git
-manifest                # add 'depends: libhello ^ 1.0.0' (@@ ^)
+manifest                # add 'depends: libhello ^1.0.0'
 buildfile               # import libhello
 hello.cxx               # use libhello
 \

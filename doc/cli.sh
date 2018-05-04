@@ -39,6 +39,7 @@ function gen () # <name>
 --link-regex '%bdep([-.].+)%../../bdep/doc/bdep$1%' \
 --link-regex '%b(#.+)?%../../build2/doc/build2-build-system-manual.xhtml$1%' \
 --link-regex '%bpkg(#.+)?%../../bpkg/doc/build2-package-manager-manual.xhtml$1%' \
+--link-regex '%testscript(#.+)?%../../build2/doc/build2-testscript-manual.xhtml$1%' \
 --output-prefix build2-toolchain- "${@}" $n.cli
 
 html2ps -f doc.html2ps:a4.html2ps -o build2-toolchain-$n-a4.ps build2-toolchain-$n.xhtml

@@ -253,10 +253,13 @@ synchronizing:
 The \cb{--create|-C} option instructs \c{init} to create a new configuration
 in the specified directory. To make refering to configurations easire, we can
 give it a name, which is what we do with \c{@gcc}. The next argument (\c{cc},
-stands for \i{C-common}) is the build system module we would like to configure
-with \c{config.cxx=g++} being (one of) its configuration variables. Let's
-ignore that \c{synchronizing:\ ...} bit for now \- it will become clear what's
-going on here in a moment.
+stands for \i{C-common}) is the build system module we would like to
+configure. It implements compilation and linking rules for the C and C++
+languages. Finally, \c{config.cxx=g++} is (one of) this module's configuration
+variables that specifies the C++ compiler we would like to use (the
+corresponding C compiler will be derived automatically). Let's also ignore
+that \c{synchronizing:\ ...} bit for now \- it will become clear what's going
+on here in a moment.
 
 Now the same for Clang:
 
@@ -417,8 +420,8 @@ several tools that you will be using directly and which together with your
 version control system (VCS) will constitute the core of your development
 toolset.
 
-\N|While \c{build2} can work without a VCS, the resulting functionality will
-be limited significantly.|
+\N|While \c{build2} can work without a VCS, this will result in reduced
+functionality.|
 
 At the bottom of the hierarchy is the build system, \l{b(1)}. Next comes the
 package dependency manager, \l{bpkg(1)}. It is primarily used for package
@@ -455,17 +458,17 @@ see if we can find something suitable to use in our project.
 Where should we look? That's a good question. But before we can try to answer
 it, we need to understand where \c{build2} can source dependencies. In
 \c{build2} packages come from \i{package repositories}. Two commonly used
-repository types are \i{version control} and \i{archive}-based (@@ link to
-repo type help topic).
+repository types are \i{version control} and \i{archive}-based (see
+\l{bpkg-repository-types(1)} for details).
 
 As the name suggests, a version control-based repository uses a VCS as its
 ditribution mechanism. \N{Currently only \c{git} is supported.} Such a
 repository normally contains multiple versions of a single package or,
 perhaps, of a few related packages.
 
-An archive-based repository contain multiple, potentially unrelated
+An archive-based repository contains multiple, potentially unrelated
 packages/versions as archives along with some meta information (package list,
-prerequisite/complement repositories, signtures, etc) that are all accessible
+prerequisite/complement repositories, signatures, etc) that are all accessible
 via HTTP(S).
 
 Version control and archive-based repositories have different
@@ -512,38 +515,93 @@ their releases to a central repository. Package consumers can then decide
 which repository to use based on their needs. For example, one could use
 \l{https://cppget.org cppget.org} as a (fast, reliable, and secure) source of
 stable versions but also add, say, \c{git} repositories for select packages
-(perhaps with the \c{#master} fragment filter to imporive download speed) for
+(perhaps with the \c{#HEAD} fragment filter to imporive download speed) for
 testing development snapshots. In this model the two repository types
 complement each other.
 
 \N|Support for automated publishing of tagged releases to an archive-based
-repository is planned.|
+repository is a work in progress.|
 
-@@ Show using two repos with #master?
+Let's see how all this works in practice. Go over to \l{https://cppget.org
+cppget.org} and type \"hello library\" in the search box. At the top of the
+search result you should see the \l{https://cppget.org/libhello \c{libhello}}
+package and if you follow the package link you will see the package
+description page along with a list of available versions. Pick a version that
+you like and you will see the package version description page with quite a
+bit of information, including the list of platform/compiler combinations this
+version has been successfully (or unsucessfully) tested. If you like what you
+see, copy the \c{location} value \- this is the repository location where this
+package version can be sourced from.
 
-\h#tour-add-remove-deps|Adding and Removing Dependencies|
+\N|The \l{https://cppget.org cppget.org} repository is split into several
+sections: \c{stable}, \c{testing}, \c{beta}, \c{alpha} and \c{legacy} (see the
+repository's \l{https://cppget.org/?about about} page for details on each
+section's policies). Each section has its own repository location. Note also
+that \c{testing} is complemented by \c{stable}, \c{beta} by \c{testing}, and
+so on, so you only need to choose the lowest stability level and you will
+automatically \"see\" packages from the more stable sections.|
 
-Say we found \c{libhello} that we would like to use in our \c{hello}
-project. First we edit the \c{repositories.manifest} file found in the root
-directory of our project and add \c{libhello} repository as a prerequisite:
-
-\
-role: prerequisite
-location: https://example.org/libhello.git
-\
-
-\N|Refer to \l{bpkg#manifest-repository Repository Manifest} for details on
-the repository manifest values.|
-
-\N|If you are trying the examples for yourself and need a real repository,
-then you can use \c{https://git.build2.org/hello/libhello.git}. Or you can
-create and publish your own:
+\N|The \l{https://cppget.org cppget.org} \c{stable} sections will always
+contain the \c{libhello} library version \c{1.0.X} that was generated using
+the the following \l{bdep-new(1)} command:
 
 \
 $ bdep new -t lib -l c++ libhello
 \
 
-|
+It can be used as a predictable test dependency when setting up new projects.|
+
+Let's say we've visited the \c{libhello} project's
+\l{https://git.build2.org/cgit/hello/libhello/ home page} (linked from the
+package details page) and noticed that it is being developed in a \c{git}
+repository. How can we see what's available there? If the releases are tagged,
+then we can infer the available released versions from the tags. But that
+doesn't tell us anything about what's happening on the \c{HEAD} or in the
+branches. For that we can use the package manager's \l{bpkg-rep-info(1)}
+command:
+
+\
+$ bpkg rep-info https://git.build2.org/hello/libhello.git
+libhello/1.0.0
+libhello/1.1.0
+\
+
+As you can see, besides \c{1.0.0} that we have seen on \c{cppget.org/stable},
+there is also \c{1.1.0} (which is perhaps being tested in
+\c{cppget.org/testing}). We can also check what's available on the \c{HEAD}
+(see \l{bpkg-repository-types(1)} for details on the \c{git} repository URL
+format):
+
+\
+$ bpkg rep-info https://git.build2.org/hello/libhello.git#HEAD
+libhello/1.1.1-a.0.20180504111511.2e82f7378519
+\
+
+\N|We can also use the \c{rep-info} command on archive-based repositories,
+however, if available, the web interface is usually more convenient and
+provides more information.|
+
+To summarize, we found two repositories for the \c{libhello} package: the
+archive-based \l{https://cppget.org cppget.org} that contains the released
+versions as well as its development \c{git} repository where we can get the
+bleeding edge stuff. Let's now see how we can add \c{libhello} to our
+\c{hello} project.
+
+
+\h#tour-add-remove-deps|Adding and Removing Dependencies|
+
+So we found \c{libhello} that we would like to use in our \c{hello}
+project. First we edit the \c{repositories.manifest} file found in the root
+directory of our project and add \c{libhello} repository as a prerequisite.
+Let's start with \l{https://cppget.org cppget.org}:
+
+\
+role: prerequisite
+location: https://pkg.cppget.org/1/stable
+\
+
+\N|Refer to \l{bpkg#manifest-repository Repository Manifest} for details on
+the repository manifest values.|
 
 Next we edit the \c{manifest} file (again, found in the root of our project)
 and specify the dependency on \c{libhello} with optional version constraint.
@@ -586,7 +644,7 @@ where the minor version effectively becomes major. As a result, the tilde
 constraint has a special treatment of this case.|
 
 Unless you have good reasons not to (for example, a dependency does not use
-semantic versioning) we suggest that you use the \c{^} constraint which
+semantic versioning), we suggest that you use the \c{^} constraint which
 provides a good balance between compatibility and upgrdability with \c{~}
 being a more conservative option.
 
@@ -619,31 +677,30 @@ for the same reason (a library can be imported in multiple buildfiles) plus
 the build system doesn't really know anything about version constraints or
 repositories which is the purview of the dependency management tools.
 
-Finally, we have to separate the version constraint specification and the
-location specification because the same package can be present in multiple
-repositories. For example, when a package from \i{version control}-based
-repostiroy is published in an \i{archive}-based repository, its
-\c{repositories.manifest} file is ignored and all its dependencies should be
-available from the \i{archive}-based repository itself (or its fixes set of
-prerequisite repositories). In other words, \c{manifest} belongs to a
-package while \c{repositories.manifest} \- to a repository.
+Finally, we have to separate the version constraint and the location because
+the same package can be present in multiple repositories. For example, when a
+package from a version control-based repostiroy is published in an
+archive-based repository, its \c{repositories.manifest} file is ignored and
+all its dependencies should be available from the archive-based repository
+itself (or its fixes set of prerequisite repositories). In other words,
+\c{manifest} belongs to a package while \c{repositories.manifest} \- to a
+repository.
 
 Also note that this is unlikely to become burdensome since adding new
-dependencies is not something that happens often. Plus there is a
-possibility this will be automated with a \c{bdep-add(1)} command in
-the future.|
+dependencies is not something that happens often. It's also possible this will
+be automated with a \c{bdep-add(1)} command in the future.|
 
 To summarize, these are the files we had to touch to add a dependency
 to your project:
 
 \
-repositories.manifest   # add https://example.org/libhello.git
+repositories.manifest   # add https://pkg.cppget.org/1/stable
 manifest                # add 'depends: libhello ^1.0.0'
 buildfile               # import libhello
 hello.cxx               # use libhello
 \
 
-With a new dependency added, let's check status of our project:
+With a new dependency added, let's check the status of our project:
 
 \
 $ bdep status
@@ -654,6 +711,19 @@ hello configured 0.1.0-a.0.19700101000000
 The \l{bdep-status(1)} command has detected that the dependency information
 has changed and tells us that a new \i{iteration} of our project (that \c{#1})
 is now available for \i{synchronization} with its build configurations.
+
+We've also been prompted to authenticate the repository. This will have to
+happen once for every build configuration we initialize our project in and can
+quickly become tedious. To overcome this, we can mention the certificate
+fingerprint that we wish to automatically trust in the
+\c{repositories.manifest} file (replace it with the actual fingerptint from
+the repository's about page):
+
+\
+role: prerequisite
+location: https://pkg.cppget.org/1/stable
+trust: 86:BA:D4:DE:<...>:1D:63:30:C6
+\
 
 To synchronize a project with one or more build configurations we use the
 \l{bdep-sync(1)} command:
@@ -684,11 +754,13 @@ The synchronization as performed by the \c{sync} command is two-way:
 dependency packages are first added, removed, upgraded, or downgraded in build
 configurations according the project's version constraints and user
 input. Then the actual versions of the dependecies present in the build
-configurations are recorded in the project's \c{lockfile}. \N{The \c{lockfile}
-functionality is not yet implemented.}. For a new dependency the latest
-available version that satisfies the version constraint is used.
+configurations are recorded in the project's \c{lockfile} so that if desired
+the build can be reproduced exactly. \N{The \c{lockfile} functionality is not
+yet implemented.}. For a new dependency the latest available version that
+satisfies the version constraint is used.
 
-\N|Synchronization is also the last of the \l{bdep-init(1)} command's logic.|
+\N|Synchronization is also the last step of the \l{bdep-init(1)} command's
+logic.|
 
 Let's now examine the status in all (\c{--all|-a}) build configurations
 including immediate dependencies (\c{--immediate|-i}):
@@ -733,15 +805,25 @@ synchronizing:
 
 \h#tour-upgrade-downgrade-deps|Upgrading and Downgrading Dependencies|
 
-Let's say we've heard a new version of \c{libhello} was released and we
-would like to try it out. To refresh the list of available dependency
-versions we use the \l{bdep-fetch(1)} command (or the \c{--fetch|-f}
-option to \c{status}):
+Let's say we would like to try that \c{1.1.0} version we have see in
+the \c{libhello} \c{git} repository. First we need to add the
+repository to the \c{repositories.manifest} file:
+
+\
+role: prerequisite
+location: https://git.build2.org/hello/libhello.git
+\
+
+\N|Note that we don't need the \c{trust} value since \c{git} repositories
+are not authenticated.|
+
+To refresh the list of available dependency versions we use the
+\l{bdep-fetch(1)} command (or the \c{--fetch|-f} option to \c{status}):
 
 \
 $ bdep fetch
 $ bdep status libhello
-libhello configured 1.0.0 available [2.0.0]
+libhello configured 1.0.0 available [1.1.0]
 \
 
 To upgrade (or downgrade) dependencies we again use the \l{bdep-sync(1)}
@@ -751,19 +833,19 @@ as arguments to \c{sync}:
 \
 $ bdep sync libhello
 synchronizing:
-  upgrade libhello/2.0.0
+  upgrade libhello/1.1.0
   reconfigure hello/0.1.0-a.0.19700101000000#3
 \
 
 Without an explicit version or the \c{--patch|-p} option, \c{sync} will
 upgrade the specified dependencies to the latest available versions. For
-example, if we don't like version \c{2.0.0}, we can downgrade it back to
+example, if we don't like version \c{1.1.0}, we can downgrade it back to
 \c{1.0.0} by specifying the version explicitly (we pass \c{--old-available|-o}
 to \c{status} to see the old versions):
 
 \
 $ bdep status -o libhello
-libhello configured 2.0.0 available [1.0.0] (2.0.0)
+libhello configured 1.1.0 available [1.0.0] (1.1.0)
 
 $ bdep sync libhello/1.0.0
 synchronizing:
@@ -775,16 +857,16 @@ Instead of specific dependecies we can also upgrade (\c{--upgrade|-u}) or
 patch (\c{--patch|-p}) immediate (\c{--immediate|-i}) or all
 (\c{--recursive|-r}) dependencies of our project.
 
-As a more realistic example, let's assume our \c{hello} project also depends
-on \c{libformat} and that \c{libhello} in turn depends on \c{libprint}. Here
-is the dependency tree of this project:
+As a more realistic example, version \c{1.1.0} of \c{libhello} depends on two
+other libraries: \c{libformat} and \c{libprint}. Here is the dependency tree
+of this project:
 
 \
 $ bdep status -r
 hello configured 0.1.0-a.0.19700101000000#1
-  libhello configured 1.0.0
+  libhello configured 1.1.0
     libprint configured 1.0.0
-  libformat configured 1.0.0
+    libformat configured 1.0.0
 \
 
 A typical conservative dependency management workflow for a our project would
@@ -793,13 +875,11 @@ look like this:
 \
 $ bdep status -fi  # refresh and examine immediate dependencies
 hello configured 0.1.0-a.0.19700101000000#1
-  libhello configured 1.0.0 available 1.0.1 1.0.2 1.1.0 2.0.0
-  libformat configured 1.0.0 available 1.0.1 1.0.2 1.1.0 2.0.0
+  libhello configured 1.1.0 available 1.1.1 1.1.2 1.2.0 2.0.0
 
 $ bdep sync -pi    # upgrade immediate to latest patch version
 synchronizing:
-  upgrade libhello/1.0.2
-  upgrade libformat/1.0.2
+  upgrade libhello/1.1.2
   reconfigure hello/0.1.0-a.0.19700101000000#2
 continue? [Y/n] y
 \
@@ -808,20 +888,21 @@ Notice that in case of such mass upgrades you are prompted for confirmation
 before anything is actually changed (unless you pass \c{--yes|-y}).
 
 In contrast, this would be a fairly agressive workflow where we upgrade
-everything to the latest available version (version constraints permitting):
+everything to the latest available version (version constraints permitting;
+here we assume \c{^1.0.0} was used for all the dependencies):
 
 \
 $ bdep status -fr  # refresh and examine all dependencies
 hello configured 0.1.0-a.0.19700101000000#1
-  libhello configured 1.0.0 available 1.0.1 1.1.0 2.0.0
+  libhello configured 1.1.0 available 1.1.1 1.2.0 2.0.0
     libprint configured 1.0.0 available 1.0.1 1.1.0 2.0.0
-  libformat configured 1.0.0 available 1.0.1 1.1.0 2.0.0
+    libformat configured 1.0.0 available 1.0.1 1.1.0 2.0.0
 
 $ bdep sync -ur    # upgrade all to latest available version
 synchronizing:
-  upgrade libprint/2.0.0
-  upgrade libhello/2.0.0
-  upgrade libformat/2.0.0
+  upgrade libprint/1.1.0
+  upgrade libformat/1.1.0
+  upgrade libhello/1.2.0
   reconfigure hello/0.1.0-a.0.19700101000000#2
 continue? [Y/n] y
 \
@@ -830,10 +911,11 @@ We can also have something in between: patch all (\c{sync\ -pr}), upgrade
 immediate (\c{sync\ -ui}), or even upgrade immediate and patch the rest
 (\c{sync\ -ui} followed by \c{sync\ -pr}).
 
+
 \h#tour-versioning|Versioning and Release Management|
 
-Let's now discuss versioning and release management (and, yes, that
-strange-looking \c{0.1.0-a.0.19700101000000} we keep seeing). While a build
+Let's now discuss versioning and release management and, yes, that
+strange-looking \c{0.1.0-a.0.19700101000000} we keep seeing. While a build
 system project doesn't need a version and a \c{bpkg} package can use custom
 versioning schemes (see \l{bpkg#package-version Package Version}), a project
 managed by \c{bdep} must use \i{standard versioning}. \N{A dependency, which
@@ -860,9 +942,9 @@ beta. In between those we may also want to publish a number of snapshots, for
 example, for CI. With continuous versioning all these releases, pre-releases,
 and snapshots are assigned unique, properly ordered versions.
 
-\N|Continous versioning is a fundamental building block of the \c{build2}
-project depdendency management. In case of snapshots, an appropriate version
-is assigned automatically in cooperation with your VCS.|
+\N|Continous versioning is a cornerstone of the \c{build2} project depdendency
+management. In case of snapshots, an appropriate version is assigned
+automatically in cooperation with your VCS.|
 
 The \ci{prerel} component for a pre-release has the following form:
 
@@ -919,8 +1001,8 @@ of a project that uses \c{git} as its VCS:
 \
 
 Let's see how this works in practice by publishing a couple of versions for
-our \c{hello} project. For more details on standard versioning and its support
-in \c{build2} refer to \l{b#module-version Version Module}.
+our \c{hello} project. For a more detailed discussion of standard versioning
+and its support in \c{build2} refer to \l{b#module-version Version Module}.
 
 By now it should be clear what that \c{0.1.0-a.0.19700101000000} means \- it
 is a first snapshot version of our project. Since there are no commits yet, it
@@ -937,8 +1019,8 @@ hello configured 0.1.0-a.0.19700101000000
       available  0.1.0-a.0.20180418054428.4cf95b919a4c
 \
 
-Similar to dependency information, \c{status} has detected that a new
-(snapshot) version of our project is available for synchronization.
+Just like with changes to dependency information, \c{status} has detected that
+a new (snapshot) version of our project is available for synchronization.
 
 \N|Another way to view the project's version (which works even if we are
 not using \c{bdep}) is with the build system's \c{info} operation:
@@ -967,7 +1049,7 @@ hello configured 0.1.0-a.0.20180418054428.4cf95b919a4c
 \N|Notice that we didn't have to manually change the version anywhere. All we
 had to do is commit our changes and a new snapshot version was automatically
 derived by \c{build2} from the new commit. Without this automation continous
-versioning would be burdensome and hardly impractical.|
+versioning would be hardly practical.|
 
 If we now make another commit, we will see a similar picture:
 
@@ -1002,7 +1084,7 @@ also recommend that you tag the release commit with a name in the
 \N|Having regular release tag names with the \cb{v} prefix allows one to
 distinguish them from other tags, for example, with wildcard patterns.|
 
-Here is a workflow for our example:
+Here is the release workflow for our example:
 
 \
 $ git commit -a -m \"Release version 0.1.0-a.1\"
@@ -1018,7 +1100,10 @@ $ git push
 # Master is now open for business.
 \
 
-Note that when specifying a snapshot version in \c{manifest} we use the
+\N|In the future release management may be automated with a \c{bdep-release(1)}
+command.|
+
+Notice also that when specifying a snapshot version in \c{manifest} we use the
 special \cb{z} snapshot value (for example, \c{0.1.0-a.1.z}) which is
 recognized and automatically replaced by \c{build2} with, in case of \c{git},
 commit timestamp and id (refer to \l{b#module-version Version Module} for
@@ -1050,7 +1135,11 @@ will actually be a new major release, we can easily change it to
 conservatively by either incrementing the patch or the minor version
 component. One reasonable strategy is to incremen the minor component and, if
 required, release patch versions from a separate branch (created by branching
-off from the release commit).|
+off from the release commit).
+
+Note also that you don't have to make any pre-releases if you don't need them.
+While during development you would still keep the version as \c{X.Y.Z-a.0}, at
+release you would change it directly to the final \c{X.Y.Z}.|
 
 When publishing the final release you may also want to clean up now
 obsolete pre-release tags. For example:
@@ -1067,6 +1156,18 @@ is published.
 Also note that having a \c{git} repository with a large number of published
 but unused references may result in a significant download overhead.|
 
+Let's also briefly discuss in which situations we should increment each of the
+version components. While \i{semver} gives basic guidelines, there are several
+ways to apply them in the context of C/C++ where there is a distinction
+between binary and source compatibility. We recommend that you reserve
+\i{patch} releases for bug fixes and security issues that you can guarantee
+with a high level of certainty to be binary-compatible. Otherwise, if the
+changes are source-compatible, then increment \i{minor}. And if they are
+breaking (that is, the user code likely will need adjustments), then increment
+\i{major}. During early development, when breaking changes are frequent, it is
+customary to use the \c{0.Y.Z} versions where \c{Y} effectively becomes the
+\i{major} component. Again, refer to the \l{b#module-version Version Module}
+for a more detailed discussion of this topic.
 
 \h#tour-consume-pkg|Package Consumption|
 

@@ -31,30 +31,63 @@
 
 \
 $ git clone ssh://example.org/hello.git
-$ cd hello
+$ tree hello
+hello/
+├── hello/
+│   ├── hello.cxx
+│   └── buildfile
+├── manifest
+└── repositories.manifest
 
-$ bdep init --create ../hello-gcc cc config.cxx=g++
+$ cd hello
+$ bdep init --config-create ../hello-gcc cc config.cxx=g++
+initializing project /tmp/hello/
+created configuration /tmp/hello-gcc/ (default, auto-synchronized)
+synchronizing:
+  new hello/0.1.0
+
 $ b
-<compile>
-$ ./hello
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
+
+$ hello/hello World
+Hello, World!
 
 $ edit repositories.manifest   # add https://example.org/libhello.git
 $ edit manifest                # add 'depends: libhello ^1.0.0'
-$ edit buildfile               # import libhello
-$ edit hello.cxx               # use libhello
+$ edit hello/buildfile         # import libhello
+$ edit hello/hello.cxx         # use libhello
+
 $ b
-<sync>
-<compile>
+fetching from https://example.org/libhello.git
+synchronizing /tmp/hello-gcc/:
+  new libhello/1.0.0 (required by hello)
+  reconfigure hello/0.1.0
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello}
+ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
 $ bdep fetch                   # refresh available versions
-$ bdep status                  # review available versions
-<show new version>
+$ bdep status -i               # review available versions
+hello configured 0.1.0
+  libhello ^1.0.0 configured 1.0.0 available [1.1.0]
 
 $ bdep sync libhello           # upgrade to latest
-<...>
+synchronizing:
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  reconfigure hello/0.1.0
 
-$ bdep sync libhello/1.1.0     # downgrade to X.Y.Z
-<...>
+$ bdep sync libhello/1.0.0     # downgrade
+synchronizing:
+  drop libprint/1.0.0 (unused)
+  drop libformat/1.0.0 (unused)
+  downgrade libhello/1.0.0
+  reconfigure hello/0.1.0
 \
 
 \h1#tour|A Tour of The \c{build2} Toolchain|
@@ -90,6 +123,7 @@ customary \i{\"Hello, World!\"} program:
 
 \
 $ bdep new -t exe -l c++ hello
+created new executable project hello in /tmp/hello/
 \
 
 The \l{bdep-new(1)} command creates a \i{canonical} \c{build2} project. In
@@ -180,6 +214,8 @@ infrastructure for importing (commented out) and linking libraries (that
 file tests our program. Let's take a look inside:
 
 \
+$ cat hello/testscript
+
 : basics
 :
 $* 'World' >'Hello, World!'
@@ -245,9 +281,9 @@ we are in the project's root directory):
 \
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
 initializing project /tmp/hello/
-created configuration @gcc /tmp/hello-gcc/ (1, default)
+created configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
 synchronizing:
-  build hello/0.1.0-a.0.19700101000000
+  new hello/0.1.0-a.0.19700101000000
 \
 
 The \cb{--create|-C} option instructs \c{init} to create a new configuration
@@ -266,9 +302,9 @@ Now the same for Clang:
 \
 $ bdep init -C ../hello-clang @clang cc config.cxx=clang++
 initializing project /tmp/hello/
-created configuration @clang /tmp/hello-clang/ (2)
+created configuration @clang /tmp/hello-clang/ (auto-synchronized)
 synchronizing:
-  build hello/0.1.0-a.0.19700101000000
+  new hello/0.1.0-a.0.19700101000000
 \
 
 If we check the parent directory, we should now see two build configurations
@@ -332,12 +368,14 @@ $ bdep status
 hello configured 0.1.0-a.0.19700101000000
 
 $ b
-<...>
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
 $ b test
-<...>
+test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
 
-$ hello/hello
+$ hello/hello World
 Hello, World!
 \
 
@@ -348,12 +386,13 @@ $ bdep status @clang
 hello configured 0.1.0-a.0.19700101000000
 
 $ b ../hello-clang/hello/
-...
+c++ hello/cxx{hello}@../hello-clang/hello/hello/
+ld ../hello-clang/hello/hello/exe{hello}
 
 $ b test: ../hello-clang/hello/
-...
+test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
 
-$ ../hello-clang/hello/hello/hello
+$ ../hello-clang/hello/hello/hello World
 Hello, World!
 \
 
@@ -364,14 +403,15 @@ and other build system options.|
 While we are here, let's also check how hard it would be to cross-compile:
 
 \
-$ bdep init -C ../hello-mingw cc config.cxx=x86_64-w64-mingw32-g++
+$ bdep init -C ../hello-mingw @mingw cc config.cxx=x86_64-w64-mingw32-g++
 initializing project /tmp/hello/
-created configuration /tmp/hello-mingw/ (1, default)
+created configuration @mingw /tmp/hello-mingw/ (auto-synchronized)
 synchronizing:
-  build hello/0.1.0-a.0.19700101000000
+  new hello/0.1.0-a.0.19700101000000
 
-$ b
-<...>
+$ b ../hello-mingw/hello/
+c++ hello/cxx{hello}@../hello-mingw/hello/hello/
+ld ../hello-mingw/hello/hello/exe{hello}
 \
 
 As you can see, cross-compiling in \c{build2} is nothing special. In our case,
@@ -379,8 +419,11 @@ on a properly setup GNU/Linux machine (that automatically uses \c{wine} as an
 \c{.exe} interpreter) we can even run tests:
 
 \
-$ b test
-<...>
+$ b test: ../hello-mingw/hello/
+test hello/test{testscript} ../hello-mingw/hello/hello/exe{hello}
+
+$ ../hello-mingw/hello/hello/hello.exe Windows
+Hello, Windows!
 \
 
 Let's review what it takes to initialize a project's infrastructure and

@@ -49,8 +49,8 @@ html2ps -f doc.html2ps:letter.html2ps -o build2-toolchain-$n-letter.ps build2-to
 ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
 }
 
-gen intro2
 gen intro
+#gen intro1
 
 # Auto-heading doesn't work since it is broken into multiple doc strings.
 #

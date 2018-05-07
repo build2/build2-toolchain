@@ -18,7 +18,6 @@
 // PDF
 //
 // @@ tree output is garbled
-// @@ Install list margins missing
 // @@ Could we use a nicer font, seeing that we embed them?
 //
 
@@ -28,1142 +27,1364 @@
 //
 
 "
-\h#tldr|TL;DR|
+\h1#tldr|TL;DR|
 
 \
-$ bpkg create -d hello cc
-created new configuration in hello/
+$ git clone ssh://example.org/hello.git
+$ tree hello
+hello/
+├── hello/
+│   ├── hello.cxx
+│   └── buildfile
+├── manifest
+└── repositories.manifest
 
-$ cd hello/
-$ bpkg add https://build2.org/pkg/1/hello/stable
-added repository build2.org/hello/stable
+$ cd hello
+$ bdep init --config-create ../hello-gcc cc config.cxx=g++
+initializing project /tmp/hello/
+created configuration /tmp/hello-gcc/ (default, auto-synchronized)
+synchronizing:
+  new hello/0.1.0
 
-$ bpkg fetch
-fetching build2.org/hello/stable
-2 package(s) in 1 repository(s)
+$ b
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
-$ bpkg build hello
-  build libhello/1.0.0 (required by hello)
-  build hello/1.0.0
-continue? [Y/n] y
+$ hello/hello World
+Hello, World!
 
-libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
-fetched libhello/1.0.0
-unpacked libhello/1.0.0
+$ edit repositories.manifest   # add https://example.org/libhello.git
+$ edit manifest                # add 'depends: libhello ^1.0.0'
+$ edit hello/buildfile         # import libhello
+$ edit hello/hello.cxx         # use libhello
 
-hello-1.0.0.tar.gz           100% of 1057  B 6882 kBps 00m01s
-fetched hello/1.0.0
-unpacked hello/1.0.0
+$ b
+fetching from https://example.org/libhello.git
+synchronizing /tmp/hello-gcc/:
+  new libhello/1.0.0 (required by hello)
+  reconfigure hello/0.1.0
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello}
+ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
-configured libhello/1.0.0
-configured hello/1.0.0
+$ bdep fetch                   # refresh available versions
+$ bdep status -i               # review available versions
+hello configured 0.1.0
+  libhello ^1.0.0 configured 1.0.0 available [1.1.0]
 
-c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/libs{hello}
-ld hello-1.0.0/exe{hello}
+$ bdep sync libhello           # upgrade to latest
+synchronizing:
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  reconfigure hello/0.1.0
 
-updated hello/1.0.0
+$ bdep sync libhello/1.0.0     # downgrade
+synchronizing:
+  drop libprint/1.0.0 (unused)
+  drop libformat/1.0.0 (unused)
+  downgrade libhello/1.0.0
+  reconfigure hello/0.1.0
 \
-"
 
-"
-\h#warning|Warning|
+\h1#guide|Getting Started Guide|
 
-The \c{build2} toolchain \c{0.X.Y} series are alpha releases. Interfaces
-\i{will} most likely change in backwards-incompatible ways. But if you want
-to start playing with it, welcome and join the \l{https://lists.build2.org
-mailing list}!
-
-Our approach to developing \c{build2} is to first get the hard parts right
-before focusing on completeness. So while we might still have no support for
-custom build rules, we do handle auto-generated source code (and, in
-particular, headers) properly. In other words, we go depth rather than
-breadth-first. As a result, there are some limitations and missing pieces,
-especially in the build system. The most notable ones are:
-
-\ul|
-
-\li|Limited documentation.|
-
-\li|No support for custom build system rules/modules.|
-
-|
-"
-
-"
-\h#intro|Introduction|
-
-The \c{build2} toolchain is a set of tools designed for building and packaging
-C and C++ code (though, if it can handle C++, it can handle anything,
-right?). The toolchain currently includes the \i{build system} (\c{build2}),
-the \i{package manager} (\c{bpkg}), and the \i{repository web interface}
-(\c{brep}). More tools, such as the \i{build robot} (\c{bbot}), are in the
-works. Then there is \l{https://cppget.org/ cppget.org} (running \c{brep})
-which we hope will become \i{the C++ package repository}.
-
-The goal of this document is to give you a basic idea of what the \c{build2}
-toolchain can do so that you can decide if you are interested and want to learn
-more. Further documentation is referenced at the end of this introduction.
-
-The \c{build2} toolchain is self-hosted and self-packaged (and, yes, it is on
-\l{https://cppget.org/ cppget.org}). It could have served as its own example,
-however, before the toolchain can build itself, we have to bootstrap it (that
-chicken and egg problem again). And this step wouldn't serve our goal of
-quickly learning what \c{build2} is about. So, instead, we will start with a
-customary \i{\"Hello, World!\"} example which you won't yet be able to try
-yourself (but don't worry, complete terminal output will be shown). If at the
-end you find \c{build2} appealing, you can jump straight to
+The aim of this guide is to get you started developing C/C++ projects with the
+\c{build2} toolchain. All the examples in this section include the relevant
+command output so if you just want to get a sense of what \c{build2} is about,
+then you don't have to install the toolchain and run the commands in order to
+follow along. If at the end you find \c{build2} appealing and would like to
+start using it or try the examples for yourself, you can jump straight to
 \l{build2-toolchain-install.xhtml The \c{build2} Toolchain Installation and
-Upgrade} (and, yes, there you get to run that coveted \c{bpkg build bpkg}).
-Once the \c{build2} installation is complete, you can come back to the
-\i{\"Hello, World!\"} example and try all of the steps for yourself.
-
-This introduction explores the \i{consumer} side of \i{\"Hello, World!\"}.
-That is, we assume that someone was kind enough to create and package the
-\c{libhello} library as well as the \c{hello} program and we will learn how to
-obtain and build them as well as keep up with their updates. At the end we
-will also see how to write our own, \c{hello2}, program that depends on
-\c{libhello}.  And so, without further ado, let's begin.
-
-Actually, one more thing: if you have a recent enough compiler and would like
-to try the new C++ Modules support, then you can instead use the modularized
-variants of these packages: simply replace \c{hello} with \c{mhello} and
-\c{libhello} with \c{libmhello} in the commands below.
-
-The first step in using \c{bpkg} is to create a \i{configuration}. A
-configuration is a directory where packages that require similar compile
-settings will be built. You can create as many configurations as you want: for
-different C++ compilers, targets (\c{build2} is big on cross-compiling),
-debug/release, 32/64-bit, or even for different days of the week, if you are
-so inclined. Say we are in the mood for a GCC 5 release build today:
-
-\
-$ mkdir hello-gcc5-release
-$ cd hello-gcc5-release
-$ bpkg create cxx config.cxx=g++-5 config.cxx.coptions=-O3
-created new configuration in /tmp/hello-gcc5-release/
-\
-
-Or perhaps you are on Windows and prefer Visual Studio (running from the
-Visual Studio Tools Command Prompt):
-
-\
-> mkdir hello-vc14-release
-> cd hello-vc14-release
-> bpkg create cxx config.cxx=cl config.cxx.coptions=/O2
-created new configuration in C:\projects\hello-vc14-release\
-\
+Upgrade}.
 
 One of the primary goals of the \c{build2} toolchain is to provide a uniform
-build interface across all the platforms and compilers. While the following
-examples use the \c{hello-gcc5-release} configuration and assume a UNIX-like
-operation system, everything will work if you use \c{hello-vc14-release} (or
-\c{hello-mingw-release}) on Windows. Just use appropriate paths, compilers,
-and options.
+interface across all the platforms and compilers. While the examples in this
+document assume a UNIX-like operation system, they will look pretty similar if
+you are on Windows. You just have to use appropriate paths, compilers, and
+options.
 
-Let's discuss that last command line: \l{bpkg-cfg-create(1) \c{bpkg create}}
-is the command for creating a new configuration. As a side note, if you ever
-want to get help for any \c{bpkg} command, run \c{bpkg help \i{<command>}}. To
-see the list of commands, run just \l{bpkg-help(1) \c{bpkg help}} (or see
-\l{bpkg(1)}). While we are at it, if you ever want to see what \c{bpkg} is
-running underneath, there is the \c{-v} (essential commands) and \c{-V} (all
-commands) options. And if you really want to get under the hood, use
-\l{bpkg-common-options(1) \c{--verbose <level>}}.
-
-After the command we have \c{cxx} which is the name of the \c{build2} build
-system module. As you might have guessed, \c{cxx} provides support for the C++
-compilation. By specifying this module when creating the configuration we
-configure it (yes, with those \c{config.cxx.*} variables that follow) for the
-entire configuration. That is, every package that we will build in this
-configuration and that uses the \c{cxx} module will by default inherit these
-settings.
-
-The rest of the command line are the configuration variables for the \c{cxx}
-module with \c{coptions} standing for \i{compile options} (there are also
-\c{poptions} for \i{preprocess options}, \c{loptions} for \i{link options}, and
-\c{libs} for extra libraries to link).
-
-There is also the \c{c} module for the C compilation. So if we were planning
-to build both C and C++ projects, then we could have run:
+The question we will try to answer in this section can be summarized as:
 
 \
-$ bpkg create c cxx ...
+$ git clone .../hello.git && now-what?
 \
 
-The problem, of course, is that you may not know what mix of languages those
-projects (or their dependencies) might use. For example, the use of C might be
-an implementation detail of a C++ library. To solve this, \c{build2} provides
-another module called \c{cc} which stands for \i{C-common}. So, in this
-context, instead of using the \c{c} and \c{cxx} modules directly, it's a good
-idea to get into the habit of using \c{cc}:
+That is, we clone an existing C/C++ project or would like to create a new one
+and then start hacking on it. We want to spend as little time and energy as
+possible on the initial and ongoing infrastructure maintenance: setting up
+build configurations, managing dependencies, continuous integration and
+testing, release management, etc. Or, as one C++ user aptly put it, \"\i{All I
+want to do is program.}\"
+
+\h#guide-hello|Hello, World|
+
+Let's see what programming with \c{build2} feels like by starting with a
+customary \i{\"Hello, World!\"} program (here we assume our current working
+directory is \c{/tmp}):
 
 \
-$ bpkg create cc config.cxx=g++-5 config.cc.coptions=-O3
+$ bdep new -t exe -l c++ hello
+created new executable project hello in /tmp/hello/
 \
 
-Notice two things about this command line: we don't need to specify the C
-compiler with \c{config.c} \- \c{build2} is smart enough to figure it out
-from \c{config.cxx} (or vice versa). We also used \c{config.cc.coptions}
-instead of \c{config.cxx.coptions} so that the options apply to all the
-C-common languages (we can still use \c{config.{c,cxx\}.*} for the
-language-specific options).
+The \l{bdep-new(1)} command creates a \i{canonical} \c{build2} project. In
+our case it is an executable implemented in C++.
 
-Ok, configuration in hand, where can we get some packages? \c{bpkg} packages
-come from \i{repositories}. A repository can be a local filesystem directory
-or a remote URL. Our example packages come from their own remote \i{\"Hello,
-World!\"} repository: \c{\l{https://build2.org/pkg/1/hello/stable/}} (go ahead,
-browse it, I will wait).
+\N|To create a library, pass \c{-t\ lib}. By default \c{new} also initializes
+a \c{git} repository and generates suitable \c{.gitignore} files (pass \c{-s\
+none} if you don't want that).|
 
-Instead of scouring repository manifests by hand (I know you couldn't resist),
-we can ask \c{bpkg} to interrogate a repository location for us:
+Let's take a look inside our new project:
 
 \
-$ bpkg rep-info https://build2.org/pkg/1/hello/stable
-warning: authenticity of the certificate for repository build2.org/hello/stable cannot be established
-certificate is for build2.org, \"Code Synthesis\" <admin@build2.org>
-certificate SHA256 fingerprint:
-FF:DF:7D:38:67:4E:C3:82:[...]:30:56:B9:77:B9:F2:01:94
-trust this certificate? [y/n]
+$ tree hello
+hello/
+├── .git/
+├── .bdep/
+├── build/
+├── hello/
+│   ├── hello.cxx
+│   ├── buildfile
+│   └── testscript
+├── buildfile
+├── manifest
+└── repositories.manifest
 \
 
-The \c{bpkg} repositories are normally signed to prevent tampering with
-packages. If the repository certificate is seen (in this configuration) for
-the first time, \c{bpkg} will ask you to authenticate it. A good way to
-authenticate a certificate is to compare the displayed fingerprint to the one
-you have received earlier, for example, in an email announcement. The
-repository's about page also lists the fingerprint (see the
-\l{https://build2.org/pkg/hello/?about about page} for our repository). For
-more details on repository signing see the \l{bpkg-repository-signing(1)} help
-topic.
+\N|While the canonical project structure is strongly recommended, especially
+for new projects, \c{build2} is flexible enough to allow most commonly used
+arrangements.|
 
-If we answer \i{yes}, we will see the basic repository information (its
-\i{canonical name}, location, certificate subject and fingerprint) followed
-by the list of available packages:
+Similar to version control tools, we normally run all \c{build2} tools from
+the project's source directory or one of its subdirectories, so:
 
 \
-build2.org/hello/stable https://build2.org/pkg/1/hello/stable
-CN=build2.org/O=Code Synthesis/admin@build2.org
-FF:DF:7D:38:67:4E:C3:82:[...]:30:56:B9:77:B9:F2:01:94
-
-hello/1.0.0
-libhello/1.0.0
+$ cd hello
 \
 
-We can also use the repository's web interface (implemented by \c{brep}). Our
-repository has one, check it out: \c{\l{https://build2.org/pkg/hello/}}.
-
-Ok, back to the command line. If we want to use a repository as a source of
-packages in our configuration, we have to first add it:
+While the project layout is discussed in more detail in later sections, let's
+examine a couple of interesting files to get a sense of what's going on. We
+start with the source file which should look familiar:
 
 \
-$ bpkg add https://build2.org/pkg/1/hello/stable
-added repository build2.org/hello/stable
-\
+$ cat hello/hello.cxx
 
-If we want to add several repositories, we just execute the \l{bpkg-rep-add(1)
-\c{bpkg add}} command for each of them. Once this is done, we fetch the list of
-available packages for all the added repositories:
+#include <iostream>
 
-\
-$ bpkg fetch
-fetching build2.org/hello/stable
-2 package(s) in 1 repository(s)
-\
+using namespace std;
 
-Note that you would normally re-run the \l{bpkg-rep-fetch(1) \c{bpkg fetch}}
-command after you've added another repository or to refresh the list of
-available packages.
-
-Now that \c{bpkg} knows where to get the packages, we can finally get down to
-business:
-
-\
-$ bpkg build hello
-  build libhello/1.0.0 (required by hello)
-  build hello/1.0.0
-continue? [Y/n]
-\
-
-Let's see what's going on here. We ran \l{bpkg-pkg-build(1) \c{bpkg build}} to
-build the \c{hello} program which happens to depend on the \c{libhello}
-library. So \c{bpkg} presents us with a \i{plan of action}, that is, the steps
-it will have to perform in order to build us \c{hello} and then asks us to
-confirm if that's what we want to do (you can add \c{--yes|-y} to skip the
-confirmation). In the real-world usage the plan will be more complex, with
-upgrades/downgrades, reconfigurations, etc.
-
-Let's answer \i{yes} and see what happens:
-
-\
-libhello-1.0.0.tar.gz        100% of 2428  B 1364 kBps 00m01s
-fetched libhello/1.0.0
-unpacked libhello/1.0.0
-hello-1.0.0.tar.gz           100% of 1057  B   20 MBps 00m01s
-fetched hello/1.0.0
-unpacked hello/1.0.0
-configured libhello/1.0.0
-configured hello/1.0.0
-c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/libs{hello}
-ld hello-1.0.0/exe{hello}
-updated hello/1.0.0
-\
-
-While the output is mostly self-explanatory, in short, \c{bpkg} downloaded,
-unpacked, and configured both packages and then proceeded to building the
-\c{hello} executable which happens to require building the \c{libhello}
-library. Note that the download progress may look differently on your machine
-depending on which \i{fetch tool} (\c{wget}, \c{curl}, or \c{fetch}) is
-used. If you ever considered giving that \c{-v} option a try, now would be a
-good time. But let's first drop (\l{bpkg-pkg-drop(1) \c{bpkg drop}}) the
-\c{hello} package so that we get the same build from scratch:
-
-\
-$ bpkg drop hello
-following prerequisite packages were automatically built and will no longer be necessary:
-  libhello
-drop prerequisite packages? [Y/n] y
-  drop hello
-  drop libhello
-continue? [Y/n] y
-disfigured hello
-disfigured libhello
-purged hello
-purged libhello
-\
-
-Ok, ready for some \c{-v} details? Feel free to skip the following listing
-if you are not interested.
-
-\
-$ bpkg build -v -y hello
-fetching libhello-1.0.0.tar.gz from build2.org/hello/stable
-curl ... https://build2.org/pkg/1/hello/stable/libhello-1.0.0.tar.gz
-  % Total    % Received Average Speed   Time    Time     Time  Current
-                        Dload  Upload   Total   Spent    Left  Speed
-100  2428  100  2428      1121      0  0:00:01  0:00:01 --:--:--  1122
-fetched libhello/1.0.0
-tar -xf libhello-1.0.0.tar.gz
-unpacked libhello/1.0.0
-fetching hello-1.0.0.tar.gz from build2.org/hello/stable
-curl ... https://build2.org/pkg/1/hello/stable/hello-1.0.0.tar.gz
-  % Total    % Received Average Speed   Time    Time     Time  Current
-                        Dload  Upload   Total   Spent    Left  Speed
-100  1057  100  1057      773      0  0:00:01  0:00:01 --:--:--   772
-fetched hello/1.0.0
-tar -xf hello-1.0.0.tar.gz
-unpacked hello/1.0.0
-b -v configure(./libhello-1.0.0/)
-cat >libhello-1.0.0/build/config.build
-configured libhello/1.0.0
-b -v configure(./hello-1.0.0/)
-cat >hello-1.0.0/build/config.build
-configured hello/1.0.0
-hold package hello
-b -v update(./hello-1.0.0/)
-g++-5 -I libhello-1.0.0 -O3 -std=c++11 -o hello-1.0.0/hello.o -c hello-1.0.0/hello.cxx
-g++-5 -I libhello-1.0.0 -O3 -std=c++11 -fPIC -o libhello-1.0.0/hello/hello.so.o -c libhello-1.0.0/hello/hello.cxx
-g++-5 -O3 -std=c++11 -shared -o libhello-1.0.0/hello/libhello-1.0.so libhello-1.0.0/hello/hello.so.o
-g++-5 -O3 -std=c++11 -o hello-1.0.0/hello hello-1.0.0/hello.o libhello-1.0.0/hello/libhello-1.0.so
-updated hello/1.0.0
-\
-
-Another handy command is \l{bpkg-pkg-status(1) \c{bpkg status}}. It can be
-used to examine the state of a package in the configuration. Here are a few
-examples (if you absolutely must know what \c{hold_package} and \c{sys:?}
-mean, check \l{bpkg-pkg-status(1)}):
-
-\
-$ bpkg status libhello
-configured 1.0.0; available sys:?
-
-$ bpkg status hello
-configured 1.0.0 hold_package; available sys:?
-
-$ bpkg drop -y hello
-disfigured hello
-disfigured libhello
-purged hello
-purged libhello
-
-$ bpkg status hello
-available 1.0.0 sys:?
-
-$ bpkg status libfoobar
-unknown
-\
-
-Let's say we got wind of a new development: the \c{libhello} author released a
-new version of the library. It is such an advance in the art of \i{\"Hello,
-World!\"}, it's only currently available from \c{testing}. Of course, we must
-check it out.
-
-Now, what exactly is \c{testing}? You must have noticed that the repository
-location that we've been using so far ended with \c{/stable}. Quite often it is
-useful to split our repository into sub-repositories or \i{sections}. For
-example, to reflect the maturity of packages (say, \c{stable} and \c{testing},
-as in our case) or to divide them into sub-categories (\c{misc} and \c{math})
-or even some combination (\c{math/testing}). Note, however, that to \c{bpkg}
-these sub-repositories or \i{sections} are just normal repositories and there
-is nothing special about them.
-
-We are impatient to try the new version so we will skip interrogating the
-repository with \c{rep-info} and just add it to our configuration. After all,
-we can always check with \c{status} if any upgrades are available for packages
-we are interested in. Here we assume the configuration has \c{hello} built (run
-\c{bpkg build -y hello} to get to that state).
-
-\
-$ bpkg add https://build2.org/pkg/1/hello/testing
-added repository build2.org/hello/testing
-
-$ bpkg fetch
-fetching build2.org/hello/stable
-fetching build2.org/hello/testing
-5 package(s) in 2 repository(s)
-\
-
-Notice that this time we don't see any authentication-related messages or
-prompts since \c{bpkg} remembered (in this configuration) that we trust the
-certificate (\c{testing} naturally uses the same one as \c{stable}).
-
-Let's see what's new:
-
-\
-$ bpkg status libhello
-configured 1.0.0; available 1.1.0 sys:?
-\
-
-Ok, \c{libhello/1.1.0} is now available. How do we upgrade? We can try to
-build \c{hello} again:
-
-\
-$ bpkg build -y hello
-info: dir{hello-1.0.0/} is up to date
-updated hello/1.0.0
-\
-
-Why did nothing happen? Because \c{bpkg} will only upgrade (or downgrade)
-to a new version if we explicitly ask it to. As things stand, all dependencies
-for \c{hello} are satisfied and \c{bpkg} is happy to twiddle its thumbs. Let's
-tell \c{bpkg} to build us \c{libhello} instead:
-
-\
-$ bpkg build libhello
-  build libformat/1.0.0 (required by libhello)
-  build libprint/1.0.0 (required by libhello)
-  upgrade libhello/1.1.0
-  reconfigure hello (dependent of libhello)
-continue? [Y/n]
-\
-
-Ok, now we are getting somewhere. It looks like the new version of \c{libhello}
-went really enterprise-grade (or is it called web-scale these days?). There are
-now two new dependencies (\c{libformat} and \c{libprint}) that we will have to
-build in order to upgrade. Maybe we should answer \i{no} here?
-
-Notice also that \c{reconfigure hello} line. If you think about this, it makes
-sense: we are getting a new version of \c{libhello} and \c{hello} depends on it
-so it might need a chance to make some adjustments to its configuration.
-
-Let's answer \i{yes} if only to see what happens:
-
-\
-update dependent packages? [Y/n]
-\
-
-Another question. This one has to do with that \c{reconfigure hello} line we
-just talked about. If you were wondering why we were only offered to
-reconfigure and not actually update the dependent package, you should know
-that \c{bpkg} is a very lazy package manager, it only does what it must do,
-not what might be nice to do. It must reconfigure but it doesn't really have
-to update. And this could be a good thing if, for example, you have a hundred
-dependents in your configuration but right now you only want to build just
-those specific packages. However, quite often, you do want to keep all the
-packages in your configuration up to date and \c{bpkg} graciously offers to
-take care of this task. Ok, let's answer \i{yes} again:
-
-\
-...
-update dependent packages? [Y/n] y
-disfigured hello/1.0.0
-disfigured libhello/1.0.0
-libformat-1.0.0.tar.gz       100% of 1064  B   11 MBps 00m01s
-fetched libformat/1.0.0
-unpacked libformat/1.0.0
-libprint-1.0.0.tar.gz        100% of 1040  B    9 MBps 00m01s
-fetched libprint/1.0.0
-unpacked libprint/1.0.0
-libhello-1.1.0.tar.gz        100% of 1564  B 4672 kBps 00m01s
-fetched libhello/1.1.0
-unpacked libhello/1.1.0
-configured libformat/1.0.0
-configured libprint/1.0.0
-configured libhello/1.1.0
-configured hello/1.0.0
-c++ libhello-1.1.0/hello/cxx{hello}
-c++ libformat-1.0.0/format/cxx{format}
-ld libformat-1.0.0/format/liba{format}
-c++ libprint-1.0.0/print/cxx{print}
-ld libprint-1.0.0/print/liba{print}
-ld libhello-1.1.0/hello/liba{hello}
-c++ libhello-1.1.0/hello/cxx{hello}
-c++ libformat-1.0.0/format/cxx{format}
-ld libformat-1.0.0/format/libs{format}
-c++ libprint-1.0.0/print/cxx{print}
-ld libprint-1.0.0/print/libs{print}
-ld libhello-1.1.0/hello/libs{hello}
-c++ libhello-1.1.0/tests/test/cxx{driver}
-ld libhello-1.1.0/tests/test/exe{driver}
-c++ hello-1.0.0/cxx{hello}
-ld hello-1.0.0/exe{hello}
-updated libhello/1.1.0
-updated hello/1.0.0
-\
-
-A lot of output but nothing really new. If you were to answer \i{no} to the
-\"update dependent packages?\" question above, it is easy to make sure a
-package is up-to-date at a later time with the \l{bpkg-pkg-update(1) \c{bpkg
-update}} command (there is also \l{bpkg-pkg-clean(1) \c{bpkg clean}}), for
-example:
-
-\
-$ bpkg clean hello
-rm hello-1.0.0/exe{hello}
-rm hello-1.0.0/obje{hello}
-cleaned hello/1.0.0
-
-$ bpkg update hello
-c++ hello-1.0.0/cxx{hello.cxx}
-ld hello-1.0.0/exe{hello}
-updated hello/1.0.0
-\
-
-Let's say we really don't like the direction \c{libhello} is going and would
-rather stick to version \c{1.0.0}. Just like upgrades, downgrades are explicit
-plus, in this case, we need to specify the version (you can also specify
-the desired version for upgrades).
-
-\
-$ bpkg build libhello/1.0.0
-  downgrade libhello/1.0.0
-  reconfigure hello (dependent of libhello)
-continue? [Y/n] y
-update dependent packages? [Y/n] y
-disfigured hello/1.0.0
-disfigured libhello/1.1.0
-libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
-fetched libhello/1.0.0
-unpacked libhello/1.0.0
-configured libhello/1.0.0
-configured hello/1.0.0
-following prerequisite packages were automatically built and will no longer be necessary:
-  libprint
-  libformat
-drop prerequisite packages? [Y/n] y
-disfigured libprint
-disfigured libformat
-purged libprint
-purged libformat
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/liba{hello}
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/libs{hello}
-c++ libhello-1.0.0/tests/test/cxx{driver}
-ld libhello-1.0.0/tests/test/exe{driver}
-c++ hello-1.0.0/cxx{hello}
-ld hello-1.0.0/exe{hello}
-updated libhello/1.0.0
-updated hello/1.0.0
-\
-
-Notice how \c{bpkg} helpfully offered to get rid of \c{libprint} and
-\c{libformat} which we won't be needing anymore. Note also that while we
-can use \c{--yes|y} as an answer to all the numerous prompts, there are
-also more granular options. For example, this is how we can instruct
-\c{bpkg} to drop prerequisites (\c{--drop-prerequisite|-D}) but leave
-dependents just reconfigured (\c{--leave-dependent|-L}):
-
-\
-$ bpkg build -D -L libhello/1.0.0
-\
-
-Ok, so all this might look nice and all, but we haven't actually seen anything
-of what we've presumably built; it can all be a charade, for all we know. Can
-we see some libraries and run the \c{hello} program?
-
-There are several ways we can do this. If the package provides tests (as all
-good packages should), we can run them with the \l{bpkg-pkg-test(1) \c{bpkg
-test}} command:
-
-\
-$ bpkg test libhello hello
-test libhello-1.0.0/tests/test/exe{driver}
-test hello-1.0.0/exe{hello}
-tested libhello/1.0.0
-tested hello/1.0.0
-\
-
-But that doesn't quite count for seeing libraries and running programs. Well,
-if you insist, let's see what's inside \c{hello-gcc5-release/}. The \c{bpkg}
-configuration (this \c{hello-gcc5-release/} directory) is, in the \c{build2}
-build system terms, an \i{amalgamation} \- a project that contains
-\i{subprojects}. Not surprisingly, the subprojects in this amalgamation are the
-packages that we've built:
-
-\
-$ ls -1F
-build/
-hello-1.0.0/
-libhello-1.0.0/
-buildfile
-hello-1.0.0.tar.gz
-libhello-1.0.0.tar.gz
-\
-
-And if we look inside \c{hello-1.0.0/} we will see what looks like the
-\c{hello} program:
-
-\
-$ ls -1F hello-1.0.0/
-build/
-buildfile
-hello*
-hello.d
-hello.cxx
-hello.o
-hello.o.d
-manifest
-test.out
-version
-
-$ hello-1.0.0/hello
-usage: hello <name>...
-
-$ hello-1.0.0/hello World
-Hello, World!
-\
-
-The important point here is this: the \c{bpkg} configuration is not some black
-box that you should never look inside of. On the contrary, it is a normal and
-predictable concept of the build system and as long as you understand what you
-are doing, feel free to muck around.
-
-Another way to get hold of a package's goodies is to install it with
-\l{bpkg-pkg-install(1) \c{bpkg install}}. Let's try that:
-
-\
-$ bpkg install                   \
-  config.install.root=/opt/hello \
-  config.install.sudo=sudo       \
-  hello
-
-install /opt/hello/
-install /opt/hello/include/
-install /opt/hello/include/hello/
-install libhello-1.0.0/hello/hxx{hello}
-install libhello-1.0.0/hello/hxx{export}
-install /opt/hello/lib/
-install libhello-1.0.0/hello/libs{hello}
-install /opt/hello/bin/
-install hello-1.0.0/exe{hello}
-install /opt/hello/share/
-install /opt/hello/share/doc/
-install /opt/hello/share/doc/hello/
-install hello-1.0.0/doc{version}
-installed hello/1.0.0
-\
-
-The \c{config.install.sudo} value is the optional \i{sudo}-like program
-that should be used to run the \c{install} program. For those feeling queasy
-running \c{sudo make install}, here is your answer. If you are wondering
-whether you could have specified those \c{config.install.*} values during the
-configuration creation, the answer is yes, indeed!
-
-Let's see what we've got:
-
-\
-$ tree -F /opt/hello/
-/opt/hello/
-├── bin/
-│   └── hello*
-├── include/
-│   └── libhello/
-│       ├── export
-│       └── hello
-├── lib/
-│   ├── libhello-1.0.so*
-│   └── libhello.so -> libhello-1.0.so*
-└── share/
-    └── doc/
-        └── hello/
-            └── version
-\
-
-We can also try to run the installed program:
-
-\
-$ /opt/hello/bin/hello World
-/opt/hello/bin/hello: error while loading shared libraries: libhello-1.0.so: cannot open shared object file: No such file or directory
-\
-
-Not what we hoped to see. Note to the Windows users: this will actually work
-since \c{hello-1.0.dll} will be installed into \c{bin\\}, next to the
-executable; for once things are working better on Windows.
-
-The problem is with our installation location: the runtime linker won't look
-for \c{libhello-1.0.so} in \c{/opt/hello/lib} unless we somehow tell it to
-(for example, using \c{LD_LIBRARY_PATH} or equivalent).  There are several
-ways we can resolve this. We could give up on shared libraries and link our
-prerequisite libraries statically (\c{config.bin.exe.lib=static}). Or we could
-use the \i{rpath} mechanism:
-
-\
-$ bpkg install                    \
-  config.install.root=/opt/hello  \
-  config.install.sudo=sudo        \
-  config.bin.rpath=/opt/hello/lib \
-  hello
-
-ld hello-1.0.0/exe{hello}
-install /opt/hello/
-install /opt/hello/include/
-install /opt/hello/include/hello/
-install libhello-1.0.0/hello/hxx{hello}
-install libhello-1.0.0/hello/hxx{export}
-install /opt/hello/lib/
-install libhello-1.0.0/hello/libs{hello}
-install /opt/hello/bin/
-install hello-1.0.0/exe{hello}
-install /opt/hello/share/
-install /opt/hello/share/doc/
-install /opt/hello/share/doc/hello/
-install hello-1.0.0/doc{version}
-installed hello/1.0.0
-
-$ /opt/hello/bin/hello World
-Hello, World!
-\
-
-Notice that \c{ld} line above \- this is where our executable is re-linked
-with the \c{-rpath} option.
-
-We can also uninstall what we have installed with \l{bpkg-pkg-uninstall(1)
-\c{bpkg uninstall}}:
-
-\
-$ bpkg uninstall                  \
-  config.install.root=/opt/hello  \
-  config.install.sudo=sudo        \
-  hello
-
-uninstall hello-1.0.0/doc{version}
-uninstall /opt/hello/share/doc/hello/
-uninstall /opt/hello/share/doc/
-uninstall /opt/hello/share/
-uninstall hello-1.0.0/exe{hello}
-uninstall /opt/hello/bin/
-uninstall libhello-1.0.0/hello/libs{hello}
-uninstall /opt/hello/lib/
-uninstall libhello-1.0.0/hello/hxx{export}
-uninstall libhello-1.0.0/hello/hxx{hello}
-uninstall /opt/hello/include/hello/
-uninstall /opt/hello/include/
-uninstall /opt/hello/
-uninstalled hello/1.0.0
-
-$ ls /opt/hello
-ls: cannot access /opt/hello: No such file or directory
-\
-
-What if we wanted to use \c{libhello} in our own project? While installing it
-is always an option, this may not be convenient when we develop our code. We
-may have multiple builds per project, for example, with GCC and Clang to catch
-all the warnings. We may also want to make sure our application works well
-with several versions of \c{libhello} (and maybe even with that heinous
-\c{1.1.X}). While we can install different configurations into different
-directories, it's hard to deny things are getting a bit hairy: multiple
-configurations, multiple installations... I guess we will have to get our
-hands into that cookie jar, I mean, configuration, again.
-
-In fact, let's just start writing our own version of the \c{hello} program
-and see how it goes:
-
-\
-$ mkdir hello2
-$ cd hello2
-
-$ cat >hello.cpp
-
-#include <libhello/hello>
-
-int main ()
+int main (int argc, char* argv[])
 {
-  hello::say (\"World\");
+  if (argc < 2)
+  {
+    cerr << \"error: missing name\" << endl;
+    return 1;
+  }
+
+  cout << \"Hello, \" << argv[1] << '!' << endl;
 }
-
 \
 
-What build system shall we use? I can't believe you are even asking this
-question...
+\N|If you prefer the \c{.?pp} extensions over \c{.?xx} for your C++ source
+files, pass \c{-l\ c++,cpp} to the \c{new} command. See \l{bdep-new(1)} for
+details on this and other customization options.|
+
+Let's take a look at the accompanying \c{buildfile}:
 
 \
-$ mkdir build
+$ cat hello/buildfile
 
-$ cat >build/bootstrap.build
+libs =
+#import libs += libhello%lib{hello}
 
-project = hello2              # project name
-using config                  # config module (those config.*)
-
-$ cat >build/root.build
-
-cxx.std = 11                  # C++ standard
-using cxx                     # C++ module
-cxx{*}: extension = cpp       # C++ source file extension
-
-$ cat >buildfile
-
-import libs = libhello%lib{hello}
-exe{hello}: cxx{hello} $libs
+exe{hello}: {hxx ixx txx cxx}{*} $libs test{testscript}
 \
 
-While some of this might not be crystal clear (like why do we have
-\c{bootstrap.build} \i{and} \c{root.build}), I am sure you at least have a
-fuzzy idea of what's going on. And that's enough for what we are after here.
-Completely explaining what's going on here and, more importantly, \i{why} it's
-going this way is for another time and place (the \c{build2} build system
-manual).
-
-To recap, these are the contents of our project so far:
-
-\
-$ tree -F
-.
-├── build/
-│   ├── bootstrap.build
-│   └── root.build
-├── buildfile
-└── hello.cpp
-\
-
-Let's try to build it and see what happens \- maybe it will magically work
-(\l{b(1)} is the \c{build2} build system driver).
+As the name suggests, this file describes how to build things. While its
+content might look a bit cryptic, let's try to infer a couple of points
+without going into too much detail (the details are discussed in the following
+sections). That \c{exe{hello\}} on the left of \c{:} is a \i{target}
+(executable named \c{hello}) and what we have on the right are
+\i{prerequisites} (C++ source files, libraries, etc). This \c{buildfile} uses
+\l{b#name-patterns wildcard patterns} (that \c{*}) to automatically locate all
+the C++ source files. This means we don't have to edit our \c{buildfile} every
+time we add a source file to our project. There also appears to be some
+(commented out) infrastructure for importing and linking libraries (that
+\c{libs} variable). We will see how to use it in a moment. Finally, the
+\c{buildfile} also lists \c{testscript} as a prerequisite of \c{hello}. This
+file tests our target. Let's take a look inside:
 
 \
-$ b config.cxx=g++-5
-error: unable to import target libhello%lib{hello}
-  info: use config.import.libhello command line variable to specifying its project out_root
-  info: while applying rule cxx.link to update exe{hello}
-  info: while applying rule alias to update dir{./}
+$ cat hello/testscript
+
+: basics
+:
+$* 'World' >'Hello, World!'
+
+: missing-name
+:
+$* 2>>EOE != 0
+error: missing name
+EOE
 \
 
-No magic, unfortunately (or fortunately). But we got a hint: looks like we
-need to tell \c{build2} where \c{libhello} is using
-\c{config.import.libhello}. Without fretting too much about what exactly
-\c{out_root} means, let's point \c{build2} to our \c{bpkg} configuration and
-see what happens. After all, that's where, more or less, our \i{out}-put for
-\c{libhello} is.
+Again, we are not going into detail here (see \l{testscript#intro Testscript
+Introduction} for a proper introduction), but to give you an idea, here we
+have two tests: the first (with id \c{basics}) verifies that our program
+prints the expected greeting while the second makes sure it handles the
+missing name error condition. Tests written in Testscript are concise,
+portable, and executed in parallel.
+
+Next up is \c{manifest}:
 
 \
-$ b config.cxx=g++-5 \
-    config.import.libhello=/tmp/hello-gcc5-release
-c++ cxx{hello}
-ld exe{hello}
-\
-
-Almost magic. Let's see what we've got:
-
-\
-$ tree -F
-.
-├── build/
-│   ├── bootstrap.build
-│   └── root.build
-├── buildfile
-├── hello*
-├── hello.d
-├── hello.cpp
-├── hello.o
-└── hello.o.d
-
-$ ./hello
-Hello, World!
-\
-
-Let's change something in our source code and try to update:
-
-\
-$ touch hello.cpp
-
-$ b
-error: unable to import target libhello%lib{hello}
-  info: use config.import.libhello command line variable to specifying its project out_root
-  info: while applying rule cxx.link to update exe{hello}
-  info: while applying rule alias to update dir{./}
-\
-
-Looks like we have to keep repeating those \c{config.*} values and who wants
-that? To get rid of this annoyance we have to make our configuration
-\i{permanent}. Also, seeing that we plan to have several of them (GCC/Clang,
-different version of \c{libhello}), it makes sense to create them \i{out of
-source tree}. Let's get to it:
-
-\
-$ cd ..
-$ mkdir hello2-gcc5-release
-$ ls -1F
-hello2/
-hello2-gcc5-release/
-
-$ b config.cxx=g++-5                             \
-  config.cc.coptions=-O3                         \
-  config.import.libhello=/tmp/hello-gcc5-release \
-  'configure(hello2/@hello2-gcc5-release/)'
-
-mkdir -p hello2-gcc5-release/build/
-save hello2-gcc5-release/build/config.build
-\
-
-Translated, \c{configure(hello2/@hello2-gcc5-release/)} means \i{\"configure
-the \c{hello2/} source directory in the \c{hello2-gcc5-release/} output
-directory\"}. In \c{build2} this \i{source directory} is called \c{src_root}
-and \i{output directory} \- \c{out_root}. Hm, we've already heard \c{out_root}
-mentioned somewhere before...
-
-Once the configuration is saved, we can develop our project without any
-annoyance:
-
-\
-$ b hello2-gcc5-release/
-c++ hello2/cxx{hello}
-ld hello2-gcc5-release/exe{hello}
-
-$ cd hello2-gcc5-release/
-
-$ b
-info: dir{./} is up to date
-
-$ b clean
-rm exe{hello}
-rm obje{hello}
-
-$ b -v
-g++-5 -I/tmp/hello-gcc5-release/libhello-1.0.0 -O3 -std=c++11 -o hello.o -c ../hello2/hello.cpp
-g++-5 -O3 -std=c++11 -o hello hello.o /tmp/hello-gcc5-release/libhello-1.0.0/hello/libhello-1.0.so
-\
-
-Some of you might have noticed that \c{hello2-gcc5-release/} and
-\c{/tmp/hello-gcc5-release/} look awfully similar and are now wondering if we
-could instead build \c{hello2} \i{inside} \c{/tmp/hello-gcc5-release/}? I am
-glad you've asked. In fact, we can just do:
-
-\
-$ cd ..
-$ ls -1F
-hello2/
-hello2-gcc5-release/
-
-$ b 'configure(hello2/@/tmp/hello-gcc5-release/hello2/)'
-mkdir -p /tmp/hello-gcc5-release/hello2/build/
-save /tmp/hello-gcc5-release/hello2/build/config.build
-
-$ b /tmp/hello-gcc5-release/hello2/
-c++ hello2/cxx{hello}@/tmp/hello-gcc5-release/hello2/
-ld /tmp/hello-gcc5-release/hello2/exe{hello}
-\
-
-Now that might seem like magic, but it's actually pretty logical. Why don't we
-need to specify any of the \c{config.c*} values this time? Because they are
-inherited from those specified for \c{/tmp/hello-gcc5-release} when we created
-the configuration with \c{bpkg create}. What about \c{config.import.libhello},
-don't we need at least that? Not really \- \c{libhello} will be found
-automatically since it is part of the same amalgamation.
-
-Of course, \c{bpkg} has no idea \c{hello2} is now part of its configuration:
-
-\
-$ bpkg status -d /tmp/hello-gcc5-release/ hello2
-unknown
-\
-
-This is what I meant when I said you can muck around in \c{bpkg}'s back yard as
-long as you understand the implications.
-
-But is there a way to make \c{bpkg} aware of our little project? You seem to
-really have all the right questions today. Actually, there is a very good
-reason why we would want that: if we upgrade \c{libhello} we would want
-\c{bpkg} to automatically reconfigure our project. As it is now, we will have
-to remember and do it ourselves.
-
-The only way to make \c{bpkg} aware of \c{hello2} is to turn it from merely a
-\c{build2} \i{project} into a \c{build2} \i{package}. While the topic of
-packaging is also for another time and place (the \c{build2} package manager
-manual), we can get away with something as simple as this:
-
-\
-$ cat >hello2/manifest
+$ cat manifest
 : 1
-name: hello2
-version: 1.0.0
-summary: Improved \"Hello World\" program
+name: hello
+version: 0.1.0-a.0.z
+summary: hello executable project
 license: proprietary
-url: http://example.org/hello2
-email: hello2@example.org
-depends: libhello >= 1.0.0
+url: https://example.org/hello
+email: you@example.org
+#depends: libhello ^1.0.0
 \
 
-For our purposes, the only really important value in this manifest is
-\c{depends} since it tells \c{bpkg} which package(s) we need. Let's give it a
-try. But first we will clean up our previous attempt at building \c{hello2}
-inside \c{/tmp/hello-gcc5-release/}:
+The \c{manifest} file is what makes a build system project a \i{package}. It
+contains all the metadata that a user of a package might need to know: its
+name, version, license, dependencies, etc., all in one place.
+
+\N|Refer to \l{bpkg#manifest-format Manifest Format} for the general format of
+\c{build2} manifest files and to \l{bpkg#manifest-package Package Manifest}
+for details on the package manifest values.|
+
+As you can see, \c{manifest} created by \l{bdep-new(1)} contains some dummy
+values which you would want to adjust before publishing your package. But
+let's resist the urge to adjust that strange looking \c{0.1.0-a.0.z} until we
+discuss package versioning.
+
+\N|Next to \c{manifest} you might have noticed the \c{repositories.manifest}
+file \- we will discuss its function later, when we talk about dependencies
+and where they come from.|
+
+Project in hand, let's build it. Unlike other programming languages, C++
+development usually involves juggling a handful of build configurations:
+several compilers and/or targets (\c{build2} is big on cross-compiling),
+debug/release, different sanitizers and/or static analysis tools, and so
+on. As a result, \c{build2} is optimized for multi-configuration
+usage. However, as we will see shortly, one build configuration can be
+designated as the default with additional conveniences.
+
+The \l{bdep-init(1)} command is used to initialize a project in a build
+configuration. As a shortcut, it can also create a new build configuration in
+the process, which is just what we need here. Let's start with GCC (remember
+we are in the project's root directory):
 
 \
-$ b '{clean disfigure}(/tmp/hello-gcc5-release/hello2/)'
-rm /tmp/hello-gcc5-release/hello2/exe{hello}
-rm /tmp/hello-gcc5-release/hello2/obje{hello}
-rm /tmp/hello-gcc5-release/hello2/build/config.build
-rmdir /tmp/hello-gcc5-release/hello2/
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+initializing project /tmp/hello/
+created configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000
 \
 
-Next, we use the \l{bpkg-pkg-build(1) \c{bpkg build}} command but instead of
-giving it a package name like we did before, we will point it to our \c{hello2}
-package directory (\c{bpkg} can fetch packages or it can build local package
-archives or package directories):
+The \cb{--create|-C} option instructs \c{init} to create a new configuration
+in the specified directory (\c{../hello-gcc} in our case). To make referring
+to configurations easier, we can give it a name, which is what we do with
+\c{@gcc}. The next argument (\c{cc}, stands for \i{C-common}) is the build
+system module we would like to configure. It implements compilation and
+linking rules for the C and C++ languages. Finally, \c{config.cxx=g++} is (one
+of) this module's configuration variables that specifies the C++ compiler we
+would like to use (the corresponding C compiler will be determined
+automatically). Let's for now also ignore that \c{synchronizing:...} bit along
+with strange-looking \c{19700101000000} in the version \- it will become clear
+what's going on here in a moment.
+
+Now the same for Clang:
 
 \
-$ bpkg build -d /tmp/hello-gcc5-release/ ./hello2/
-  build hello2/1.0.0
-continue? [Y/n] y
-unpacked hello2/1.0.0
-configured hello2/1.0.0
-c++ hello2/cxx{hello}@/tmp/hello-gcc5-release/hello2-1.0.0/
-ld /tmp/hello-gcc5-release/hello2-1.0.0/exe{hello}
-updated hello2/1.0.0
+$ bdep init -C ../hello-clang @clang cc config.cxx=clang++
+initializing project /tmp/hello/
+created configuration @clang /tmp/hello-clang/ (auto-synchronized)
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000
 \
 
-Let's upgrade \c{libhello} and see what happens:
+If we check the parent directory, we should now see two build configurations
+next to our project:
 
 \
-$ bpkg build -d /tmp/hello-gcc5-release/ -L libhello
-  build libformat/1.0.0 (required by libhello)
-  build libprint/1.0.0 (required by libhello)
-  upgrade libhello/1.1.0
-  reconfigure hello2 (dependent of libhello)
-continue? [Y/n] y
-disfigured hello2/1.0.0
-disfigured libhello/1.0.0
-[ ... fetching & unpacking ... ]
-configured libformat/1.0.0
-configured libprint/1.0.0
-configured libhello/1.1.0
-configured hello2/1.0.0
-[ ... updating libprint, libformat, and libhello ... ]
-updated libhello/1.1.0
+$ ls ..
+hello/
+hello-gcc/
+hello-clang/
 \
 
-As promised, \c{hello2} got reconfigured (it didn't get updated because of the
-\c{-L} option). We can now update it and give it a try:
+Things will also look pretty similar if you are on Windows instead of a
+UNIX-like operating system. For example, to initialize our project on Windows
+with Visual Studio, start the Visual Studio development command prompt and
+then run:
+
+\N|Currently we have to run \c{build2} tools from a suitable Visual Studio
+development command prompt. This requirement will likely be removed in the
+future.|
 
 \
-$ bpkg update -d /tmp/hello-gcc5-release/ hello2
-c++ hello2/cxx{hello}@/tmp/hello-gcc5-release/hello2-1.0.0/
-ld /tmp/hello-gcc5-release/hello2-1.0.0/exe{hello}
-updated hello2/1.0.0
+> bdep init -C ..\hello-debug @debug cc     ^
+  config.cxx=cl                             ^
+  \"config.cc.coptions=/MDd /Z7\"             ^
+  config.cc.loptions=/DEBUG
 
-$ /tmp/hello-gcc5-release/hello2-1.0.0/hello
+> bdep init -C ..\hello-release @release cc ^
+  config.cxx=cl                             ^
+  config.cc.coptions=/O2
+\
+
+\N|Besides the \c{coptions} (compile options) and \c{loptions} (link options),
+other commonly used \c{cc} module configuration variables are \c{poptions}
+(preprocess options) and \c{libs} (extra libraries to link). We can also use
+their \c{config.c.*} (C compilation) and \c{config.cxx.*} (C++ compilation)
+variants if we only want them applied during the respective language
+compilation. For example:
+
+\
+$ bdep init ... cc       \
+  config.cxx=clang++     \
+  config.cc.coptions=-g  \
+  config.cxx.coptions=-stdlib=libc++
+\
+
+|
+
+One difference you might have noticed when creating the \c{gcc} and \c{clang}
+configurations above is that the first one was designated as the default. The
+default configuration is used by \c{bdep} commands if no configuration is
+specified explicitly (see \l{bdep-projects-configs(1)} for details). It is
+also the configuration that is used if we run the build system in the
+project's source directory. So, normally, you would make your every day
+development configuration the default. Let's try that:
+
+\
+$ bdep status
+hello configured 0.1.0-a.0.19700101000000
+
+$ b
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
+
+$ b test
+test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+
+$ hello/hello World
 Hello, World!
 \
 
-To finish off, let's see how hard it will be to get a Clang build going:
+In contrast, the Clang configuration has to be requested explicitly:
 
 \
-$ cd /tmp
-$ mkdir hello-clang36-release
-$ cd hello-clang36-release
+$ bdep status @clang
+hello configured 0.1.0-a.0.19700101000000
 
-$ bpkg create cc config.cxx=clang++-3.6 config.cc.coptions=-O3
-created new configuration in /tmp/hello-clang36-release/
+$ b ../hello-clang/hello/
+c++ hello/cxx{hello}@../hello-clang/hello/hello/
+ld ../hello-clang/hello/hello/exe{hello}
 
-$ bpkg add https://build2.org/pkg/1/hello/testing
-added repository build2.org/hello/testing
+$ b test: ../hello-clang/hello/
+test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
 
-$ bpkg fetch
-fetching build2.org/hello/testing
-[... certificate authentication ...]
-fetching build2.org/hello/stable (complements build2.org/hello/testing)
-5 package(s) in 2 repository(s)
-
-$ bpkg build libhello/1.0.0 path/to/hello2/
-  build libhello/1.0.0
-  build hello2/1.0.0
-continue? [Y/n] y
-libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
-fetched libhello/1.0.0
-unpacked libhello/1.0.0
-unpacked hello2/1.0.0
-configured libhello/1.0.0
-configured hello2/1.0.0
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/liba{hello}
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/libs{hello}
-c++ libhello-1.0.0/tests/test/cxx{driver}
-ld libhello-1.0.0/tests/test/exe{driver}
-c++ /path/to/hello2/cxx{hello}@hello2-1.0.0/
-ld hello2-1.0.0/exe{hello}
-updated libhello/1.0.0
-updated hello2/1.0.0
+$ ../hello-clang/hello/hello/hello World
+Hello, World!
 \
 
-Are you still there? Ok, one last example. Let's see how hard it is to
-cross-compile.
+\N|To see the actual compilation command lines, run \c{b\ -v} and for even
+more details, run \c{b\ -V}. See \l{b(1)} for more information on these
+and other build system options.|
+
+While we are here, let's also check how hard it would be to cross-compile:
 
 \
-$ mkdir hello-mingw64
-$ cd hello-mingw64
+$ bdep init -C ../hello-mingw @mingw cc config.cxx=x86_64-w64-mingw32-g++
+initializing project /tmp/hello/
+created configuration @mingw /tmp/hello-mingw/ (auto-synchronized)
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000
 
-$ bpkg create cc config.cxx=x86_64-w64-mingw32-g++
-created new configuration in /tmp/hello-mingw64/
+$ b ../hello-mingw/hello/
+c++ hello/cxx{hello}@../hello-mingw/hello/hello/
+ld ../hello-mingw/hello/hello/exe{hello}
+\
 
-$ bpkg add https://build2.org/pkg/1/hello/stable
-added repository build2.org/hello/stable
+As you can see, cross-compiling in \c{build2} is nothing special. In our case,
+on a properly setup GNU/Linux machine (that automatically uses \c{wine} as an
+\c{.exe} interpreter) we can even run tests (in \c{build2} this is called
+\i{cross-testing}):
 
-$ bpkg fetch
-fetching build2.org/hello/stable
-[... certificate authentication ...]
-2 package(s) in 1 repository(s)
+\
+$ b test: ../hello-mingw/hello/
+test hello/test{testscript} ../hello-mingw/hello/hello/exe{hello}
 
-$ bpkg build -y hello
-libhello-1.0.0.tar.gz        100% of 2428  B  983 kBps 00m01s
-fetched libhello/1.0.0
-unpacked libhello/1.0.0
-hello-1.0.0.tar.gz           100% of 1057  B 6882 kBps 00m01s
-fetched hello/1.0.0
-unpacked hello/1.0.0
-configured libhello/1.0.0
-configured hello/1.0.0
-c++ hello-1.0.0/cxx{hello}
-c++ libhello-1.0.0/hello/cxx{hello}
-ld libhello-1.0.0/hello/libs{hello}
-ld hello-1.0.0/exe{hello}
-updated hello/1.0.0
-
-$ wine hello-1.0.0/hello.exe Windows
+$ ../hello-mingw/hello/hello/hello.exe Windows
 Hello, Windows!
 \
 
-In fact, on a properly setup GNU/Linux machine (that automatically uses
-\c{wine} as an \c{.exe} interpreter) we can even run tests:
+Let's review what it takes to initialize a project's infrastructure and
+perform the first build. For an existing project:
 
 \
-$ bpkg test libhello hello
-c++ libhello-1.0.0/tests/test/cxx{driver}
-ld libhello-1.0.0/tests/test/exe{driver}
-test libhello-1.0.0/tests/test/exe{driver}
-test hello-1.0.0/exe{hello}
-tested libhello/1.0.0
-tested hello/1.0.0
+$ git clone .../hello.git
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b
+\
+
+For a new project:
+
+\
+$ bdep new -t exe -l c++ hello
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b
+\
+
+If you prefer, the \c{new} and \c{init} steps can be combined into a single
+command:
+
+\
+$ bdep new -t exe -l c++ hello -C hello-gcc @gcc cc config.cxx=g++
+\
+
+Now is also a good time to get an overview of the \c{build2} toolchain. After
+all, we have already used two of its tools (\c{bdep} and \c{b}) without a
+clear understanding of what they actually are.
+
+Unlike most other programming languages that encapsulate the build system,
+package dependency manager, and project dependency manager into a single tool
+(such as Rust's \c{cargo} or Go's \c{go}), \c{build2} is a hierarchy of
+several tools that you will be using directly and which together with your
+version control system (VCS) will constitute the core of your project
+management toolset.
+
+\N|While \c{build2} can work without a VCS, this will result in reduced
+functionality.|
+
+At the bottom of the hierarchy is the build system, \l{b(1)}. Next comes the
+package dependency manager, \l{bpkg(1)}. It is primarily used for \i{package
+consumption} and depends on the build system. The top of the hierarchy is the
+project dependency manager, \l{bdep(1)}. It is used for \i{project
+development} and relies on \c{bpkg} for building project packages and their
+dependencies.
+
+\N|The main reason for this separation is modularity and the resulting
+flexibility: there are situations where we only need the build system (for
+example, when building a package for a system package manager where all the
+dependencies should be satisfied from the system repository), or only the
+build system and package manager (for example, when a build bot is building a
+package for testing).
+
+Note also that strictly speaking \c{build2} is not C/C++-specific; its build
+model is general enough to handle any DAG-based operations and its
+package/project dependency management can be used for any compiled language.|
+
+\N|As we will see in a moment, \c{build2} also integrates with your VCS in
+order to automate project versioning. Note that currently only \c{git(1)} is
+supported.|
+
+Let's now move on to the reason why there is \i{dep} in the \c{bdep} name:
+dependency management.
+
+
+\h#guide-repositories|Package Repositories|
+
+Say we have realized that writing \i{\"Hello, World!\"} programs is a fairly
+common task and that someone must have written a library to help with that. So
+let's see if we can find something suitable to use in our project.
+
+Where should we look? That's a good question. But before we can try to answer
+it, we need to understand where \c{build2} can source dependencies. In
+\c{build2} packages come from \i{package repositories}. Two commonly used
+repository types are \i{version control} and \i{archive}-based (see
+\l{bpkg-repository-types(1)} for details).
+
+As the name suggests, a version control-based repository uses a VCS as its
+distribution mechanism. \N{Currently, only \c{git} is supported.} Such a
+repository normally contains multiple versions of a single package or,
+perhaps, of a few related packages.
+
+An archive-based repository contains multiple, potentially unrelated
+packages/versions as archives along with some meta information (package list,
+prerequisite/complement repositories, signatures, etc) that are all accessible
+via HTTP(S).
+
+Version control and archive-based repositories have different
+trade-offs. Version control-based repositories are great for package
+developers: With services like GitHub they are trivial to setup. In fact, your
+project's (already existing) VCS repository will normally be the \c{build2}
+package repository \- you might need to add a few files, but that's about it.
+
+However, version control-based repositories are not without drawbacks: It will
+be hard for your users to discover your packages (try searching for \"hello
+library\" on GitHub \- most of the results are not even in C++ let alone
+packaged for \c{build2}). There is also the issue of continuous availability:
+users can delete their repositories, services may change their policies or go
+out of business, and so on. Version control-based repositories also lack
+repository authentication and package signing. Finally, obtaining the
+available package list for such repositories can be slow.
+
+A central, archive-based repository would address all these drawbacks: It
+would be a single place to search for packages. Published packages will never
+disappear and can be easily mirrored. Packages are signed and the repository
+is authenticated (see \l{bpkg-repository-signing(1)} for details). And, last,
+but not least, archive-based repositories are fast.
+
+\l{https://cppget.org cppget.org} is the \c{build2} community's central
+package repository (which we hope one day will become \i{the C++ package
+repository}). As an added benefit, packages on \l{https://cppget.org
+cppget.org} are continuously \l{https://cppget.org/?builds built and tested} on
+all the major platform/compiler combinations with the results available as
+part of the package description.
+
+\N|The main drawback of archive-based repositories is the setup cost. Getting
+a basic repository going is relatively easy \- all you need is an HTTP(S)
+server. Adding a repository web interface like that on \l{https://cppget.org
+cppget.org} will require running \l{https://cppget.org/brep \c{brep}}. And
+adding CI will require running a bunch of build bots
+(\l{https://cppget.org/bbot \c{bbot}}).|
+
+\N|CI support for version control-based repositories is a work in progress.|
+
+To summarize, version control-based repositories are great for package
+developers while a central, archive-based repository is convenient for package
+consumers. A reasonable strategy is then for package developers to publish
+their releases to a central repository. Package consumers can then decide
+which repository to use based on their needs. For example, one could use
+\l{https://cppget.org cppget.org} as a (fast, reliable, and secure) source of
+stable versions but also add, say, \c{git} repositories for select packages
+(perhaps with the \c{#HEAD} fragment filter to improve download speed) for
+testing development snapshots. In this model the two repository types
+complement each other.
+
+\N|Support for automated publishing of tagged releases to an archive-based
+repository is a work in progress.|
+
+Let's see how all this works in practice. Go over to \l{https://cppget.org
+cppget.org} and type \"hello library\" in the search box. At the top of the
+search result you should see the \l{https://cppget.org/libhello \c{libhello}}
+package and if you follow the link you will see the package description page
+along with a list of available versions. Pick a version that you like and you
+will see the package version description page with quite a bit of information,
+including the list of platform/compiler combinations that this version has
+been successfully (or unsuccessfully) tested with. If you like what you see,
+copy the \c{location} value \- this is the repository location where this
+package version can be sourced from.
+
+\N|The \l{https://cppget.org cppget.org} repository is split into several
+sections: \c{stable}, \c{testing}, \c{beta}, \c{alpha} and \c{legacy}, with
+each section having its own repository location (see the repository's
+\l{https://cppget.org/?about about} page for details on each section's
+policies). Note also that \c{testing} is complemented by \c{stable}, \c{beta}
+by \c{testing}, and so on, so you only need to choose the lowest stability
+level and you will automatically \"see\" packages from the more stable
+sections.|
+
+\N|The \l{https://cppget.org cppget.org} \c{stable} sections will always
+contain the \c{libhello} library version \c{1.0.X} that was generated using
+the following \l{bdep-new(1)} command line:
+
+\
+$ bdep new -t lib -l c++ libhello
+\
+
+It can be used as a predictable test dependency when setting up new projects.|
+
+Let's say we've visited the \c{libhello} project's
+\l{https://git.build2.org/cgit/hello/libhello/ home page} (for example by
+following a link from the package details page) and noticed that it is being
+developed in a \c{git} repository. How can we see what's available there? If
+the releases are tagged, then we can infer the available released versions
+from the tags. But that doesn't tell us anything about what's happening on the
+\c{HEAD} or in the branches. For that we can use the package manager's
+\l{bpkg-rep-info(1)} command:
+
+\
+$ bpkg rep-info https://git.build2.org/hello/libhello.git
+libhello/1.0.0
+libhello/1.1.0
+\
+
+As you can see, besides \c{1.0.0} that we have seen on \c{cppget.org/stable},
+there is also \c{1.1.0} (which is perhaps being tested in
+\c{cppget.org/testing}). We can also check what might be available on the
+\c{HEAD} (see \l{bpkg-repository-types(1)} for details on the \c{git}
+repository URL format):
+
+\
+$ bpkg rep-info https://git.build2.org/hello/libhello.git#HEAD
+libhello/1.1.1-a.0.20180504111511.2e82f7378519
+\
+
+\N|We can also use the \c{rep-info} command on archive-based repositories,
+however, if available, the web interface is usually more convenient and
+provides more information.|
+
+To summarize, we found two repositories for the \c{libhello} package: the
+archive-based \l{https://cppget.org cppget.org} that contains the released
+versions as well as its development \c{git} repository where we can get the
+bleeding edge stuff. Let's now see how we can add \c{libhello} to our
+project.
+
+
+\h#guide-add-remove-deps|Adding and Removing Dependencies|
+
+So we found \c{libhello} that we would like to use in our \c{hello}
+project. First, we edit the \c{repositories.manifest} file found in the root
+directory of our project and add one of the \c{libhello} repositories as a
+prerequisite. Let's start with \l{https://cppget.org cppget.org}:
+
+\
+role: prerequisite
+location: https://pkg.cppget.org/1/stable
+\
+
+\N|Refer to \l{bpkg#manifest-repository Repository Manifest} for details on
+the repository manifest values.|
+
+Next, we edit the \c{manifest} file (again, found in the root of our project)
+and specify the dependency on \c{libhello} with optional version constraint.
+For example:
+
+\
+depends: libhello ^1.0.0
+\
+
+Let's briefly discuss version constraints (for details see the
+\l{bpkg#manifest-package-depends \c{depends}} value documentation). A version
+constraint can be expressed with a comparison operator (\c{==}, \c{>},
+\c{<}, \c{>=}, \c{<=}), a range shortcut operator (\c{~} and \c{^}), or a
+range. Here are a few examples:
+
+\
+depends: libhello == 1.2.3
+depends: libhello >= 1.2.3
+
+depends: libhello ~1.2.3
+depends: libhello ^1.2.3
+
+depends: libhello [1.2.3 1.2.9)
+\
+
+You may already be familiar with the tilde (\c{~}) and caret (\c{^})
+constraints from dependency managers for other languages. To recap, tilde
+allows upgrades to any further patch versions while caret also allows upgrades
+to further minor versions. They are equivalent to the following ranges:
+
+\
+~X.Y.Z  [X.Y.Z  X.Y+1.0)
+
+^X.Y.Z  [X.Y.Z  X+1.0.0)  if X >  0
+^0.Y.Z  [0.Y.Z  0.Y+1.0)  if X == 0
+\
+
+\N|Zero major version component is customarily used during early development
+where the minor version effectively becomes major. As a result, the tilde
+constraint has a special treatment of this case.|
+
+Unless you have good reasons not to (for example, a dependency does not use
+semantic versioning), we suggest that you use the \c{^} constraint which
+provides a good balance between compatibility and upgradability with \c{~}
+being a more conservative option.
+
+Ok, we've specified where our package comes from (\c{repositories.manifest})
+and which versions we find acceptable (\c{manifest}). The next step is to edit
+\c{hello/buildfile} and import the \c{libhello} library into our build:
+
+\
+import libs += libhello%lib{hello}
+\
+
+Finally, we modify our source code to use the library:
+
+\
+#include <libhello/hello.hxx>
+...
+
+int main (int argc, char* argv[])
+{
+  ...
+  hello::say_hello (cout, argv[1]);
+}
+\
+
+\N|You are probably wondering why we have to specify this repeating
+information in so many places. Let's start with the source code: we can't
+specify the version constraint or location there because it will have to be
+repeated in every source file that uses the dependency.
+
+Moving up, \c{buildfile} is also not a good place to specify this information
+for the same reason (a library can be imported in multiple buildfiles) plus
+the build system doesn't really know anything about version constraints or
+repositories which is the purview of the dependency management tools.
+
+Finally, we have to separate the version constraint and the location because
+the same package can be present in multiple repositories with different
+policies. For example, when a package from a version control-based repository
+is published in an archive-based repository, its \c{repositories.manifest}
+file is ignored and all its dependencies should be available from the
+archive-based repository itself (or its fixed set of prerequisite
+repositories). In other words, \c{manifest} belongs to a package while
+\c{repositories.manifest} \- to a repository.
+
+Also note that this is unlikely to become burdensome since adding new
+dependencies is not something that happens often. There are also plans to
+automate this with a \c{bdep-add(1)} command in the future.|
+
+To summarize, these are the files we had to modify to add a dependency
+to our project:
+
+\
+repositories.manifest   # add https://pkg.cppget.org/1/stable
+manifest                # add 'depends: libhello ^1.0.0'
+buildfile               # import libhello
+hello.cxx               # use libhello
+\
+
+With a new dependency added, let's check the status of our project:
+
+\
+$ bdep status
+fetching pkg:cppget.org/stable (prerequisite of dir:/tmp/hello)
+warning: authenticity of the certificate for pkg:cppget.org/stable
+         cannot be established
+certificate is for cppget.org, \"Code Synthesis\" <admin@cppget.org>
+certificate SHA256 fingerprint:
+86:BA:D4:DE:2C:87:1A:EE:38:<...>:5A:EA:F4:F7:8C:1D:63:30:C6
+trust this certificate? [y/n] y
+
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.19700101000000#1
+\
+
+The \l{bdep-status(1)} command has detected that the dependency information
+has changed and tells us that a new \i{iteration} of our project (that \c{#1})
+is now available for \i{synchronization} with the build configuration.
+
+We've also been prompted to authenticate the prerequisite repository. This
+will have to happen once for every build configuration we initialize our
+project in and can quickly become tedious. To overcome this, we can mention
+the certificate fingerprint that we wish to automatically trust in the
+\c{repositories.manifest} file (replace it with the actual fingerprint from
+the repository's about page):
+
+\
+role: prerequisite
+location: https://pkg.cppget.org/1/stable
+trust: 86:BA:D4:DE:2C:87:1A:EE:38:<...>:5A:EA:F4:F7:8C:1D:63:30:C6
+\
+
+To synchronize a project with one or more build configurations we use the
+\l{bdep-sync(1)} command:
+
+\
+$ bdep sync
+synchronizing:
+  new libhello/1.0.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#1
+\
+
+Or we could just build the project without an explicit \c{sync} \- if
+necessary, it will be automatically synchronized:
+
+\
+$ b
+synchronizing:
+  new libhello/1.0.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#1
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello}
+ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
+\
+
+The synchronization as performed by the \c{sync} command is two-way:
+dependency packages are first added, removed, upgraded, or downgraded in build
+configurations according to the project's version constraints and user
+input. Then the actual versions of the dependencies present in the build
+configurations are recorded in the project's \c{lockfile} so that if desired,
+the build can be reproduced exactly. \N{The \c{lockfile} functionality is not
+yet implemented.} For a new dependency the latest available version that
+satisfies the version constraint is used.
+
+\N|Synchronization is also the last step in the \l{bdep-init(1)} command's
+logic.|
+
+Let's now examine the status in all (\c{--all|-a}) the build configurations
+and include the immediate dependencies (\c{--immediate|-i}):
+
+\
+$ bdep status -ai
+in configuration @gcc:
+hello configured 0.1.0-a.0.19700101000000#1
+  libhello ^1.0.0 configured 1.0.0
+
+in configuration @clang:
+hello configured 0.1.0-a.0.19700101000000
+      available 0.1.0-a.0.19700101000000#1
+\
+
+Since we didn't specify a configuration explicitly, only the default (\c{gcc})
+was synchronized. Normally, you would try a new dependency in one
+configuration, make sure everything looks good, then synchronize the rest with
+\c{--all|-a} (or, again, just build what you need directly). Here are a few
+examples (see \l{bdep-projects-configs(1)} for details):
+
+\
+$ bdep sync -a
+$ bdep sync @gcc @clang
+$ bdep sync -c ../hello-mingw
+\
+
+To get rid of a dependency, we simply remove it from the \c{manifest} file
+and synchronize the project. For example, assuming \c{libhello} is no longer
+mentioned as a dependency in our \c{manifests}:
+
+\
+$ bdep status
+hello configured 0.1.0-a.0.19700101000000#1
+      available  0.1.0-a.0.19700101000000#2
+
+$ bdep sync
+synchronizing:
+  drop libhello/1.0.0 (unused)
+  upgrade hello/0.1.0-a.0.19700101000000#2
+\
+
+
+\h#guide-upgrade-downgrade-deps|Upgrading and Downgrading Dependencies|
+
+Let's say we would like to try that \c{1.1.0} version we have seen in
+the \c{libhello} \c{git} repository. First, we need to add the
+repository to the \c{repositories.manifest} file:
+
+\
+role: prerequisite
+location: https://git.build2.org/hello/libhello.git
+\
+
+\N|Note that we don't need the \c{trust} value since \c{git} repositories
+are not authenticated.|
+
+To refresh the list of available dependency versions we use the
+\l{bdep-fetch(1)} command (or the \c{--fetch|-f} option to \c{status}):
+
+\
+$ bdep fetch
+$ bdep status libhello
+libhello configured 1.0.0 available [1.1.0]
+\
+
+To upgrade (or downgrade) dependencies we again use the \l{bdep-sync(1)}
+command. We can upgrade one or more specific dependencies by listing them
+as arguments to \c{sync}:
+
+\
+$ bdep sync libhello
+synchronizing:
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  upgrade hello/0.1.0-a.0.19700101000000#3
+\
+
+Without an explicit version or the \c{--patch|-p} option, \c{sync} will
+upgrade the specified dependencies to the latest available versions. For
+example, if we don't like version \c{1.1.0}, we can downgrade it back to
+\c{1.0.0} by specifying the version explicitly (we pass \c{--old-available|-o}
+to \c{status} to see the old versions):
+
+\
+$ bdep status -o libhello
+libhello configured 1.1.0 available (1.1.0) [1.0.0]
+
+$ bdep sync libhello/1.0.0
+synchronizing:
+  drop libprint/1.0.0 (unused)
+  drop libformat/1.0.0 (unused)
+  downgrade libhello/1.0.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+\
+
+\N|The available versions are listed in the descending order with \c{[]}
+indicating that the version is only available as a dependency and \c{()}
+marking the current version.|
+
+Instead of specific dependencies we can also upgrade (\c{--upgrade|-u}) or
+patch (\c{--patch|-p}) immediate (\c{--immediate|-i}) or all
+(\c{--recursive|-r}) dependencies of our project.
+
+As a more realistic example, version \c{1.1.0} of \c{libhello} depends on two
+other libraries: \c{libformat} and \c{libprint}. Here is our project's
+dependency tree while we were still using that version:
+
+\
+$ bdep status -r
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello ^1.0.0 configured 1.1.0
+    libformat ^1.0.0 configured 1.0.0
+    libprint ^1.0.0 configured 1.0.0
+\
+
+A typical conservative dependency management workflow would look like this:
+
+\
+$ bdep status -fi  # refresh and examine immediate dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.2] [1.1.1]
+
+$ bdep sync -pi    # upgrade immediate to latest patch version
+synchronizing:
+  upgrade libhello/1.1.2
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y
+\
+
+Notice that in case of such mass upgrades you are prompted for confirmation
+before anything is actually changed (unless you pass \c{--yes|-y}).
+
+In contrast, the following would be a fairly aggressive workflow where we
+upgrade everything to the latest available version (version constraints
+permitting; here we assume \c{^1.0.0} was used for all the dependencies):
+
+\
+$ bdep status -fr  # refresh and examine all dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.1]
+    libprint configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+    libformat configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+
+$ bdep sync -ur    # upgrade all to latest available version
+synchronizing:
+  upgrade libprint/1.1.0
+  upgrade libformat/1.1.0
+  upgrade libhello/1.2.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y
+\
+
+We can also have something in between: patch all (\c{sync\ -pr}), upgrade
+immediate (\c{sync\ -ui}), or even upgrade immediate and patch the rest
+(\c{sync\ -ui} followed by \c{sync\ -pr}).
+
+
+\h#guide-versioning-releasing|Versioning and Release Management|
+
+Let's now discuss versioning and release management and, yes, that
+strange-looking \c{0.1.0-a.0.19700101000000} we keep seeing. While a build
+system project doesn't need a version and a \c{bpkg} package can use custom
+versioning schemes (see \l{bpkg#package-version Package Version}), a project
+managed by \c{bdep} must use \i{standard versioning}. \N{A dependency, which
+is a \c{bpkg} package, need not use standard versioning.}
+
+Standard versioning (\i{stdver}) is a \l{https://semver.org semantic
+versioning} (\i{semver}) scheme with a more precisely defined pre-release
+component and without any build metadata.
+
+\N|If you believe that \i{semver} is just \c{\i{major}.\i{minor}.\i{patch}},
+then in your worldview \i{stdver} would be the same as \i{semver}. In reality,
+\i{semver} also allows loosely defined pre-release and build metadata
+components. For example, \c{1.2.3-beta.1+build.23456} is a valid \i{semver}.|
+
+A standard version has the following form:
+
+\c{\i{major}\b{.}\i{minor}\b{.}\i{patch}[\b{-}\i{prerel}]}
+
+The \ci{major}, \ci{minor}, and \ci{patch} components have the same meaning as
+in \i{semver}. The \ci{prerel} component is used to provide \i{continuous
+versioning} of our project between releases. Specifically, during development
+of a new version we may want to publish several pre-releases, for example,
+alpha or beta. In between those we may also want to publish a number of
+snapshots, for example, for CI. With continuous versioning all these releases,
+pre-releases, and snapshots are assigned unique, properly ordered versions.
+
+\N|Continuous versioning is a cornerstone of the \c{build2} project dependency
+management. In case of snapshots, an appropriate version is assigned
+automatically in cooperation with your VCS.|
+
+The \ci{prerel} component for a pre-release has the following form:
+
+\c{(\b{a}|\b{b})\b{.}\i{num}}
+
+Here \cb{a} stands for alpha, \cb{b} stands for beta, and \ci{num} is the
+alpha/beta number. For example:
+
+\
+1.1.0        # final              release  for 1.1.0
+1.2.0-a.1    # first  alpha   pre-release  for 1.2.0
+1.2.0-a.2    # second alpha   pre-release  for 1.2.0
+1.2.0-b.1    # first  beta    pre-release  for 1.2.0
+1.2.0        # final              release  for 1.2.0
+\
+
+The \ci{prerel} component for a snapshot has the following form:
+
+\c{(\b{a}|\b{b})\b{.}\i{num}\b{.}\i{snapsn}[\b{.}\i{snapid}]}
+
+Where \ci{snapsn} is the snapshot sequence number and \ci{snapid} is
+the snapshot id. In case of \c{git}, \ci{snapsn} is the commit timestamp
+in the \c{YYYYMMDDhhmmss} form and UTC timezone while \ci{snapid} is
+a 12-character abbreviated commit id. For example:
+
+\
+1.2.3-a.1.20180319215815.26efe301f4a7
+\
+
+Notice also that a snapshot version is ordered \i{after} the corresponding
+pre-release version. That is, \c{1.2.3-a.1\ <\ 1.2.3-a.1.1}. As a result, it
+is customary to start the development of a new version with \c{X.Y.Z-a.0.z},
+that is, a snapshot after the (non-existent) zero'th alpha release. \N{We will
+explain the meaning of \cb{z} in this version momentarily.} The following
+chronologically-ordered versions illustrate a typical release flow of a
+project that uses \c{git} as its VCS:
+
+\
+0.1.0-a.0.19700101000000               # snapshot (no commits yet)
+0.1.0-a.0.20180319215815.26efe301f4a7  # snapshot (first commit)
+...                                    # more commits/snapshots
+0.1.0-a.1                              # pre-release (first alpha)
+0.1.0-a.1.20180319221826.a6f0f41205b8  # snapshot
+...                                    # more commits/snapshots
+0.1.0-a.2                              # pre-release (second alpha)
+0.1.0-a.2.20180319231937.b701052316c9  # snapshot
+...                                    # more commits/snapshots
+0.1.0-b.1                              # pre-release (first beta)
+0.1.0-b.1.20180319242038.c812163417da  # snapshot
+...                                    # more commits/snapshots
+0.1.0                                  # release
+0.2.0-a.0.20180319252139.d923274528eb  # snapshot (first in 0.2.0)
+...
+\
+
+For a more detailed discussion of standard versioning and its support in
+\c{build2} refer to \l{b#module-version Version Module}.
+
+Let's now see how this works in practice by publishing a couple of versions
+for our \c{hello} project. By now it should be clear what that
+\c{0.1.0-a.0.19700101000000} means \- it is the first snapshot version of our
+project. Since there are no commits yet, it has the UNIX epoch as its commit
+timestamp. As the first step, let's try to commit our project and see what
+changes:
+
+\
+$ git add .
+$ git commit -m \"Start hello project\"
+
+$ bdep status
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.20180507062614.ee006880fc7e
+\
+
+Just like with changes to dependency information, \c{status} has detected that
+a new (snapshot) version of our project is available for synchronization.
+
+\N|Another way to view the project's version (which works even if we are
+not using \c{bdep}) is with the build system's \c{info} operation:
+
+\
+$ b info
+project: hello
+version: 0.1.0-a.0.20180507062614.ee006880fc7e
+summary: hello executable project
+...
+\
+
+|
+
+Let's synchronize with the default build configuration:
+
+\
+$ bdep sync
+synchronizing:
+  upgrade hello/0.1.0-a.0.20180507062614.ee006880fc7e
+
+$ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e
+\
+
+\N|Notice that we didn't have to manually change the version anywhere. All we
+had to do was commit our changes and a new snapshot version was automatically
+derived by \c{build2} from the new \c{git} commit. Without this automation
+continuous versioning would hardly be practical.|
+
+If we now make another commit, we will see a similar picture:
+
+\
+$ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e
+      available  0.1.0-a.0.20180507062615.8fb9de05b38f
+\
+
+\N|Note that you don't need to manually run \c{sync} after every commit. As
+discussed earlier, you can simply run the build system to update your project
+and things will get automatically synchronized if necessary.|
+
+Ok, time for our first release. Let's start with \c{0.1.0-a.1}. Unlike
+snapshots, for pre-releases as well as final releases we have to update the
+version in the \c{manifest} file manually:
+
+\
+version: 0.1.0-a.1
+\
+
+\N|The \c{manifest} file is the singular place where we specify the package
+version. The build system's \l{b#module-version \c{version} module} makes it
+available in various forms in buildfiles and even source code.|
+
+To ensure continuous versioning, this change to version must be the last commit
+for this (pre-)release which itself must be immediately followed by a second
+change to the version starting the development of the next (pre-)release. We
+also recommend that you tag the release commit with a tag name in the
+\c{\b{v}\i{X}.\i{Y}.\i{Z}} form.
+
+\N|Having regular release tag names with the \cb{v} prefix allows one to
+distinguish them from other tags, for example, with wildcard patterns.|
+
+Here is the release workflow for our example:
+
+\
+$ git commit -a -m \"Release version 0.1.0-a.1\"
+$ git tag -a v0.1.0-a.1 -m \"Tag version 0.1.0-a.1\"
+$ git push --follow-tags
+
+# Version 0.1.0-a.1 is now public.
+
+$ edit manifest  # change 'version: 0.1.0-a.1.z'
+$ git commit -a -m \"Change version to 0.1.0-a.1.z\"
+$ git push
+
+# Master is now open for business.
+\
+
+\N|In the future release management will be automated with a
+\c{bdep-release(1)} command.|
+
+Notice also that when specifying a snapshot version in \c{manifest} we use the
+special \cb{z} snapshot value (for example, \c{0.1.0-a.1.z}) which is
+recognized and automatically replaced by \c{build2} with, in case of \c{git},
+a commit timestamp and id (refer to \l{b#module-version Version Module} for
+details).
+
+Publishing the final release is exactly the same. For completeness, here
+are the commands:
+
+\
+$ edit manifest  # change 'version: 0.1.0'
+$ git commit -a -m \"Release version 0.1.0\"
+$ git tag -a v0.1.0 -m \"Tag version 0.1.0\"
+$ git push --follow-tags
+
+$ edit manifest  # change 'version: 0.2.0-a.0.z'
+$ git commit -a -m \"Change version to 0.2.0-a.0.z\"
+$ git push
+\
+
+\N|One sticky point of continuous versioning is choosing the next version.
+For example, above should we continue with \c{0.1.1-a.0}, \c{0.2.0-a.0},
+or \c{1.0.0-a.0}? The important rule to keep in mind is that we can jump
+forward to any further version at any time and without breaking continuous
+versioning. But we can never jump backwards.
+
+For example, we can start with \c{0.2.0-a.0} but if we later realize that this
+will actually be a new major release, we can easily change it to
+\c{1.0.0-a.0}. As a result, the general recommendation is to start
+conservatively by either incrementing the patch or the minor version
+component. The recommended strategy is to increment the minor component and,
+if required, release patch versions from a separate branch (created by
+branching off from the release commit).
+
+Note also that you don't have to make any pre-releases if you don't need them.
+While during development you would still keep the version as \c{X.Y.Z-a.0}, at
+release you simply change it directly to the final \c{X.Y.Z}.|
+
+When publishing the final release you may also want to clean up now
+obsolete pre-release tags. For example:
+
+\
+$ git tag -l 'v0.1.0-*' | xargs git push --delete origin
+$ git tag -l 'v0.1.0-*' | xargs git tag --delete
+\
+
+\N|While at first removing such tags may seem like a bad idea, pre-releases
+are by nature temporary and their use only makes sense until the final release
+is published.
+
+Also note that having a \c{git} repository with a large number of published
+but unused version tags may result in a significant download overhead.|
+
+Let's also briefly discuss in which situations we should increment each of the
+version components. While \i{semver} gives basic guidelines, there are several
+ways to apply them in the context of C/C++ where there is a distinction
+between binary and source compatibility. We recommend that you reserve
+\i{patch} releases for specific bug fixes and security issues that you can
+guarantee with a high level of certainty to be binary-compatible. Otherwise,
+if the changes are source-compatible, increment \i{minor}. And if they are
+breaking (that is, the user code likely will need adjustments), increment
+\i{major}. During early development, when breaking changes are frequent, it is
+customary to use the \c{0.Y.Z} versions where \c{Y} effectively becomes the
+\i{major} component. Again, refer to the \l{b#module-version Version Module}
+for a more detailed discussion of this topic.
+
+\h#guide-consume-pkg|Package Consumption|
+
+Ok, now that we have published a few releases of \c{hello}, how would the
+users of our project get them? While they could clone the repository and use
+\c{bdep} just like we did, this is more of a development rather than
+consumption workflow. For consumption it is much easier to use the package
+dependency manager, \l{bpkg(1)}, directly.
+
+First, we create a suitable build configuration with the
+\l{bpkg-cfg-create(1)} command. We can use the same place for building all our
+tools so let's call the directory \c{tools}. Seeing that we are only
+interested in using (rather than developing) such tools, let's build them
+optimized and also configure a suitable installation location:
+
+\
+$ bpkg create -d tools cc        \
+  config.cxx=g++                 \
+  config.cc.coptions=-O3         \
+  config.install.root=/usr/local \
+  config.install.sudo=sudo
+created new configuration in /tmp/tools/
+
+$ cd tools
+\
+
+\N|The \c{bdep} build configurations we were creating with \c{init\ -C} are
+actually \c{bpkg} build configurations. In fact, underneath, \l{bdep-init(1)}
+calls \l{bpkg-cfg-create(1)}.|
+
+To fetch and build packages (as well as all their dependencies) we use the
+\l{bpkg-pkg-build(1)} command. We can use either an archive-based repository
+like \l{https://cppget.org cppget.org} or build directly from \c{git}:
+
+\
+$ bpkg build hello@https://git.build2.org/hello/hello.git
+fetching from https://git.build2.org/hello/hello.git
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  new libhello/1.1.0 (required by hello)
+  new hello/1.0.0
+continue? [Y/n] y
+configured libformat/1.0.0
+configured libprint/1.0.0
+configured libhello/1.1.0
+configured hello/1.0.0
+c++ libprint-1.0.0/libprint/cxx{print}
+c++ hello-1.0.0/hello/cxx{hello}
+c++ libhello-1.1.0/libhello/cxx{hello}
+c++ libformat-1.0.0/libformat/cxx{format}
+ld libprint-1.0.0/libprint/libs{print}
+ld libformat-1.0.0/libformat/libs{format}
+ld libhello-1.1.0/libhello/libs{hello}
+ld hello-1.0.0/hello/exe{hello}
+updated hello/1.0.0
+\
+
+\N|Passing a repository URL to the \c{build} command is a shortcut to the
+following sequence of commands:
+
+\
+$ bpkg add https://git.build2.org/hello/hello.git  # add repository
+$ bpkg fetch                             # fetch package list
+$ bpkg build hello                       # build package by name
+\
+
+|
+
+Once built, we can install the package to the location that we have specified
+with \c{config.install.root} using the \l{bpkg-pkg-install(1)} command:
+
+\
+$ bpkg install hello
+...
+install libformat-1.0.0/libformat/libs{format}
+install libprint-1.0.0/libprint/libs{print}
+install libhello-1.1.0/libhello/libs{hello}
+install hello-1.0.0/hello/exe{hello}
+
+$ hello World
+Hello, World!
+\
+
+\N|If on your system the installed executables don't run from \c{/usr/local}
+because of the unresolved shared libraries (or if you are installing somewhere
+else, such as \c{/opt}), then the easiest way to fix this is with \i{rpath}.
+Simply add the following configuration variable when creating the build
+configuration (or as an argument to the \c{install} command):
+
+\
+config.bin.rpath=/usr/local/lib
+\
+
+|
+
+If we need to uninstall a previously installed package, there is the
+\l{bpkg-pkg-uninstall(1)} command:
+
+\
+$ bpkg uninstall hello
+uninstall hello-1.0.0/hello/exe{hello}
+uninstall libhello-1.1.0/libhello/libs{hello}
+uninstall libprint-1.0.0/libprint/libs{print}
+uninstall libformat-1.0.0/libformat/libs{format}
+...
+\
+
+To upgrade or downgrade packages we again use the \c{build} command. Here
+is a typical upgrade workflow:
+
+\
+$ bpkg fetch              # refresh available package list
+$ bpkg status             # see if new versions are available
+
+$ bpkg uninstall hello    # uninstall old version
+$ bpkg build     hello    # upgrade to the latest version
+$ bpkg install   hello    # install new version
+\
+
+Similar to \c{bdep}, to downgrade we have to specify the desired version
+explicitly. There are also the \c{--upgrade|-u} and \c{--patch|-p} as well as
+\c{--immediate|-i} and \c{--recursive|-r} options that allow us to upgrade or
+patch packages that we have built and/or their immediate or all dependencies
+(see \l{bpkg-pkg-build(1)} for details). For example, to make sure everything
+is patched, run:
+
+\
+$ bpkg fetch
+$ bpkg build -pr
+\
+
+If a package is no longer needed, we can remove it from the configuration with
+\l{bpkg-pkg-drop(1)}:
+
+\
+$ bpkg drop hello
+following dependencies were automatically built but
+will no longer be used:
+  libhello
+  libformat
+  libprint
+drop unused packages? [Y/n] y
+  drop hello
+  drop libhello
+  drop libformat
+  drop libprint
+continue? [Y/n] y
+purged hello
+purged libhello
+purged libformat
+purged libprint
 \
 "

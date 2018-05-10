@@ -865,6 +865,12 @@ synchronizing:
   upgrade hello/0.1.0-a.0.19700101000000#2
 \
 
+\N|If instead of building a dependency from source you would prefer to use a
+version that is installed by your system package manager, see
+\l{#guide-system-deps Using System-Installed Dependencies}. And for
+information on using dependencies that are not \c{build2} packages refer to
+\l{#guide-unpackaged-deps Using Unpackaged Dependencies}.|
+
 
 \h#guide-upgrade-downgrade-deps|Upgrading and Downgrading Dependencies|
 
@@ -982,124 +988,6 @@ immediate (\c{sync\ -ui}), or even upgrade immediate and patch the rest
 (\c{sync\ -ui} followed by \c{sync\ -pr}).
 
 
-\h#guide-unpackaged-deps|Unpackaged Dependencies|
-
-Generally, we will have a much better time if all our dependencies come as
-\c{build2} packages. Unfortunately, this won't always be the case in the real
-world and some libraries that you may need will use other build systems.
-
-\N|There is also the opposite problem: you may want to consume a library that
-uses \c{build2} in a project that uses a different build system. For that
-refer to \l{#guide-consume-pkg Package Consumption}.|
-
-The standard way to consume such unpackaged libraries is to install them (not
-necessarily into a system-wide location like \c{/usr/local}) so that we have
-a single directory with their headers and a single directory with their
-libraries. We can then configure our builds to use these directories when
-searching for imported libraries.
-
-\N|Needless to say, none of the \c{build2} dependency management mechanisms
-such as version constraints or upgrade/downgrade will work on such unpackaged
-libraries. You will have to manage all these yourself manually.|
-
-Let's see how this all works in an example. Say, we want to use \c{libextra}
-that uses a different build system in our \c{hello} project. The first step
-is to manually build and install this library for each build configuration
-that we have. For example, we can install all such unpackaged libraries into
-\c{unpkg-gcc} and \c{unpkg-clang}, next to our \c{hello-gcc} and
-\c{hello-clang} build configurations:
-
-\
-$ ls
-hello/
-hello-gcc/
-unpkg-gcc/
-hello-clang/
-unpkg-clang/
-\
-
-\N|If you would like to try this out but don't have a suitable \c{libextra},
-you can create and install one with these commands:
-
-\
-$ bdep new -t lib -l c++ libextra -C libextra-gcc cc config.cxx=g++
-$ b install: libextra-gcc/ config.install.root=/tmp/unpkg-gcc
-\
-
-|
-
-If we look inside one of these \c{unpkg-*} directories, we should see
-something like this:
-
-\
-$ tree unpkg-gcc
-unpkg-gcc
-├── include
-│   └── libextra
-│       └── extra.hxx
-└── lib
-    ├── libextra.a
-    ├── libextra.so
-    └── pkgconfig
-        └── libextra.pc
-\
-
-Notice that \c{libextra.pc} \- it's a \cb{pkg-config(1)} file that contains
-any extra compile and link options that may be necessary to consume this
-library. This is the \i{de facto} standard for build systems to communicate
-library build information to each other and is today supported by most
-commonly used implementations. Speaking of \c{build2}, it both recognizes
-\c{.pc} files when consuming third-party libraries and automatically produces
-them when installing its own.
-
-\N|While this may all seem foreign to Windows users, there is nothing
-platform-specific about this approach, including support for \c{pkg-config},
-which, at least in case of \c{build2}, works equally well on Windows.|
-
-Next, we create a build configuration and configure it to use one of these
-\c{unpkg-*} directories (replace \c{...} with the absolute path):
-
-\
-$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ \
-  config.cc.poptions=-I.../unpkg-gcc/include       \
-  config.cc.loptions=-L.../unpkg-gcc/lib
-\
-
-\N|If using Visual Studio, replace \c{-I} with \c{/I} and \c{-L} with
-\c{/LIBPATH:}.|
-
-Alternatively, if you want to reconfigure one of the existing build
-configurations, then simply edit the \c{build/config.build} file (that is,
-\c{hello-gcc/build/config.build} in our case) and adjust the \c{poptions} and
-\c{loptions} values. Or you can use the build system directly to reconfigure
-the build configuration (see \l{b(1)} for details):
-
-\
-b configure: ../hello-gcc/                    \
-  config.cc.poptions+=-I.../unpkg-gcc/include \
-  config.cc.loptions+=-L.../unpkg-gcc/lib
-\
-
-\N|If all the unpackaged libraries included \c{.pc} files, then the \c{-L}
-alone would have been sufficient. However, it doesn't hurt to also add
-\c{-I}, for good measure.|
-
-Once this is done, adjust your \c{buildfile} to import the library:
-
-\
-import libs += libextra%lib{extra}
-\
-
-And your source code to use it:
-
-\
-#include <libextra/extra.hxx>
-\
-
-\N|Notice that we don't add the corresponding \c{depends} value to the
-project's \c{manifest} since this library is not a package. However, it is a
-good idea to instead add a \l{bpkg#manifest-package-requires \c{requires}}
-entry as a documentation to users of our project.|
 
 \h#guide-versioning-releasing|Versioning and Release Management|
 
@@ -1368,7 +1256,7 @@ dependency manager, \l{bpkg(1)}, directly.
 
 \N|Note that this approach also works for libraries in case you wish to use
 them in a project with a build system other than \c{build2}. See
-\l{#guide-unpackaged-deps Unpackaged Dependencies} for background on
+\l{#guide-unpackaged-deps Using Unpackaged Dependencies} for background on
 cross-build system library consumption.|
 
 First, we create a suitable build configuration with the
@@ -1514,5 +1402,186 @@ purged libhello
 purged libformat
 purged libprint
 \
+
+\h#guide-system-deps|Using System-Installed Dependencies|
+
+Our operating system might already have a package manager (which we will refer
+to as \i{system package manager}) and for various reasons we may want to use
+the system-installed version of a dependency rather than building one from
+source.
+
+\N|Using system-installed versions works best for mature rather than
+rapidly-developed packages since for the latter you often need to track the
+latest version (which may not yet be available from the system repository)
+and/or test with multiple versions (which is not something that many system
+package managers support).|
+
+We can instruct \c{build2} to configure a dependency package as available from
+the system rather than building it from source. Let's see how this works in an
+example. Say, we want to use \l{https://cppget.org/libsqlite3 \c{libsqlite3}}
+in our \c{hello} project.
+
+The first step is to add it as a dependency, just like we did for \c{libhello}.
+That is, add another \c{depends} entry to \c{manifest}, then import it in
+\c{buildfile}, and so on.
+
+\N|Note that the dependency still has to be packaged and available from one of
+the project's prerequisite repositories. However, it can be a \i{stub} \- a
+package that does not contain any source code and that can only be \"obtained\"
+from the system (see \l{bpkg#package-version Package Version} for
+details). See also \l{#guide-unpackaged-deps Using Unpackaged Dependencies}
+for how to deal with dependencies that are not packaged.|
+
+Now, if we just run \c{sync} or try to build our project, \c{build2} will
+download and build the new dependency from source, just like it did for
+\c{libhello}. Instead, we can issue an explicit \c{sync} command that
+configures the \c{libsqlite3} package as coming from the system:
+
+\
+$ sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/*
+  upgrade hello/0.1.0-a.0.19700101000000#3
+\
+
+Here \cb{?} is a package \i{flag} that instructs \c{build2} to treat it as a
+dependency and \cb{sys} is a package \i{scheme} that tells \c{build2} it comes
+from the system. See \l{bpkg-pkg-build(1)} for details.
+
+\N|We can have some build configurations using a system-installed version of
+a dependency while others building it from source, for example, for testing.|
+
+\N|The system-installed dependency doesn't really have to come from the system
+package manager. It can also be manually installed and, as discussed in
+\l{#guide-unpackaged-deps Using Unpackaged Dependencies}, not necessarily into
+the system-default location like \c{/usr/local}.|
+
+\N|Currently, unless we specify the installed version explicitly, a
+system-installed package is assumed to satisfy any dependency constraint. In
+the future, \c{build2} will automatically query commonly used system package
+managers for the installed version and maybe even request installation of the
+absent packages. To support this functionality, the package manifest may need
+to specify package name mappings for various system package managers (which is
+the rationale behind stub packages).|
+
+
+\h#guide-unpackaged-deps|Using Unpackaged Dependencies|
+
+Generally, we will have a much better time if all our dependencies come as
+\c{build2} packages. Unfortunately, this won't always be the case in the real
+world and some libraries that you may need will use other build systems.
+
+\N|There is also the opposite problem: you may want to consume a library that
+uses \c{build2} in a project that uses a different build system. For that
+refer to \l{#guide-consume-pkg Package Consumption}.|
+
+The standard way to consume such unpackaged libraries is to install them (not
+necessarily into a system-default location like \c{/usr/local}) so that we
+have a single directory with their headers and a single directory with their
+libraries. We can then configure our builds to use these directories when
+searching for imported libraries.
+
+\N|Needless to say, none of the \c{build2} dependency management mechanisms
+such as version constraints or upgrade/downgrade will work on such unpackaged
+libraries. You will have to manage all these yourself manually.|
+
+Let's see how this all works in an example. Say, we want to use \c{libextra}
+that uses a different build system in our \c{hello} project. The first step
+is to manually build and install this library for each build configuration
+that we have. For example, we can install all such unpackaged libraries into
+\c{unpkg-gcc} and \c{unpkg-clang}, next to our \c{hello-gcc} and
+\c{hello-clang} build configurations:
+
+\
+$ ls
+hello/
+hello-gcc/
+unpkg-gcc/
+hello-clang/
+unpkg-clang/
+\
+
+\N|If you would like to try this out but don't have a suitable \c{libextra},
+you can create and install one with these commands:
+
+\
+$ bdep new -t lib -l c++ libextra -C libextra-gcc cc config.cxx=g++
+$ b install: libextra-gcc/ config.install.root=/tmp/unpkg-gcc
+\
+
+|
+
+If we look inside one of these \c{unpkg-*} directories, we should see
+something like this:
+
+\
+$ tree unpkg-gcc
+unpkg-gcc
+├── include
+│   └── libextra
+│       └── extra.hxx
+└── lib
+    ├── libextra.a
+    ├── libextra.so
+    └── pkgconfig
+        └── libextra.pc
+\
+
+Notice that \c{libextra.pc} \- it's a \cb{pkg-config(1)} file that contains
+any extra compile and link options that may be necessary to consume this
+library. This is the \i{de facto} standard for build systems to communicate
+library build information to each other and is today supported by most
+commonly used implementations. Speaking of \c{build2}, it both recognizes
+\c{.pc} files when consuming third-party libraries and automatically produces
+them when installing its own.
+
+\N|While this may all seem foreign to Windows users, there is nothing
+platform-specific about this approach, including support for \c{pkg-config},
+which, at least in case of \c{build2}, works equally well on Windows.|
+
+Next, we create a build configuration and configure it to use one of these
+\c{unpkg-*} directories (replace \c{...} with the absolute path):
+
+\
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ \
+  config.cc.poptions=-I.../unpkg-gcc/include       \
+  config.cc.loptions=-L.../unpkg-gcc/lib
+\
+
+\N|If using Visual Studio, replace \c{-I} with \c{/I} and \c{-L} with
+\c{/LIBPATH:}.|
+
+Alternatively, if you want to reconfigure one of the existing build
+configurations, then simply edit the \c{build/config.build} file (that is,
+\c{hello-gcc/build/config.build} in our case) and adjust the \c{poptions} and
+\c{loptions} values. Or you can use the build system directly to reconfigure
+the build configuration (see \l{b(1)} for details):
+
+\
+b configure: ../hello-gcc/                    \
+  config.cc.poptions+=-I.../unpkg-gcc/include \
+  config.cc.loptions+=-L.../unpkg-gcc/lib
+\
+
+\N|If all the unpackaged libraries included \c{.pc} files, then the \c{-L}
+alone would have been sufficient. However, it doesn't hurt to also add
+\c{-I}, for good measure.|
+
+Once this is done, adjust your \c{buildfile} to import the library:
+
+\
+import libs += libextra%lib{extra}
+\
+
+And your source code to use it:
+
+\
+#include <libextra/extra.hxx>
+\
+
+\N|Notice that we don't add the corresponding \c{depends} value to the
+project's \c{manifest} since this library is not a package. However, it is a
+good idea to instead add a \l{bpkg#manifest-package-requires \c{requires}}
+entry as a documentation to users of our project.|
 
 "

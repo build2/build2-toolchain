@@ -1438,7 +1438,7 @@ download and build the new dependency from source, just like it did for
 configures the \c{libsqlite3} package as coming from the system:
 
 \
-$ sync ?sys:libsqlite3
+$ bdep sync ?sys:libsqlite3
 synchronizing:
   configure sys:libsqlite3/*
   upgrade hello/0.1.0-a.0.19700101000000#3

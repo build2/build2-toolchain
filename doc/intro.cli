@@ -386,6 +386,10 @@ $ hello/hello World
 Hello, World!
 \
 
+\N|To see the actual compilation command lines, run \c{b\ -v} and for even
+more details, run \c{b\ -V}. See \l{b(1)} for more information on these
+and other build system options.|
+
 In contrast, the Clang configuration has to be requested explicitly:
 
 \
@@ -403,9 +407,33 @@ $ ../hello-clang/hello/hello/hello World
 Hello, World!
 \
 
-\N|To see the actual compilation command lines, run \c{b\ -v} and for even
-more details, run \c{b\ -V}. See \l{b(1)} for more information on these
-and other build system options.|
+As you can see, using the build system directly on configurations other than
+the default requires explicitly specifying their paths. It would have been
+more convenient if we could refer to them by names. The \l{bdep-update(1)} and
+\l{bdep-test(1)} commands allow us to do exactly that:
+
+\
+$ bdep test @clang
+c++ hello/cxx{hello}@../hello-clang/hello/hello/
+ld ../hello-clang/hello/hello/exe{hello}
+test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+\
+
+And we can also perform the desired build system operation on several (or
+\c{--all|-a}) configurations at once:
+
+\
+$ bdep test @gcc @clang
+in configuration @gcc:
+test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+
+in configuration @clang:
+test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+\
+
+\N|As we will see later, the \l{bdep-test(1)} command also allows us to test
+immediate (\c{--immediate|-i}) or all (\c{--recursive|-r}) dependencies of our
+project.|
 
 While we are here, let's also check how hard it would be to cross-compile:
 
@@ -416,7 +444,7 @@ created configuration @mingw /tmp/hello-mingw/ (auto-synchronized)
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
 
-$ b ../hello-mingw/hello/
+$ bdep update @mingw
 c++ hello/cxx{hello}@../hello-mingw/hello/hello/
 ld ../hello-mingw/hello/hello/exe{hello}
 \
@@ -427,7 +455,7 @@ on a properly setup GNU/Linux machine (that automatically uses \c{wine} as an
 \i{cross-testing}):
 
 \
-$ b test: ../hello-mingw/hello/
+$ bdep test @mingw
 test hello/test{testscript} ../hello-mingw/hello/hello/exe{hello}
 
 $ ../hello-mingw/hello/hello/hello.exe Windows
@@ -848,6 +876,22 @@ examples (see \l{bdep-projects-configs(1)} for details):
 $ bdep sync -a
 $ bdep sync @gcc @clang
 $ bdep sync -c ../hello-mingw
+\
+
+After adding a new (or upgrading/downgrading existing) dependency, it's a good
+idea to \i{deep-test} our project: run not only our own tests but also of its
+immediate (\c{--immediate|-i}) or even all (\c{--recursive|-r}) dependencies.
+For example:
+
+\
+$ bdep test -ai
+in configuration @gcc:
+test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello-1.0.0/tests/basics/exe{driver}
+
+in configuration @clang:
+test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/libhello-1.0.0/tests/basics/exe{driver}
 \
 
 To get rid of a dependency, we simply remove it from the \c{manifest} file

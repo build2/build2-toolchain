@@ -41,7 +41,7 @@ hello/
 
 $ cd hello
 $ bdep init --config-create ../hello-gcc cc config.cxx=g++
-initializing project /tmp/hello/
+initializing in project /tmp/hello/
 created configuration /tmp/hello-gcc/ (default, auto-synchronized)
 synchronizing:
   new hello/0.1.0
@@ -178,10 +178,10 @@ $ cat hello/hello.cxx
 
 #include <iostream>
 
-using namespace std;
-
 int main (int argc, char* argv[])
 {
+  using namespace std;
+
   if (argc < 2)
   {
     cerr << \"error: missing name\" << endl;
@@ -288,7 +288,7 @@ we are in the project's root directory):
 
 \
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
-initializing project /tmp/hello/
+initializing in project /tmp/hello/
 created configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
@@ -310,7 +310,7 @@ Now the same for Clang:
 
 \
 $ bdep init -C ../hello-clang @clang cc config.cxx=clang++
-initializing project /tmp/hello/
+initializing in project /tmp/hello/
 created configuration @clang /tmp/hello-clang/ (auto-synchronized)
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
@@ -325,6 +325,16 @@ hello/
 hello-gcc/
 hello-clang/
 \
+
+\N|If, as in the above examples, our configuration directories are next to the
+project and their names are in the \c{\i{prj-name}\b{-}\i{cfg-name}} form,
+then we can use the shortcut version of the \c{init} command:
+
+\
+$ bdep init -C @clang cc config.cxx=clang++
+\
+
+|
 
 Things will also look pretty similar if you are on Windows instead of a
 UNIX-like operating system. For example, to initialize our project on Windows
@@ -439,7 +449,7 @@ While we are here, let's also check how hard it would be to cross-compile:
 
 \
 $ bdep init -C ../hello-mingw @mingw cc config.cxx=x86_64-w64-mingw32-g++
-initializing project /tmp/hello/
+initializing in project /tmp/hello/
 created configuration @mingw /tmp/hello-mingw/ (auto-synchronized)
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
@@ -486,6 +496,21 @@ command:
 
 \
 $ bdep new -t exe -l c++ hello -C hello-gcc @gcc cc config.cxx=g++
+\
+
+And if you need to deinitialize a project in one or more build configurations,
+there is the \l{bdep-deinit(1)} command for that:
+
+\
+$ bdep deinit @gcc @clang
+deinitializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  drop hello
+
+in configuration @clang:
+synchronizing:
+  drop hello
 \
 
 Now is also a good time to get an overview of the \c{build2} toolchain. After
@@ -571,12 +596,12 @@ disappear and can be easily mirrored. Packages are signed and the repository
 is authenticated (see \l{bpkg-repository-signing(1)} for details). And, last,
 but not least, archive-based repositories are fast.
 
-\l{https://cppget.org cppget.org} is the \c{build2} community's central
-package repository (which we hope one day will become \i{the C++ package
-repository}). As an added benefit, packages on \l{https://cppget.org
-cppget.org} are continuously \l{https://cppget.org/?builds built and tested} on
-all the major platform/compiler combinations with the results available as
-part of the package description.
+\l{https://cppget.org cppget.org} is the \c{build2} community's central (but
+easy to mirror) package repository. As an added benefit, packages on
+\l{https://cppget.org cppget.org} are continuously
+\l{https://cppget.org/?builds built and tested} on all the major
+platform/compiler combinations with the results available as part of the
+package description.
 
 \N|The main drawback of archive-based repositories is the setup cost. Getting
 a basic repository going is relatively easy \- all you need is an HTTP(S)
@@ -646,7 +671,7 @@ libhello/1.0.0
 libhello/1.1.0
 \
 
-As you can see, besides \c{1.0.0} that we have seen on \c{cppget.org/stable},
+As you can see, besides \c{1.0.0} that we have seen in \c{cppget.org/stable},
 there is also \c{1.1.0} (which is perhaps being tested in
 \c{cppget.org/testing}). We can also check what might be available on the
 \c{HEAD} (see \l{bpkg-repository-types(1)} for details on the \c{git}
@@ -1290,6 +1315,232 @@ customary to use the \c{0.Y.Z} versions where \c{Y} effectively becomes the
 \i{major} component. Again, refer to the \l{b#module-version Version Module}
 for a more detailed discussion of this topic.
 
+
+\h#guide-dev-multi|Developing Multiple Packages and Projects|
+
+How does a library like \c{libhello} get developed? It's possible someone woke
+up one day and realized that they were going to build a useful library that
+everyone was going to use. But somehow this doesn't feel like how it really
+works. In the real world things start organically: someone had a project like
+\c{hello} and then needed the same functionality in another project. Or
+someone else needed it and asked the author to factor it out into a
+library. For this approach to work, however, moving such common functionality
+into a library and then continue its parallel development must be a simple,
+frictionless process. Let's see how this works in \c{build2}.
+
+First, we need decide whether to make \c{libhello} another package in our
+\c{hello} project (that is, in the same \c{git} repository) or a separate
+project (with a separate repository). Both arrangements are equally well
+supported. Let's start with a separate project since it is simpler.
+
+\N|A multi-package project works best if all the packages have the same
+version and are released together. While the packages themselves can have
+different versions (since each has its own \c{manifest}), in this scenario
+following the release tagging recommendations discussed earlier will be
+problematic.|
+
+As the first step we use \l{bdep-new(1)} to create a new library project next
+to our \c{hello}:
+
+\
+$ bdep new -t lib -l c++ libhello
+created new library project libhello in /tmp/libhello/
+
+$ ls
+hello/
+libhello/
+hello-gcc/
+hello-clang/
+\
+
+Our two projects will be sharing the same set of build configurations, so
+we next initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang}:
+
+\
+$ cd libhello
+
+$ bdep init -A ../hello-gcc @gcc
+initializing in project /tmp/libhello/
+added configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000
+
+$ bdep init -A ../hello-clang @clang
+initializing in project /tmp/libhello/
+added configuration @clang /tmp/hello-clang/ (auto-synchronized)
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000
+\
+
+\N|If two or more projects share the same build configuration, then all the
+projects are always synchronized at once, regardless of the originating
+project. It also makes sense to have the same default configuration and
+use identical configuration names in all the projects.|
+
+Finally, we move the desired functionality from \c{hello} to \c{libhello} and
+at the same add a dependency on \c{libhello}, just as we did earlier (add a
+\c{depends} entry to \c{manifest}, then import the library in \c{buildfile},
+and so on). One interesting question is what to put as a prerequisite
+repository in \c{repositories.manifest}. Our own setup will work even if we
+don't put anything there \- the dependency will be automatically resolved to
+our local version of \c{libhello} since we have initialized it in all our
+build configurations. However, in case our \c{hello} repository is used by
+someone else, it's a good idea to also add the remote \c{git} repository for
+\c{libhello} as a prerequisite.
+
+\N|By now you have probably realized that our project directory is just
+another type of package repository. See \l{bpkg-repository-types(1)} for
+more information.|
+
+And that's it, now we can build and test our new arrangement:
+
+\
+$ cd ../hello   # back to hello project root
+$ bdep test -i
+c++ ../libhello/libhello/cxx{hello}
+c++ ../libhello/tests/basics/cxx{driver}
+c++ hello/cxx{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+\
+
+This is also the approach we would use if we wanted to fix a bug in someone
+else's library. That is, we would clone their project repository and
+initialize it in the build configurations of our project which will
+\"upgrade\" the dependency to use the local version. Then we make the fix,
+submit it upstream, and continue using the local version until our fix is
+merged/published, at which point we deinitialize the project and switch
+to using the upstream version.
+
+Let's now look at the second option: making \c{libhello} a package inside
+\c{hello}. Here is the current structure of our \c{hello} project:
+
+\
+hello/
+├── .git/
+├── build/
+├── hello/
+│   ├── hello.cxx
+│   └── buildfile
+├── buildfile
+├── manifest
+└── repositories.manifest
+\
+
+As the first step, let's move the \c{hello} program into its own subdirectory:
+
+\
+hello/
+├── .git/
+├── hello/
+│   ├── build/
+│   ├── hello/
+│   │   ├── hello.cxx
+│   │   └── buildfile
+│   ├── buildfile
+│   └── manifest
+└── repositories.manifest
+\
+
+\N|Notice that, as discussed earlier, \c{repositories.manifest} belongs to
+the project (repository) while \c{manifest} \- to the package.|
+
+Next we again use \l{bdep-new(1)} to create a new library but this time
+as a package inside an already existing project:
+
+\
+$ cd hello
+$ bdep new --package -t lib -l c++ libhello
+created new library package libhello in /tmp/hello/libhello/
+\
+
+Let's see what our project looks like now:
+
+\
+hello/
+├── .git/
+├── hello/
+│   ├── ...
+│   └── manifest
+├── libhello/
+│   ├── ...
+│   └── manifest
+├── packages.manifest
+└── repositories.manifest
+\
+
+Notice that besides the \c{libhello} directory the \c{new} command also
+created the \c{packages.manifest} file in the root directory of our
+project. Let's take a look inside:
+
+\
+$ cat packages.manifest
+: 1
+location: libhello/
+\
+
+Up until now our \c{hello} was a simple, single-package project that didn't
+need this file \- \c{manifest} in its root directory was sufficient (see
+\l{bpkg-repository-types(1)} for details on the project repository
+structure). But now it contains several packages and we need to specify where
+they are located within the project. So let's go ahead and add the location
+of the \c{hello} package:
+
+\
+$ cat packages.manifest
+: 1
+location: libhello/
+:
+location: hello/
+\
+
+\N|Packages in a project can reside next to each other or in subdirectories
+but they cannot nest. When published to an archive-based repository, each
+such package will reside in its own archive.|
+
+Next we initialize the new package in all our build configurations:
+
+\
+$ cd libhello
+$ bdep init -a
+initializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000
+
+in configuration @clang:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000
+\
+
+\N|Notice that the \c{hello} package has been \"upgraded\" to reflect its
+new location.|
+
+Finally, as before, we move the desired functionality from \c{hello} to
+\c{libhello} and at the same time add a dependency on \c{libhello}. Note,
+however, that in this case we don't need to add anything to
+\c{repositories.manifest} since both packages are in the same project
+(repository). And that's it, now we can build and test our new arrangement:
+
+\
+$ cd ..      # back to hello project root
+$ bdep test
+c++ libhello/libhello/cxx{hello}
+c++ libhello/tests/basics/cxx{driver}
+c++ hello/hello/cxx{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test hello/hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+\
+
+
 \h#guide-consume-pkg|Package Consumption|
 
 Ok, now that we have published a few releases of \c{hello}, how would the
@@ -1318,6 +1569,16 @@ $ bpkg create -d tools cc        \
 created new configuration in /tmp/tools/
 
 $ cd tools
+\
+
+The same step on Windows using Visual Studio would look like this (again,
+remember to run this from the Visual Studio development command prompt):
+
+\
+$ bpkg create -d tools cc ^
+  config.cxx=cl           ^
+  config.cc.coptions=/O2  ^
+  config.install.root= C:\install
 \
 
 \N|The \c{bdep} build configurations we were creating with \c{init\ -C} are
@@ -1387,7 +1648,9 @@ configuration (or as an argument to the \c{install} command):
 config.bin.rpath=/usr/local/lib
 \
 
-|
+Note to Windows users: this is not an issue on this platform since executables
+and shared (DLL) libraries are installed into the same subdirectory (\c{bin})
+of the installation directory.|
 
 If we need to uninstall a previously installed package, there is the
 \l{bpkg-pkg-uninstall(1)} command:

@@ -20,9 +20,9 @@ echo   --verbose ^<level^>    Diagnostics verbosity level between 0 and 6.
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
-echo directory (C:\build2\bin\ by default).
+echo directory ^(C:\build2\bin\ by default^).
 echo.
-echo The --trust option recognizes two special values: 'yes' (trust everything)
+echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
 echo.
 echo The --make option can be used to bootstrap using GNU make. The first

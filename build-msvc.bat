@@ -19,9 +19,9 @@ echo   --verbose ^<level^>    Diagnostics verbosity level between 0 and 6.
 echo.
 echo By default the batch file will use cl.exe as the C++ compiler and install
 echo into C:\build2. It also expects to find the base utilities in the bin\
-echo subdirectory of the installation directory (C:\build2\bin\ by default).
+echo subdirectory of the installation directory ^(C:\build2\bin\ by default^).
 echo.
-echo The --trust option recognizes two special values: 'yes' (trust everything)
+echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
 echo.
 echo See the BOOTSTRAP-MSVC file for details.

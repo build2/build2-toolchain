@@ -32,7 +32,7 @@ run ()
   diag "+ $@"
   "$@"
   if test "$?" -ne "0"; then
-    exit 1;
+    exit 1
   fi
 }
 
@@ -41,20 +41,19 @@ owd="$(pwd)"
 cxx=
 idir=
 sudo=
-sudo_set=
 trust=
 timeout=
 make=
 verbose=
 
 while test $# -ne 0; do
-  case $1 in
+  case "$1" in
     -h|--help)
       diag
       diag "$usage"
       diag "Options:"
       diag "  --install-dir <dir>  Alternative installation directory."
-      diag "  --sudo <prog>        Optional sudo program to use."
+      diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Repository certificate fingerprint to trust."
       diag "  --timeout <sec>      Network operations timeout in seconds."
@@ -98,7 +97,6 @@ while test $# -ne 0; do
 	exit 1
       fi
       sudo="$1"
-      sudo_set="y"
       shift
       ;;
     --repo)
@@ -170,9 +168,13 @@ fi
 if test -z "$idir"; then
   idir="/usr/local"
 
-  if test -z "$sudo_set"; then
+  if test -z "$sudo"; then
     sudo="sudo"
   fi
+fi
+
+if test "$sudo" = false; then
+  sudo=
 fi
 
 if test -f build/config.build; then

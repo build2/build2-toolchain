@@ -249,7 +249,7 @@ $ cat manifest
 : 1
 name: hello
 version: 0.1.0-a.0.z
-summary: hello executable project
+summary: hello executable
 license: proprietary
 url: https://example.org/hello
 email: you@example.org
@@ -305,6 +305,10 @@ would like to use (the corresponding C compiler will be determined
 automatically). Let's for now also ignore that \c{synchronizing:...} bit along
 with strange-looking \c{19700101000000} in the version \- it will become clear
 what's going on here in a moment.
+
+\N|Note to Windows users: a command line argument with leading \c{@} has
+a special meaning in PowerShell. To work around this, you can use the
+alternative \c{-@gcc} syntax or the \c{-n\ gcc} option.|
 
 Now the same for Clang:
 
@@ -1328,10 +1332,10 @@ library. For this approach to work, however, moving such common functionality
 into a library and then continue its parallel development must be a simple,
 frictionless process. Let's see how this works in \c{build2}.
 
-First, we need decide whether to make \c{libhello} another package in our
+First, we need to decide whether to make \c{libhello} another package in our
 \c{hello} project (that is, in the same \c{git} repository) or a separate
 project (with a separate repository). Both arrangements are equally well
-supported. Let's start with a separate project since it is simpler.
+supported.
 
 \N|A multi-package project works best if all the packages have the same
 version and are released together. While the packages themselves can have
@@ -1339,8 +1343,8 @@ different versions (since each has its own \c{manifest}), in this scenario
 following the release tagging recommendations discussed earlier will be
 problematic.|
 
-As the first step we use \l{bdep-new(1)} to create a new library project next
-to our \c{hello}:
+Let's start with a separate project since it is simpler. As the first step we
+use \l{bdep-new(1)} to create a new library project next to our \c{hello}:
 
 \
 $ bdep new -t lib -l c++ libhello
@@ -1354,7 +1358,7 @@ hello-clang/
 \
 
 Our two projects will be sharing the same set of build configurations, so
-we next initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang}:
+next we initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang}:
 
 \
 $ cd libhello
@@ -1372,21 +1376,21 @@ synchronizing:
   new libhello/0.1.0-a.0.19700101000000
 \
 
-\N|If two or more projects share the same build configuration, then all the
-projects are always synchronized at once, regardless of the originating
-project. It also makes sense to have the same default configuration and
-use identical configuration names in all the projects.|
+\N|If two or more projects share the same build configuration, then all of
+them are always synchronized at once, regardless of the originating project.
+It also makes sense to have the same default configuration and use identical
+configuration names in all the projects.|
 
-Finally, we move the desired functionality from \c{hello} to \c{libhello} and
-at the same add a dependency on \c{libhello}, just as we did earlier (add a
-\c{depends} entry to \c{manifest}, then import the library in \c{buildfile},
-and so on). One interesting question is what to put as a prerequisite
-repository in \c{repositories.manifest}. Our own setup will work even if we
-don't put anything there \- the dependency will be automatically resolved to
-our local version of \c{libhello} since we have initialized it in all our
-build configurations. However, in case our \c{hello} repository is used by
-someone else, it's a good idea to also add the remote \c{git} repository for
-\c{libhello} as a prerequisite.
+The last step is to move the desired functionality from \c{hello} to
+\c{libhello} and at the same add a dependency on \c{libhello}, just as we did
+earlier (add a \c{depends} entry to \c{manifest}, then import the library in
+\c{buildfile}, and so on). One interesting question is what to put as a
+prerequisite repository in \c{repositories.manifest}. Our own setup will work
+even if we don't put anything there \- the dependency will be automatically
+resolved to our local version of \c{libhello} since we have initialized it in
+all our build configurations. However, in case our \c{hello} repository is
+used by someone else, it's a good idea to add the remote \c{git} repository
+for \c{libhello} as a prerequisite.
 
 \N|By now you have probably realized that our project directory is just
 another type of package repository. See \l{bpkg-repository-types(1)} for
@@ -1413,10 +1417,10 @@ initialize it in the build configurations of our project which will
 \"upgrade\" the dependency to use the local version. Then we make the fix,
 submit it upstream, and continue using the local version until our fix is
 merged/published, at which point we deinitialize the project and switch
-to using the upstream version.
+back to using the upstream version.
 
-Let's now look at the second option: making \c{libhello} a package inside
-\c{hello}. Here is the current structure of our \c{hello} project:
+Let's now examine the second option: making \c{libhello} a package inside
+\c{hello}. Here is the original structure of our \c{hello} project:
 
 \
 hello/
@@ -1430,7 +1434,7 @@ hello/
 └── repositories.manifest
 \
 
-As the first step, let's move the \c{hello} program into its own subdirectory:
+As the first step, we move the \c{hello} program into its own subdirectory:
 
 \
 hello/
@@ -1444,9 +1448,6 @@ hello/
 │   └── manifest
 └── repositories.manifest
 \
-
-\N|Notice that, as discussed earlier, \c{repositories.manifest} belongs to
-the project (repository) while \c{manifest} \- to the package.|
 
 Next we again use \l{bdep-new(1)} to create a new library but this time
 as a package inside an already existing project:
@@ -1472,9 +1473,12 @@ hello/
 └── repositories.manifest
 \
 
-Notice that besides the \c{libhello} directory the \c{new} command also
-created the \c{packages.manifest} file in the root directory of our
-project. Let's take a look inside:
+\N|Notice that, as discussed earlier, \c{repositories.manifest} belongs to
+the project (repository) while \c{manifest} \- to the package.|
+
+Besides the \c{libhello} directory the \c{new} command also created the
+\c{packages.manifest} file in the root directory of our project. Let's take a
+look inside:
 
 \
 $ cat packages.manifest
@@ -1499,7 +1503,7 @@ location: hello/
 
 \N|Packages in a project can reside next to each other or in subdirectories
 but they cannot nest. When published to an archive-based repository, each
-such package will reside in its own archive.|
+such package will be placed into its own archive.|
 
 Next we initialize the new package in all our build configurations:
 

@@ -12,6 +12,18 @@
 //
 
 "
+\h0#preface|Preface|
+
+The recommended way to install the \c{build2} toolchain in most circumstances
+is using the automated install scripts as described on the
+\l{https://build2.org/install.xhtml Install} page. This document describes the
+manual installation and upgrade process which offers greater control can be
+helpful in situations where the automated scripts cannot be used (offline
+installation, packaging for system package managers, unsupported
+platform/compiler, etc).
+"
+
+"
 \h#INSTALL|Introduction|
 "
 source "../INSTALL.cli";

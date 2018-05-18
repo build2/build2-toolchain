@@ -98,8 +98,7 @@ command output so if you just want to get a sense of what \c{build2} is about,
 then you don't have to install the toolchain and run the commands in order to
 follow along. If at the end you find \c{build2} appealing and would like to
 start using it or try the examples for yourself, you can jump straight to
-\l{build2-toolchain-install.xhtml The \c{build2} Toolchain Installation and
-Upgrade}.
+the \l{https://build2.org/install.xhtml Install} page.
 
 One of the primary goals of the \c{build2} toolchain is to provide a uniform
 interface across all the platforms and compilers. While the examples in this

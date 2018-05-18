@@ -30,7 +30,7 @@ $ cd build2-build
 
 Download \c{build2-toolchain-X.Y.Z.tar.xz} (or its \c{.tar.gz} variant if you
 don't have \cb{xz(1)}) as well as its \c{.sha256} checksum from
-\l{https://download.build2.org}.
+\l{https://build2.org/download.xhtml Download} page.
 
 Place everything into \c{~/build2-build/} (build directory) and verify the
 archive checksum matches:

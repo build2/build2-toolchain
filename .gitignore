@@ -2,4 +2,3 @@ INSTALL
 UPGRADE
 BOOTSTRAP-*
 !BOOTSTRAP-*.cli
-version

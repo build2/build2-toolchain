@@ -203,7 +203,7 @@ $ cat hello/buildfile
 libs =
 #import libs += libhello%lib{hello}
 
-exe{hello}: {hxx ixx txx cxx}{*} $libs test{testscript}
+exe{hello}: {hxx ixx txx cxx}{*} $libs testscript
 \
 
 As the name suggests, this file describes how to build things. While its

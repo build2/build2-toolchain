@@ -135,7 +135,8 @@ our case it is an executable implemented in C++.
 
 \N|To create a library, pass \c{-t\ lib}. By default \c{new} also initializes
 a \c{git} repository and generates suitable \c{.gitignore} files (pass \c{-s\
-none} if you don't want that).|
+none} if you don't want that). And for details on naming your projects, see
+\l{bpkg#package-name Package Name}.|
 
 \N|Note to Windows users: the \c{build2-baseutils} package includes core
 \c{git} utilities that are sufficient for the \c{bdep} functionality.|

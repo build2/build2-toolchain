@@ -42,7 +42,7 @@ hello/
 $ cd hello
 $ bdep init --config-create ../hello-gcc cc config.cxx=g++
 initializing in project /tmp/hello/
-created configuration /tmp/hello-gcc/ (default, auto-synchronized)
+created configuration /tmp/hello-gcc/ default,auto-synchronized
 synchronizing:
   new hello/0.1.0
 
@@ -289,7 +289,7 @@ we are in the project's root directory):
 \
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
 initializing in project /tmp/hello/
-created configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
+created configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
 \
@@ -315,7 +315,7 @@ Now the same for Clang:
 \
 $ bdep init -C ../hello-clang @clang cc config.cxx=clang++
 initializing in project /tmp/hello/
-created configuration @clang /tmp/hello-clang/ (auto-synchronized)
+created configuration @clang /tmp/hello-clang/ auto-synchronized
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
 \
@@ -454,7 +454,7 @@ While we are here, let's also check how hard it would be to cross-compile:
 \
 $ bdep init -C ../hello-mingw @mingw cc config.cxx=x86_64-w64-mingw32-g++
 initializing in project /tmp/hello/
-created configuration @mingw /tmp/hello-mingw/ (auto-synchronized)
+created configuration @mingw /tmp/hello-mingw/ auto-synchronized
 synchronizing:
   new hello/0.1.0-a.0.19700101000000
 
@@ -1365,13 +1365,13 @@ $ cd libhello
 
 $ bdep init -A ../hello-gcc @gcc
 initializing in project /tmp/libhello/
-added configuration @gcc /tmp/hello-gcc/ (default, auto-synchronized)
+added configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
 synchronizing:
   new libhello/0.1.0-a.0.19700101000000
 
 $ bdep init -A ../hello-clang @clang
 initializing in project /tmp/libhello/
-added configuration @clang /tmp/hello-clang/ (auto-synchronized)
+added configuration @clang /tmp/hello-clang/ auto-synchronized
 synchronizing:
   new libhello/0.1.0-a.0.19700101000000
 \

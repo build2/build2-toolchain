@@ -250,7 +250,7 @@ $ cat manifest
 name: hello
 version: 0.1.0-a.0.z
 summary: hello executable
-license: proprietary
+license: TODO
 url: https://example.org/hello
 email: you@example.org
 #depends: libhello ^1.0.0

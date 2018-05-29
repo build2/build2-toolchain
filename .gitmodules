@@ -15,7 +15,7 @@
 	url = ../bdep.git
 [submodule "doc/style"]
 	path = doc/style
-	url = ../etc/style.git
+	url = ../style.git
 [submodule "libsqlite3"]
 	path = libsqlite3
 	url = https://git.build2.org/packaging/sqlite/libsqlite3.git

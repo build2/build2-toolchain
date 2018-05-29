@@ -27,6 +27,17 @@
 //
 
 "
+\h0#preface|Preface|
+
+This document is an overall introduction to the \c{build2} toolchain that
+shows how the main components, namely the build system, the package dependency
+manager, and the project dependency manager are used together to handle the
+entire C++ project development lifecycle: creation, development, testing, and
+delivery. For additional information, including documentation for individual
+toolchain components, man pages, etc., refer to the \c{build2} project
+\l{https://build2.org/doc.xhtml Documentation} page.
+
+
 \h1#tldr|TL;DR|
 
 \
@@ -96,15 +107,15 @@ The aim of this guide is to get you started developing C/C++ projects with the
 \c{build2} toolchain. All the examples in this section include the relevant
 command output so if you just want to get a sense of what \c{build2} is about,
 then you don't have to install the toolchain and run the commands in order to
-follow along. If at the end you find \c{build2} appealing and would like to
-start using it or try the examples for yourself, you can jump straight to
-the \l{https://build2.org/install.xhtml Install} page.
+follow along. Or, alternatively, you can take a short detour to the
+\l{https://build2.org/install.xhtml Installation Instructions} and then try
+the examples for yourself.
 
 One of the primary goals of the \c{build2} toolchain is to provide a uniform
-interface across all the platforms and compilers. While the examples in this
-document assume a UNIX-like operation system, they will look pretty similar if
-you are on Windows. You just have to use appropriate paths, compilers, and
-options.
+interface across all the platforms and compilers. While most of the examples
+in this document assume a UNIX-like operation system, they will look pretty
+similar if you are on Windows. You just have to use appropriate paths,
+compilers, and options.
 
 The question we will try to answer in this section can be summarized as:
 
@@ -553,6 +564,39 @@ package/project dependency management can be used for any compiled language.|
 order to automate project versioning. Note that currently only \c{git(1)} is
 supported.|
 
+Now that we understand the tooling, let's also revisit the notion of \i{build
+configuration} (those \c{hello-gcc} and \c{hello-clang} directories). A
+\c{bdep} build configuration is actually a \c{bpkg} build configuration which,
+in the build system terms, is an \i{amalgamation} \- a project that contains
+\i{subprojects}. In our case, the subprojects in these amalgamations will be
+the projects we have initialized with \c{init} and, as we will see later,
+packages that they depend on. For example, here is what our \c{hello-gcc}
+contains:
+
+\
+$ tree hello-gcc
+hello-gcc/
+├── .bpkg/
+├── build/
+│   └── config.build
+└── hello/
+    ├── build/
+    │   └── config.build
+    └── hello/
+        ├── hello
+        └── hello.o
+\
+
+\N|Underneath \l{bdep-init(1)} with the \c{--config-create|-C} option calls
+\l{bpkg-cfg-create(1)} which, in turn, performs the build system \c{create}
+meta-operation (see \l{b(1)} for details).
+
+The important point here is that the \c{bdep} build configuration is not a
+black box that you should never look inside of. On the contrary, it is a
+normal and predictable concept of the package manager and the build system and
+as long as you understand what you are doing, you should feel free to interact
+with it directly.|
+
 Let's now move on to the reason why there is \i{dep} in the \c{bdep} name:
 dependency management.
 
@@ -600,9 +644,11 @@ disappear and can be easily mirrored. Packages are signed and the repository
 is authenticated (see \l{bpkg-repository-signing(1)} for details). And, last,
 but not least, archive-based repositories are fast.
 
-\l{https://cppget.org cppget.org} is the \c{build2} community's central (but
-easy to mirror) package repository. As an added benefit, packages on
-\l{https://cppget.org cppget.org} are continuously
+\l{https://cppget.org cppget.org} is the \c{build2} community's central
+package repository. While centralized, it is also easy to mirror since its
+contents are accessible via plain HTTPS (you can browse
+\l{https://pkg.cppget.org pkg.cppget.org} to get an idea). As an added
+benefit, packages on \l{https://cppget.org cppget.org} are continuously
 \l{https://cppget.org/?builds built and tested} on all the major
 platform/compiler combinations with the results available as part of the
 package description.
@@ -1585,10 +1631,6 @@ $ bpkg create -d tools cc ^
   config.install.root= C:\install
 \
 
-\N|The \c{bdep} build configurations we were creating with \c{init\ -C} are
-actually \c{bpkg} build configurations. In fact, underneath, \l{bdep-init(1)}
-calls \l{bpkg-cfg-create(1)}.|
-
 To fetch and build packages (as well as all their dependencies) we use the
 \l{bpkg-pkg-build(1)} command. We can use either an archive-based repository
 like \l{https://cppget.org cppget.org} or build directly from \c{git}:
@@ -1655,6 +1697,64 @@ config.bin.rpath=/usr/local/lib
 Note to Windows users: this is not an issue on this platform since executables
 and shared (DLL) libraries are installed into the same subdirectory (\c{bin})
 of the installation directory.|
+
+The installation contents and layout under \c{config.install.root} would be
+along these lines:
+
+\
+/usr/local/
+├── bin/
+│   └── hello
+├── include/
+│   ├── libformat/
+│   │   ├── export.hxx
+│   │   ├── format.hxx
+│   │   └── version.hxx
+│   ├── libhello/
+│   │   ├── export.hxx
+│   │   ├── hello.hxx
+│   │   └── version.hxx
+│   └── libprint/
+│       ├── export.hxx
+│       ├── print.hxx
+│       └── version.hxx
+├── lib/
+│   ├── libformat-1.0.so
+│   ├── libformat.so -> libformat-1.0.so
+│   ├── libhello-1.1.so
+│   ├── libhello.so -> libhello-1.1.so
+│   ├── libprint-1.0.so
+│   ├── libprint.so -> libprint-1.0.so
+│   └── pkgconfig
+│       ├── libformat.shared.pc
+│       ├── libhello.shared.pc
+│       └── libprint.shared.pc
+└── share/
+    └── doc/
+        ├── libformat/
+        │   └── manifest
+        ├── libhello/
+        │   └── manifest
+        └── libprint/
+            └── manifest
+\
+
+\N|The installation locations of various types of files (executables,
+libraries, headers, documentation, etc.) can be customized using a number of
+the \c{config.install.*} variables with the most commonly used ones and their
+defaults (relative to \c{config.install.root}) listed below (see the
+\c{install} build system module documentation for the complete list).
+
+\
+config.install.bin     = root/bin/
+config.install.lib     = root/lib/
+config.install.doc     = root/share/doc/
+config.install.man     = root/share/man/
+config.install.include = root/include/
+\
+
+|
+
 
 If we need to uninstall a previously installed package, there is the
 \l{bpkg-pkg-uninstall(1)} command:

@@ -1428,9 +1428,9 @@ It also makes sense to have the same default configuration and use identical
 configuration names in all the projects.|
 
 The last step is to move the desired functionality from \c{hello} to
-\c{libhello} and at the same add a dependency on \c{libhello}, just as we did
-earlier (add a \c{depends} entry to \c{manifest}, then import the library in
-\c{buildfile}, and so on). One interesting question is what to put as a
+\c{libhello} and at the same time add a dependency on \c{libhello}, just as we
+did earlier (add a \c{depends} entry to \c{manifest}, then import the library
+in \c{buildfile}, and so on). One interesting question is what to put as a
 prerequisite repository in \c{repositories.manifest}. Our own setup will work
 even if we don't put anything there \- the dependency will be automatically
 resolved to our local version of \c{libhello} since we have initialized it in

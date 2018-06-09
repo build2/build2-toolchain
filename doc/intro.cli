@@ -226,11 +226,16 @@ sections). That \c{exe{hello\}} on the left of \c{:} is a \i{target}
 \i{prerequisites} (C++ source files, libraries, etc). This \c{buildfile} uses
 \l{b#name-patterns wildcard patterns} (that \c{*}) to automatically locate all
 the C++ source files. This means we don't have to edit our \c{buildfile} every
-time we add a source file to our project. There also appears to be some
-(commented out) infrastructure for importing and linking libraries (that
-\c{libs} variable). We will see how to use it in a moment. Finally, the
-\c{buildfile} also lists \c{testscript} as a prerequisite of \c{hello}. This
-file tests our target. Let's take a look inside:
+time we add, remove, or rename a source file in our project. There also
+appears to be some (commented out) infrastructure for importing and linking
+libraries (that \c{libs} variable). We will see how to use it in a moment.
+
+\N|for simple projects that follow the canonical structure we can often
+completely ignore the presence of the build definition files thus approaching
+the \i{build system-less} workflow found in languages like Rust and Go.|
+
+Finally, the \c{buildfile} also lists \c{testscript} as a prerequisite of
+\c{hello}. This file tests our target. Let's take a look inside:
 
 \
 $ cat hello/testscript
@@ -363,7 +368,7 @@ future.|
 \
 > bdep init -C ..\hello-debug @debug cc     ^
   config.cxx=cl                             ^
-  \"config.cc.coptions=/MDd /Z7\"             ^
+  \"config.cc.coptions=/MDd /Od /Zi\"         ^
   config.cc.loptions=/DEBUG
 
 > bdep init -C ..\hello-release @release cc ^
@@ -458,7 +463,7 @@ test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
 
 \N|As we will see later, the \l{bdep-test(1)} command also allows us to test
 immediate (\c{--immediate|-i}) or all (\c{--recursive|-r}) dependencies of our
-project.|
+project. We call it \i{deep testing}.|
 
 While we are here, let's also check how hard it would be to cross-compile:
 
@@ -658,7 +663,9 @@ a basic repository going is relatively easy \- all you need is an HTTP(S)
 server. Adding a repository web interface like that on \l{https://cppget.org
 cppget.org} will require running \l{https://cppget.org/brep \c{brep}}. And
 adding CI will require running a bunch of build bots
-(\l{https://cppget.org/bbot \c{bbot}}).|
+(\l{https://cppget.org/bbot \c{bbot}}). Note also that in \c{build2}
+archive-based repositories can be federated with different sections of
+the repository being hosted/managed potentially independently.|
 
 \N|CI support for version control-based repositories is a work in progress.|
 

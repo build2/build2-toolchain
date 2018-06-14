@@ -4,7 +4,7 @@
 # copyright : Copyright (c) 2014-2018 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
-usage="Usage: $0 [-h|--help] [<options>] <c++-compiler>"
+usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"
 
 # Package repository URL (or path).
 #
@@ -74,6 +74,13 @@ while test $# -ne 0; do
       diag "followed by additional make arguments, for example:"
       diag
       diag "$0 --make gmake --make -j8 g++"
+      diag
+      diag "If specified, <compile-options> override the default (-O3) compile"
+      diag "options (config.cc.coptions) in the bpkg configuration used to build"
+      diag "and install the final toolchain. For example, to build with the debug"
+      diag "information (and without optimization):"
+      diag
+      diag "$0 g++ -g"
       diag
       diag "See the BOOTSTRAP-UNIX file for details."
       diag
@@ -151,6 +158,7 @@ while test $# -ne 0; do
       ;;
     *)
       cxx="$1"
+      shift
       break
       ;;
   esac
@@ -160,6 +168,12 @@ if test -z "$cxx"; then
   diag "error: compiler executable expected"
   diag "$usage"
   exit 1
+fi
+
+# Place default <compile-options> into the $@ array.
+#
+if test $# -eq 0; then
+  set -- -O3
 fi
 
 # Only use default sudo for the default installation directory and only if
@@ -280,7 +294,7 @@ cdir="$(pwd)" # Save full path for later.
 run bpkg-stage $verbose create \
 cc \
 config.cxx="$cxx" \
-config.cc.coptions=-O3 \
+config.cc.coptions="'$@'" \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo"

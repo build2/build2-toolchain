@@ -294,7 +294,7 @@ cdir="$(pwd)" # Save full path for later.
 run bpkg-stage $verbose create \
 cc \
 config.cxx="$cxx" \
-config.cc.coptions="'$@'" \
+config.cc.coptions="$*" \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo"

@@ -1410,6 +1410,26 @@ hello-gcc/
 hello-clang/
 \
 
+Let's also edit the generated \c{manifest} file and add the \c{project} value
+(customarily after \c{version}) to indicate that our library belongs to the
+same overall project as our executable:
+
+\
+$ cat libhello/manifest
+: 1
+name: libhello
+version: 0.1.0-a.0.z
+project: hello
+summary: hello library
+...
+\
+
+\N|The \c{project} value is used to group related packages together in order
+to help with their organization and discovery. For example, if later we create
+\c{libhello2} or \c{libhello-extra}, then it would make sense for them to also
+belong to the \c{hello} project. See the \l{bpkg#manifest-package-project
+\c{project}} value documentation for details.|
+
 Our two projects will be sharing the same set of build configurations, so
 next we initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang}:
 

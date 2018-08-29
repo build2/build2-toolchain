@@ -230,7 +230,7 @@ every time we add, remove, or rename a source file in our project. There also
 appears to be some (commented out) infrastructure for importing and linking
 libraries (that \c{libs} variable). We will see how to use it in a moment.
 
-\N|for simple projects that follow the canonical structure we can often
+\N|In simple projects that follow the canonical structure we can often
 completely ignore the presence of the build definition files thus approaching
 the \i{build system-less} workflow found in languages like Rust and Go.|
 

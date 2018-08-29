@@ -854,7 +854,7 @@ Let's try to build it and see what happens \- maybe it will magically work
 \
 $ b config.cxx=g++-5
 error: unable to import target libhello%lib{hello}
-  info: use config.import.libhello command line variable to specifying its project out_root
+  info: use config.import.libhello command line variable to specify its project out_root
   info: while applying rule cxx.link to update exe{hello}
   info: while applying rule alias to update dir{./}
 \
@@ -899,7 +899,7 @@ $ touch hello.cpp
 
 $ b
 error: unable to import target libhello%lib{hello}
-  info: use config.import.libhello command line variable to specifying its project out_root
+  info: use config.import.libhello command line variable to specify its project out_root
   info: while applying rule cxx.link to update exe{hello}
   info: while applying rule alias to update dir{./}
 \

@@ -411,7 +411,7 @@ ld ../hello-gcc/hello/hello/exe{hello}
 ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
 $ b test
-test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 
 $ hello/hello World
 Hello, World!
@@ -432,7 +432,7 @@ c++ hello/cxx{hello}@../hello-clang/hello/hello/
 ld ../hello-clang/hello/hello/exe{hello}
 
 $ b test: ../hello-clang/hello/
-test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
 
 $ ../hello-clang/hello/hello/hello World
 Hello, World!
@@ -447,7 +447,7 @@ more convenient if we could refer to them by names. The \l{bdep-update(1)} and
 $ bdep test @clang
 c++ hello/cxx{hello}@../hello-clang/hello/hello/
 ld ../hello-clang/hello/hello/exe{hello}
-test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
 \
 
 And we can also perform the desired build system operation on several (or
@@ -456,10 +456,10 @@ And we can also perform the desired build system operation on several (or
 \
 $ bdep test @gcc @clang
 in configuration @gcc:
-test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 
 in configuration @clang:
-test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
 \
 
 \N|As we will see later, the \l{bdep-test(1)} command also allows us to test
@@ -487,7 +487,7 @@ on a properly setup GNU/Linux machine (that automatically uses \c{wine} as an
 
 \
 $ bdep test @mingw
-test hello/test{testscript} ../hello-mingw/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-mingw/hello/hello/exe{hello}
 
 $ ../hello-mingw/hello/hello/hello.exe Windows
 Hello, Windows!
@@ -969,11 +969,11 @@ For example:
 \
 $ bdep test -ai
 in configuration @gcc:
-test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello-1.0.0/tests/basics/exe{driver}
 
 in configuration @clang:
-test hello/test{testscript} ../hello-clang/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
 test ../hello-clang/libhello-1.0.0/tests/basics/exe{driver}
 \
 
@@ -1482,7 +1482,7 @@ ld ../hello-gcc/libhello/libhello/libs{hello}
 ld ../hello-gcc/libhello/tests/basics/exe{driver}
 ld ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello/tests/basics/exe{driver}
-test hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 \
 
 This is also the approach we would use if we wanted to fix a bug in someone
@@ -1615,7 +1615,7 @@ ld ../hello-gcc/libhello/libhello/libs{hello}
 ld ../hello-gcc/libhello/tests/basics/exe{driver}
 ld ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello/tests/basics/exe{driver}
-test hello/hello/test{testscript} ../hello-gcc/hello/hello/exe{hello}
+test hello/hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 \
 
 

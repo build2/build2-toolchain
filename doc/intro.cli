@@ -1205,7 +1205,7 @@ project that uses \c{git} as its VCS:
 \
 
 For a more detailed discussion of standard versioning and its support in
-\c{build2} refer to \l{b#module-version Version Module}.
+\c{build2} refer to \l{b#module-version \c{version} Module}.
 
 Let's now see how this works in practice by publishing a couple of versions
 for our \c{hello} project. By now it should be clear what that
@@ -1310,8 +1310,8 @@ $ git push
 Notice also that when specifying a snapshot version in \c{manifest} we use the
 special \cb{z} snapshot value (for example, \c{0.1.0-a.1.z}) which is
 recognized and automatically replaced by \c{build2} with, in case of \c{git},
-a commit timestamp and id (refer to \l{b#module-version Version Module} for
-details).
+a commit timestamp and id (refer to \l{b#module-version \c{version} Module}
+for details).
 
 Publishing the final release is exactly the same. For completeness, here
 are the commands:
@@ -1370,8 +1370,8 @@ if the changes are source-compatible, increment \i{minor}. And if they are
 breaking (that is, the user code likely will need adjustments), increment
 \i{major}. During early development, when breaking changes are frequent, it is
 customary to use the \c{0.Y.Z} versions where \c{Y} effectively becomes the
-\i{major} component. Again, refer to the \l{b#module-version Version Module}
-for a more detailed discussion of this topic.
+\i{major} component. Again, refer to the \l{b#module-version \c{version}
+Module} for a more detailed discussion of this topic.
 
 
 \h#guide-dev-multi|Developing Multiple Packages and Projects|
@@ -1753,7 +1753,7 @@ along these lines:
 │   ├── libhello.so -> libhello-1.1.so
 │   ├── libprint-1.0.so
 │   ├── libprint.so -> libprint-1.0.so
-│   └── pkgconfig
+│   └── pkgconfig/
 │       ├── libformat.shared.pc
 │       ├── libhello.shared.pc
 │       └── libprint.shared.pc
@@ -1955,14 +1955,14 @@ something like this:
 
 \
 $ tree unpkg-gcc
-unpkg-gcc
-├── include
-│   └── libextra
+unpkg-gcc/
+├── include/
+│   └── libextra/
 │       └── extra.hxx
-└── lib
+└── lib/
     ├── libextra.a
     ├── libextra.so
-    └── pkgconfig
+    └── pkgconfig/
         └── libextra.pc
 \
 
@@ -2242,7 +2242,7 @@ subdirectory. For example:
 libhello/
 └── libhello/
     ├── details/
-    │    └── utility.hxx
+    │   └── utility.hxx
     └── ...
 \
 

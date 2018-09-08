@@ -534,9 +534,61 @@ synchronizing:
   drop hello
 \
 
-Now is also a good time to get an overview of the \c{build2} toolchain. After
-all, we have already used two of its tools (\c{bdep} and \c{b}) without a
-clear understanding of what they actually are.
+As mentioned earlier, by default \c{bdep-new(1)} initializes a \c{git}
+repository for us. Now that we have successfully built and tested our project,
+it might be a good idea to make a first commit and publish it to a remote
+repository hosting service where others can find it. Using GitHub as an
+example:
+
+\
+$ git add .
+$ git commit -m \"Initial implementation\"
+$ git remote add origin git@github.com:john-doe/hello.git
+$ git push -u
+\
+
+While we have managed to test a few platforms (Linux and Windows) and compiler
+versions (Clang and GCC) locally, there are quite a few combinations that we
+haven't tried (Mac OS with Apple Clang and Windows with MSVC, to name the
+major ones). We could test them manually, some with the help of virtualization
+while for others (such as Mac OS) we may need physical hardware. Add a few
+versions for each compiler and we are looking at at least a dozen build
+configurations. Needless to say, testing on all of them manually is a lot of
+work. Now that we have our project available from a public remote repository,
+we can instead use the remote testing functionality offered by the
+\l{bdep-ci(1)} command. For example:
+
+\
+$ bdep ci
+submitting:
+  to:      https://ci.cppget.org
+  in:      https://github.com/john-doe/hello.git#master@93e1dbc94baa
+  package: hello
+  version: 0.1.0-a.0.20180907091517.93e1dbc94baa
+continue? [y/n] y
+############################################################# 100.0%
+CI request is queued:
+  https://ci.cppget.org/@d6ee90f4-21a9-47a0-ab5a-7cd2f521d3d8
+\
+
+Let's see what's going on here. We are submitting our test request to
+\l{https://ci.cppget.org ci.cppget.org} which is a public CI service run by
+the \c{build2} project (see available \l{https://ci.cppget.org?build-configs
+Build Configurations} and use \l{https://ci.cppget.org?ci Policies}). We are
+testing the current working tree state (branch and commit) of our package. It
+should, however, be available from our remote (GitHub repository in this
+example) since that's where the CI service expects to find it. In response we
+get a URL where we can see the build and test results, logs, etc.
+
+\N|This \i{push} CI model works particularly well with the \"feature branch\"
+development workflow. Specifically, you would develop a new feature in a
+separate branch, publishing and remote-testing it as necessary. When the
+feature is ready, you would merge any changes from \c{master}, test the result
+one more time, then merge the feature into master.|
+
+Now is a good time to get an overview of the \c{build2} toolchain. After all,
+we have already used two of its tools (\c{bdep} and \c{b}) without a clear
+understanding of what they actually are.
 
 Unlike most other programming languages that encapsulate the build system,
 package dependency manager, and project dependency manager into a single tool
@@ -668,8 +720,6 @@ adding CI will require running a bunch of build bots
 archive-based repositories can be federated with different sections of
 the repository being hosted/managed potentially independently.|
 
-\N|CI support for version control-based repositories is a work in progress.|
-
 To summarize, version control-based repositories are great for package
 developers while a central, archive-based repository is convenient for package
 consumers. A reasonable strategy is then for package developers to publish
@@ -681,8 +731,8 @@ stable versions but also add, say, \c{git} repositories for select packages
 testing development snapshots. In this model the two repository types
 complement each other.
 
-\N|Support for automated publishing of tagged releases to an archive-based
-repository is a work in progress.|
+\N|Publishing of packages to archive-based repositories is discussed in
+\l{#guide-versioning-releasing Versioning and Release Management}.|
 
 Let's see how all this works in practice. Go over to \l{https://cppget.org
 cppget.org} and type \"hello library\" in the search box. At the top of the
@@ -852,7 +902,7 @@ repositories). In other words, \c{manifest} belongs to a package while
 \c{repositories.manifest} \- to a repository.
 
 Also note that this is unlikely to become burdensome since adding new
-dependencies is not something that happens often. There are also plans to
+dependencies is not something that happens often. There are also ideas to
 automate this with a \c{bdep-add(1)} command in the future.|
 
 To summarize, these are the files we had to modify to add a dependency
@@ -1211,12 +1261,11 @@ Let's now see how this works in practice by publishing a couple of versions
 for our \c{hello} project. By now it should be clear what that
 \c{0.1.0-a.0.19700101000000} means \- it is the first snapshot version of our
 project. Since there are no commits yet, it has the UNIX epoch as its commit
-timestamp. As the first step, let's try to commit our project and see what
-changes:
+timestamp. Let's see what changes after we've made our first commit:
 
 \
 $ git add .
-$ git commit -m \"Start hello project\"
+$ git commit -m \"Initial implementation\"
 
 $ bdep status
 hello configured 0.1.0-a.0.19700101000000
@@ -1304,24 +1353,73 @@ $ git push
 # Master is now open for business.
 \
 
-\N|In the future release management will be automated with a
-\c{bdep-release(1)} command.|
-
 Notice also that when specifying a snapshot version in \c{manifest} we use the
 special \cb{z} snapshot value (for example, \c{0.1.0-a.1.z}) which is
 recognized and automatically replaced by \c{build2} with, in case of \c{git},
 a commit timestamp and id (refer to \l{b#module-version \c{version} Module}
 for details).
 
-Publishing the final release is exactly the same. For completeness, here
-are the commands:
+Publishing the final release to the version control repository is exactly the
+same. This time, however, let's also see how we can publish it to an
+archive-based repository. The first step is again to change the version,
+commit, tag, and push:
 
 \
 $ edit manifest  # change 'version: 0.1.0'
 $ git commit -a -m \"Release version 0.1.0\"
 $ git tag -a v0.1.0 -m \"Tag version 0.1.0\"
 $ git push --follow-tags
+\
 
+To publish our project to an archive-based repository we use the
+\l{bdep-publish(1)} command. For example:
+
+\
+$ bdep publish
+publishing:
+  to:      https://cppget.org
+  as:      John Doe <john@example.org>
+  package: hello
+  version: 0.1.0
+  project: hello
+  section: alpha
+  control: https://github.com/john-doe/hello.git
+continue? [y/n] y
+pushing build2-control
+submitting hello-0.1.0.tar.gz
+############################################################# 100.0%
+hello/0.1.0 submission is queued
+reference: 0c596fca2017
+\
+
+Let's see what's going on here. By default \c{publish} submits to the
+\l{https://cppget.org cppget.org} repository. On \c{cppget.org} package names
+are assigned on the first come first serve basis. But instead of using logins
+or emails to authenticate package ownership, \c{cppget.org} uses your version
+control repository as a proxy. In a nutshell, when we submit a package for the
+first time, its control repository is associated with its name and all
+subsequent submissions have to use the same control repository (the
+authentication part). When submitting a package, \c{publish} also adds a
+file to the \c{build2-control} branch of the control repository with the
+package archive checksum. On its side, \c{cppget.org} checks for the presence
+of this file in the control repository to make sure that whomever is making
+this submission has write access to the control repository (the authorization
+part). See \l{bdep-publish(1)} for further details.
+
+The rest should be pretty straightforward: \c{publish} prepares and uploads a
+distribution of our package which goes into the \c{alpha} section of the
+repository (because it has \c{0} major version component). In response we get
+a reference which we can use to check the status of our submission on
+\l{https://queue.cppget.org queue.cppget.org}. And after some basic testing
+and verification our package should appear on \c{cppget.org} (the exact steps
+are described in submission \l{https://cppget.org?submit Policies}). Note also
+that package submissions to \c{cppget.org} are public and permanent and cannot
+be \"unpublished\" under no circumstances.
+
+Finally, we also shouldn't forget to increment the version for the next
+development cycle:
+
+\
 $ edit manifest  # change 'version: 0.2.0-a.0.z'
 $ git commit -a -m \"Change version to 0.2.0-a.0.z\"
 $ git push

@@ -221,15 +221,17 @@ exe{hello}: {hxx ixx txx cxx}{**} $libs testscript
 
 As the name suggests, this file describes how to build things. While its
 content might look a bit cryptic, let's try to infer a couple of points
-without going into too much detail (the details are discussed in the following
-sections). That \c{exe{hello\}} on the left of \c{:} is a \i{target}
-(executable named \c{hello}) and what we have on the right are
-\i{prerequisites} (C++ source files, libraries, etc). This \c{buildfile} uses
-\l{b#name-patterns wildcard patterns} (that \c{**}) to automatically locate
-all the C++ source files. This means we don't have to edit our \c{buildfile}
-every time we add, remove, or rename a source file in our project. There also
-appears to be some (commented out) infrastructure for importing and linking
-libraries (that \c{libs} variable). We will see how to use it in a moment.
+without going into too much detail (for details see the build system
+\l{b#intro Introduction}).
+
+That \c{exe{hello\}} on the left of \c{:} is a \i{target} (executable named
+\c{hello}) and what we have on the right are \i{prerequisites} (C++ source
+files, libraries, etc). This \c{buildfile} uses wildcard patterns (that
+\c{**}) to automatically locate all the C++ source files. This means we don't
+have to edit our \c{buildfile} every time we add, remove, or rename a source
+file in our project. There also appears to be some (commented out)
+infrastructure for importing and linking libraries (that \c{libs}
+variable). We will see how to use it in a moment.
 
 \N|In simple projects that follow the canonical structure we can often
 completely ignore the presence of the build definition files thus approaching

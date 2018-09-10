@@ -1389,7 +1389,7 @@ continue? [y/n] y
 pushing build2-control
 submitting hello-0.1.0.tar.gz
 ############################################################# 100.0%
-hello/0.1.0 submission is queued
+package submission is queued: https://queue.cppget.org/hello/0.1.0
 reference: 0c596fca2017
 \
 
@@ -1409,8 +1409,8 @@ access to the control repository (the authorization part). See
 
 The rest should be pretty straightforward: \c{publish} prepares and uploads a
 distribution of our package which goes into the \c{alpha} section of the
-repository (because it has \c{0} major version). In response we get a
-reference which we can use to check the status of our submission on
+repository (because it has \c{0} major version). In response we get a URL
+which we can use to check the status of our submission on
 \l{https://queue.cppget.org queue.cppget.org}. And after some basic testing
 and verification, our package should appear on \c{cppget.org} (the exact steps
 are described in \l{https://cppget.org?submit Submission Policies}). Note also
@@ -1867,7 +1867,7 @@ along these lines:
 \
 
 \N|The installation locations of various types of files (executables,
-libraries, headers, documentation, etc.) can be customized using a number of
+libraries, headers, documentation, etc) can be customized using a number of
 the \c{config.install.*} variables with the most commonly used ones and their
 defaults (relative to \c{config.install.root}) listed below (see the
 \c{install} build system module documentation for the complete list).
@@ -2193,8 +2193,8 @@ prefix, for example, \c{<libhello/hello.hxx>}.}|
 
 Let's start with naming projects: by convention, library names start with the
 \c{lib} prefix and using this prefix for non-library projects should be
-avoided. The \c{bdep-new} command warns about both violations. \N{The
-rationale for this naming convention will become evident later.}
+avoided. The \c{bdep-new} command warns about this violation. \N{The rationale
+for this naming convention will become evident later.}
 
 The project's root directory should contain the root \c{buildfile} and package
 \c{manifest} file. Other recommended top-level subdirectory names are
@@ -2248,25 +2248,25 @@ private \- is not as clear cut as it may seem at first. The common assumption
 of the split layout is that only headers from \c{include/} are installed and,
 conversely, to use the headers in-place, all one has to do is add \c{-I}
 pointing to \c{include/}.  On the other hand, it is common for public headers
-to include private, for example, to call an implementation-detail function in
+to include private, for example, to call an implementation detail function in
 inline or template code (note that the same applies to private modules
 imported in public module interfaces). Which means such private, (or, probably
-now more accurately called implementation-detail) headers have to be placed in
-the \c{include/} directory as well, perhaps into a subdirectory (such as
-\c{details/}) or with a file name suffix (such as \c{-impl}) to signal to the
-user that they are still \"private\". Needless to say, keeping track of which
-private headers can still stay in \c{src/} and which have to be moved to
-\c{include/} (and vice versa) is a tedious, error-prone task. As a result,
-practically, the split layout quickly degrades into the \"all headers in
-\c{include/}\" arrangement which negates its main advantage.
+now more accurately called \i{implementation detail}) headers have to be
+placed in the \c{include/} directory as well, perhaps into a subdirectory
+(such as \c{details/}) or with a file name suffix (such as \c{-impl}) to
+signal to the user that they are still \"private\". Needless to say, keeping
+track of which private headers can still stay in \c{src/} and which have to be
+moved to \c{include/} (and vice versa) is a tedious, error-prone task. As a
+result, practically, the split layout quickly degrades into the \"all headers
+in \c{include/}\" arrangement which negates its main advantage.
 
 It is also not clear how the split layout will translate to modularized
 projects. With modules, both the interface and implementation (including
 non-inline/template function definitions) can reside in the same file with a
 substantial number of C++ developers finding this arrangement appealing. If a
 project consists of only such single-file modules, then \c{include/} and
-\c{src/} are effectively become the same thing. In a sense, we already have
-this situation with header-only libraries except that in case of modules
+\c{src/} have effectively become the same thing. In a sense, we already have
+this situation with header-only libraries except that in the case of modules
 calling the directory \c{include/} would be an anachronism.
 
 To summarize, the split directory arrangement offers little benefit over the
@@ -2346,7 +2346,7 @@ libhello/
     └── ...
 \
 
-It is recommended that you still install the implementation details headers
+It is recommended that you still install the implementation detail headers
 and modules for the reasons discussed above. If, however, you would like to
 disable their installation, you can add the following line to your source
 subdirectory \c{buildfile}:
@@ -2355,8 +2355,8 @@ subdirectory \c{buildfile}:
 details/hxx{*}: install = false
 \
 
-\N|If you are creating a \i{family of libraries} with the common name prefix,
-then it may make sense to use a nested source directory layout with the common
+\N|If you are creating a \i{family of libraries} with a common name prefix,
+then it may make sense to use a nested source directory layout with a common
 top-level directory. As an example, let's say we have the \c{libstud-path} and
 \c{libstud-url} libraries that belong to the same \c{libstud} family. Their
 source subdirectory layouts could look like this:
@@ -2467,9 +2467,9 @@ namespace hello
 }
 \
 
-Executable project may use a namespace (in which case it is natural to call it
-after the project) and its (private) modules shouldn't be qualified with the
-project name (in order not to clash with similarly named modules from the
+An executable project may use a namespace (in which case it is natural to call
+it after the project) and its (private) modules shouldn't be qualified with
+the project name (in order not to clash with similarly named modules from the
 corresponding library, if any).
 
 \N|Hopefully by now the insistence on the \c{lib} prefix should be easy to
@@ -2522,7 +2522,7 @@ libhello/
     └── hello.test.testscript
 \
 
-\N|All source files (that is, headers, modules, etc.) with the \c{.test}
+\N|All source files (that is, headers, modules, etc) with the \c{.test}
 second-level extension are assumed to belong to unit tests and are
 automatically excluded from the library/executable sources.|
 
@@ -2561,14 +2561,14 @@ through the public API. At the same time, support for unit testing adds extra
 complexity to the build infrastructure. Note also that it is fairly
 straightforward to add support for unit testing at a later stage. The relevant
 build logic is localized in the source subdirectory \c{buildfile} so you can
-simply generate a new project with unit tests enables and copy over the
+simply generate a new project with unit tests enabled and copy over the
 relevant parts.|
 
 
 \h#proj-struct-build-out|Build Output|
 
 There are no \c{bin/} or \c{obj/} subdirectories: build output (object files,
-libraries, executables, etc.) go into a parallel directory structure (in case
+libraries, executables, etc) go into a parallel directory structure (in case
 of an out of source build) or next to the sources (in case of an in source
 build). See \l{b#intro-dirs-scopes Output Directories and Scopes} for details
 on in and out of source builds.
@@ -2585,9 +2585,9 @@ illustrates this setup for our \c{hello} project (executables are marked with
 
 \
                  hello-gcc/
-hello/    ~~~    └── hello/
-├── build/    ~~~    ├── build/
-└── hello/    ~~~    └── hello/
+hello/    ~~>    └── hello/
+├── build/    ~~>    ├── build/
+└── hello/    ~~>    └── hello/
     ├── hello.cxx        ├── hello.o
     └── hello     -->    └── *hello
 \
@@ -2598,7 +2598,7 @@ of the drawback (such as the inability to have multiple builds or source
 directory cluttered with object files).
 
 \N|The often cited motivation for placing executables into \c{bin/} is that in
-many build system it is the only way to make things runnable in a reasonably
+many build systems it is the only way to make things runnable in a reasonably
 cross-platform manner. The major drawback of this arrangement is the need for
 unique executable names which is especially constraining when writing tests
 where it is convenient to call the executable just \c{driver} or \c{test}.

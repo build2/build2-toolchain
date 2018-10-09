@@ -2125,7 +2125,7 @@ entry as a documentation to users of our project.|
 
 \h1#proj-struct|Canonical Project Structure|
 
-The goal of establishing the \i{canonical project structure} is to create an
+The goal of establishing a canonical project structure is to create an
 ecosystem of packages that can coexist, are easy to comprehend by both humans
 and tools, scale to complex, real-world requirements, and, last but not least,
 are pleasant to work with.
@@ -2138,6 +2138,12 @@ of the recommendations discussed below would still apply. Oftentimes, you
 would start with a canonical project and expand from there. Note also that
 while the discussion below focuses on C++, most of it applies equally to C
 projects.
+
+\N|We often find ourselves factoring common functionality out of such
+end-products and into separate packages, for example, in order to be reused in
+another end-product). In this light, it can be helpful to start a new
+end-product project as a composition of individual packages that follow the
+canonical structure.|
 
 Projects created by the \l{bdep-new(1)} command have the canonical structure.
 The overall layouts for executable (\c{-t\ exe}) and library (\c{-t\ lib})
@@ -2176,10 +2182,7 @@ below.
 
 \ul|
 
-\li|\n\n\i{Library project names start with the \c{lib} prefix, for example,
-\c{libhello}.}|
-
-\li|\n\i{Header and source files (or module interface and implementation
+\li|\n\n\i{Header and source files (or module interface and implementation
 files) are next to each other (no \c{include/} and \c{src/} split).}|
 
 \li|\n\i{Headers are included with \c{<>} and contain the project directory
@@ -2191,10 +2194,37 @@ prefix, for example, \c{<libhello/hello.hxx>}.}|
 \li|\n\i{No special characters other than \c{_} and \c{-} in file names with
 \c{.} only used for extensions.}\n\n||
 
-Let's start with naming projects: by convention, library names start with the
-\c{lib} prefix and using this prefix for non-library projects should be
-avoided. The \c{bdep-new} command warns about this violation. \N{The rationale
-for this naming convention will become evident later.}
+Let's start with naming our projects: A project name should only contain ASCII
+alphabetic characters (\c{[a-zA-Z]}), digits (\c{[0-9]}), underscores (\c{_}),
+plus/minus (\c{+-}), and dots (\c{.}) as well as be at least two characters
+long (see \l{bpkg#package-name Package Name} for additional restrictions and
+recommendations).
+
+If a project consists of a library and an executable, then they should be
+split into separate packages (see \l{#guide-dev-multi Developing Multiple
+Packages and Projects} for some common arrangements). In this case, by
+convention, the library name should start with the \c{lib} prefix, for
+example, \c{libhello} and \c{hello}. It is also strongly recommended (but not
+required) to follow this convention in new projects, even if there are no
+plans to have a related executable.
+
+\N|Using the \c{lib} prefix consistently offers several benefits:
+
+\ol|
+
+\li|\nIt is clear from the name to both humans and tools what kind of project
+it is.|
+
+\li|\nAll libraries are consistently named (as opposed to some with the
+\c{lib} prefix and some without).|
+
+\li|\nAll library names are future-proofed to co-exist with executables. If
+one starts with a library without the \c{lib} prefix but later decides to add
+an executable, renaming the library would unlikely be an option. And there is
+no need to spend mental energy on thinking whether it's possible that an
+executable will be added later.||
+
+|
 
 The project's root directory should contain the root \c{buildfile} and package
 \c{manifest} file. Other recommended top-level subdirectory names are
@@ -2247,27 +2277,30 @@ Also, the stated advantage of this layout \- separation of public headers from
 private \- is not as clear cut as it may seem at first. The common assumption
 of the split layout is that only headers from \c{include/} are installed and,
 conversely, to use the headers in-place, all one has to do is add \c{-I}
-pointing to \c{include/}.  On the other hand, it is common for public headers
+pointing to \c{include/}. On the other hand, it is common for public headers
 to include private, for example, to call an implementation detail function in
 inline or template code (note that the same applies to private modules
 imported in public module interfaces). Which means such private, (or, probably
 now more accurately called \i{implementation detail}) headers have to be
 placed in the \c{include/} directory as well, perhaps into a subdirectory
 (such as \c{details/}) or with a file name suffix (such as \c{-impl}) to
-signal to the user that they are still \"private\". Needless to say, keeping
-track of which private headers can still stay in \c{src/} and which have to be
-moved to \c{include/} (and vice versa) is a tedious, error-prone task. As a
-result, practically, the split layout quickly degrades into the \"all headers
-in \c{include/}\" arrangement which negates its main advantage.
+signal to the user that they are still \"private\". Needless to say, in an
+actively developed project, keeping track of which private headers can still
+stay in \c{src/} and which have to be moved to \c{include/} (and vice versa)
+is a tedious, error-prone task. As a result, practically, the split layout
+quickly degrades into the \"all headers in \c{include/}\" arrangement which
+negates its main advantage.
 
 It is also not clear how the split layout will translate to modularized
 projects. With modules, both the interface and implementation (including
 non-inline/template function definitions) can reside in the same file with a
 substantial number of C++ developers finding this arrangement appealing. If a
 project consists of only such single-file modules, then \c{include/} and
-\c{src/} have effectively become the same thing. In a sense, we already have
-this situation with header-only libraries except that in the case of modules
-calling the directory \c{include/} would be an anachronism.
+\c{src/} have effectively become the same thing (note that there couldn't be
+any \"private\" modules in \c{src/} since there would be nobody to import
+them). In a sense, we already have this situation with header-only libraries
+except that in the case of modules calling the directory \c{include/} would be
+an anachronism.
 
 To summarize, the split directory arrangement offers little benefit over the
 single directory layout, has a number of real drawbacks, and does not fit
@@ -2306,21 +2339,23 @@ listed as to be installed), chances are that a completely unrelated header
 with the same name will be found and included. Needless to say, debugging
 situations like these is unpleasant.
 
-Similarly, prefixing all inclusions with the project name makes sure that
-headers with common names (for example, \c{utility.hxx}) can coexist (for
-example, when installed into a system-wide directory, such as
-\c{/usr/include}). The prefix also plays an important role in supporting
-auto-generated headers.
+Prefixing all inclusions with the project name also makes sure that headers
+with common names (for example, \c{utility.hxx}) can coexist (for example,
+when installed into a system-wide directory, such as \c{/usr/include}). The
+prefix also plays an important role in supporting auto-generated headers.
 
-Finally, note that this header inclusion scheme is consistent with the module
+Note also that this header inclusion scheme is consistent with the module
 importation, for example:
 
 \
 import hello.utility;
 \
 
-So let's imagine the \c{\"\"} style inclusion does not exist and we will all
-have a much better time.|
+Finally, note that while adding the project prefix to the \c{\"\"} style
+inclusion (for example, \c{\"libhello/hello.hxx\"}) will make finding an
+unrelated header unlikely, there is still a possibility. And it is not clear
+why take the chance when there are no benefits. So let's imagine the \c{\"\"}
+style inclusion does not exist and we will all have a much better time.|
 
 If you have to disregard every rule and recommendation in this section but
 one, for example, because you are working on an existing library, then insist
@@ -2335,7 +2370,7 @@ example, into \c{/usr/include}), this subdirectory hierarchy is
 automatically recreated.
 
 If you would like to separate public API headers/modules from implementation
-details, then the convention is to place them into the \c{details/}
+details, the convention is to place them into the \c{details/}
 subdirectory. For example:
 
 \
@@ -2345,6 +2380,12 @@ libhello/
     │   └── utility.hxx
     └── ...
 \
+
+\N|If a project has truly private headers (for example, proprietary code) that
+must be clearly separated from public and implementation detail headers, then
+they can be placed into the \c{private/} subdirectory, next to
+\c{details/}. In a sense, this arrangement mimics the C++
+public/protected/private member access.|
 
 It is recommended that you still install the implementation detail headers
 and modules for the reasons discussed above. If, however, you would like to
@@ -2402,12 +2443,15 @@ small_vector.hxx
 small-vector.test.cxx
 \
 
-Example of bad names:
+Examples of bad names:
 
 \
 small+vector.hxx
 small.vector.hxx
 \
+
+\N|If you are using \c{_} or \c{-} as word separators in filesystem names,
+pick one and use it consistently throughout the project.|
 
 The C source file extensions are always \c{.h}/\c{.c}. The two alternative C++
 source file extension schemes are \c{.?pp} and \c{.?xx}:
@@ -2447,14 +2491,46 @@ for C++ files:
 The last two reasons are also why headers without extensions are probably not
 worth the trouble.|
 
+Source files corresponding to C++ modules need to embed a sufficient amount of
+\"module name tail\" in their names to unambiguously resolve all the modules
+used in a project. When deriving file names from C++ module names, \c{.} (dot)
+should be replaced with either \c{_} (underscore), \c{-} (minus), a case
+change, or a directory separator, according to your project's file naming
+scheme. For example, if our \c{libhello} had two modules, \c{hello.core} and
+\c{hello.extra}, then their interface units could be named as follows:
+
+\
+hello-core.mxx
+hello-extra.mxx
+
+hello_core.mxx
+hello_extra.mxx
+
+HelloCore.mxx
+HelloExtra.mxx
+
+hello/core.mxx
+hello/extra.mxx
+
+core.mxx
+extra.mxx
+\
+
+As discussed in the next section, public module names should start with the
+project name and for such modules it is customary to omit this first component
+from file names (the last variant in the above example). See also
+\l{b#cxx-modules-build Building Modules} for a more detailed discussion of
+the module name to file name mapping.
+
 
 \h#proj-struct-src-content|Source Contents|
 
 Let's now move inside our source files. All macros defined by a project, such
-as include guards, version macro, etc., must all start with the project name
-(including the \c{lib} prefix for libraries), for example
-\c{LIBHELLO_VERSION}. Similarly, the library's namespace and module names all
-start with the library name but without the \c{lib} prefix. For example:
+as include guards, version and symbol export macros, etc., must all start with
+the project name (including the \c{lib} prefix for libraries), for example
+\c{LIBHELLO_VERSION}. Similarly, the library's namespace and module names
+(both public and implementation detail) should all start with the library name
+but without the \c{lib} prefix. For example:
 
 \
 // libhello/hello.mxx
@@ -2470,16 +2546,17 @@ namespace hello
 An executable project may use a namespace (in which case it is natural to call
 it after the project) and its (private) modules shouldn't be qualified with
 the project name (in order not to clash with similarly named modules from the
-corresponding library, if any).
+corresponding library, if any). \N{A library may also have private modules in
+which case they shouldn't be qualified either.}
 
-\N|Hopefully by now the insistence on the \c{lib} prefix should be easy to
-understand: oftentimes executables and libraries come in pairs, for example
+\N|Hopefully by now the recommendation for the \c{lib} prefix should be easy
+to understand: oftentimes executables and libraries come in pairs, for example
 \c{hello} and \c{libhello}, with the reusable functionality being factored out
 from the executable into the library. It is natural to want to use the same
 name \i{stem} (\c{hello} in our case) for both.
 
 The above naming scheme (with the \c{lib} prefix present in some names but not
-others) is carefully crafted to allow such library/executable pairs to coexist
+others) is carefully chosen to allow such library/executable pairs to coexist
 and be used together without too much friction. For example, both the library
 and executable can have a header called \c{utility.hxx} with the executable
 being able to include both and even get the \"merged\" functionality without
@@ -2507,9 +2584,15 @@ A canonical library project contains two special headers: \c{export.hxx} (or
 
 \h#proj-struct-tests|Tests|
 
+A project may have \i{unit} and/or \i{functional/integration} tests. Unit
+tests exercise each module's (potentially private) functionality in
+isolation. In contrast, functional/integration tests exercise the project via
+its public API, just like the real users of the project would.
+
 A source file that implements a module's unit tests should be placed next to
 that module's files and be called with the module's name plus the \c{.test}
-second-level extension. If a module uses Testscript for unit testing, then the
+second-level extension. It is expected to implement an executable (that is,
+define \c{main()}). If a module uses Testscript for unit testing, then the
 corresponding file should be called with the module's name plus the
 \c{.test.testscript} extension. For example:
 
@@ -2526,14 +2609,34 @@ libhello/
 second-level extension are assumed to belong to unit tests and are
 automatically excluded from the library/executable sources.|
 
-The canonical library project created by \c{bdep-new} includes the \c{tests/}
-subdirectory which contains the library's functional/integration (as opposed
-to unit) tests. Or, in other words, these are the tests that exercise the
-library via its public API, just like the real users of the library would. The
-\c{tests/} subdirectory is an unnamed subproject (in the build system terms)
-which allows us to build and run tests against an installed version of the
-library (see \l{b#intro-operations-test Testing} for more information on the
-contents of this directory).
+A library's functional/integration tests should go into the \c{tests/}
+subdirectory. Each such test should reside in a separate subdirectory,
+potentially organized into nested subdirectories (for instance, to correspond
+to the source directory components). For example, if we were creating an XML
+parsing and serialization library, then our \c{tests/} could have the
+following layout:
+
+\
+tests/
+├── basics/
+│   ├── driver.cxx
+│   └── buildfile
+├── parser/
+│   ├── pull/
+│   │   ├── driver.cxx
+│   │   └── buildfile
+│   └── push/
+│       ├── driver.cxx
+│       └── buildfile
+└── serializer/
+    └── ...
+\
+
+In the canonical library project created by \c{bdep-new} the \c{tests/}
+subdirectory is an unnamed subproject (in the build system terms). This allows
+us to build and run tests against an installed version of the library (see
+\l{b#intro-operations-test Testing} for more information on the contents of
+this directory).
 
 \N|The \c{build2} CI implementation will automatically perform the
 installation test if a project contains the \c{tests/} subproject. See

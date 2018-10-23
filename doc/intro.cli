@@ -2466,6 +2466,18 @@ template    .tpp  .txx
 source      .cpp  .cxx
 \
 
+\N|The \c{.mxx}/\c{.mpp} extension is for the module interface translation
+units with module implementation units (if any) using the \c{.cxx}/\c{.cpp}
+extension. If both are present, then it makes sense to use the same base name,
+similar to headers. For example:
+
+\
+hello-core.mxx
+hello-core.cxx
+\
+
+|
+
 The use of inline and template files is a matter of taste. If used, they are
 included at the end of the header/module files and contain definitions of
 inline and non-inline template functions, respectively. The \c{.?xx}/\c{.?pp}

@@ -25,7 +25,7 @@ the UNIX version of the commands. In this case making a Windows version is
 a simple matter of adjusting paths and, if used, line continuations.
 
 The \c{build2} toolchain requires a C++14 compiler. From the commonly-used
-options, GCC 4.9, Clang 3.4, and MSVC 14 (2015) Update 3 or any later versions
+options, GCC 4.9, Clang 3.7, and MSVC 14 (2015) Update 3 or any later versions
 of these compilers should work.
 
 \N|Note that the C++ compiler that you use to build the \c{build2} toolchain

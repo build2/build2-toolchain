@@ -127,7 +127,7 @@ the \c{configure} and \c{install} command lines above along these lines:
 \
 > build2\build2\b-boot configure ^
   config.cxx=cl                  ^
-  \"config.cc.coptions=/O2 /Oi\"   ^
+  config.cc.coptions=/O2         ^
   config.install.root=C:\build2
 
 > build2\build2\b-boot install: build2/ bpkg/ bdep/
@@ -150,7 +150,7 @@ previous step and you may want/need to make similar adjustments.
 > bpkg-stage create             ^
   cc                            ^
   config.cxx=cl                 ^
-  \"config.cc.coptions=/O2 /Oi\"  ^
+  config.cc.coptions=/O2        ^
   config.install.root=C:\build2
 \
 

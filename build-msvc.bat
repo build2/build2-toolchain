@@ -249,7 +249,7 @@ cd %cdir%
 bpkg-stage %verbose% create^
  cc^
  config.cxx=%cxx%^
- "config.cc.coptions=/O2 /Oi"^
+ config.cc.coptions=/O2^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 

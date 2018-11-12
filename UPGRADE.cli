@@ -177,10 +177,10 @@ config.install.sudo=sudo
 For Windows with MSVC (from the Visual Studio command prompt):
 
 \
-> bpkg-stage create              ^
-  cc                             ^
-  config.cxx=cl                  ^
-  \"config.cc.coptions=/O2 /Oi\"   ^
+> bpkg-stage create             ^
+  cc                            ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
   config.install.root=C:\build2
 \
 

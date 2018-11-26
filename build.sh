@@ -40,10 +40,12 @@ owd="$(pwd)"
 
 cxx=
 idir=
+jobs=
 sudo=
 trust=
 timeout=
 make=
+make_options=
 verbose=
 
 while test $# -ne 0; do
@@ -54,6 +56,7 @@ while test $# -ne 0; do
       diag "Options:"
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
+      diag "  --jobs|-j <num>      Number of jobs to perform in parallel."
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Repository certificate fingerprint to trust."
       diag "  --timeout <sec>      Network operations timeout in seconds."
@@ -66,14 +69,21 @@ while test $# -ne 0; do
       diag
       diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
+      diag "If --jobs|-j is unspecified, then the bootstrap step is performed"
+      diag "serially with the rest of the process using the number of available"
+      diag "hardware threads."
+      diag
       diag "The --trust option recognizes two special values: 'yes' (trust"
       diag "everything) and 'no' (trust nothing)."
       diag
       diag "The --make option can be used to bootstrap using GNU make. The"
       diag "first --make value should specify the make executable optionally"
-      diag "followed by additional make arguments, for example:"
+      diag "followed by additional make options, for example:"
       diag
       diag "$0 --make gmake --make -j8 g++"
+      diag
+      diag "If --jobs|-j is specified, then its value is passed to make before"
+      diag "any additional options."
       diag
       diag "If specified, <compile-options> override the default (-O3) compile"
       diag "options (config.cc.coptions) in the bpkg configuration used to build"
@@ -94,6 +104,16 @@ while test $# -ne 0; do
 	exit 1
       fi
       idir="$1"
+      shift
+      ;;
+    -j|--jobs)
+      shift
+      if test $# -eq 0; then
+	diag "error: number of jobs expected after --jobs|-j"
+	diag "$usage"
+	exit 1
+      fi
+      jobs="-j $1"
       shift
       ;;
     --sudo)
@@ -143,7 +163,11 @@ while test $# -ne 0; do
 	diag "$usage"
 	exit 1
       fi
-      make="$make $1"
+      if test -z "$make"; then
+        make="$1"
+      else
+	make_options="$make_options $1"
+      fi
       shift
       ;;
     --verbose)
@@ -174,6 +198,18 @@ fi
 #
 if test $# -eq 0; then
   set -- -O3
+fi
+
+# Merge jobs and make_options into make.
+#
+if test -n "$make"; then
+  if test -n "$jobs"; then
+    make="$make $jobs"
+  fi
+
+  if test -n "$make_options"; then
+    make="$make$make_options" # Already has leading space.
+  fi
 fi
 
 # Only use default sudo for the default installation directory and only if
@@ -260,7 +296,7 @@ run build2/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run build2/b-boot $verbose config.cxx="$cxx" config.bin.lib=static build2/exe{b}
+run build2/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static build2/exe{b}
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
@@ -276,7 +312,7 @@ config.install.root="$idir" \
 config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
 
-run build2/build2/b-boot $verbose install: build2/ bpkg/
+run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
 
 run which b-stage
 run which bpkg-stage
@@ -301,8 +337,8 @@ config.install.sudo="$conf_sudo"
 
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $bpkg_build_ops build --for install --yes build2 bpkg bdep
-run bpkg-stage $verbose install build2 bpkg bdep
+run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes build2 bpkg bdep
+run bpkg-stage $verbose $jobs install build2 bpkg bdep
 
 run which b
 run which bpkg
@@ -315,7 +351,7 @@ run bdep --version
 # Clean up stage.
 #
 run cd "$owd"
-run b $verbose uninstall: build2/ bpkg/
+run b $verbose $jobs uninstall: build2/ bpkg/
 
 diag
 diag "Toolchain installation: $idir/bin"

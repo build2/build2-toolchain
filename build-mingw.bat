@@ -27,7 +27,7 @@ echo and 'no' (trust nothing).
 echo.
 echo The --make option can be used to bootstrap using GNU make. The first
 echo --make value should specify the make executable optionally followed by
-echo additional make arguments, for example:
+echo additional make options, for example:
 echo.
 echo %0 --make mingw32-make --make -j8 g++
 echo.

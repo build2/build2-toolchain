@@ -337,7 +337,7 @@ config.install.sudo="$conf_sudo"
 
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes build2 bpkg bdep
+run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes --plan= build2 bpkg bdep
 run bpkg-stage $verbose $jobs install build2 bpkg bdep
 
 run which b

@@ -37,9 +37,13 @@ The dirty upgrade is straightforward:
 \
 $ cd build2-toolchain-X.Y
 $ bpkg fetch
-$ bpkg build --for install build2 bpkg bdep
+$ bpkg build --for install -ur build2 bpkg bdep
 $ bpkg install build2 bpkg bdep
 \
+
+\N|The \c{-ur} options stands for \c{--upgrade} and \c{--recursive} \- upgrade
+the listed packages and their dependencies, recursively. See
+\l{bpkg-pkg-build(1)} for details.|
 
 You may also want to issue the \c{status} command after \c{fetch} to examine
 which versions are available. By default \c{bpkg} will upgrade to the latest
@@ -102,7 +106,7 @@ configuration and install the new toolchain with the \c{-stage} suffix:
 
 \
 $ cd build2-toolchain-X.Z
-$ bpkg build --for install build2 bpkg bdep
+$ bpkg build --for install -ur build2 bpkg bdep
 $ bpkg install                        \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \

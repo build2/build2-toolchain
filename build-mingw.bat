@@ -292,10 +292,10 @@ bpkg-stage %verbose% create^
 bpkg-stage %verbose% add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% fetch %timeout% %trust%
+bpkg-stage %verbose% %timeout% %trust% fetch
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% build %timeout% --for install --yes --plan= build2 bpkg bdep
+bpkg-stage %verbose% %timeout% build --for install --yes --plan= build2 bpkg bdep
 @if errorlevel 1 goto error
 
 bpkg-stage %verbose% install build2 bpkg bdep

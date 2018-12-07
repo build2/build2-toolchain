@@ -28,9 +28,15 @@ We recommend that you use a dirty upgrade for patch releases with the same
 \c{X.Y} (\c{MAJOR.MINOR}) version and a staged upgrade otherwise. With patch
 releases we guarantee not to alter the installation file set.
 
-\N|Note that without periodic upgrades your version of the toolchain may
-become too old to be able to upgrade itself. In this case you will have to
-fall back onto the bootstrap process.|
+\N|Without periodic upgrades your version of the toolchain may become too old
+to be able to upgrade itself. In this case you will have to fall back onto the
+bootstrap process.|
+
+\N|The below upgrade process does not cover upgrading the \c{baseutils} and
+\c{mingw} packages on Windows (see \l{#bootstrap-windows Bootstrapping on
+Windows} for details). We recommend using the bootstrap process to upgrade
+these packages since all the straightforward upgrade sequences would lead to
+either the old toolchain using the new utilities or vice versa.|
 
 The dirty upgrade is straightforward:
 

@@ -14,8 +14,8 @@
 "
 \h0#preface|Preface|
 
-The recommended way to install the \c{build2} toolchain in most circumstances
-is using the automated install scripts as described on the
+The recommended way to install and upgrade the \c{build2} toolchain in most
+circumstances is using the automated install scripts as described on the
 \l{https://build2.org/install.xhtml Install} page. This document describes the
 manual installation and upgrade process which offers greater control can be
 helpful in situations where the automated scripts cannot be used (offline
@@ -23,37 +23,40 @@ installation, packaging for system package managers, unsupported
 platform/compiler, etc).
 "
 
+// NOTE: The following ids must correspond to the file names (used in
+// plain-text links).
+
 "
-\h#INSTALL|Introduction|
+\h#install|Introduction|
 "
 source "../INSTALL.cli";
 
 "
-\h#BOOTSTRAP-WINDOWS|Bootstrapping on Windows|
+\h#bootstrap-windows|Bootstrapping on Windows|
 "
 source "../BOOTSTRAP-WINDOWS.cli";
 
 "
-\h2#BOOTSTRAP-MSVC|Bootstrapping with MSVC|
+\h2#bootstrap-msvc|Bootstrapping with MSVC|
 "
 source "../BOOTSTRAP-MSVC.cli";
 
 "
-\h2#BOOTSTRAP-MINGW|Bootstrapping with MinGW|
+\h2#bootstrap-mingw|Bootstrapping with MinGW|
 "
 source "../BOOTSTRAP-MINGW.cli";
 
 "
-\h#BOOTSTRAP-MACOSX|Bootstrapping on Mac OS X|
+\h#bootstrap-macosx|Bootstrapping on Mac OS X|
 "
 source "../BOOTSTRAP-MACOSX.cli";
 
 "
-\h#BOOTSTRAP-UNIX|Bootstrapping on UNIX|
+\h#bootstrap-unix|Bootstrapping on UNIX|
 "
 source "../BOOTSTRAP-UNIX.cli";
 
 "
-\h#UPGRADE|Upgrading|
+\h#upgrade|Upgrading|
 "
 source "../UPGRADE.cli";

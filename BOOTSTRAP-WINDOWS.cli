@@ -6,7 +6,7 @@
 The following instructions are for bootstrapping \c{build2} with either MSVC
 or MinGW using the Windows command prompt. If you are using any kind of UNIX
 emulation layer (for example, MSYS or Cygwin) and already have a UNIX shell
-with standard utilities, then you most likely should follow \l{#BOOTSTRAP-UNIX
+with standard utilities, then you most likely should follow \l{#bootstrap-unix
 Bootstrapping on UNIX} instead.
 
 \N|Note that if you continue with these instructions but you already have your
@@ -142,9 +142,9 @@ directory:
 
 ||
 
-If building with MSVC, continue with \l{#BOOTSTRAP-MSVC Bootstrapping with
+If building with MSVC, continue with \l{#bootstrap-msvc Bootstrapping with
 MSVC}.
 
-If building with MinGW, continue with \l{#BOOTSTRAP-MINGW Bootstrapping with
+If building with MinGW, continue with \l{#bootstrap-mingw Bootstrapping with
 MinGW}.
 "

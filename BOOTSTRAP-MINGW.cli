@@ -3,7 +3,7 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing from \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you are
+Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, if you are
 using your own MinGW distribution, then the resulting \c{build2} binaries will
 most likely require a number of DLLs in order to run. It is therefore
 recommended that you copy the following files from your MinGW \c{bin\\}
@@ -52,7 +52,7 @@ details).|
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
-\c{build2-toolchain-X.Y\\} that can be used to \l{#UPGRADE upgrade} to newer
+\c{build2-toolchain-X.Y\\} that can be used to \l{#upgrade upgrade} to newer
 versions. It can also be used to uninstall the toolchain:
 
 \

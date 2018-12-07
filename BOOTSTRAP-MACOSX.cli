@@ -26,5 +26,5 @@ To install Command Line Tools, run:
 $ xcode-select --install
 \
 
-Once this is done continue with \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
+Once this is done continue with \l{#bootstrap-unix Bootstrapping on UNIX}.
 "

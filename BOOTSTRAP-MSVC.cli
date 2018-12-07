@@ -3,7 +3,7 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing from \l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}, if you have
+Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, if you have
 already started an appropriate Visual Studio command prompt, then you can
 continue using it. Otherwise, start the \"x64 Native Tools Command Prompt\" if
 you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
@@ -34,7 +34,7 @@ details).|
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
-\c{build2-toolchain-X.Y\\} that can be used to \l{#UPGRADE upgrade} to newer
+\c{build2-toolchain-X.Y\\} that can be used to \l{#upgrade upgrade} to newer
 versions. It can also be used to uninstall the toolchain:
 
 \

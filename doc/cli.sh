@@ -61,7 +61,7 @@ gen install --html-heading-map 2=h2
 #
 function gen_txt () # <name>
 {
-  cli --generate-txt --omit-link-check --link-regex '%#(.*)%\1 file%' \
+  cli --generate-txt --omit-link-check --link-regex '%#(.*)%\U\1\E file%' \
 -o .. --txt-suffix "" ../$1.cli
 }
 

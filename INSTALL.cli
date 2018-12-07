@@ -6,7 +6,7 @@
 One of the primary goals of the \c{build2} toolchain is to provide a uniform
 build interface across all the platforms and compilers. As a result, if you
 already have the toolchain installed and would like to upgrade to a newer
-version, then there is a single set of \l{#UPGRADE upgrade instructions} for
+version, then there is a single set of \l{#upgrade upgrade instructions} for
 all the platforms.
 
 If, however, you need to install the toolchain for the first time, then it has
@@ -72,12 +72,12 @@ prefer not to build from packages (for example, because the machine is
 offline).|
 
 For Windows, if you are using either MSVC or MinGW, continue with
-\l{#BOOTSTRAP-WINDOWS Bootstrapping on Windows}. If using MSYS or Cygwin,
-then instead refer to \l{#BOOTSTRAP-UNIX Bootstrapping on UNIX}.
+\l{#bootstrap-windows Bootstrapping on Windows}. If using MSYS or Cygwin,
+then instead refer to \l{#bootstrap-unix Bootstrapping on UNIX}.
 
-For Mac OS X, continue with \l{#BOOTSTRAP-MACOSX Bootstrapping on Mac OS X}.
+For Mac OS X, continue with \l{#bootstrap-macosx Bootstrapping on Mac OS X}.
 
 For other UNIX-like operating systems (GNU/Linux, FreeBSD, etc; this also
-includes MSYS/Cygwin), continue with \l{#BOOTSTRAP-UNIX Bootstrapping on
+includes MSYS/Cygwin), continue with \l{#bootstrap-unix Bootstrapping on
 UNIX}.
 "

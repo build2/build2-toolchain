@@ -5,7 +5,7 @@
 "
 The following instructions are for bootstrapping \c{build2} on UNIX-like
 operating systems (GNU/Linux, FreeBSD, etc). For Mac OS X first see
-\l{#BOOTSTRAP-MACOSX Bootstrapping on Mac OS X}. These instructions should
+\l{#bootstrap-macosx Bootstrapping on Mac OS X}. These instructions should
 also be used for UNIX emulation layers on Windows (for example, MSYS or
 Cygwin) where you already have a UNIX shell with standard utilities.
 
@@ -93,7 +93,7 @@ fingerprint with the \c{--trust} option (see \c{build.sh -h} for details).|
 
 The end result of the bootstrap process (performed either with the script or
 manually) is the installed toolchain as well as the \c{bpkg} configuration in
-\c{build2-toolchain-X.Y/} that can be used to \l{#UPGRADE upgrade} to newer
+\c{build2-toolchain-X.Y/} that can be used to \l{#upgrade upgrade} to newer
 versions. It can also be used to uninstall the toolchain:
 
 \

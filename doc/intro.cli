@@ -1277,7 +1277,7 @@ Just like with changes to dependency information, \c{status} has detected that
 a new (snapshot) version of our project is available for synchronization.
 
 \N|Another way to view the project's version (which works even if we are
-not using \c{bdep}) is with the build system's \c{info} operation:
+not using \c{bdep}) is with the build system's \c{info} meta-operation:
 
 \
 $ b info
@@ -1318,8 +1318,8 @@ discussed earlier, you can simply run the build system to update your project
 and things will get automatically synchronized if necessary.|
 
 Ok, time for our first release. Let's start with \c{0.1.0-a.1}. Unlike
-snapshots, for pre-releases as well as final releases we have to update the
-version in the \c{manifest} file manually:
+snapshots, for pre-releases as well as final releases we have to change the
+version in the \c{manifest} file:
 
 \
 version: 0.1.0-a.1
@@ -1357,19 +1357,61 @@ $ git push
 Notice also that when specifying a snapshot version in \c{manifest} we use the
 special \cb{z} snapshot value (for example, \c{0.1.0-a.1.z}) which is
 recognized and automatically replaced by \c{build2} with, in case of \c{git},
-a commit timestamp and id (refer to \l{b#module-version \c{version} Module}
-for details).
+the current commit timestamp and id (refer to \l{b#module-version \c{version}
+Module} for details).
 
-Publishing the final release to the version control repository is exactly the
-same. This time, however, let's also see how we can publish it to an
-archive-based repository. The first step is again to change the version,
-commit, tag, and push:
+While not particularly complicated, performing the release steps manually is
+both tedious and error-prone. Instead, this process can be automated with the
+\l{bdep-release(1)} command. Specifically, in its default mode, this command
+will update the version in the \c{manifest} file, commit and tag this change,
+open the next development cycle (again, by changing \c{manifest} and
+committing), and, finally, if \c{--push} is specified, push everything to the
+remote. So, instead of the above manual steps, we could have simply run:
 
 \
-$ edit manifest  # change 'version: 0.1.0'
-$ git commit -a -m \"Release version 0.1.0\"
-$ git tag -a v0.1.0 -m \"Tag version 0.1.0\"
-$ git push --follow-tags
+$ bdep release --alpha --push
+releasing:
+  package: hello
+  current: 0.1.0-a.0.z
+  release: 0.1.0-a.1
+  open:    0.1.0-a.1.z
+  commit:  yes
+  tag:     v0.1.0-a.1
+  push:    origin/master
+continue? [y/n] y
+[master 82a7e65] Release version 0.1.0-a.1
+[master e6cf3c0] Change version to 0.1.0-a.1.z
+To github.com:john-doe/hello.git
+   26ec5c9..e6cf3c0  master -> master
+ * [new tag]         v0.1.0-a.1 -> v0.1.0-a.1
+\
+
+\N|The \c{release} command has a number of alternative modes, such as for
+releasing a package revision, as well as a number of options that control
+which version will be released and which version will be opened. See
+\l{bdep-release(1)} for details.|
+
+Publishing the final release to the version control repository is exactly the
+same. This time, however, let's see how we can also publish it to an
+archive-based repository. The first step is again to make the release, which
+we will do with the help of the \c{release} command. Except now we will delay
+opening the next development cycle by passing \c{--no-open} (there is also no
+\c{--alpha} since this is the final release):
+
+\
+$ bdep release --no-open --push
+releasing:
+  package: hello
+  current: 0.1.0-a.1.z
+  release: 0.1.0
+  commit:  yes
+  tag:     v0.1.0
+  push:    origin/master
+continue? [y/n] y
+[master 00ed45a] Release version 0.1.0
+To github.com:john-doe/hello.git
+   5d5094c..00ed45a  master -> master
+ * [new tag]         v0.1.0 -> v0.1.0
 \
 
 To publish our project to an archive-based repository we use the
@@ -1418,12 +1460,21 @@ that package submissions to \c{cppget.org} are public and permanent and cannot
 be removed under any circumstances.
 
 Finally, we also shouldn't forget to increment the version for the next
-development cycle:
+development cycle. For that we can use the \c{--open} mode of the \c{release}
+command. For example:
 
 \
-$ edit manifest  # change 'version: 0.2.0-a.0.z'
-$ git commit -a -m \"Change version to 0.2.0-a.0.z\"
-$ git push
+$ bdep release --open --push
+opening:
+  package: hello
+  current: 0.1.0
+  open:    0.2.0-a.0.z
+  commit:  yes
+  push:    origin/master
+continue? [y/n] y
+[master ace2f6e] Change version to 0.2.0-a.0.z
+To github.com:john-doe/hello.git
+   00ed45a..ace2f6e  master -> master
 \
 
 \N|One sticky point of continuous versioning is choosing the next version.
@@ -1434,11 +1485,11 @@ versioning. But we can never jump backwards.
 
 For example, we can start with \c{0.2.0-a.0} but if we later realize that this
 will actually be a new major release, we can easily change it to
-\c{1.0.0-a.0}. As a result, the general recommendation is to start
-conservatively by either incrementing the patch or the minor version
-component. The recommended strategy is to increment the minor component and,
-if required, release patch versions from a separate branch (created by
-branching off from the release commit).
+\c{1.0.0-a.0}. As a result, the general guideline is to start conservatively
+by either incrementing the patch or the minor version component. And the
+recommended strategy is to increment the minor component and, if required,
+release patch versions from a separate branch (created by branching off from
+the release commit). This is the default behavior of the \c{release} command.
 
 Note also that you don't have to make any pre-releases if you don't need them.
 While during development you would still keep the version as \c{X.Y.Z-a.0}, at

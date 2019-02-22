@@ -174,7 +174,7 @@ $ build2/build2/b-boot configure      \
   config.install.data_root=root/stage \
   config.install.sudo=sudo
 
-$ build2/build2/b-boot install build2/ bpkg/
+$ build2/build2/b-boot install: build2/ bpkg/
 \
 
 The strange-looking \c{config.install.data_root=root/stage} means install

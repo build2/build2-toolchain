@@ -2286,7 +2286,8 @@ The project's root directory should contain the root \c{buildfile} and package
 discussed below), \c{doc/}, and \c{etc/} (sample configurations, scripts,
 third-party contributions, etc). See also build system \l{b#intro-proj-struct
 Project Structure} for details on the build-related files (\c{buildfile}) and
-subdirectories (\c{build/}).
+subdirectories (\c{build/}) as well as the available alternative naming
+scheme.
 
 
 \h#proj-struct-src-dir|Source Directory|

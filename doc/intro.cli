@@ -2195,9 +2195,10 @@ projects.
 
 \N|We often find ourselves factoring common functionality out of such
 end-products and into separate packages, for example, in order to be reused in
-another end-product). In this light, it can be helpful to start a new
-end-product project as a composition of individual packages that follow the
-canonical structure.|
+another end-product). In this light, it can be helpful to organize a new
+end-product project as a composition of individual packages or source
+subdirectories that follow the canonical structure. The \l{bdep-new(1)}
+\c{--package} and \c{--subdirectory} modes can used to automate this process.|
 
 Projects created by the \l{bdep-new(1)} command have the canonical structure.
 The overall layouts for executable (\c{-t\ exe}) and library (\c{-t\ lib})

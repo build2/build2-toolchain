@@ -30,11 +30,10 @@ should be unpacked into the same directory as \c{build2-baseutils}.
 the \c{posix} threading model (this is currently the only configuration that
 implements C++11 threads; run \c{g++ -v} to verify).|
 
-\N|Note that you \b{must} match the width (32/64-bit) of the toolchain to the
-\c{baseutils} and \c{mingw} packages. They must all be 32-bit or all 64-bit.
-If you are running 64-bit Windows, it is strongly recommended that you build
-the 64-bit (x86_64) version of the toolchain and use the 64-bit versions of
-the \c{baseutils} and \c{mingw} packages.|
+\N|Only 64-bit variants of the \c{baseutils} and \c{mingw} packages are
+provided and they \b{must} match the width of the \c{build2} toolchain. Note
+also that the 64-bit \c{build2} toolchain can be used to build 32-bit
+applications with any restrictions.|
 
 To bootstrap on Windows with either MSVC or MinGW start with the following
 common steps:
@@ -44,9 +43,8 @@ common steps:
 \li|\b{1. Open Command Prompt}\n
 
 Start the standard Windows Command Prompt. If you plan to build with MSVC,
-then you may go ahead and start the Visual Studio Command Prompt (or wait
-for MSVC-specific instructions).
-|
+then you may go ahead and start the Visual Studio \"x64 Native Tools Command
+Prompt\" (or wait for MSVC-specific instructions).|
 
 \li|\n\b{2. Create Build Directory}\n
 
@@ -67,12 +65,11 @@ you can use other paths.
 \li|\n\b{3. Download Archives}\n
 
 Download the following files as well as their \c{.sha256} checksums from the
-\l{https://build2.org/download.xhtml Download} page, replacing \i{<arch>} with
-\c{x86_64} for 64-bit Windows and with \c{i686} for 32-bit:
+\l{https://build2.org/download.xhtml Download} page:
 
 \
-build2-baseutils-X.Y.Z-<arch>-windows.zip
-build2-mingw-X.Y.Z-<arch>-windows.tar.xz   (if required)
+build2-baseutils-X.Y.Z-x86_64-windows.zip
+build2-mingw-X.Y.Z-x86_64-windows.tar.xz   (if required)
 build2-toolchain-X.Y.Z.tar.xz
 \
 
@@ -91,7 +88,7 @@ Verify archive checksums match (compare visually):
 
 \li|\n\b{5. Unpack \c{build2-baseutils}}\n
 
-Unpack the \c{build2-baseutils-X.Y.Z-<arch>-windows.zip} archive into \c{C:\\}
+Unpack the \c{build2-baseutils-X.Y.Z-x86_64-windows.zip} archive into \c{C:\\}
 using Windows Explorer (for example, copy the archive directory and then paste
 it). Rename it to \c{C:\\build2\\}. This will be the toolchain installation
 directory.  |
@@ -111,12 +108,12 @@ and work:
 
 \li|\n\b{7. Unpack \c{build2-mingw} (optional)}\n
 
-If required, unpack the \c{build2-mingw-X.Y.Z-<arch>-windows.tar.xz} archive
+If required, unpack the \c{build2-mingw-X.Y.Z-x86_64-windows.tar.xz} archive
 into \c{C:\\build2\\}:
 
 \
-> xz -d build2-mingw-X.Y.Z-<arch>-windows.tar.xz
-> tar -xf build2-mingw-X.Y.Z-<arch>-windows.tar ^
+> xz -d build2-mingw-X.Y.Z-x86_64-windows.tar.xz
+> tar -xf build2-mingw-X.Y.Z-x86_64-windows.tar ^
   --one-top-level=C:\build2 --strip-components=1
 \
 

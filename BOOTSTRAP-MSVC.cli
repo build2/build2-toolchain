@@ -5,9 +5,8 @@
 "
 Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, if you have
 already started an appropriate Visual Studio command prompt, then you can
-continue using it. Otherwise, start the \"x64 Native Tools Command Prompt\" if
-you are on 64-bit Windows or \"x86 Native Tools Command Prompt\" if you are on
-32-bit. Also set the \c{PATH} environment variable:
+continue using it. Otherwise, start the \"x64 Native Tools Command Prompt\".
+Also set the \c{PATH} environment variable:
 
 \
 > set PATH=C:\build2\bin;%PATH%

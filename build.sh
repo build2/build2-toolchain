@@ -314,8 +314,8 @@ config.install.sudo="$conf_sudo"
 
 run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
 
-run which b-stage
-run which bpkg-stage
+run command -v b-stage
+run command -v bpkg-stage
 
 run b-stage --version
 run bpkg-stage --version
@@ -340,9 +340,9 @@ run bpkg-stage $verbose $bpkg_fetch_ops fetch
 run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes --plan= build2 bpkg bdep
 run bpkg-stage $verbose $jobs install build2 bpkg bdep
 
-run which b
-run which bpkg
-run which bdep
+run command -v b
+run command -v bpkg
+run command -v bdep
 
 run b --version
 run bpkg --version

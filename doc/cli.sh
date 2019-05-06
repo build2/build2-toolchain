@@ -24,6 +24,18 @@ build2-toolchain-install*.pdf
   esac
 done
 
+function xhtml_to_ps () # <from> <to> [<html2ps-options>]
+{
+  local from="$1"
+  shift
+  local to="$1"
+  shift
+
+  cat "$from" | \
+  sed -e 's/├/|/g' -e 's/│/|/g' -e 's/─/-/g' -e 's/└/`/g' | \
+  html2ps "${@}" -o "$to"
+}
+
 function gen () # <name>
 {
   local n="$1"
@@ -43,11 +55,11 @@ function gen () # <name>
 --link-regex '%testscript(#.+)?%../../build2/doc/build2-testscript-manual.xhtml$1%' \
 --output-prefix build2-toolchain- "${@}" $n.cli
 
-html2ps -f doc.html2ps:a4.html2ps -o build2-toolchain-$n-a4.ps build2-toolchain-$n.xhtml
-ps2pdf14 -sPAPERSIZE=a4 -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-a4.ps build2-toolchain-$n-a4.pdf
+  xhtml_to_ps build2-toolchain-$n.xhtml build2-toolchain-$n-a4.ps -f doc.html2ps:a4.html2ps
+  ps2pdf14 -sPAPERSIZE=a4 -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-a4.ps build2-toolchain-$n-a4.pdf
 
-html2ps -f doc.html2ps:letter.html2ps -o build2-toolchain-$n-letter.ps build2-toolchain-$n.xhtml
-ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
+  xhtml_to_ps build2-toolchain-$n.xhtml build2-toolchain-$n-letter.ps -f doc.html2ps:letter.html2ps
+  ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
 }
 
 gen intro

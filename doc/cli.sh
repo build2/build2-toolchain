@@ -31,8 +31,7 @@ function xhtml_to_ps () # <from> <to> [<html2ps-options>]
   local to="$1"
   shift
 
-  cat "$from" | \
-  sed -e 's/├/|/g' -e 's/│/|/g' -e 's/─/-/g' -e 's/└/`/g' | \
+  sed -e 's/├/|/g' -e 's/│/|/g' -e 's/─/-/g' -e 's/└/`/g' "$from" | \
   html2ps "${@}" -o "$to"
 }
 

@@ -166,6 +166,7 @@ hello/
 │   └── testscript
 ├── buildfile
 ├── manifest
+├── README.md
 └── repositories.manifest
 \
 
@@ -268,8 +269,9 @@ $ cat manifest
 : 1
 name: hello
 version: 0.1.0-a.0.z
-summary: hello executable
-license: TODO
+summary: hello C++ executable
+license: proprietary
+description-file: README.md
 url: https://example.org/hello
 email: you@example.org
 #depends: libhello ^1.0.0
@@ -284,8 +286,13 @@ name, version, license, dependencies, etc., all in one place.
 for details on the package manifest values.|
 
 As you can see, \c{manifest} created by \l{bdep-new(1)} contains some dummy
-values which you would want to adjust before publishing your package. But
-let's resist the urge to adjust that strange looking \c{0.1.0-a.0.z} until we
+values which you would want to adjust before publishing your package.
+Specifically, you would want to review \l{bpkg#manifest-package-summary
+\c{summary}}, \l{bpkg#manifest-package-license \c{license}},
+\l{bpkg#manifest-package-url \c{url}}, and \l{bpkg#manifest-package-email
+\c{email}} as well as the \c{README.md} file referenced by
+\l{bpkg#manifest-package-description \c{description-file}}. Let's, however,
+resist the urge to adjust that strange looking \c{0.1.0-a.0.z} until we
 discuss package versioning.
 
 \N|Next to \c{manifest} you might have noticed the \c{repositories.manifest}
@@ -1658,6 +1665,7 @@ hello/
 │   └── buildfile
 ├── buildfile
 ├── manifest
+├── README.md
 └── repositories.manifest
 \
 
@@ -1672,7 +1680,8 @@ hello/
 │   │   ├── hello.cxx
 │   │   └── buildfile
 │   ├── buildfile
-│   └── manifest
+│   ├── manifest
+│   └── README.md
 └── repositories.manifest
 \
 
@@ -1913,11 +1922,14 @@ along these lines:
 └── share/
     └── doc/
         ├── libformat/
-        │   └── manifest
+        │   ├── manifest
+        │   └── README.md
         ├── libhello/
-        │   └── manifest
+        │   ├── manifest
+        │   └── README.md
         └── libprint/
-            └── manifest
+            ├── manifest
+            └── README.md
 \
 
 \N|The installation locations of various types of files (executables,
@@ -2213,7 +2225,8 @@ projects are presented below.
 │   ├── testscript
 │   └── buildfile
 ├── buildfile
-└── manifest
+├── manifest
+└── README.md
 \
 
 \
@@ -2228,7 +2241,8 @@ lib<name>/
 │   └── buildfile
 ├── tests/
 ├── buildfile
-└── manifest
+├── manifest
+└── README.md
 \
 
 The canonical structure for both project types is discussed in detail in

@@ -13,6 +13,7 @@ A few additional notes:
 
    ./modup
    ./commit
+   ./push
    cd build2-toolchain
    git submodule update --remote
    git submodule foreach git submodule update --init --recursive

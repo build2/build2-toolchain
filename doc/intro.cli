@@ -2018,7 +2018,10 @@ source.
 rapidly-developed packages since for the latter you often need to track the
 latest version (which may not yet be available from the system repository)
 and/or test with multiple versions (which is not something that many system
-package managers support).|
+package managers support).
+
+We can also have some build configurations using a system-installed version of
+a dependency while others building it from source, for example, for testing.|
 
 We can instruct \c{build2} to configure a dependency package as available from
 the system rather than building it from source. Let's see how this works in an
@@ -2028,13 +2031,6 @@ in our \c{hello} project.
 The first step is to add it as a dependency, just like we did for \c{libhello}.
 That is, add another \c{depends} entry to \c{manifest}, then import it in
 \c{buildfile}, and so on.
-
-\N|Note that the dependency still has to be packaged and available from one of
-the project's prerequisite repositories. However, it can be a \i{stub} \- a
-package that does not contain any source code and that can only be \"obtained\"
-from the system (see \l{bpkg#package-version Package Version} for
-details). See also \l{#guide-unpackaged-deps Using Unpackaged Dependencies}
-for how to deal with dependencies that are not packaged.|
 
 Now, if we just run \c{sync} or try to build our project, \c{build2} will
 download and build the new dependency from source, just like it did for
@@ -2052,13 +2048,22 @@ Here \cb{?} is a package \i{flag} that instructs \c{build2} to treat it as a
 dependency and \cb{sys} is a package \i{scheme} that tells \c{build2} it comes
 from the system. See \l{bpkg-pkg-build(1)} for details.
 
-\N|We can have some build configurations using a system-installed version of
-a dependency while others building it from source, for example, for testing.|
-
 \N|The system-installed dependency doesn't really have to come from the system
 package manager. It can also be manually installed and, as discussed in
 \l{#guide-unpackaged-deps Using Unpackaged Dependencies}, not necessarily into
 the system-default location like \c{/usr/local}.|
+
+In the above example our dependency still has to be packaged and available
+from one of the project's prerequisite repositories. But it can be a \i{stub}
+\- a package that does not contain any source code and that can only be
+\"obtained\" from the system (see \l{bpkg#package-version Package Version} for
+details). However, if we would like to use a completely unpackaged dependency,
+then we will have to specify its version explicitly either as the actual
+version or as the \c{*} wildcard, for example:
+
+\
+$ bdep sync ?sys:libsqlite3/* ?sys:libcurl/7.47.0
+\
 
 \N|Currently, unless we specify the installed version explicitly, a
 system-installed package is assumed to satisfy any dependency constraint. In

@@ -320,14 +320,14 @@ synchronizing:
   new hello/0.1.0-a.0.19700101000000
 \
 
-The \cb{--create|-C} option instructs \c{init} to create a new configuration
-in the specified directory (\c{../hello-gcc} in our case). To make referring
-to configurations easier, we can give it a name, which is what we do with
-\c{@gcc}. The next argument (\c{cc}, stands for \i{C-common}) is the build
-system module we would like to configure. It implements compilation and
-linking rules for the C and C++ languages. Finally, \c{config.cxx=g++} is (one
-of) this module's configuration variables that specifies the C++ compiler we
-would like to use (the corresponding C compiler will be determined
+The \c{--config-create|-C} option instructs \c{init} to create a new
+configuration in the specified directory (\c{../hello-gcc} in our case). To
+make referring to configurations easier, we can give it a name, which is what
+we do with \c{@gcc}. The next argument (\c{cc}, stands for \i{C-common}) is
+the build system module we would like to configure. It implements compilation
+and linking rules for the C and C++ languages. Finally, \c{config.cxx=g++} is
+(one of) this module's configuration variables that specifies the C++ compiler
+we would like to use (the corresponding C compiler will be determined
 automatically). Let's for now also ignore that \c{synchronizing:...} bit along
 with strange-looking \c{19700101000000} in the version \- it will become clear
 what's going on here in a moment.
@@ -1592,7 +1592,8 @@ belong to the \c{hello} project. See the \l{bpkg#manifest-package-project
 \c{project}} value documentation for details.|
 
 Our two projects will be sharing the same set of build configurations, so
-next we initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang}:
+next we initialize \c{libhello} in \c{hello-gcc} and \c{hello-clang} (notice
+the use of \c{--config-add|-A} instead of \c{--config-create|-C}):
 
 \
 $ cd libhello

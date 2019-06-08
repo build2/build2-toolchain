@@ -1290,7 +1290,7 @@ not using \c{bdep}) is with the build system's \c{info} meta-operation:
 $ b info
 project: hello
 version: 0.1.0-a.0.20180507062614.ee006880fc7e
-summary: hello executable project
+summary: hello C++ executable
 ...
 \
 
@@ -1581,7 +1581,7 @@ $ cat libhello/manifest
 name: libhello
 version: 0.1.0-a.0.z
 project: hello
-summary: hello library
+summary: hello C++ library
 ...
 \
 

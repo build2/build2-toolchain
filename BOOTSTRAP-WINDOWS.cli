@@ -54,8 +54,7 @@ as the build directory and \c{C:\\build2\\} as the installation directory but
 you can use other paths.
 
 \
-> C:
-> cd \
+> cd /D C:\
 > mkdir build2-build
 > cd build2-build
 \

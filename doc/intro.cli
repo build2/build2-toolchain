@@ -388,10 +388,20 @@ future.|
 
 \N|Besides the \c{coptions} (compile options) and \c{loptions} (link options),
 other commonly used \c{cc} module configuration variables are \c{poptions}
-(preprocess options) and \c{libs} (extra libraries to link). We can also use
-their \c{config.c.*} (C compilation) and \c{config.cxx.*} (C++ compilation)
-variants if we only want them applied during the respective language
-compilation. For example:
+(preprocess options) and \c{libs} (extra libraries to link). Here is the
+complete list with their rough \c{make} equivalents:
+
+\
+*.poptions   preprocess        CPPFLAGS
+*.coptions   compile           CFLAGS/CXXFLAGS
+*.loptions   link              LDFLAGS
+*.aoptions   archive           ARFLAGS
+*.libs       extra libraries   LIBS
+\
+
+We can also use their \c{config.c.*} (C compilation) and \c{config.cxx.*} (C++
+compilation) variants if we only want them applied during the respective
+language compilation. For example:
 
 \
 $ bdep init ... cc       \

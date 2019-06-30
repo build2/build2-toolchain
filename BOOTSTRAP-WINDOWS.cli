@@ -33,7 +33,7 @@ implements C++11 threads; run \c{g++ -v} to verify).|
 \N|Only 64-bit variants of the \c{baseutils} and \c{mingw} packages are
 provided and they \b{must} match the width of the \c{build2} toolchain. Note
 also that the 64-bit \c{build2} toolchain can be used to build 32-bit
-applications with any restrictions.|
+applications without any restrictions.|
 
 To bootstrap on Windows with either MSVC or MinGW start with the following
 common steps:

@@ -57,7 +57,7 @@ versions. It can also be used to uninstall the toolchain:
 
 \
 > cd build2-toolchain-X.Y
-> bpkg uninstall build2 bpkg
+> bpkg uninstall build2 bpkg bdep
 \
 
 \N|Note that in both cases (manual or scripted bootstrap), if something goes

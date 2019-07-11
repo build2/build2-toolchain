@@ -25,15 +25,15 @@ A few additional notes:
    commits)' next to submodules (i.e., git "thinks" you have modified the
    member project by "setting back" its subproject commit).
 
-2. The libpkgconf, libsqlite3 and libodb* submodules are not updated by default
+2. The pkgconf, sqlite and libodb* submodules are not updated by default
    (e.g., with the above command). This is achieved with:
 
-   git config --file .gitmodules submodule.libsqlite3.update none
+   git config --file .gitmodules submodule.sqlite.update none
 
    Instead, their updates (normally to something tagged) must be requested
    explicitly:
 
-   git submodule update --remote --checkout libsqlite3
+   git submodule update --remote --checkout sqlite
 
    Note that you need a fairly recent git (e.g., 2.9) for this enforcement
    to work.

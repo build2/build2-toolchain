@@ -396,7 +396,7 @@ complete list with their rough \c{make} equivalents:
 *.coptions   compile           CFLAGS/CXXFLAGS
 *.loptions   link              LDFLAGS
 *.aoptions   archive           ARFLAGS
-*.libs       extra libraries   LIBS
+*.libs       extra libraries   LIBS/LDLIBS
 \
 
 We can also use their \c{config.c.*} (C compilation) and \c{config.cxx.*} (C++

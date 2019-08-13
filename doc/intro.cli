@@ -565,6 +565,25 @@ $ git remote add origin git@github.com:john-doe/hello.git
 $ git push -u
 \
 
+We could have also done it the other way around: first created a project on
+one of the hosting services (GitHub, GitLab, etc) cloned it, and then ran
+\c{new} on that. One advantage of this approach is the \c{new} command's
+ability to automatically extract the license and description from the existing
+\c{LICENSE} and \c{README.md} files and use that to generate the \c{manifest}
+file. This way we only need to specify things once and everything is nice and
+consistent. Here is an example of this streamlined project creation workflow
+(notice also the omitted project name in the \c{new} command):
+
+\
+# Create a project with LICENSE and README.md on one of the Git
+# hosting services (GitHub, GitLab, etc) and then:
+
+$ git clone .../hello.git
+$ cd hello
+
+$ bdep new -t exe -l c++
+\
+
 While we have managed to test a couple of platforms (Linux and Windows) and
 compiler versions (Clang and GCC) locally, there are quite a few combinations
 that we haven't tried (Mac OS with Apple Clang and Windows with MSVC, to name

@@ -1,6 +1,6 @@
 @echo off
 
-rem file      : build-msvc.bat
+rem file      : build-clang.bat
 rem copyright : Copyright (c) 2014-2019 Code Synthesis Ltd
 rem license   : MIT; see accompanying LICENSE file
 
@@ -9,22 +9,30 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] [^<cl-compiler^>]
+echo Usage: %0 [/?] [^<options^>] [^<clang++-compiler^>]
 echo Options:
 echo   --install-dir ^<dir^>  Alternative installation directory.
 echo   --repo ^<loc^>         Alternative package repository location.
 echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
 echo   --timeout ^<sec^>      Network operations timeout in seconds.
+echo   --make ^<arg^>         Bootstrap using GNU make instead of batch file.
 echo   --verbose ^<level^>    Diagnostics verbosity level between 0 and 6.
 echo.
-echo By default the batch file will use cl.exe as the C++ compiler and install
-echo into C:\build2. It also expects to find the base utilities in the bin\
-echo subdirectory of the installation directory ^(C:\build2\bin\ by default^).
+echo By default the batch file will use clang++.exe as the C++ compiler and
+echo install into C:\build2. It also expects to find the base utilities in the
+echo bin\ subdirectory of the installation directory ^(C:\build2\bin\ by
+echo default^).
 echo.
 echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
 echo.
-echo See the BOOTSTRAP-MSVC file for details.
+echo The --make option can be used to bootstrap using GNU make. The first
+echo --make value should specify the make executable optionally followed by
+echo additional make options, for example:
+echo.
+echo %0 --make mingw32-make --make -j8
+echo.
+echo See the BOOTSTRAP-CLANG file for details.
 echo.
 goto end
 
@@ -50,6 +58,7 @@ rem
 set "idir=C:\build2"
 set "trust="
 set "timeout="
+set "make="
 set "verbose="
 
 :options
@@ -101,6 +110,17 @@ if "_%~1_" == "_--timeout_" (
   goto options
 )
 
+if "_%~1_" == "_--make_" (
+  if "_%~2_" == "__" (
+    echo error: argument expected after --make
+    goto error
+  )
+  set "make=%make% %~2"
+  shift
+  shift
+  goto options
+)
+
 if "_%~1_" == "_--verbose_" (
   if "_%~2_" == "__" (
     echo error: diagnostics level between 0 and 6 expected after --verbose
@@ -117,21 +137,13 @@ if "_%~1_" == "_--_" shift
 rem Validate options and arguments.
 rem
 
-rem @@ Temporarily retained for backwards compatibility.
-rem
-if not "_%1_" == "__" (
-  set "idir=%1"
-)
-if not "_%2_" == "__" (
-  set "trust=%2"
-)
 rem Compiler.
 rem
-rem if "_%1_" == "__" (
-  set "cxx=cl"
-rem ) else (
-rem  set "cxx=%1"
-rem )
+if "_%1_" == "__" (
+  set "cxx=clang++"
+) else (
+  set "cxx=%1"
+)
 
 rem Certificate to trust.
 rem
@@ -182,22 +194,36 @@ rem
 
 @rem Verify the compiler works.
 @rem
-%cxx%
+%cxx% --version
 @if errorlevel 1 goto error
 
 @rem Bootstrap.
 @rem
 cd build2
 
+@if "_%make%_" == "__" (
+  goto batchfile
+) else (
+  goto makefile
+)
+
+:batchfile
 @rem Execute in a separate cmd.exe to preserve the echo mode.
 @rem
-cmd /C bootstrap-msvc.bat %cxx%
+cmd /C bootstrap-clang.bat %cxx%
 @if errorlevel 1 goto error
+@goto endfile
 
+:makefile
+%make% -f bootstrap.gmake CXX=%cxx%
+@if errorlevel 1 goto error
+@goto endfile
+
+:endfile
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
+build2\b-boot %verbose% config.cxx=%cxx% config.cc.coptions=-m64 config.bin.lib=static build2\exe{b}
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -212,6 +238,7 @@ cd ..
 
 build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
+ config.cc.coptions=-m64^
  config.bin.suffix=-stage^
  config.install.root=%idir%^
  config.install.data_root=root\stage
@@ -248,7 +275,7 @@ cd %cdir%
 bpkg-stage %verbose% create^
  cc^
  config.cxx=%cxx%^
- config.cc.coptions=/O2^
+ "config.cc.coptions=-m64 -O3"^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 

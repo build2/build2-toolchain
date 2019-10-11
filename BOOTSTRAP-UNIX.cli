@@ -6,7 +6,7 @@
 The following instructions are for bootstrapping \c{build2} on UNIX-like
 operating systems (GNU/Linux, FreeBSD, etc). For Mac OS X first see
 \l{#bootstrap-macosx Bootstrapping on Mac OS X}. These instructions should
-also be used for UNIX emulation layers on Windows (for example, MSYS or
+also be used for UNIX emulation layers on Windows (for example, WSL, MSYS, or
 Cygwin) where you already have a UNIX shell with standard utilities.
 
 \dl|
@@ -36,7 +36,7 @@ Place everything into \c{~/build2-build/} (build directory) and verify the
 archive checksum matches:
 
 \
-# Linux, MSYS, Cygwin:
+# Linux, WSL, MSYS, Cygwin:
 #
 $ sha256sum -c build2-toolchain-X.Y.Z.tar.xz.sha256
 

@@ -72,12 +72,12 @@ prefer not to build from packages (for example, because the machine is
 offline).|
 
 For Windows, if you are using either MSVC or MinGW, continue with
-\l{#bootstrap-windows Bootstrapping on Windows}. If using MSYS or Cygwin,
-then instead refer to \l{#bootstrap-unix Bootstrapping on UNIX}.
+\l{#bootstrap-windows Bootstrapping on Windows}. If using WSL, MSYS, or
+Cygwin, then instead refer to \l{#bootstrap-unix Bootstrapping on UNIX}.
 
 For Mac OS X, continue with \l{#bootstrap-macosx Bootstrapping on Mac OS X}.
 
 For other UNIX-like operating systems (GNU/Linux, FreeBSD, etc; this also
-includes MSYS/Cygwin), continue with \l{#bootstrap-unix Bootstrapping on
-UNIX}.
+includes WSL, MSYS, and Cygwin), continue with \l{#bootstrap-unix
+Bootstrapping on UNIX}.
 "

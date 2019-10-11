@@ -37,14 +37,14 @@ source "../INSTALL.cli";
 source "../BOOTSTRAP-WINDOWS.cli";
 
 "
-\h2#bootstrap-msvc|Bootstrapping with MSVC|
+\h2#bootstrap-windows-msvc|Bootstrapping on Windows with MSVC|
 "
-source "../BOOTSTRAP-MSVC.cli";
+source "../BOOTSTRAP-WINDOWS-MSVC.cli";
 
 "
-\h2#bootstrap-mingw|Bootstrapping with MinGW|
+\h2#bootstrap-windows-mingw|Bootstrapping on Windows with MinGW|
 "
-source "../BOOTSTRAP-MINGW.cli";
+source "../BOOTSTRAP-WINDOWS-MINGW.cli";
 
 "
 \h#bootstrap-macosx|Bootstrapping on Mac OS X|

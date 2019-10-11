@@ -8,14 +8,14 @@
 d = libpkgconf/ libbutl/ build2/ \
 libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ bdep/ doc/
 
-i =               \
-INSTALL           \
-UPGRADE           \
-BOOTSTRAP-MACOSX  \
-BOOTSTRAP-MINGW   \
-BOOTSTRAP-MSVC    \
-BOOTSTRAP-UNIX    \
-BOOTSTRAP-WINDOWS
+i =                     \
+INSTALL                 \
+UPGRADE                 \
+BOOTSTRAP-UNIX          \
+BOOTSTRAP-MACOSX        \
+BOOTSTRAP-WINDOWS       \
+BOOTSTRAP-WINDOWS-MINGW \
+BOOTSTRAP-WINDOWS-MSVC
 
 ./: $d doc{$i README CONTRIBUTING.md} cli{$i} file{build.sh build-*} manifest
 

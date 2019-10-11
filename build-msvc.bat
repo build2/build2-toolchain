@@ -24,7 +24,7 @@ echo.
 echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
 echo.
-echo See the BOOTSTRAP-MSVC file for details.
+echo See the BOOTSTRAP-WINDOWS-MSVC file for details.
 echo.
 goto end
 

@@ -31,7 +31,7 @@ echo additional make options, for example:
 echo.
 echo %0 --make mingw32-make --make -j8 g++
 echo.
-echo See the BOOTSTRAP-MINGW file for details.
+echo See the BOOTSTRAP-WINDOWS-MINGW file for details.
 echo.
 goto end
 

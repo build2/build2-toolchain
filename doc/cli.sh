@@ -78,8 +78,8 @@ function gen_txt () # <name>
 
 gen_txt INSTALL
 gen_txt UPGRADE
-gen_txt BOOTSTRAP-MACOSX
-gen_txt BOOTSTRAP-MINGW
-gen_txt BOOTSTRAP-MSVC
 gen_txt BOOTSTRAP-UNIX
+gen_txt BOOTSTRAP-MACOSX
 gen_txt BOOTSTRAP-WINDOWS
+gen_txt BOOTSTRAP-WINDOWS-MINGW
+gen_txt BOOTSTRAP-WINDOWS-MSVC

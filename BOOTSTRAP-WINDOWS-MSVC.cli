@@ -90,6 +90,7 @@ libraries and then staged:
 
 > build2\build2\b-boot configure      ^
   config.cxx=cl                       ^
+  config.bin.lib=shared               ^
   config.bin.suffix=-stage            ^
   config.install.root=C:\build2       ^
   config.install.data_root=root\stage
@@ -127,6 +128,7 @@ the \c{configure} and \c{install} command lines above along these lines:
 > build2\build2\b-boot configure ^
   config.cxx=cl                  ^
   config.cc.coptions=/O2         ^
+  config.bin.lib=shared          ^
   config.install.root=C:\build2
 
 > build2\build2\b-boot install: build2/ bpkg/ bdep/
@@ -150,6 +152,7 @@ previous step and you may want/need to make similar adjustments.
   cc                            ^
   config.cxx=cl                 ^
   config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
   config.install.root=C:\build2
 \
 

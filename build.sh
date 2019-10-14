@@ -306,6 +306,7 @@ run cd ..
 
 run build2/build2/b-boot $verbose configure \
 config.cxx="$cxx" \
+config.bin.lib=shared \
 config.bin.suffix=-stage \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
@@ -331,6 +332,7 @@ run bpkg-stage $verbose create \
 cc \
 config.cxx="$cxx" \
 config.cc.coptions="$*" \
+config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo"

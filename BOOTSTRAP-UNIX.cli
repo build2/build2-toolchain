@@ -168,6 +168,7 @@ $ cd ..  # Back to build2-toolchain-X.Y.Z/
 
 $ build2/build2/b-boot configure      \
   config.cxx=g++                      \
+  config.bin.lib=shared               \
   config.bin.suffix=-stage            \
   config.bin.rpath=/usr/local/lib     \
   config.install.root=/usr/local      \
@@ -222,6 +223,7 @@ the \c{configure} and \c{install} command lines above along these lines:
 $ build2/build2/b-boot configure  \
   config.cxx=g++                  \
   config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
   config.bin.rpath=/usr/local/lib \
   config.install.root=/usr/local  \
   config.install.sudo=sudo
@@ -248,6 +250,7 @@ $ bpkg-stage create               \
   cc                              \
   config.cxx=g++                  \
   config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
   config.bin.rpath=/usr/local/lib \
   config.install.root=/usr/local  \
   config.install.sudo=sudo

@@ -17,10 +17,10 @@
 The recommended way to install and upgrade the \c{build2} toolchain in most
 circumstances is using the automated install scripts as described on the
 \l{https://build2.org/install.xhtml Install} page. This document describes the
-manual installation and upgrade process which offers greater control can be
-helpful in situations where the automated scripts cannot be used (offline
+manual installation and upgrade process which offers greater control that can
+be helpful in situations where the automated scripts cannot be used (offline
 installation, packaging for system package managers, unsupported
-platform/compiler, etc).
+by the install scripts platform/compiler, etc).
 "
 
 // NOTE: The following ids must correspond to the file names (used in
@@ -40,6 +40,11 @@ source "../BOOTSTRAP-WINDOWS.cli";
 \h2#bootstrap-windows-msvc|Bootstrapping on Windows with MSVC|
 "
 source "../BOOTSTRAP-WINDOWS-MSVC.cli";
+
+"
+\h2#bootstrap-windows-clang|Bootstrapping on Windows with Clang|
+"
+source "../BOOTSTRAP-WINDOWS-CLANG.cli";
 
 "
 \h2#bootstrap-windows-mingw|Bootstrapping on Windows with MinGW|

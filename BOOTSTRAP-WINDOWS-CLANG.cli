@@ -1,35 +1,45 @@
-// file      : BOOTSTRAP-WINDOWS-MSVC.cli
+// file      : BOOTSTRAP-WINDOWS-CLANG.cli
 // copyright : Copyright (c) 2014-2019 Code Synthesis Ltd
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, if you have
-already started an appropriate Visual Studio command prompt, then you can
-continue using it. Otherwise, start the Visual Studio \"x64 Native Tools
-Command Prompt\". Also set the \c{PATH} environment variable as on the
-previous steps:
+Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, there two
+common ways to obtain Clang on Windows: bundled with the MSVC installation or
+as a separate installation. If you are using a separate installation, then the
+Clang compiler is most likely already in your \c{PATH} environment variable
+and, after confirming this is the case, you can continue using the command
+prompt started on the previous step:
 
 \
-> set \"PATH=C:\build2\bin;%PATH%\"
+> where clang++
 \
 
-To build with MSVC you can either perform the following steps manually or, if
+Otherwise, if you are using Clang that is bundled with MSVC (and haven't
+manually added its compiler to \c{PATH}), start the Visual Studio \"x64 Native
+Tools Command Prompt\" and set the \c{PATH} environment variable:
+
+\
+> set \"PATH=C:\build2\bin;%VCINSTALLDIR%Tools\Llvm\bin;%PATH%\"
+> where clang++
+\
+
+To build with Clang you can either perform the following steps manually or, if
 after reviewing the steps you are happy with using the defaults, run the
-\c{build-msvc.bat} batch file. It performs (and echoes) the same set of steps
+\c{build-clang.bat} batch file. It performs (and echoes) the same set of steps
 as outlined below but only allows you to customize the installation directory
-and a few other things (run \c{build-msvc.bat /?} for usage).
+and a few other things (run \c{build-clang.bat /?} for usage).
 
 For example, you could run this batch file (from the above-mentioned command
 prompt) like this:
 
 \
-> .\build-msvc.bat
+> .\build-clang.bat
 \
 
 \N|Note that at about half way through (\c{bpkg fetch} at step 4 below) the
 script will stop and prompt you to verify the authenticity of the repository
 certificate. To run the script unattended you can specify the certificate
-fingerprint with the \c{--trust} option (see \c{build-msvc.bat /?} for
+fingerprint with the \c{--trust} option (see \c{build-clang.bat /?} for
 details).|
 
 The end result of the bootstrap process (performed either with the script or
@@ -53,14 +63,24 @@ The rest of this section outlines the manual bootstrap process.
 \li|\b{1. Bootstrap, Phase 1}\n
 
 First, we build a minimal build system with the provided
-\c{bootstrap-msvc.bat} batch file. Normally, the only argument you will pass
+\c{bootstrap-clang.bat} batch file. Normally, the only argument you will pass
 to this script is the C++ compiler to use but there is also a way to specify
-compile options; run \c{bootstrap-msvc.bat /?} and see the \c{build2\\INSTALL}
-file for details.
+compile options; run \c{bootstrap-clang.bat /?} and see the
+\c{build2\\INSTALL} file for details.
 
 \
 > cd build2
-> .\bootstrap-msvc.bat cl
+> .\bootstrap-clang.bat clang++
+
+> build2\b-boot --version
+\
+
+Alternatively, we can use the \c{bootstrap.gmake} GNU makefile to bootstrap
+in parallel:
+
+\
+> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=clang++
 
 > build2\b-boot --version
 \
@@ -73,7 +93,12 @@ Then, we rebuild the build system with the result of Phase 1 linking libraries
 statically.
 
 \
-> build2\b-boot config.cxx=cl config.bin.lib=static build2\exe{b}
+> build2\b-boot           ^
+  config.cxx=clang++      ^
+  config.cc.coptions=-m64 ^
+  config.bin.lib=static   ^
+  build2\exe{b}
+
 > move /y build2\b.exe build2\b-boot.exe
 
 > build2\b-boot --version
@@ -90,7 +115,8 @@ libraries and then staged:
 > cd ..  # Back to build2-toolchain-X.Y.Z\
 
 > build2\build2\b-boot configure      ^
-  config.cxx=cl                       ^
+  config.cxx=clang++                  ^
+  config.cc.coptions=-m64             ^
   config.bin.lib=shared               ^
   config.bin.suffix=-stage            ^
   config.install.root=C:\build2       ^
@@ -127,8 +153,8 @@ the \c{configure} and \c{install} command lines above along these lines:
 
 \
 > build2\build2\b-boot configure ^
-  config.cxx=cl                  ^
-  config.cc.coptions=/O2         ^
+  config.cxx=clang++             ^
+  \"config.cc.coptions=-m64 -O3\"  ^
   config.bin.lib=shared          ^
   config.install.root=C:\build2
 
@@ -151,8 +177,8 @@ previous step and you may want/need to make similar adjustments.
 
 > bpkg-stage create             ^
   cc                            ^
-  config.cxx=cl                 ^
-  config.cc.coptions=/O2        ^
+  config.cxx=clang++            ^
+  \"config.cc.coptions=-m64 -O3\" ^
   config.bin.lib=shared         ^
   config.install.root=C:\build2
 \

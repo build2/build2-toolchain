@@ -32,7 +32,7 @@ echo additional make options, for example:
 echo.
 echo %0 --make mingw32-make --make -j8
 echo.
-echo See the BOOTSTRAP-CLANG file for details.
+echo See the BOOTSTRAP-WINDOWS-CLANG file for details.
 echo.
 goto end
 

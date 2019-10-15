@@ -32,7 +32,7 @@ of these compilers should work.
 and the one that you will use to build your projects need not be the same. For
 example, if you are using MSVC 12 (2013) (which cannot build \c{build2}), it
 is perfectly fine to get a minimal MinGW toolchain and use that to build
-\c{build2}; you will still be able to use MSVC to build your own code.|
+\c{build2}; you will still be able to use MSVC 12 to build your own code.|
 
 At the high level, the bootstrap process involves the following 5 steps.
 
@@ -57,21 +57,21 @@ libraries and then staged.|
 \li|\n\b{4. Install}\n
 
 Next, the staged tools are used to build and install the entire toolchain
-from the package repository with the \cb{bpkg} package manager.|
+from the package repository with the package manager.|
 
 \li|\n\b{5. Clean}\n
 
 Finally, the staged at step 3 tools are uninstalled.||
 
 The end result of the bootstrap process is the installed toolchain as well as
-the \c{bpkg} configuration (created at step 4) that can be used to upgrade to
-newer versions.
+the package manager configuration (created at step 4) that can be used to
+upgrade to newer versions.
 
 \N|You can skip step 4 and instead install at step 3 if for some reason you
 prefer not to build from packages (for example, because the machine is
 offline).|
 
-For Windows, if you are using either MSVC or MinGW, continue with
+For Windows, if you are using either MSVC, Clang, or MinGW, continue with
 \l{#bootstrap-windows Bootstrapping on Windows}. If using WSL, MSYS, or
 Cygwin, then instead refer to \l{#bootstrap-unix Bootstrapping on UNIX}.
 

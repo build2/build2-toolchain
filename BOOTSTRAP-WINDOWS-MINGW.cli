@@ -151,7 +151,8 @@ At the next step we will use \c{bpkg} to build and install the entire
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
 the \"final\" installation and skip the rest. For this you will need to change
-the \c{configure} and \c{install} command lines above along these lines:
+the \c{configure} and \c{install} command lines above along these lines (see
+also a note on the following step about only building shared libraries):
 
 \
 > build2\build2\b-boot configure ^
@@ -184,6 +185,9 @@ previous step and you may want/need to make similar adjustments.
   config.bin.lib=shared         ^
   config.install.root=C:\build2
 \
+
+\N|The above configuration will only build shared libraries. If you would like
+to build both shared and static, remove \c{config.bin.lib=shared}.|
 
 Next, we add the package repository, build, and install:
 

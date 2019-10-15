@@ -3,7 +3,7 @@
 // license   : MIT; see accompanying LICENSE file
 
 "
-Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, there two
+Continuing from \l{#bootstrap-windows Bootstrapping on Windows}, there are two
 common ways to obtain Clang on Windows: bundled with the MSVC installation or
 as a separate installation. If you are using a separate installation, then the
 Clang compiler is most likely already in your \c{PATH} environment variable

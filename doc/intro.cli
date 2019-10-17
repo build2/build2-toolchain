@@ -368,12 +368,7 @@ $ bdep init -C @clang cc config.cxx=clang++
 
 Things will also look pretty similar if you are on Windows instead of a
 UNIX-like operating system. For example, to initialize our project on Windows
-with Visual Studio, start the Visual Studio development command prompt and
-then run:
-
-\N|Currently we have to run \c{build2} tools from a suitable Visual Studio
-development command prompt. This requirement will likely be removed in the
-future.|
+with Visual Studio, start a command prompt and then run:
 
 \
 > bdep init -C ..\hello-debug @debug cc     ^
@@ -385,6 +380,20 @@ future.|
   config.cxx=cl                             ^
   config.cc.coptions=/O2
 \
+
+\N|For Visual Studio, \c{build2} by default will use the latest available
+version and build for the \c{x86_64} target (\c{x64} in the Microsoft's
+terminology). You can, however, override these defaults by either running
+from a suitable Visual Studio development command prompt or by specifying
+an absolute path to \c{cl.exe} that you wish to use. For example:
+
+\
+> bdep init -C ..\hello-debug-32 @debug-32 cc                       ^
+  \"config.cxx=...\VC\Tools\MSVC\14.23.28105\bin\Hostx64\x86\cl.exe\"
+  ...
+\
+
+|
 
 \N|Besides the \c{coptions} (compile options) and \c{loptions} (link options),
 other commonly used \c{cc} module configuration variables are \c{poptions}
@@ -1841,8 +1850,7 @@ created new configuration in /tmp/tools/
 $ cd tools
 \
 
-The same step on Windows using Visual Studio would look like this (again,
-remember to run this from the Visual Studio development command prompt):
+The same step on Windows using Visual Studio would look like this:
 
 \
 $ bpkg create -d tools cc ^

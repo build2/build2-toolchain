@@ -371,9 +371,9 @@ UNIX-like operating system. For example, to initialize our project on Windows
 with Visual Studio, start a command prompt and then run:
 
 \
-> bdep init -C ..\hello-debug @debug cc     ^
-  config.cxx=cl                             ^
-  \"config.cc.coptions=/MDd /Od /Zi\"         ^
+> bdep init -C ..\hello-debug @debug cc ^
+  \"config.cxx=cl /MDd\"                  ^
+  \"config.cc.coptions=/Od /Zi\"          ^
   config.cc.loptions=/DEBUG
 
 > bdep init -C ..\hello-release @release cc ^
@@ -413,10 +413,20 @@ compilation) variants if we only want them applied during the respective
 language compilation. For example:
 
 \
-$ bdep init ... cc       \
-  config.cxx=clang++     \
-  config.cc.coptions=-g  \
-  config.cxx.coptions=-stdlib=libc++
+$ bdep init ... cc                       \
+  config.cxx=g++                         \
+  config.cc.poptions=-D_FORTIFY_SOURCE=2 \
+  config.cxx.poptions=-D_GLIBCXX_ASSERTIONS
+\
+
+Finally, we can specify the \"compiler mode\" options as part of the compiler
+executable in \c{config.c} and \c{config.cxx}. Such options cannot be modified
+by buildfiles and they will appear last on the command lines. For example:
+
+\
+$ bdep init ... cc      \
+  config.c=\"clang -m32\" \
+  config.cxx=\"clang++ -m32 -stdlib=libc++\"
 \
 
 |

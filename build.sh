@@ -38,7 +38,7 @@ run ()
 
 owd="$(pwd)"
 
-cxx=
+local=
 idir=
 jobs=
 sudo=
@@ -48,12 +48,15 @@ make=
 make_options=
 verbose=
 
+cxx=
+
 while test $# -ne 0; do
   case "$1" in
     -h|--help)
       diag
       diag "$usage"
       diag "Options:"
+      diag "  --local              Don't build from packages, only from local source."
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
       diag "  --jobs|-j <num>      Number of jobs to perform in parallel."
@@ -80,7 +83,7 @@ while test $# -ne 0; do
       diag "first --make value should specify the make executable optionally"
       diag "followed by additional make options, for example:"
       diag
-      diag "$0 --make gmake --make -j8 g++"
+      diag "$0 --make make --make -j8 g++"
       diag
       diag "If --jobs|-j is specified, then its value is passed to make before"
       diag "any additional options."
@@ -95,6 +98,10 @@ while test $# -ne 0; do
       diag "See the BOOTSTRAP-UNIX file for details."
       diag
       exit 0
+      ;;
+    --local)
+      local=true
+      shift
       ;;
     --install-dir)
       shift
@@ -232,7 +239,7 @@ if test -f build/config.build; then
   exit 1
 fi
 
-if test -d "../$cdir"; then
+if test -z "$local" -a -d "../$cdir"; then
   diag "error: ../$cdir/ bpkg configuration directory already exists, remove it"
   exit 1
 fi
@@ -300,10 +307,40 @@ run build2/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static build2/
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
-# Build and stage the build system and the package manager.
-#
 run cd ..
 
+# Local installation early return.
+#
+if test "$local" = true; then
+
+  run build2/build2/b-boot $verbose configure \
+config.cxx="$cxx" \
+config.cc.coptions="$*" \
+config.bin.lib=shared \
+config.bin.rpath="$conf_rpath" \
+config.install.root="$idir" \
+config.install.sudo="$conf_sudo"
+
+  run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/ bdep/
+
+  run command -v b
+  run command -v bpkg
+  run command -v bdep
+
+  run b --version
+  run bpkg --version
+  run bdep --version
+
+  diag
+  diag "Toolchain installation: $idir/bin"
+  diag "Build configuration:    $owd"
+  diag
+
+  exit 0
+fi
+
+# Build and stage the build system and the package manager.
+#
 run build2/build2/b-boot $verbose configure \
 config.cxx="$cxx" \
 config.bin.lib=shared \
@@ -357,5 +394,5 @@ run b $verbose $jobs uninstall: build2/ bpkg/
 
 diag
 diag "Toolchain installation: $idir/bin"
-diag "Upgrade configuration:  $cdir"
+diag "Build configuration:    $cdir"
 diag

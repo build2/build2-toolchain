@@ -216,7 +216,7 @@ subdirectory is in \c{PATH}.
 At the next step we will use \c{bpkg} to build and install the entire
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
-the \"final\" installation and skip the rest. For this you will need to change
+a local installation and skip the rest. For this you will need to change
 the \c{configure} and \c{install} command lines above along these lines (see
 also a note on the following step about only building shared libraries):
 
@@ -230,6 +230,15 @@ $ build2/build2/b-boot configure  \
   config.install.sudo=sudo
 
 $ build2/build2/b-boot install: build2/ bpkg/ bdep/
+\
+
+\N|To perform a local installation with the \c{build.sh} script, pass the
+\c{--local} option.|
+
+To uninstall such a local installation, run:
+
+\
+$ b uninstall: build2/ bpkg/ bdep/
 \
 
 |

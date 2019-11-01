@@ -18,9 +18,9 @@ The recommended way to install and upgrade the \c{build2} toolchain in most
 circumstances is using the automated install scripts as described on the
 \l{https://build2.org/install.xhtml Install} page. This document describes the
 manual installation and upgrade process which offers greater control that can
-be helpful in situations where the automated scripts cannot be used (offline
-installation, packaging for system package managers, unsupported
-by the install scripts platform/compiler, etc).
+be helpful in situations where the automated scripts cannot be used (packaging
+for system package managers, unsupported by the install scripts
+platform/compiler, etc).
 "
 
 // NOTE: The following ids must correspond to the file names (used in

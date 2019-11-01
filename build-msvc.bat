@@ -11,6 +11,7 @@ goto start
 echo.
 echo Usage: %0 [/?] [^<options^>] [^<cl-compiler^>]
 echo Options:
+echo   --local              Don't build from packages, only from local source.
 echo   --install-dir ^<dir^>  Alternative installation directory.
 echo   --repo ^<loc^>         Alternative package repository location.
 echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
@@ -47,6 +48,7 @@ set "cdir=build2-toolchain-%cver%"
 
 rem Parse options.
 rem
+set "local="
 set "idir=C:\build2"
 set "trust="
 set "timeout="
@@ -56,6 +58,12 @@ set "verbose="
 if "_%~1_" == "_/?_"     goto usage
 if "_%~1_" == "_-h_"     goto usage
 if "_%~1_" == "_--help_" goto usage
+
+if "_%~1_" == "_--local_" (
+  set "local=true"
+  shift
+  goto options
+)
 
 if "_%~1_" == "_--install-dir_" (
   if "_%~2_" == "__" (
@@ -169,9 +177,11 @@ if exist build\config.build (
   goto error
 )
 
-if exist ..\%cdir%\ (
-  echo error: ..\%cdir%\ bpkg configuration directory already exists, remove it
-  goto error
+if "_%local%_" == "__" (
+  if exist ..\%cdir%\ (
+    echo error: ..\%cdir%\ bpkg configuration directory already exists, remove it
+    goto error
+  )
 )
 
 set "PATH=%idir%\bin;%PATH%"
@@ -206,9 +216,52 @@ move /y build2\b.exe build2\b-boot.exe
 build2\b-boot --version
 @if errorlevel 1 goto error
 
+cd ..
+
+@rem Local installation early return.
+@rem
+@if "_%local%_" == "__" goto stage
+
+build2\build2\b-boot %verbose% configure^
+ config.cxx=%cxx%^
+ config.cc.coptions=/O2^
+ config.bin.lib=shared^
+ config.install.root=%idir%
+@if errorlevel 1 goto error
+
+build2\build2\b-boot %verbose% install: build2\ bpkg\ bdep\
+@if errorlevel 1 goto error
+
+where b
+@if errorlevel 1 goto error
+
+where bpkg
+@if errorlevel 1 goto error
+
+where bdep
+@if errorlevel 1 goto error
+
+b --version
+@if errorlevel 1 goto error
+
+bpkg --version
+@if errorlevel 1 goto error
+
+bdep --version
+@if errorlevel 1 goto error
+
+@echo off
+
+echo.
+echo Toolchain installation: %idir%\bin
+echo Build configuration:    %owd%
+echo.
+
+goto end
+
 @rem Build and stage the build system and the package manager.
 @rem
-cd ..
+:stage
 
 build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
@@ -294,7 +347,7 @@ b %verbose% uninstall: build2/ bpkg/
 
 echo.
 echo Toolchain installation: %idir%\bin
-echo Upgrade configuration:  %cdir%
+echo Build configuration:    %cdir%
 echo.
 
 goto end

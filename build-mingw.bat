@@ -50,7 +50,7 @@ rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
 
 rem The bpkg configuration directory.
 rem
-set "cver=0.12-a.0"
+set "cver=0.12"
 set "cdir=build2-toolchain-%cver%"
 
 rem Parse options.

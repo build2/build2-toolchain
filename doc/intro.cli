@@ -173,7 +173,7 @@ hello/
 \N|While the canonical project structure is strongly recommended, especially
 for new projects, \c{build2} is flexible enough to allow most commonly used
 arrangements. See \l{#proj-struct Canonical Project Structure} for the more
-detailed discussion and rationale behing this layout.|
+detailed discussion and rationale behind this layout.|
 
 Similar to version control tools, we normally run all \c{build2} tools from
 the project's source directory or one of its subdirectories, so:

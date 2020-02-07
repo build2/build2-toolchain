@@ -1,13 +1,15 @@
 #! /usr/bin/env bash
 
 version=0.13.0-a.0.z
-date="$(date +"%B %Y")"
 
 trap 'exit 1' ERR
 set -o errtrace # Trap in functions.
 
 function info () { echo "$*" 1>&2; }
 function error () { info "$*"; exit 1; }
+
+date="$(date +"%B %Y")"
+copyright="$(sed -n -re 's%^Copyright \(c\) (.+)\.$%\1%p' ../COPYRIGHT)"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -42,6 +44,7 @@ function gen () # <name>
   cli -I .. \
 -v version="$(echo "$version" | sed -e 's/^\([^.]*\.[^.]*\).*/\1/')" \
 -v date="$date" \
+-v copyright="$copyright" \
 --generate-html --html-suffix .xhtml \
 --html-prologue-file doc-prologue.xhtml \
 --html-epilogue-file doc-epilogue.xhtml \

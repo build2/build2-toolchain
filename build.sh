@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # file      : build.sh
-# copyright : Copyright (c) 2014-2019 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
 usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"

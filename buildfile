@@ -1,5 +1,4 @@
 # file      : buildfile
-# copyright : Copyright (c) 2014-2019 Code Synthesis Ltd
 # license   : MIT; see accompanying LICENSE file
 
 # Note that the project directories order is important (prerequisites go

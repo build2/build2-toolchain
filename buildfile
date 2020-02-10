@@ -17,7 +17,11 @@ BOOTSTRAP-WINDOWS-MSVC  \
 BOOTSTRAP-WINDOWS-CLANG \
 BOOTSTRAP-WINDOWS-MINGW
 
-./: $d doc{$i README CONTRIBUTING.md} cli{$i} file{build.sh build-*} manifest
+./: $d                                               \
+    doc{$i LICENSE COPYRIGHT README CONTRIBUTING.md} \
+    cli{$i}                                          \
+    file{build.sh build-*}                           \
+    manifest
 
 # Don't install the BOOTSTRAP/INSTALL files. But UPGRADE could be useful.
 #

@@ -136,7 +136,7 @@ customary \i{\"Hello, World!\"} program (here we assume our current working
 directory is \c{/tmp}):
 
 \
-$ bdep new -t exe -l c++ hello
+$ bdep new -l c++ -t exe hello
 created new executable project hello in /tmp/hello/
 \
 
@@ -556,7 +556,7 @@ $ b
 For a new project:
 
 \
-$ bdep new -t exe -l c++ hello
+$ bdep new -l c++ -t exe hello
 $ cd hello
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
 $ b
@@ -566,7 +566,7 @@ If you prefer, the \c{new} and \c{init} steps can be combined into a single
 command:
 
 \
-$ bdep new -t exe -l c++ hello -C hello-gcc @gcc cc config.cxx=g++
+$ bdep new -l c++ -t exe hello -C hello-gcc @gcc cc config.cxx=g++
 \
 
 And if you need to deinitialize a project in one or more build configurations,
@@ -612,7 +612,7 @@ consistent. Here is an example of this streamlined project creation workflow
 $ git clone .../hello.git
 $ cd hello
 
-$ bdep new -t exe -l c++
+$ bdep new -l c++ -t exe
 \
 
 While we have managed to test a couple of platforms (Linux and Windows) and
@@ -827,7 +827,7 @@ contain the \c{libhello} library version \c{1.0.X} that was generated using
 the following \l{bdep-new(1)} command line:
 
 \
-$ bdep new -t lib -l c++ libhello
+$ bdep new -l c++ -t lib libhello
 \
 
 It can be used as a predictable test dependency when setting up new projects.|
@@ -1621,7 +1621,7 @@ Let's start with a separate project since it is simpler. As the first step we
 use \l{bdep-new(1)} to create a new library project next to our \c{hello}:
 
 \
-$ bdep new -t lib -l c++ libhello
+$ bdep new -l c++ -t lib libhello
 created new library project libhello in /tmp/libhello/
 
 $ ls
@@ -1751,7 +1751,7 @@ as a package inside an already existing project:
 
 \
 $ cd hello
-$ bdep new --package -t lib -l c++ libhello
+$ bdep new --package -l c++ -t lib libhello
 created new library package libhello in /tmp/hello/libhello/
 \
 
@@ -2174,7 +2174,7 @@ unpkg-clang/
 you can create and install one with these commands:
 
 \
-$ bdep new -t lib -l c++ libextra -C libextra-gcc cc config.cxx=g++
+$ bdep new -l c++ -t lib libextra -C libextra-gcc cc config.cxx=g++
 $ b install: libextra-gcc/ config.install.root=/tmp/unpkg-gcc
 \
 
@@ -2562,6 +2562,14 @@ With the header inclusion paths adjusted accordingly:
 #include <libstud/url/url.hxx>
 \
 
+The \l{bdep-new(1)} command provides the \c{source} project type sub-option
+that allows us to customize the source subdirectory within a project. For
+example:
+
+\
+$ bdep new -l c++ -t lib,source=libstud/path libstud-path
+\
+
 |
 
 \h#proj-struct-src-name|Source Naming|
@@ -2801,7 +2809,7 @@ defaults, however, can be overridden with \c{no-tests} and \c{unit-tests}
 options, respectively. For example:
 
 \
-$ bdep new -t lib,unit-tests -l c++ libhello
+$ bdep new -l c++ -t lib,unit-tests libhello
 \
 
 The rationale behind these defaults is that if a functionality can be tested

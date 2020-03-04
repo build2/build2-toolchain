@@ -1841,6 +1841,30 @@ test ../hello-gcc/libhello/tests/basics/exe{driver}
 test hello/hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 \
 
+\N|A multi-package project could have several files, such as \c{README.md} and
+\c{LICENSE}, which, while shared by all the packages, must nevertheless reside
+within each package's directory. The recommended way to avoid the duplication
+is to use symlinks. For example:
+
+\
+hello/
+├── .git/
+├── hello/
+│   ├── ...
+│   ├── LICENSE  -> ../LICENSE
+│   └── manifest
+├── libhello/
+│   ├── ...
+│   ├── LICENSE  -> ../LICENSE
+│   └── manifest
+├── LICENSE
+├── packages.manifest
+└── repositories.manifest
+\
+
+See \l{https://build2.org/article/symlinks.xhtml Using Symlinks in \c{build2}
+Projects} for details.|
+
 
 \h#guide-consume-pkg|Package Consumption|
 

@@ -253,10 +253,12 @@ sys="$(build2/config.guess | sed -n 's/^[^-]*-[^-]*-\(.*\)$/\1/p')"
 case "$sys" in
   mingw32 | mingw64 | msys | msys2 | cygwin)
     conf_rpath="[null]"
+    conf_rpath_stage="[null]"
     conf_sudo="[null]"
     ;;
   *)
-    conf_rpath="$idir/lib"
+    conf_rpath="$idir/lib/build2"
+    conf_rpath_stage="$idir/lib"
 
     if test -n "$sudo"; then
       conf_sudo="$sudo"
@@ -318,6 +320,7 @@ config.cc.coptions="$*" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
+config.install.private=build2 \
 config.install.sudo="$conf_sudo"
 
   run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/ bdep/
@@ -344,7 +347,7 @@ run build2/build2/b-boot $verbose configure \
 config.cxx="$cxx" \
 config.bin.lib=shared \
 config.bin.suffix=-stage \
-config.bin.rpath="$conf_rpath" \
+config.bin.rpath="$conf_rpath_stage" \
 config.install.root="$idir" \
 config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
@@ -371,6 +374,7 @@ config.cc.coptions="$*" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
+config.install.private=build2 \
 config.install.sudo="$conf_sudo"
 
 run bpkg-stage $verbose add "$BUILD2_REPO"

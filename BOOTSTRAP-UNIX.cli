@@ -64,11 +64,11 @@ reviewing the steps, you are happy with using the defaults, run the
 outlined below but only allows you to customize the compiler, installation
 directory, and a few other things (run \c{build.sh -h} for usage).
 
-For example, this command will use \c{g++-5} and install the toolchain into
+For example, this command will use \c{g++} and install the toolchain into
 \c{/usr/local/}.
 
 \
-$ ./build.sh g++-5
+$ ./build.sh g++
 \
 
 While this will use Clang and install into \c{/opt/build2}:
@@ -217,15 +217,17 @@ toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
 a local installation and skip the rest. For this you will need to change
 the \c{configure} and \c{install} command lines above along these lines (see
-also a note on the following step about only building shared libraries):
+also notes on the following step about only building shared libraries and
+private installation subdirectory):
 
 \
-$ build2/build2/b-boot configure  \
-  config.cxx=g++                  \
-  config.cc.coptions=-O3          \
-  config.bin.lib=shared           \
-  config.bin.rpath=/usr/local/lib \
-  config.install.root=/usr/local  \
+$ build2/build2/b-boot configure         \
+  config.cxx=g++                         \
+  config.cc.coptions=-O3                 \
+  config.bin.lib=shared                  \
+  config.bin.rpath=/usr/local/lib/build2 \
+  config.install.root=/usr/local         \
+  config.install.private=build2          \
   config.install.sudo=sudo
 
 $ build2/build2/b-boot install: build2/ bpkg/ bdep/
@@ -255,18 +257,28 @@ $ cd ..  # Back to build2-build/
 $ mkdir build2-toolchain-X.Y
 $ cd build2-toolchain-X.Y
 
-$ bpkg-stage create               \
-  cc                              \
-  config.cxx=g++                  \
-  config.cc.coptions=-O3          \
-  config.bin.lib=shared           \
-  config.bin.rpath=/usr/local/lib \
-  config.install.root=/usr/local  \
+$ bpkg-stage create                      \
+  cc                                     \
+  config.cxx=g++                         \
+  config.cc.coptions=-O3                 \
+  config.bin.lib=shared                  \
+  config.bin.rpath=/usr/local/lib/build2 \
+  config.install.root=/usr/local         \
+  config.install.private=build2          \
   config.install.sudo=sudo
 \
 
 \N|The above configuration will only build shared libraries. If you would like
 to build both shared and static, remove \c{config.bin.lib=shared}.|
+
+\N|The above configuration will install shared libraries that \c{build2}
+depends on into a private subdirectory. This is primarily useful when
+installing into a shared location, such as \c{/usr/local/}. By hiding the
+libraries in the private subdirectory we make sure that they will not
+interfere with anything that is already installed into such a shared location
+and that any further such installations won't interfere with \c{build2}. If,
+however, you are installing into a private location, such as \c{/opt/build2/},
+then you can remove \c{config.install.private=build2}.|
 
 Next, we add the package repository, build, and install:
 

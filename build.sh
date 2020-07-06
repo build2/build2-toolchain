@@ -38,6 +38,7 @@ run ()
 owd="$(pwd)"
 
 local=
+private=
 idir=
 jobs=
 sudo=
@@ -58,6 +59,7 @@ while test $# -ne 0; do
       diag "  --local              Don't build from packages, only from local source."
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
+      diag "  --private            Install shared libraries into private subdirectory."
       diag "  --jobs|-j <num>      Number of jobs to perform in parallel."
       diag "  --repo <loc>         Alternative package repository location."
       diag "  --trust <fp>         Repository certificate fingerprint to trust."
@@ -65,9 +67,10 @@ while test $# -ne 0; do
       diag "  --make <arg>         Bootstrap using GNU make instead of script."
       diag "  --verbose <level>    Diagnostics verbosity level between 0 and 6."
       diag
-      diag "By default the script will install into /usr/local using sudo(1)."
-      diag "To use sudo for a custom installation directory you need to specify"
-      diag "the sudo program explicitly, for example:"
+      diag "By default the script will install into /usr/local with private"
+      diag "library subdirectories and using sudo(1). To enable private"
+      diag "subdirectories and/or use sudo for a custom installation location,"
+      diag "you need to specify --private and/or --sudo explicitly, for example:"
       diag
       diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
@@ -100,6 +103,10 @@ while test $# -ne 0; do
       ;;
     --local)
       local=true
+      shift
+      ;;
+    --private)
+      private=config.install.private=build2
       shift
       ;;
     --install-dir)
@@ -218,12 +225,13 @@ if test -n "$make"; then
   fi
 fi
 
-# Only use default sudo for the default installation directory and only if
-# it wasn't specified by the user.
-#
 if test -z "$idir"; then
-  idir="/usr/local"
+  idir=/usr/local
+  private=config.install.private=build2
 
+  # Only use default sudo for the default installation directory and only if
+  # it wasn't specified by the user.
+  #
   if test -z "$sudo"; then
     sudo="sudo"
   fi
@@ -257,7 +265,12 @@ case "$sys" in
     conf_sudo="[null]"
     ;;
   *)
-    conf_rpath="$idir/lib/build2"
+    if test -n "$private"; then
+      conf_rpath="$idir/lib/build2"
+    else
+      conf_rpath="$idir/lib"
+    fi
+
     conf_rpath_stage="$idir/lib"
 
     if test -n "$sudo"; then
@@ -320,8 +333,8 @@ config.cc.coptions="$*" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
-config.install.private=build2 \
-config.install.sudo="$conf_sudo"
+config.install.sudo="$conf_sudo" \
+$private
 
   run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/ bdep/
 
@@ -374,8 +387,8 @@ config.cc.coptions="$*" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
-config.install.private=build2 \
-config.install.sudo="$conf_sudo"
+config.install.sudo="$conf_sudo" \
+$private
 
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch

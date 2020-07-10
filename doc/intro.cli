@@ -2286,20 +2286,21 @@ and tools, scale to complex, real-world requirements, and, last but not least,
 are pleasant to work with.
 
 The canonical structure is primarily meant for a package \- a single library
-or program (or, sometimes, a collection of related programs) with a specific
-and well-defined function. While it may be less suitable for more elaborate,
-multi-library/program \i{end-products} that are not meant to be packaged, most
-of the recommendations discussed below would still apply. Oftentimes, you
-would start with a canonical project and expand from there. Note also that
-while the discussion below focuses on C++, most of it applies equally to C
-projects.
+or program (or, sometimes, a collection of related libraries or programs)
+with a specific and well-defined function. While it may be less suitable for
+more elaborate, multi-library/program \i{end-products} that are not meant to
+be packaged, most of the recommendations discussed below would still
+apply. Oftentimes, you would start with a canonical project and expand from
+there. Note also that while the discussion below focuses on C++, most of it
+applies equally to C projects.
 
 \N|We often find ourselves factoring common functionality out of such
 end-products and into separate packages, for example, in order to be reused in
 another end-product). In this light, it can be helpful to organize a new
 end-product project as a composition of individual packages or source
 subdirectories that follow the canonical structure. The \l{bdep-new(1)}
-\c{--package} and \c{--subdirectory} modes can used to automate this process.|
+\c{--package} and \c{--subdirectory} modes can be used to automate this
+process.|
 
 Projects created by the \l{bdep-new(1)} command have the canonical structure.
 The overall layouts for executable (\c{-t\ exe}) and library (\c{-t\ lib})
@@ -2517,9 +2518,9 @@ why take the chance when there are no benefits. So let's imagine the \c{\"\"}
 style inclusion does not exist and we will all have a much better time.|
 
 If you have to disregard every rule and recommendation in this section but
-one, for example, because you are working on an existing library, then insist
-on this: \b{public header inclusions must use the library name as a directory
-prefix}.
+one, for example, because you are working on an existing library, then at
+minimum insist on this: \b{public header inclusions must use the library name
+as a directory prefix}.
 
 The project's source subdirectory can have subdirectories of its own, for
 example, to organize the code into components. Naturally, header inclusions

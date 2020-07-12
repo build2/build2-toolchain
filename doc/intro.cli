@@ -1766,6 +1766,7 @@ hello/
 ├── libhello/
 │   ├── ...
 │   └── manifest
+├── buildfile
 ├── packages.manifest
 └── repositories.manifest
 \
@@ -1774,8 +1775,21 @@ hello/
 the project (repository) while \c{manifest} \- to the package.|
 
 Besides the \c{libhello} directory the \c{new} command also created the
-\c{packages.manifest} file in the root directory of our project. Let's take a
-look inside:
+\c{buildfile} and \c{packages.manifest} files in the root directory of our
+project. First let's take a look inside \c{buildfile}:
+
+\
+import pkgs = */
+
+./: $pkgs
+\
+
+This is what we call a \i{glue \c{buildfile}}. Its purpose is to \"pull\"
+together several packages so that we are able to invoke the build system
+driver from the project root. See \l{b#intro-import Target Importation} for
+details.
+
+Now let's examine \c{packages.manifest}:
 
 \
 $ cat packages.manifest
@@ -1858,6 +1872,7 @@ hello/
 │   ├── LICENSE  -> ../LICENSE
 │   └── manifest
 ├── LICENSE
+├── buildfile
 ├── packages.manifest
 └── repositories.manifest
 \

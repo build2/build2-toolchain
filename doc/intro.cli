@@ -169,10 +169,13 @@ hello/
 └── repositories.manifest
 \
 
-\N|While the canonical project structure is strongly recommended, especially
-for new projects, \c{build2} is flexible enough to allow most commonly used
-arrangements. See \l{#proj-struct Canonical Project Structure} for the more
-detailed discussion and rationale behind this layout.|
+\N|See \l{#proj-struct Canonical Project Structure} for a detailed discussion
+and rationale behind this layout. While it is recommended, especially for new
+projects, \c{build2} is flexible enough to support various arrangements used
+in today's C and C++ projects. Furthermore, the \l{bdep-new(1)} command
+provides a number of customization options and chances are you will be able to
+create your preferred layout automatically. See \l{bdep-new.xhtml#src-layout
+SOURCE LAYOUT} for more information and examples.|
 
 Similar to version control tools, we normally run all \c{build2} tools from
 the project's source directory or one of its subdirectories, so:
@@ -1629,9 +1632,32 @@ hello/
 libhello/
 hello-gcc/
 hello-clang/
+
+$ tree libhello
+libhello/
+├── build/
+│   └── ...
+├── libhello/
+│   ├── hello.hxx
+│   ├── hello.cxx
+│   └── buildfile
+├── buildfile
+├── manifest
+├── README.md
+└── repositories.manifest
 \
 
-Let's also edit the generated \c{manifest} file and add the \c{project} value
+\N|Similar to the executable project, this layout is not mandatory and
+\l{bdep-new(1)} can create a number of alternative library structures. For
+example, if you prefer the \c{include/src} split, try:
+
+\
+$ bdep new -l c++ -t lib,split libhello
+\
+
+See \l{bdep-new.xhtml#src-layout SOURCE LAYOUT} for more examples.|
+
+Let's edit the generated \c{manifest} file and add the \c{project} value
 (customarily after \c{version}) to indicate that our library belongs to the
 same overall project as our executable:
 
@@ -2295,12 +2321,21 @@ entry as a documentation to users of our project.|
 
 \h1#proj-struct|Canonical Project Structure|
 
-The goal of establishing a canonical project structure is to create an
-ecosystem of packages that can coexist, are easy to comprehend by both humans
-and tools, scale to complex, real-world requirements, and, last but not least,
-are pleasant to work with.
+The goal of establishing a canonical \c{build2} project structure is to create
+an ecosystem of packages that can coexist, are easy to comprehend by both
+humans and tools, scale to complex, real-world requirements, and, last but not
+least, are pleasant to work with.
 
-The canonical structure is primarily meant for a package \- a single library
+\N|Here by \i{canonical} we mean a structure that on balance achieves these
+objectives in the simplest possible way. However, not everyone agrees with
+where that balance should be struck. As a result, this structure is only
+recommended and \c{build2} is flexible enough to support various arrangements
+used in modern C and C++ projects. Furthermore, the \l{bdep-new(1)} command
+provides a number of customization options and chances are you will be able to
+create your preferred layout automatically. See \l{bdep-new.xhtml#src-layout
+SOURCE LAYOUT} for more information and examples.|
+
+This canonical structure is primarily meant for a package \- a single library
 or program (or, sometimes, a collection of related libraries or programs)
 with a specific and well-defined function. While it may be less suitable for
 more elaborate, multi-library/program \i{end-products} that are not meant to
@@ -2314,12 +2349,11 @@ end-products and into separate packages, for example, in order to be reused in
 another end-product). In this light, it can be helpful to organize a new
 end-product project as a composition of individual packages or source
 subdirectories that follow the canonical structure. The \l{bdep-new(1)}
-\c{--package} and \c{--subdirectory} modes can be used to automate this
-process.|
+\c{--package} and \c{--source} modes can be used to automate this process.|
 
-Projects created by the \l{bdep-new(1)} command have the canonical structure.
-The overall layouts for executable (\c{-t\ exe}) and library (\c{-t\ lib})
-projects are presented below.
+By default, projects created by the \l{bdep-new(1)} command have the canonical
+structure. The overall layouts for executable (\c{-t\ exe}) and library
+(\c{-t\ lib}) projects are presented below.
 
 \
 <name>/
@@ -2378,7 +2412,7 @@ If a project consists of a library and an executable, then they should be
 split into separate packages (see \l{#guide-dev-multi Developing Multiple
 Packages and Projects} for some common arrangements). In this case, by
 convention, the library name should start with the \c{lib} prefix, for
-example, \c{libhello} and \c{hello}. It is also strongly recommended (but not
+example, \c{libhello} and \c{hello}. It is also recommended (but not
 required) to follow this convention in new projects, even if there are no
 plans to have a related executable.
 
@@ -2478,10 +2512,11 @@ except that in the case of modules calling the directory \c{include/} would be
 an anachronism.
 
 To summarize, the split directory arrangement offers little benefit over the
-single directory layout, has a number of real drawbacks, and does not fit
+combined directory layout, has a number of real drawbacks, and does not fit
 modularized projects well. In practice, private headers are placed into
 \c{include/}, often either in a subdirectory or with a special file name
-suffix, a mechanism that is readily available in the single directory layout.|
+suffix, a mechanism that is readily available in the combined directory
+layout.|
 
 All headers within a project should be included using the \c{<>} style
 inclusion and contain the project name as a directory prefix. And all headers
@@ -2602,12 +2637,12 @@ With the header inclusion paths adjusted accordingly:
 #include <libstud/url/url.hxx>
 \
 
-The \l{bdep-new(1)} command provides the \c{source} project type sub-option
+The \l{bdep-new(1)} command provides the \c{subdir} project type sub-option
 that allows us to customize the source subdirectory within a project. For
 example:
 
 \
-$ bdep new -l c++ -t lib,source=libstud/path libstud-path
+$ bdep new -l c++ -t lib,subdir=libstud/path libstud-path
 \
 
 |

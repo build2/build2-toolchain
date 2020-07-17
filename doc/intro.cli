@@ -272,7 +272,7 @@ $ cat manifest
 name: hello
 version: 0.1.0-a.0.z
 summary: hello C++ executable
-license: proprietary
+license: other: proprietary
 description-file: README.md
 url: https://example.org/hello
 email: you@example.org
@@ -2041,9 +2041,9 @@ along these lines:
 │   ├── libprint-1.0.so
 │   ├── libprint.so -> libprint-1.0.so
 │   └── pkgconfig/
-│       ├── libformat.shared.pc
-│       ├── libhello.shared.pc
-│       └── libprint.shared.pc
+│       ├── libformat.pc
+│       ├── libhello.pc
+│       └── libprint.pc
 └── share/
     └── doc/
         ├── libformat/

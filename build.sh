@@ -8,8 +8,8 @@ usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"
 # Package repository URL (or path).
 #
 if test -z "$BUILD2_REPO"; then
-  BUILD2_REPO="https://stage.build2.org/1"
-# BUILD2_REPO="https://pkg.cppget.org/1/queue/alpha"
+# BUILD2_REPO="https://stage.build2.org/1"
+  BUILD2_REPO="https://pkg.cppget.org/1/queue/alpha"
 # BUILD2_REPO="https://pkg.cppget.org/1/alpha"
 fi
 

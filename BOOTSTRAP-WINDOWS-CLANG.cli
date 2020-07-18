@@ -154,7 +154,7 @@ also a note on the following step about only building shared libraries):
 \
 > build2\build2\b-boot configure ^
   config.cxx=clang++             ^
-  \"config.cc.coptions=-m64 -O3\"  ^
+  \"config.cc.coptions=-m64 -O2\"  ^
   config.bin.lib=shared          ^
   config.install.root=C:\build2
 
@@ -187,7 +187,7 @@ previous step and you may want/need to make similar adjustments.
 > bpkg-stage create             ^
   cc                            ^
   config.cxx=clang++            ^
-  \"config.cc.coptions=-m64 -O3\" ^
+  \"config.cc.coptions=-m64 -O2\" ^
   config.bin.lib=shared         ^
   config.install.root=C:\build2
 \

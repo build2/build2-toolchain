@@ -203,7 +203,7 @@ For Windows with Clang (from a suitable command prompt, see
 > bpkg-stage create             ^
   cc                            ^
   config.cxx=clang++            ^
-  \"config.cc.coptions=-m64 -O3\" ^
+  \"config.cc.coptions=-m64 -O2\" ^
   config.bin.lib=shared         ^
   config.install.root=C:\build2
 \

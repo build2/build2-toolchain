@@ -249,7 +249,7 @@ cd ..
 
 build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
- "config.cc.coptions=-m64 -O3"^
+ "config.cc.coptions=-m64 -O2"^
  config.bin.lib=shared^
  config.install.root=%idir%
 @if errorlevel 1 goto error
@@ -328,7 +328,7 @@ cd %cdir%
 bpkg-stage %verbose% create^
  cc^
  config.cxx=%cxx%^
- "config.cc.coptions=-m64 -O3"^
+ "config.cc.coptions=-m64 -O2"^
  config.bin.lib=shared^
  config.install.root=%idir%
 @if errorlevel 1 goto error

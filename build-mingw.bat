@@ -42,14 +42,14 @@ set "owd=%CD%"
 rem Package repository URL (or path).
 rem
 if "_%BUILD2_REPO%_" == "__" (
-rem set "BUILD2_REPO=https://stage.build2.org/1"
+    set "BUILD2_REPO=https://stage.build2.org/1"
 rem set "BUILD2_REPO=https://pkg.cppget.org/1/queue/alpha"
-    set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
+rem set "BUILD2_REPO=https://pkg.cppget.org/1/alpha"
 )
 
 rem The bpkg configuration directory.
 rem
-set "cver=0.13"
+set "cver=0.14-a.0"
 set "cdir=build2-toolchain-%cver%"
 
 rem Parse options.

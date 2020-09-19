@@ -152,6 +152,10 @@ if "_%1_" == "__" (
   set "cxx=%1"
 )
 
+rem Convert a relative path to an absolute.
+rem
+for /F "delims=|" %%D in ("%idir%") do set "idir=%%~dpnxD"
+
 rem Certificate to trust.
 rem
 if not "_%trust%_" == "__" (

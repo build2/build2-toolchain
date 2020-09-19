@@ -225,6 +225,12 @@ if test -n "$make"; then
   fi
 fi
 
+# If the installation directory is unspecified, then assume it is /usr/local.
+# Otherwise, if it is a relative path, then convert it to an absolute path,
+# unless the realpath program is not present on the system or doesn't
+# recognize any of the options we pass, in which case fail, advising to
+# specify an absolute installation directory.
+#
 if test -z "$idir"; then
   idir=/usr/local
   private=config.install.private=build2
@@ -234,6 +240,21 @@ if test -z "$idir"; then
   #
   if test -z "$sudo"; then
     sudo="sudo"
+  fi
+elif test -n "$(echo "$idir" | sed -n 's#^[^/].*$#true#p')"; then
+
+  if ! command -v realpath >/dev/null 2>&1; then
+    diag "error: unable to execute realpath: command not found"
+    diag "  info: specify absolute installation directory path"
+    exit 1
+  fi
+
+  # Don't resolve symlinks and allow non-existent path components.
+  #
+  if ! idir="$(realpath -s -m "$idir" 2>/dev/null)"; then
+    diag "error: realpath does not recognize -s -m"
+    diag "  info: specify absolute installation directory path"
+    exit 1
   fi
 fi
 

@@ -8,7 +8,8 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] [^<cl-compiler^>]
+rem echo Usage: %0 [/?] [^<options^>] [^<cl-compiler^>]
+echo Usage: %0 [/?] [^<options^>]
 echo Options:
 echo   --local              Don't build from packages, only from local source.
 echo   --install-dir ^<dir^>  Alternative installation directory.
@@ -139,6 +140,10 @@ rem if "_%1_" == "__" (
 rem ) else (
 rem  set "cxx=%1"
 rem )
+
+rem Convert a relative path to an absolute.
+rem
+for /F "delims=|" %%D in ("%idir%") do set "idir=%%~dpnxD"
 
 rem Certificate to trust.
 rem

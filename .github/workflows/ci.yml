@@ -87,6 +87,13 @@ jobs:
         name: dist-ubuntu-clang
         path: ~/dist-ubuntu-clang
 
+    - name: Upload dist-macos-clang
+      if: startsWith(matrix.os,'macOS')
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-macos-clang
+        path: ~/dist-macos-clang
+
   Skip:
     if: "contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest

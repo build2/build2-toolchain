@@ -72,6 +72,14 @@ jobs:
       run: |
         ./build.sh --install-dir ~/dist-macos-clang --sudo sudo clang++
 
+    # Upload
+    - name: Upload dist-windows-clang
+      if: startsWith(matrix.os,'windows')
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-windows-clang
+        path: C:/dist-windows-clang
+
   Skip:
     if: "contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest

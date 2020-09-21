@@ -53,6 +53,7 @@ jobs:
     - name: Checkout master branch
       uses: actions/checkout@v2
       with:
+        repository: 'build2/build2-toolchain'
         submodules: recursive
 
   Skip:

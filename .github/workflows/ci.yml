@@ -56,6 +56,12 @@ jobs:
         repository: 'build2/build2-toolchain'
         submodules: recursive
 
+    # Build
+    - name: Windows Build by Clang
+      if: startsWith(matrix.os,'windows')
+      run: |
+        ./build-clang.bat --install-dir C:/dist-windows-clang
+
   Skip:
     if: "contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest

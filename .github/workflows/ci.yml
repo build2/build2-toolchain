@@ -42,6 +42,13 @@ jobs:
         sudo update-alternatives --config clang
         sudo update-alternatives --config clang++
         clang++ -v
+
+    - name: MacOS Dependencies
+      if: startsWith(matrix.os,'macOS')
+      run: |
+          echo "clang 11 is already included in the image"
+          clang++ -v
+
   Skip:
     if: "contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest

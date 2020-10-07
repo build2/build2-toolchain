@@ -219,6 +219,12 @@ rem
 %cxx% --version
 @if errorlevel 1 goto error
 
+@rem Suppress loading of default options files.
+@rem
+set "BUILD2_DEF_OPT=0"
+set "BPKG_DEF_OPT=0"
+set "BDEP_DEF_OPT=0"
+
 @rem Bootstrap.
 @rem
 cd build2

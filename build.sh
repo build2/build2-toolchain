@@ -326,6 +326,17 @@ if test -n "$verbose"; then
   verbose="--verbose $verbose"
 fi
 
+# Suppress loading of default options files.
+#
+BUILD2_DEF_OPT="0"
+export BUILD2_DEF_OPT
+
+BPKG_DEF_OPT="0"
+export BPKG_DEF_OPT
+
+BDEP_DEF_OPT="0"
+export BDEP_DEF_OPT
+
 # Bootstrap, stage 1.
 #
 run cd build2

@@ -793,7 +793,7 @@ the repository being hosted/managed potentially independently.|
 
 To summarize, version control-based repositories are great for package
 developers while a central, archive-based repository is convenient for package
-consumers. A reasonable strategy is then for package developers to publish
+consumers. A reasonable strategy then is for package developers to publish
 their releases to a central repository. Package consumers can then decide
 which repository to use based on their needs. For example, one could use
 \l{https://cppget.org cppget.org} as a (fast, reliable, and secure) source of
@@ -1911,8 +1911,8 @@ Projects} for details.|
 
 Ok, now that we have published a few releases of \c{hello}, how would the
 users of our project get them? While they could clone the repository and use
-\c{bdep} just like we did, this is more of a development rather than
-consumption workflow. For consumption it is much easier to use the package
+\c{bdep} just like we did, this is more of a development than
+a consumption workflow. For consumption it is much easier to use the package
 dependency manager, \l{bpkg(1)}, directly.
 
 \N|Note that this approach also works for libraries in case you wish to use
@@ -1933,8 +1933,6 @@ $ bpkg create -d tools cc        \
   config.install.root=/usr/local \
   config.install.sudo=sudo
 created new configuration in /tmp/tools/
-
-$ cd tools
 \
 
 The same step on Windows using Visual Studio would look like this:
@@ -1951,6 +1949,7 @@ To fetch and build packages (as well as all their dependencies) we use the
 like \l{https://cppget.org cppget.org} or build directly from \c{git}:
 
 \
+$ cd tools
 $ bpkg build hello@https://git.build2.org/hello/hello.git
 fetching from https://git.build2.org/hello/hello.git
   new libformat/1.0.0 (required by libhello)
@@ -2487,11 +2486,11 @@ private \- is not as clear cut as it may seem at first. The common assumption
 of the split layout is that only headers from \c{include/} are installed and,
 conversely, to use the headers in-place, all one has to do is add \c{-I}
 pointing to \c{include/}. On the other hand, it is common for public headers
-to include private, for example, to call an implementation detail function in
-inline or template code (note that the same applies to private modules
-imported in public module interfaces). Which means such private, (or, probably
-now more accurately called \i{implementation detail}) headers have to be
-placed in the \c{include/} directory as well, perhaps into a subdirectory
+to include private headers to, for example, call an implementation detail
+function in inline or template code (note that the same applies to private
+modules imported in public module interfaces). Which means such private (or
+probably now more accurately called \i{implementation detail}) headers have to
+be placed in the \c{include/} directory as well, perhaps into a subdirectory
 (such as \c{details/}) or with a file name suffix (such as \c{-impl}) to
 signal to the user that they are still \"private\". Needless to say, in an
 actively developed project, keeping track of which private headers can still
@@ -2508,8 +2507,8 @@ project consists of only such single-file modules, then \c{include/} and
 \c{src/} have effectively become the same thing (note that there couldn't be
 any \"private\" modules in \c{src/} since there would be nobody to import
 them). In a sense, we already have this situation with header-only libraries
-except that in the case of modules calling the directory \c{include/} would be
-an anachronism.
+except that, in the case of modules, calling the directory \c{include/} would
+be an anachronism.
 
 To summarize, the split directory arrangement offers little benefit over the
 combined directory layout, has a number of real drawbacks, and does not fit
@@ -2773,7 +2772,7 @@ namespace hello
 }
 \
 
-An executable project may use a namespace (in which case it is natural to call
+An executable project may use a namespace (in which case it is natural to name
 it after the project) and its (private) modules shouldn't be qualified with
 the project name (in order not to clash with similarly named modules from the
 corresponding library, if any). \N{A library may also have private modules in
@@ -2927,7 +2926,7 @@ hello/    ~~>    └── hello/
 
 The result is an \i{as-if} in-source build with all the benefits (such as
 having both source and relevant output in the same directory) but without any
-of the drawback (such as the inability to have multiple builds or source
+of the drawbacks (such as the inability to have multiple builds or source
 directory cluttered with object files).
 
 \N|The often cited motivation for placing executables into \c{bin/} is that in

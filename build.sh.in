@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# file      : build.sh
+# file      : build.sh.in
 # license   : MIT; see accompanying LICENSE file
 
 usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"
@@ -8,14 +8,18 @@ usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"
 # Package repository URL (or path).
 #
 if test -z "$BUILD2_REPO"; then
-  BUILD2_REPO="https://stage.build2.org/1"
-# BUILD2_REPO="https://pkg.cppget.org/1/queue/alpha"
-# BUILD2_REPO="https://pkg.cppget.org/1/alpha"
+  BUILD2_REPO="@BUILD2_REPO@"
 fi
+
+# Package versions.
+#
+build2_ver="@BUILD2_VERSION@"
+bpkg_ver="@BPKG_VERSION@"
+bdep_ver="@BDEP_VERSION@"
 
 # The bpkg configuration directory.
 #
-cver="0.14-a.0"
+cver="@CONFIG_VER@"
 cdir="build2-toolchain-$cver"
 
 diag ()
@@ -38,6 +42,8 @@ run ()
 owd="$(pwd)"
 
 local=
+bpkg=true
+bdep=true
 private=
 idir=
 jobs=
@@ -57,6 +63,8 @@ while test $# -ne 0; do
       diag "$usage"
       diag "Options:"
       diag "  --local              Don't build from packages, only from local source."
+      diag "  --no-bpkg            Don't install bpkg nor bdep (requires --local)."
+      diag "  --no-bdep            Don't install bdep."
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
       diag "  --private            Install shared libraries into private subdirectory."
@@ -105,6 +113,14 @@ while test $# -ne 0; do
       local=true
       shift
       ;;
+    --no-bpkg)
+      bpkg=
+      shift
+      ;;
+    --no-bdep)
+      bdep=
+      shift
+      ;;
     --private)
       private=config.install.private=build2
       shift
@@ -112,9 +128,9 @@ while test $# -ne 0; do
     --install-dir)
       shift
       if test $# -eq 0; then
-	diag "error: installation directory expected after --install-dir"
-	diag "$usage"
-	exit 1
+        diag "error: installation directory expected after --install-dir"
+        diag "$usage"
+        exit 1
       fi
       idir="$1"
       shift
@@ -122,9 +138,9 @@ while test $# -ne 0; do
     -j|--jobs)
       shift
       if test $# -eq 0; then
-	diag "error: number of jobs expected after --jobs|-j"
-	diag "$usage"
-	exit 1
+        diag "error: number of jobs expected after --jobs|-j"
+        diag "$usage"
+        exit 1
       fi
       jobs="-j $1"
       shift
@@ -132,9 +148,9 @@ while test $# -ne 0; do
     --sudo)
       shift
       if test $# -eq 0; then
-	diag "error: sudo program expected after --sudo"
-	diag "$usage"
-	exit 1
+        diag "error: sudo program expected after --sudo"
+        diag "$usage"
+        exit 1
       fi
       sudo="$1"
       shift
@@ -142,9 +158,9 @@ while test $# -ne 0; do
     --repo)
       shift
       if test $# -eq 0; then
-	diag "error: repository location expected after --repo"
-	diag "$usage"
-	exit 1
+        diag "error: repository location expected after --repo"
+        diag "$usage"
+        exit 1
       fi
       BUILD2_REPO="$1"
       shift
@@ -152,9 +168,9 @@ while test $# -ne 0; do
     --trust)
       shift
       if test $# -eq 0; then
-	diag "error: certificate fingerprint expected after --trust"
-	diag "$usage"
-	exit 1
+        diag "error: certificate fingerprint expected after --trust"
+        diag "$usage"
+        exit 1
       fi
       trust="$1"
       shift
@@ -162,9 +178,9 @@ while test $# -ne 0; do
     --timeout)
       shift
       if test $# -eq 0; then
-	diag "error: value in seconds expected after --timeout"
-	diag "$usage"
-	exit 1
+        diag "error: value in seconds expected after --timeout"
+        diag "$usage"
+        exit 1
       fi
       timeout="$1"
       shift
@@ -172,23 +188,23 @@ while test $# -ne 0; do
     --make)
       shift
       if test $# -eq 0; then
-	diag "error: argument expected after --make"
-	diag "$usage"
-	exit 1
+        diag "error: argument expected after --make"
+        diag "$usage"
+        exit 1
       fi
       if test -z "$make"; then
         make="$1"
       else
-	make_options="$make_options $1"
+        make_options="$make_options $1"
       fi
       shift
       ;;
     --verbose)
       shift
       if test $# -eq 0; then
-	diag "error: diagnostics level between 0 and 6 expected after --verbose"
-	diag "$usage"
-	exit 1
+        diag "error: diagnostics level between 0 and 6 expected after --verbose"
+        diag "$usage"
+        exit 1
       fi
       verbose="$1"
       shift
@@ -223,6 +239,21 @@ if test -n "$make"; then
   if test -n "$make_options"; then
     make="$make$make_options" # Already has leading space.
   fi
+fi
+
+# If --no-bpkg is specified, then we require --local to also be specified
+# since it won't be possible to build things from packages without bpkg. Also
+# imply --no-bdep in this case, since bdep is pretty much useless without
+# bpkg.
+#
+if test -z "$bpkg"; then
+  if test -z "$local"; then
+    diag "error: --no-bpkg can only be used for local installation"
+    diag "  info: additionally specify --local"
+    exit 1
+  fi
+
+  bdep=
 fi
 
 # If the installation directory is unspecified, then assume it is /usr/local.
@@ -368,15 +399,30 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
 $private
 
-  run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/ bdep/
+  projects="build2/"
+
+  if test "$bpkg" = true; then
+    projects="$projects bpkg/"
+  fi
+
+  if test "$bdep" = true; then
+    projects="$projects bdep/"
+  fi
+
+  run build2/build2/b-boot $verbose $jobs install: $projects
 
   run command -v b
-  run command -v bpkg
-  run command -v bdep
-
   run b --version
-  run bpkg --version
-  run bdep --version
+
+  if test "$bpkg" = true; then
+    run command -v bpkg
+    run bpkg --version
+  fi
+
+  if test "$bdep" = true; then
+    run command -v bdep
+    run bdep --version
+  fi
 
   diag
   diag "Toolchain installation: $idir/bin"
@@ -400,9 +446,9 @@ config.install.sudo="$conf_sudo"
 run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
 
 run command -v b-stage
-run command -v bpkg-stage
-
 run b-stage --version
+
+run command -v bpkg-stage
 run bpkg-stage --version
 
 # Build the entire toolchain from packages.
@@ -422,18 +468,27 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
 $private
 
+packages="build2/$build2_ver bpkg/$bpkg_ver"
+
+if test "$bdep" = true; then
+  packages="$packages bdep/$bdep_ver"
+fi
+
 run bpkg-stage $verbose add "$BUILD2_REPO"
 run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes --plan= build2 bpkg bdep
-run bpkg-stage $verbose $jobs install build2 bpkg bdep
+run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes --plan= $packages
+run bpkg-stage $verbose $jobs install --all
 
 run command -v b
-run command -v bpkg
-run command -v bdep
-
 run b --version
+
+run command -v bpkg
 run bpkg --version
-run bdep --version
+
+if test "$bdep" = true; then
+  run command -v bdep
+  run bdep --version
+fi
 
 # Clean up stage.
 #

@@ -2,3 +2,9 @@ INSTALL
 UPGRADE
 BOOTSTRAP-*
 !BOOTSTRAP-*.cli
+
+# Building output.
+#
+*.d
+build.sh
+build-*.bat

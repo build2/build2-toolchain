@@ -3,6 +3,8 @@
 
 project = build2-toolchain
 amalgamation = # Disable amalgamation.
+subprojects  = {*/ -build/ -doc/ -tests/ -submodules/}
+subprojects += tests/*/
 
 using version
 using config

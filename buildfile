@@ -9,9 +9,6 @@ build2_repo="https://stage.build2.org/1"
 # build2_repo="https://pkg.cppget.org/1/queue/alpha"
 # build2_repo="https://pkg.cppget.org/1/alpha"
 
-d = libpkgconf/ libbutl/ build2/ \
-libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ bdep/ doc/
-
 i =                     \
 INSTALL                 \
 UPGRADE                 \
@@ -22,11 +19,15 @@ BOOTSTRAP-WINDOWS-MSVC  \
 BOOTSTRAP-WINDOWS-CLANG \
 BOOTSTRAP-WINDOWS-MINGW
 
-./: $d                     \
-    doc{$i README}         \
-    legal{LICENSE AUTHORS} \
-    cli{$i}                \
+# Note: see also subprojects in bootstrap.build.
+#
+./: {*/ -build/ -tests/ -submodules/} \
+    doc{$i README}                    \
+    legal{LICENSE AUTHORS}            \
+    cli{$i}                           \
     manifest
+
+./: tests/*/ tests/doc{README}
 
 # Obtain the build2, bpkg, bdep, and toolchain versions.
 #

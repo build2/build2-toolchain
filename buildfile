@@ -38,15 +38,25 @@ BOOTSTRAP-WINDOWS-MINGW
     cli{$i}                     \
     manifest
 
-# Obtain the build2, bpkg, bdep, and toolchain versions.
+# Obtain the toolchain and standard build system modules versions.
 #
 bp = $recall($build.path)
 pt = '^version: (.+)$'
 
-ver        = $process.run_regex($bp 'info:' $src_root/,        "$pt", '\1')
-build2_ver = $process.run_regex($bp 'info:' $src_root/build2/, "$pt", '\1')
-bpkg_ver   = $process.run_regex($bp 'info:' $src_root/bpkg/,   "$pt", '\1')
-bdep_ver   = $process.run_regex($bp 'info:' $src_root/bdep/,   "$pt", '\1')
+# When adding a new standard build system module, these are the places where
+# you will need to make changes (igrep for the name of one of the existing
+# modules to locate all the places):
+#
+# - this buildfile
+# - build scripts: build.sh.in and build-*.bat.in
+# - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (mention as new module)
+# - install scripts: prepare, build2-install.sh, and build2-install-*.bat
+#
+ver         = $process.run_regex($bp 'info:' $src_root/,                   "$pt", '\1')
+build2_ver  = $process.run_regex($bp 'info:' $src_root/build2/,            "$pt", '\1')
+bpkg_ver    = $process.run_regex($bp 'info:' $src_root/bpkg/,              "$pt", '\1')
+bdep_ver    = $process.run_regex($bp 'info:' $src_root/bdep/,              "$pt", '\1')
+kconfig_ver = $process.run_regex($bp 'info:' $src_root/libbuild2-kconfig/, "$pt", '\1')
 
 # Generate install scripts from templates and include them into the
 # distribution.
@@ -80,11 +90,12 @@ for s: exe{build.sh} file{build-msvc.bat build-clang.bat build-mingw.bat}
       cver = "$cver-$ab.$pr"
     end
 
-    sed -e 's%@BUILD2_REPO@%'$build2_repo'%'   $p >$t
-    sed -e 's/@CONFIG_VER@/'$cver'/'            -i $t
-    sed -e 's/@BUILD2_VERSION@/'$build2_ver'/'  -i $t
-    sed -e 's/@BPKG_VERSION@/'$bpkg_ver'/'      -i $t
-    sed -e 's/@BDEP_VERSION@/'$bdep_ver'/'      -i $t
+    sed -e 's%@BUILD2_REPO@%'$build2_repo'%'    $p >$t
+    sed -e 's/@CONFIG_VER@/'$cver'/'             -i $t
+    sed -e 's/@BUILD2_VERSION@/'$build2_ver'/'   -i $t
+    sed -e 's/@BPKG_VERSION@/'$bpkg_ver'/'       -i $t
+    sed -e 's/@BDEP_VERSION@/'$bdep_ver'/'       -i $t
+    sed -e 's/@KCONFIG_VERSION@/'$kconfig_ver'/' -i $t
   }}
 }
 

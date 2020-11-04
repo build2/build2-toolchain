@@ -23,9 +23,9 @@ toolchain (similar to what we did during bootstrap), test it, uninstall the
 old toolchain, install the new toolchain as \"final\", and finally uninstall
 \c{-stage}.
 
-We recommend that you use a dirty upgrade for patch releases with the same
-\c{X.Y} (\c{MAJOR.MINOR}) version and a staged upgrade otherwise. With patch
-releases we guarantee not to alter the installation file set.
+We recommend that you use a dirty upgrade for toolchain patch releases with
+the same \c{X.Y} (\c{MAJOR.MINOR}) version and a staged upgrade otherwise.
+With patch releases we guarantee not to alter the installation file set.
 
 \N|Without periodic upgrades your version of the toolchain may become too old
 to be able to upgrade itself. In this case you will have to fall back onto the
@@ -42,26 +42,25 @@ The dirty upgrade is straightforward:
 \
 $ cd build2-toolchain-X.Y
 $ bpkg fetch
-$ bpkg build --for install -ur build2 bpkg bdep
-$ bpkg install build2 bpkg bdep
+$ bpkg build --for install -pr
+$ bpkg install --all
 \
 
-\N|The \c{-ur} options stands for \c{--upgrade} and \c{--recursive} \- upgrade
-the listed packages and their dependencies, recursively. See
-\l{bpkg-pkg-build(1)} for details.|
+\N|The \c{-pr} options stands for \c{--patch} and \c{--recursive} \- upgrade
+the built packages and their dependencies to the latest patch version,
+recursively. See \l{bpkg-pkg-build(1)} for details.|
 
-You may also want to issue the \c{status} command after \c{fetch} to examine
-which versions are available. By default \c{bpkg} will upgrade to the latest
-available but you can override this by specifying the desired version
-explicitly, for example:
+You can also issue the \c{status} command after \c{fetch} to examine which
+versions are available. The above \c{build} command will upgrade all the
+packages to the latest available patch versions but you can override this by
+specifying the desired packages and/or versions explicitly, for example:
 
 \
-$ bpkg status build2 bpkg bdep
-!build2 configured 1.0.0 available 1.0.1 2.0.0
-!bpkg configured 1.0.0 available 1.0.1 2.0.0
-!bdep configured 1.0.0 available 1.0.1 2.0.0
+$ bpkg status
+!build2 configured 1.0.0 available 1.0.1 1.0.2 2.0.0
+...
 
-$ bpkg build --for install build2/1.0.1 bpkg/1.0.1 bdep/1.0.1
+$ bpkg build --for install build2/1.0.1
 \
 
 The staged upgrade consists of several steps:
@@ -106,19 +105,36 @@ Or, using Windows command prompt:
 
 \li|\n\b{2. Build and Install as \c{-stage}}\n
 
-This step is similar to the dirty upgrade except we use the copied
-configuration and install the new toolchain with the \c{-stage} suffix:
+This step is similar to the dirty upgrade except that we use the copied
+configuration, upgrade (\c{--upgrade|-u}) instead of patching
+(\c{--patch|-p}), and install the new toolchain with the \c{-stage} suffix:
 
 \
 $ cd build2-toolchain-X.Z
-$ bpkg build --for install -ur build2 bpkg bdep
+$ bpkg build --for install -ur
+\
+
+In addition to upgrading existing packages, we may also need to build packages
+that were added in the new version (listed after the command for a number of
+previous releases):
+
+\
+$ bpkg build --for install ...
+
+# new in 0.14.0: libbuild2-kconfig
+\
+
+Once this is done, we can proceed to installing:
+
+\
 $ bpkg install                        \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \
-  build2 bpkg bdep
+  --all
 \
 
-|
+You can also specify the desired packages and/or versions explicitly, again,
+similar to the dirty upgrade.|
 
 \li|\n\b{3. Test Staged}\n
 
@@ -141,10 +157,10 @@ one and install the new one:
 
 \
 $ cd ../build2-toolchain-X.Y
-$ bpkg uninstall build2 bpkg bdep
+$ bpkg uninstall --all
 
 $ cd ../build2-toolchain-X.Z
-$ bpkg-stage install build2 bpkg bdep
+$ bpkg-stage install --all
 \
 
 |
@@ -159,7 +175,7 @@ line history to find the corresponding \c{install} command and change it to
 $ bpkg uninstall                      \
   config.bin.suffix=-stage            \
   config.install.data_root=root/stage \
-  build2 bpkg bdep
+  --all
 \
 
 You can also remove the old configuration in \c{build2-toolchain-X.Y/} if you

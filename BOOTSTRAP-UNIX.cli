@@ -97,7 +97,7 @@ versions. It can also be used to uninstall the toolchain:
 
 \
 $ cd build2-toolchain-X.Y
-$ bpkg uninstall build2 bpkg bdep
+$ bpkg uninstall --all
 \
 
 \N|Note that in both cases (manual or scripted bootstrap), if something goes
@@ -215,10 +215,15 @@ subdirectory is in \c{PATH}.
 At the next step we will use \c{bpkg} to build and install the entire
 toolchain. If for some reason you prefer not to build from packages (for
 example, because the machine is offline), then you can convert this step into
-a local installation and skip the rest. For this you will need to change
-the \c{configure} and \c{install} command lines above along these lines (see
-also notes on the following step about only building shared libraries and
-private installation subdirectory):
+a local installation and skip the rest of the steps.
+
+\N|To perform a local installation with the \c{build.sh} script, pass the
+\c{--local} option.|
+
+To perform a local installation you will need to change the \c{configure} and
+\c{install} command lines above along these lines (see also notes on the
+following step about only building shared libraries and private installation
+subdirectory):
 
 \
 $ build2/build2/b-boot configure         \
@@ -233,13 +238,25 @@ $ build2/build2/b-boot configure         \
 $ build2/build2/b-boot install: build2/ bpkg/ bdep/
 \
 
-\N|To perform a local installation with the \c{build.sh} script, pass the
-\c{--local} option.|
+You will also need to build and install the standard build system modules:
+
+\
+$ b install: libbuild2-*/
+\
+
+\N|To verify the build system modules installation you can load them with the
+following command:
+
+\
+$ b noop: tests/libbuild2-*/
+\
+
+|
 
 To uninstall such a local installation, run:
 
 \
-$ b uninstall: build2/ bpkg/ bdep/
+$ b uninstall: build2/ bpkg/ bdep/ libbuild2-*/
 \
 
 |
@@ -286,10 +303,20 @@ Next, we add the package repository, build, and install:
 $ bpkg-stage add https://pkg.cppget.org/1/alpha
 $ bpkg-stage fetch
 $ bpkg-stage build --for install build2 bpkg bdep
-$ bpkg-stage install build2 bpkg bdep
+$ bpkg-stage install --all
 \
 
-Finally, we verify the result:
+\N|By default \c{bpkg} will build the latest available version of each
+package. You can, however, specify the desired versions explicitly, for
+example:
+
+\
+$ bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z
+\
+
+|
+
+To verify the result, run:
 
 \
 $ which b
@@ -306,7 +333,31 @@ $ bpkg --version
 $ bdep --version
 \
 
+Finally, we build and install the standard build system modules:
+
+\
+$ bpkg build --for install libbuild2-kconfig
+$ bpkg install libbuild2-kconfig
+\
+
+\N|To get a list of the standard pre-installed build system modules in a
+specific version of the toolchain, run:
+
+\
+$ cd ../build2-toolchain-X.Y.Z
+$ ls -d libbuild2-*
+\
+
 |
+
+\N|To verify the build system modules installation you can load them with the
+following command:
+
+\
+$ b noop: ../build2-toolchain-X.Y.Z/tests/libbuild2-*/
+\
+
+||
 
 \li|\n\b{5. Clean}\n
 

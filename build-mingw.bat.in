@@ -10,15 +10,17 @@ goto start
 echo.
 echo Usage: %0 [/?] [^<options^>] ^<c++-compiler^>
 echo Options:
-echo   --local              Don't build from packages, only from local source.
-echo   --no-bpkg            Don't install bpkg nor bdep (requires --local).
-echo   --no-bdep            Don't install bdep.
-echo   --install-dir ^<dir^>  Alternative installation directory.
-echo   --repo ^<loc^>         Alternative package repository location.
-echo   --trust ^<fp^>         Repository certificate fingerprint to trust.
-echo   --timeout ^<sec^>      Network operations timeout in seconds.
-echo   --make ^<arg^>         Bootstrap using GNU make instead of batch file.
-echo   --verbose ^<level^>    Diagnostics verbosity level between 0 and 6.
+echo   --local                Don't build from packages, only from local source.
+echo   --no-bpkg              Don't install bpkg nor bdep (requires --local).
+echo   --no-bdep              Don't install bdep.
+echo   --no-modules           Don't install standard build system modules.
+echo   --modules "<list>"     Install only specified standard build system modules.
+echo   --install-dir ^<dir^>    Alternative installation directory.
+echo   --repo ^<loc^>           Alternative package repository location.
+echo   --trust ^<fp^>           Repository certificate fingerprint to trust.
+echo   --timeout ^<sec^>        Network operations timeout in seconds.
+echo   --make ^<arg^>           Bootstrap using GNU make instead of batch file.
+echo   --verbose ^<level^>      Diagnostics verbosity level between 0 and 6.
 echo.
 echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
@@ -32,6 +34,14 @@ echo --make value should specify the make executable optionally followed by
 echo additional make options, for example:
 echo.
 echo %0 --make mingw32-make --make -j8 g++
+echo.
+echo The script by default installs the following standard build system
+echo modules:
+echo.
+echo %standard_modules%
+echo.
+echo Use --no-modules to suppress installing build system modules or
+echo --modules "<list>" to specify a comma-separated subset to install.
 echo.
 echo See the BOOTSTRAP-WINDOWS-MINGW file for details.
 echo.
@@ -53,6 +63,14 @@ set "build2_ver=@BUILD2_VERSION@"
 set "bpkg_ver=@BPKG_VERSION@"
 set "bdep_ver=@BDEP_VERSION@"
 
+rem Standard modules comma-separated list and versions.
+rem
+rem NOTE: we currently print the list as a single line and will need to somehow
+rem change that when it becomes too long.
+rem
+set "standard_modules=kconfig"
+set "kconfig_ver=@KCONFIG_VERSION@"
+
 rem The bpkg configuration directory.
 rem
 set "cver=@CONFIG_VER@"
@@ -63,6 +81,7 @@ rem
 set "local="
 set "bpkg=true"
 set "bdep=true"
+set "modules=%standard_modules%"
 set "idir=C:\build2"
 set "trust="
 set "timeout="
@@ -88,6 +107,19 @@ if "_%~1_" == "_--no-bpkg_" (
 
 if "_%~1_" == "_--no-bdep_" (
   set "bdep="
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--no-modules_" (
+  set "modules="
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--modules_" (
+  set "modules=%~2"
+  shift
   shift
   goto options
 )
@@ -194,6 +226,14 @@ if "_%bpkg%_" == "__" (
   )
 
   set "bdep="
+)
+
+for %%m in (%modules%) do (
+  if "_!%%m_ver!_" == "__" (
+    echo error: unknown standard build system module '%%m'
+    echo   info: available standard modules: %standard_modules%
+    goto error
+  )
 )
 
 rem Convert a relative path to an absolute.
@@ -308,14 +348,16 @@ build2\build2\b-boot %verbose% configure^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 
-@set "projects=build2/"
+@rem Install toolchain.
+@rem
+@set "projects=build2\"
 
 @if "_%bpkg%_" == "_true_" (
-  set "projects=%projects% bpkg/"
+  set "projects=%projects% bpkg\"
 )
 
 @if "_%bdep%_" == "_true_" (
-  set "projects=%projects% bdep/"
+  set "projects=%projects% bdep\"
 )
 
 build2\build2\b-boot %verbose% install: %projects%
@@ -324,7 +366,7 @@ build2\build2\b-boot %verbose% install: %projects%
 @rem The where command is not available on XP without the resource kit.
 @rem
 where b
-rem @if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 b --version
 @if errorlevel 1 goto error
@@ -332,7 +374,7 @@ b --version
 @if "_%bpkg%_" == "__" goto bpkg_vle
 
 where bpkg
-rem @if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 bpkg --version
 @if errorlevel 1 goto error
@@ -342,12 +384,32 @@ bpkg --version
 @if "_%bdep%_" == "__" goto bdep_vle
 
 where bdep
-rem @if errorlevel 1 goto error
+@rem @if errorlevel 1 goto error
 
 bdep --version
 @if errorlevel 1 goto error
 
 :bdep_vle
+
+@rem Install modules.
+@rem
+@set "projects="
+@set "tests="
+
+@for %%m in (%modules%) do @(
+  set "projects=!projects! libbuild2-%%m\"
+  set "tests=!tests! tests\libbuild2-%%m-tests\"
+)
+
+@if "_%projects%_" == "__" goto mods_ile
+
+b install: %projects:~1%
+@if errorlevel 1 goto error
+
+b noop: %tests:~1%
+@if errorlevel 1 goto error
+
+:mods_ile
 
 @echo off
 
@@ -446,9 +508,39 @@ bdep --version
 
 :bdep_vpe
 
+@rem Build, install, and verify the build system modules.
+@rem
+@set "packages="
+@set "package_versions="
+@set "tests="
+
+@for %%m in (%modules%) do @(
+  set "packages=!packages! libbuild2-%%m"
+  set "package_versions=!package_versions! libbuild2-%%m/!%%m_ver!"
+  set "tests=!tests! tests\libbuild2-%%m-tests\"
+)
+
+@if "_%packages%_" == "__" goto mods_ipe
+
+bpkg build --for install %package_versions:~1%
+@if errorlevel 1 goto error
+
+bpkg install %packages:~1%
+@if errorlevel 1 goto error
+
+:mods_ipe
+
+cd %owd%
+
+@if "_%tests%_" == "__" goto mods_lpe
+
+b noop: %tests:~1%
+@if errorlevel 1 goto error
+
+:mods_lpe
+
 @rem Clean up stage.
 @rem
-cd %owd%
 b %verbose% uninstall: build2\ bpkg\
 @if errorlevel 1 goto error
 

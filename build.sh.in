@@ -17,6 +17,14 @@ build2_ver="@BUILD2_VERSION@"
 bpkg_ver="@BPKG_VERSION@"
 bdep_ver="@BDEP_VERSION@"
 
+# Standard modules comma-separated list and versions.
+#
+# NOTE: we currently print the list as a single line and will need to somehow
+# change that when it becomes too long.
+#
+standard_modules="kconfig"
+kconfig_ver="@KCONFIG_VERSION@"
+
 # The bpkg configuration directory.
 #
 cver="@CONFIG_VER@"
@@ -44,6 +52,7 @@ owd="$(pwd)"
 local=
 bpkg=true
 bdep=true
+modules="$standard_modules"
 private=
 idir=
 jobs=
@@ -65,6 +74,8 @@ while test $# -ne 0; do
       diag "  --local              Don't build from packages, only from local source."
       diag "  --no-bpkg            Don't install bpkg nor bdep (requires --local)."
       diag "  --no-bdep            Don't install bdep."
+      diag "  --no-modules         Don't install standard build system modules."
+      diag "  --modules <list>     Install only specified standard build system modules."
       diag "  --install-dir <dir>  Alternative installation directory."
       diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
       diag "  --private            Install shared libraries into private subdirectory."
@@ -105,6 +116,14 @@ while test $# -ne 0; do
       diag
       diag "$0 g++ -g"
       diag
+      diag "The script by default installs the following standard build system"
+      diag "modules:"
+      diag
+      diag "$standard_modules"
+      diag
+      diag "Use --no-modules to suppress installing build system modules or"
+      diag "--modules <list> to specify a comma-separated subset to install."
+      diag
       diag "See the BOOTSTRAP-UNIX file for details."
       diag
       exit 0
@@ -119,6 +138,15 @@ while test $# -ne 0; do
       ;;
     --no-bdep)
       bdep=
+      shift
+      ;;
+    --no-modules)
+      modules=
+      shift
+      ;;
+    --modules)
+      shift
+      modules="$1"
       shift
       ;;
     --private)
@@ -255,6 +283,23 @@ if test -z "$bpkg"; then
 
   bdep=
 fi
+
+module_version () # <name>
+{
+  eval "echo \$$1_ver"
+}
+
+# Convert the comma-separated modules list into a space-separated list.
+#
+module_list="$(echo "$modules" | sed 's/,/ /g')"
+
+for m in $module_list; do
+  if test -z "$(module_version "$m")"; then
+    diag "error: unknown standard build system module '$m'"
+    diag "  info: available standard modules: $standard_modules"
+    exit 1
+  fi
+done
 
 # If the installation directory is unspecified, then assume it is /usr/local.
 # Otherwise, if it is a relative path, then convert it to an absolute path,
@@ -399,6 +444,8 @@ config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
 $private
 
+  # Install toolchain.
+  #
   projects="build2/"
 
   if test "$bpkg" = true; then
@@ -422,6 +469,21 @@ $private
   if test "$bdep" = true; then
     run command -v bdep
     run bdep --version
+  fi
+
+  # Install modules.
+  #
+  projects=
+  tests=
+
+  for m in $module_list; do
+    projects="$projects libbuild2-$m/"
+    tests="$tests tests/libbuild2-$m-tests/"
+  done
+
+  if test -n "$projects"; then
+    run b install: $projects
+    run b noop: $tests
   fi
 
   diag
@@ -490,9 +552,31 @@ if test "$bdep" = true; then
   run bdep --version
 fi
 
+# Build, install, and verify the build system modules.
+#
+packages=
+package_versions=
+tests=
+
+for m in $module_list; do
+  packages="$packages libbuild2-$m"
+  package_versions="$package_versions libbuild2-$m/$(module_version "$m")"
+  tests="$tests tests/libbuild2-$m-tests/"
+done
+
+if test -n "$packages"; then
+  run bpkg build --for install $package_versions
+  run bpkg install $packages
+fi
+
+run cd "$owd"
+
+if test -n "$tests"; then
+  run b noop: $tests
+fi
+
 # Clean up stage.
 #
-run cd "$owd"
 run b $verbose $jobs uninstall: build2/ bpkg/
 
 diag

@@ -3,8 +3,6 @@
 
 project = build2-toolchain
 amalgamation = # Disable amalgamation.
-#subprojects = libpkgconf libbutl build2 \
-#libsqlite3 libodb libodb-sqlite libbpkg bpkg bdep
 
 using version
 using config

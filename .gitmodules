@@ -24,11 +24,11 @@
 	path = libodb-sqlite
 	url = https://scm.codesynthesis.com/odb/libodb-sqlite.git
 	update = none
-[submodule "sqlite"]
-	path = sqlite
+[submodule "submodules/sqlite"]
+	path = submodules/sqlite
 	url = https://git.build2.org/packaging/sqlite/sqlite.git
 	update = none
-[submodule "pkgconf"]
-	path = pkgconf
+[submodule "submodules/pkgconf"]
+	path = submodules/pkgconf
 	url = https://git.build2.org/packaging/pkgconf/pkgconf.git
 	update = none

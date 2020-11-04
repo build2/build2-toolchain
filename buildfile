@@ -1,13 +1,23 @@
 # file      : buildfile
 # license   : MIT; see accompanying LICENSE file
 
-assert ($build.meta_operation == 'dist') 'only dist meta-operation allowed'
+assert ($build.meta_operation == 'dist'      || \
+        $build.meta_operation == 'configure' || \
+        $build.meta_operation == 'disfigure') 'only dist and configure supported'
 
 # Package repository URL (or path).
 #
 build2_repo="https://stage.build2.org/1"
 # build2_repo="https://pkg.cppget.org/1/queue/alpha"
 # build2_repo="https://pkg.cppget.org/1/alpha"
+
+# @@ Note that the project directories order is important (prerequisites go
+#    first).
+#
+# See also subprojects in bootstrap.build.
+#
+d = libpkgconf/ libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ \
+libbpkg/ bpkg/ bdep/ doc/ libbuild2-*/ tests/*/
 
 i =                     \
 INSTALL                 \
@@ -19,15 +29,11 @@ BOOTSTRAP-WINDOWS-MSVC  \
 BOOTSTRAP-WINDOWS-CLANG \
 BOOTSTRAP-WINDOWS-MINGW
 
-# Note: see also subprojects in bootstrap.build.
-#
-./: {*/ -build/ -tests/ -submodules/} \
-    doc{$i README}                    \
-    legal{LICENSE AUTHORS}            \
-    cli{$i}                           \
+./: $d                          \
+    doc{$i README tests/README} \
+    legal{LICENSE AUTHORS}      \
+    cli{$i}                     \
     manifest
-
-./: tests/*/ tests/doc{README}
 
 # Obtain the build2, bpkg, bdep, and toolchain versions.
 #

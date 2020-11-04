@@ -1,15 +1,14 @@
 # file      : buildfile
 # license   : MIT; see accompanying LICENSE file
 
+assert ($build.meta_operation == 'dist') 'only dist meta-operation allowed'
+
 # Package repository URL (or path).
 #
 build2_repo="https://stage.build2.org/1"
 # build2_repo="https://pkg.cppget.org/1/queue/alpha"
 # build2_repo="https://pkg.cppget.org/1/alpha"
 
-# Note that the project directories order is important (prerequisites go
-# first).
-#
 d = libpkgconf/ libbutl/ build2/ \
 libsqlite3/ libodb/ libodb-sqlite/ libbpkg/ bpkg/ bdep/ doc/
 

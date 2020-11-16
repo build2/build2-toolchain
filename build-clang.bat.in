@@ -501,21 +501,19 @@ bdep --version
 @rem Build, install, and verify the build system modules.
 @rem
 @set "packages="
-@set "package_versions="
 @set "tests="
 
 @for %%m in (%modules%) do @(
-  set "packages=!packages! libbuild2-%%m"
-  set "package_versions=!package_versions! libbuild2-%%m/!%%m_ver!"
+  set "packages=!packages! libbuild2-%%m/!%%m_ver!"
   set "tests=!tests! tests\libbuild2-%%m-tests\"
 )
 
 @if "_%packages%_" == "__" goto mods_ipe
 
-bpkg build --for install %package_versions:~1%
+bpkg build --for install %packages:~1%
 @if errorlevel 1 goto error
 
-bpkg install %packages:~1%
+bpkg install --all-pattern=libbuild2-*
 @if errorlevel 1 goto error
 
 :mods_ipe

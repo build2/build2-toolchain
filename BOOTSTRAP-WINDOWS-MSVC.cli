@@ -226,7 +226,7 @@ Finally, we build and install the standard build system modules:
 
 \
 > bpkg build --for install libbuild2-kconfig
-> bpkg install libbuild2-kconfig
+> bpkg install --all-pattern=libbuild2-*
 \
 
 \N|To get a list of the standard pre-installed build system modules in a

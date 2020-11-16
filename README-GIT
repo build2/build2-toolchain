@@ -33,7 +33,7 @@ A few additional notes:
    Instead, their updates (normally to something tagged) must be requested
    explicitly:
 
-   git submodule update --remote --checkout sqlite
+   git submodule update --remote --checkout submodules/sqlite
 
    Note that you need a fairly recent git (e.g., 2.9) for this enforcement
    to work.

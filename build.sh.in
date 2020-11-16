@@ -555,18 +555,16 @@ fi
 # Build, install, and verify the build system modules.
 #
 packages=
-package_versions=
 tests=
 
 for m in $module_list; do
-  packages="$packages libbuild2-$m"
-  package_versions="$package_versions libbuild2-$m/$(module_version "$m")"
+  packages="$packages libbuild2-$m/$(module_version "$m")"
   tests="$tests tests/libbuild2-$m-tests/"
 done
 
 if test -n "$packages"; then
-  run bpkg build --for install $package_versions
-  run bpkg install $packages
+  run bpkg build --for install $packages
+  run bpkg install --all-pattern=libbuild2-*
 fi
 
 run cd "$owd"

@@ -1,6 +1,11 @@
 # file      : buildfile
 # license   : MIT; see accompanying LICENSE file
 
+# NOTE: This buildfile is only meant to be used to prepare the distribution.
+#       If you need to build the toolchain manually, follow the local
+#       installation instructions in the BOOTSTRAP-* file corresponding to
+#       your platform/compiler.
+#
 assert ($build.meta_operation == 'dist'      || \
         $build.meta_operation == 'configure' || \
         $build.meta_operation == 'disfigure') 'only dist and configure supported'

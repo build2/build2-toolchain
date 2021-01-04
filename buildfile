@@ -56,6 +56,7 @@ pt = '^version: (.+)$'
 # - build scripts: build.sh.in and build-*.bat.in
 # - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (mention as new module)
 # - install scripts: prepare, build2-install.sh, and build2-install-*.bat
+# - build2.org/www/ (both public and stage)
 #
 ver         = $process.run_regex($bp 'info:' $src_root/,                   "$pt", '\1')
 build2_ver  = $process.run_regex($bp 'info:' $src_root/build2/,            "$pt", '\1')

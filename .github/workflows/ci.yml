@@ -55,6 +55,7 @@ jobs:
       with:
         repository: 'build2/build2-toolchain'
         submodules: recursive
+        fetch-depth: 0
 
     # Build
     - name: Windows Build by Clang

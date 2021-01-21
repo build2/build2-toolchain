@@ -61,17 +61,17 @@ jobs:
     - name: Windows Build by Clang
       if: startsWith(matrix.os,'windows')
       run: |
-        ./build-clang.bat C:/dist-windows-clang
+        ./build-clang.bat.in C:/dist-windows-clang
 
     - name: Ubuntu Build by Clang
       if: startsWith(matrix.os,'ubuntu')
       run: |
-        ./build.sh --sudo sudo clang++ ~/dist-ubuntu-clang
+        ./build.sh.in --sudo sudo clang++ ~/dist-ubuntu-clang
 
     - name: MacOS Build by Clang
       if: startsWith(matrix.os,'macOS')
       run: |
-        ./build.sh --sudo sudo clang++ ~/dist-macos-clang
+        ./build.sh.in --sudo sudo clang++ ~/dist-macos-clang
 
     # Upload
     - name: Upload dist-windows-clang

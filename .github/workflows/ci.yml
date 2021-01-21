@@ -66,12 +66,12 @@ jobs:
     - name: Ubuntu Build by Clang
       if: startsWith(matrix.os,'ubuntu')
       run: |
-        sudo ./build.sh.in --sudo sudo clang++ ~/dist-ubuntu-clang
+        sudo sh ./build.sh.in --sudo sudo clang++ ~/dist-ubuntu-clang
 
     - name: MacOS Build by Clang
       if: startsWith(matrix.os,'macOS')
       run: |
-        sudo ./build.sh.in --sudo sudo clang++ ~/dist-macos-clang
+        sudo sh ./build.sh.in --sudo sudo clang++ ~/dist-macos-clang
 
     # Upload
     - name: Upload dist-windows-clang

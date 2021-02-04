@@ -17,6 +17,7 @@ echo   --no-bdep              Don't install bdep.
 echo   --no-modules           Don't install standard build system modules.
 echo   --modules "<list>"     Install only specified standard build system modules.
 echo   --install-dir ^<dir^>    Alternative installation directory.
+echo   --jobs^|-j ^<num^>        Number of jobs to perform in parallel.
 echo   --repo ^<loc^>           Alternative package repository location.
 echo   --trust ^<fp^>           Repository certificate fingerprint to trust.
 echo   --timeout ^<sec^>        Network operations timeout in seconds.
@@ -25,6 +26,9 @@ echo.
 echo By default the batch file will use cl.exe as the C++ compiler and install
 echo into C:\build2. It also expects to find the base utilities in the bin\
 echo subdirectory of the installation directory ^(C:\build2\bin\ by default^).
+echo.
+echo If --jobs^|-j is unspecified, then the number of available hardware
+echo threads is used.
 echo.
 echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
@@ -77,6 +81,7 @@ set "bpkg=true"
 set "bdep=true"
 set "modules=%standard_modules%"
 set "idir=C:\build2"
+set "jobs="
 set "trust="
 set "timeout="
 set "verbose="
@@ -123,6 +128,21 @@ if "_%~1_" == "_--install-dir_" (
     goto error
   )
   set "idir=%~2"
+  shift
+  shift
+  goto options
+)
+
+set "jo="
+if "_%~1_" == "_-j_"     set "jo=true"
+if "_%~1_" == "_--jobs_" set "jo=true"
+
+if "_%jo%_" == "_true_" (
+  if "_%~2_" == "__" (
+    echo error: number of jobs expected after --jobs^|-j
+    goto error
+  )
+  set "jobs=%~2"
   shift
   shift
   goto options
@@ -220,6 +240,16 @@ rem Convert a relative path to an absolute.
 rem
 for /F "delims=|" %%D in ("%idir%") do set "idir=%%~dpnxD"
 
+rem Translate the number of jobs into the bootstrap script and build2/bpkg
+rem options.
+rem
+if not "_%jobs%_" == "__" (
+  set "ops=/MP%jobs%"
+  set "jobs=-j %jobs%"
+) else (
+  set "ops="
+)
+
 rem Certificate to trust.
 rem
 if not "_%trust%_" == "__" (
@@ -286,13 +316,13 @@ cd build2
 
 @rem Execute in a separate cmd.exe to preserve the echo mode.
 @rem
-cmd /C bootstrap-msvc.bat %cxx%
+cmd /C bootstrap-msvc.bat %cxx% %ops%
 @if errorlevel 1 goto error
 
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
+build2\b-boot %verbose% %jobs% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -326,7 +356,7 @@ build2\build2\b-boot %verbose% configure^
   set "projects=%projects% bdep\"
 )
 
-build2\build2\b-boot %verbose% install: %projects%
+build2\build2\b-boot %verbose% %jobs% install: %projects%
 @if errorlevel 1 goto error
 
 where b
@@ -367,10 +397,10 @@ bdep --version
 
 @if "_%projects%_" == "__" goto mods_ile
 
-b install: %projects:~1%
+b %verbose% %jobs% install: %projects:~1%
 @if errorlevel 1 goto error
 
-b noop: %tests:~1%
+b %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_ile
@@ -396,7 +426,7 @@ build2\build2\b-boot %verbose% configure^
  config.install.data_root=root\stage
 @if errorlevel 1 goto error
 
-build2\build2\b-boot %verbose% install: build2\ bpkg\
+build2\build2\b-boot %verbose% %jobs% install: build2\ bpkg\
 @if errorlevel 1 goto error
 
 where b-stage
@@ -432,22 +462,22 @@ bpkg-stage %verbose% create^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% add %BUILD2_REPO%
-@if errorlevel 1 goto error
-
-bpkg-stage %verbose% %timeout% %trust% fetch
-@if errorlevel 1 goto error
-
 @set "packages=build2/%build2_ver% bpkg/%bpkg_ver%"
 
 @if "_%bdep%_" == "_true_" (
   set "packages=%packages% bdep/%bdep_ver%"
 )
 
-bpkg-stage %verbose% %timeout% build --for install --yes --plan= %packages%
+bpkg-stage %verbose% add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% install --all
+bpkg-stage %verbose% %timeout% %trust% fetch
+@if errorlevel 1 goto error
+
+bpkg-stage %verbose% %jobs% %timeout% build --for install --yes --plan= %packages%
+@if errorlevel 1 goto error
+
+bpkg-stage %verbose% %jobs% install --all
 @if errorlevel 1 goto error
 
 where b
@@ -484,10 +514,10 @@ bdep --version
 
 @if "_%packages%_" == "__" goto mods_ipe
 
-bpkg build --for install %packages:~1%
+bpkg %verbose% %jobs% %timeout% build --for install %packages:~1%
 @if errorlevel 1 goto error
 
-bpkg install --all-pattern=libbuild2-*
+bpkg %verbose% %jobs% install --all-pattern=libbuild2-*
 @if errorlevel 1 goto error
 
 :mods_ipe
@@ -496,14 +526,14 @@ cd %owd%
 
 @if "_%tests%_" == "__" goto mods_lpe
 
-b noop: %tests:~1%
+b %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_lpe
 
 @rem Clean up stage.
 @rem
-b %verbose% uninstall: build2\ bpkg\
+b %verbose% %jobs% uninstall: build2\ bpkg\
 @if errorlevel 1 goto error
 
 @echo off

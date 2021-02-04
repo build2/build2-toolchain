@@ -482,8 +482,8 @@ $private
   done
 
   if test -n "$projects"; then
-    run b install: $projects
-    run b noop: $tests
+    run b $verbose $jobs install: $projects
+    run b $verbose noop: $tests
   fi
 
   diag
@@ -563,14 +563,14 @@ for m in $module_list; do
 done
 
 if test -n "$packages"; then
-  run bpkg build --for install $packages
-  run bpkg install --all-pattern=libbuild2-*
+  run bpkg $verbose $jobs $bpkg_build_ops build --for install $packages
+  run bpkg $verbose $jobs install --all-pattern=libbuild2-*
 fi
 
 run cd "$owd"
 
 if test -n "$tests"; then
-  run b noop: $tests
+  run b $verbose noop: $tests
 fi
 
 # Clean up stage.

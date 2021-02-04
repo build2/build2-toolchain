@@ -16,6 +16,7 @@ echo   --no-bdep              Don't install bdep.
 echo   --no-modules           Don't install standard build system modules.
 echo   --modules "<list>"     Install only specified standard build system modules.
 echo   --install-dir ^<dir^>    Alternative installation directory.
+echo   --jobs^|-j ^<num^>        Number of jobs to perform in parallel.
 echo   --repo ^<loc^>           Alternative package repository location.
 echo   --trust ^<fp^>           Repository certificate fingerprint to trust.
 echo   --timeout ^<sec^>        Network operations timeout in seconds.
@@ -26,6 +27,10 @@ echo By default the batch file will install into C:\build2. It also expects
 echo to find the base utilities in the bin\ subdirectory of the installation
 echo directory ^(C:\build2\bin\ by default^).
 echo.
+echo If --jobs^|-j is unspecified, then the bootstrap step is performed
+echo serially with the rest of the process using the number of available
+echo hardware threads.
+echo.
 echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
 echo and 'no' (trust nothing).
 echo.
@@ -34,6 +39,9 @@ echo --make value should specify the make executable optionally followed by
 echo additional make options, for example:
 echo.
 echo %0 --make mingw32-make --make -j8 g++
+echo.
+echo If --jobs^|-j is specified, then its value is passed to make before
+echo any additional options.
 echo.
 echo The script by default installs the following standard build system
 echo modules:
@@ -83,9 +91,11 @@ set "bpkg=true"
 set "bdep=true"
 set "modules=%standard_modules%"
 set "idir=C:\build2"
+set "jobs="
 set "trust="
 set "timeout="
 set "make="
+set "make_options="
 set "verbose="
 
 :options
@@ -135,6 +145,21 @@ if "_%~1_" == "_--install-dir_" (
   goto options
 )
 
+set "jo="
+if "_%~1_" == "_-j_"     set "jo=true"
+if "_%~1_" == "_--jobs_" set "jo=true"
+
+if "_%jo%_" == "_true_" (
+  if "_%~2_" == "__" (
+    echo error: number of jobs expected after --jobs^|-j
+    goto error
+  )
+  set "jobs=-j %~2"
+  shift
+  shift
+  goto options
+)
+
 if "_%~1_" == "_--trust_" (
   if "_%~2_" == "__" (
     echo error: certificate fingerprint expected after --trust
@@ -173,7 +198,12 @@ if "_%~1_" == "_--make_" (
     echo error: argument expected after --make
     goto error
   )
-  set "make=%make% %~2"
+
+  if "_%make%_" == "__" (
+    set "make=%~2"
+  ) else (
+    set "make_options=%make_options% %~2"
+  )
   shift
   shift
   goto options
@@ -211,6 +241,16 @@ if not "_%2_" == "__" (
 )
 if not "_%3_" == "__" (
   set "trust=%3"
+)
+
+rem Merge jobs and make_options into make.
+rem
+if not "_%make%_" == "__" (
+  if not "_%jobs%_" == "__" set "make=%make% %jobs%"
+
+  rem Already has leading space.
+  rem
+  if not "_%make_options%_" == "__" set "make=!make!%make_options%"
 )
 
 rem If --no-bpkg is specified, then we require --local to also be specified
@@ -326,7 +366,7 @@ cmd /C bootstrap-mingw.bat %cxx% -static
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot %verbose% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
+build2\b-boot %verbose% %jobs% config.cxx=%cxx% config.bin.lib=static build2\exe{b}
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -360,7 +400,7 @@ build2\build2\b-boot %verbose% configure^
   set "projects=%projects% bdep\"
 )
 
-build2\build2\b-boot %verbose% install: %projects%
+build2\build2\b-boot %verbose% %jobs% install: %projects%
 @if errorlevel 1 goto error
 
 @rem The where command is not available on XP without the resource kit.
@@ -403,10 +443,10 @@ bdep --version
 
 @if "_%projects%_" == "__" goto mods_ile
 
-b install: %projects:~1%
+b %verbose% %jobs% install: %projects:~1%
 @if errorlevel 1 goto error
 
-b noop: %tests:~1%
+b %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_ile
@@ -432,7 +472,7 @@ build2\build2\b-boot %verbose% configure^
  config.install.data_root=root\stage
 @if errorlevel 1 goto error
 
-build2\build2\b-boot %verbose% install: build2\ bpkg\
+build2\build2\b-boot %verbose% %jobs% install: build2\ bpkg\
 @if errorlevel 1 goto error
 
 where b-stage
@@ -468,22 +508,22 @@ bpkg-stage %verbose% create^
  config.install.root=%idir%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% add %BUILD2_REPO%
-@if errorlevel 1 goto error
-
-bpkg-stage %verbose% %timeout% %trust% fetch
-@if errorlevel 1 goto error
-
 @set "packages=build2/%build2_ver% bpkg/%bpkg_ver%"
 
 @if "_%bdep%_" == "_true_" (
   set "packages=%packages% bdep/%bdep_ver%"
 )
 
-bpkg-stage %verbose% %timeout% build --for install --yes --plan= %packages%
+bpkg-stage %verbose% add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% install --all
+bpkg-stage %verbose% %timeout% %trust% fetch
+@if errorlevel 1 goto error
+
+bpkg-stage %verbose% %jobs% %timeout% build --for install --yes --plan= %packages%
+@if errorlevel 1 goto error
+
+bpkg-stage %verbose% %jobs% install --all
 @if errorlevel 1 goto error
 
 where b
@@ -520,10 +560,10 @@ bdep --version
 
 @if "_%packages%_" == "__" goto mods_ipe
 
-bpkg build --for install %packages:~1%
+bpkg %verbose% %jobs% %timeout% build --for install %packages:~1%
 @if errorlevel 1 goto error
 
-bpkg install --all-pattern=libbuild2-*
+bpkg %verbose% %jobs% install --all-pattern=libbuild2-*
 @if errorlevel 1 goto error
 
 :mods_ipe
@@ -532,14 +572,14 @@ cd %owd%
 
 @if "_%tests%_" == "__" goto mods_lpe
 
-b noop: %tests:~1%
+b %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_lpe
 
 @rem Clean up stage.
 @rem
-b %verbose% uninstall: build2\ bpkg\
+b %verbose% %jobs% uninstall: build2\ bpkg\
 @if errorlevel 1 goto error
 
 @echo off

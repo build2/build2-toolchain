@@ -50,11 +50,14 @@ run ()
 owd="$(pwd)"
 
 local=
-bpkg=true
-bdep=true
+bpkg_install=true
+bdep_install=true
 modules="$standard_modules"
 private=
 idir=
+exe_prefix=
+exe_suffix=
+stage_suffix="-stage"
 jobs=
 sudo=
 trust=
@@ -71,20 +74,23 @@ while test $# -ne 0; do
       diag
       diag "$usage"
       diag "Options:"
-      diag "  --local              Don't build from packages, only from local source."
-      diag "  --no-bpkg            Don't install bpkg nor bdep (requires --local)."
-      diag "  --no-bdep            Don't install bdep."
-      diag "  --no-modules         Don't install standard build system modules."
-      diag "  --modules <list>     Install only specified standard build system modules."
-      diag "  --install-dir <dir>  Alternative installation directory."
-      diag "  --sudo <prog>        Optional sudo program to use (pass false to disable)."
-      diag "  --private            Install shared libraries into private subdirectory."
-      diag "  --jobs|-j <num>      Number of jobs to perform in parallel."
-      diag "  --repo <loc>         Alternative package repository location."
-      diag "  --trust <fp>         Repository certificate fingerprint to trust."
-      diag "  --timeout <sec>      Network operations timeout in seconds."
-      diag "  --make <arg>         Bootstrap using GNU make instead of script."
-      diag "  --verbose <level>    Diagnostics verbosity level between 0 and 6."
+      diag "  --local               Don't build from packages, only from local source."
+      diag "  --no-bpkg             Don't install bpkg nor bdep (requires --local)."
+      diag "  --no-bdep             Don't install bdep."
+      diag "  --no-modules          Don't install standard build system modules."
+      diag "  --modules <list>      Install only specified standard build system modules."
+      diag "  --install-dir <dir>   Alternative installation directory."
+      diag "  --exe-prefix <pfx>    Toolchain executables name prefix."
+      diag "  --exe-suffix <sfx>    Toolchain executables name suffix."
+      diag "  --stage-suffix <sfx>  Staged executables name suffix ('-stage' by default)."
+      diag "  --sudo <prog>         Optional sudo program to use (pass false to disable)."
+      diag "  --private             Install shared libraries into private subdirectory."
+      diag "  --jobs|-j <num>       Number of jobs to perform in parallel."
+      diag "  --repo <loc>          Alternative package repository location."
+      diag "  --trust <fp>          Repository certificate fingerprint to trust."
+      diag "  --timeout <sec>       Network operations timeout in seconds."
+      diag "  --make <arg>          Bootstrap using GNU make instead of script."
+      diag "  --verbose <level>     Diagnostics verbosity level between 0 and 6."
       diag
       diag "By default the script will install into /usr/local with private"
       diag "library subdirectories and using sudo(1). To enable private"
@@ -133,11 +139,11 @@ while test $# -ne 0; do
       shift
       ;;
     --no-bpkg)
-      bpkg=
+      bpkg_install=
       shift
       ;;
     --no-bdep)
-      bdep=
+      bdep_install=
       shift
       ;;
     --no-modules)
@@ -161,6 +167,36 @@ while test $# -ne 0; do
         exit 1
       fi
       idir="$1"
+      shift
+      ;;
+    --exe-prefix)
+      shift
+      if test $# -eq 0; then
+        diag "error: executables name prefix expected after --exe-prefix"
+        diag "$usage"
+        exit 1
+      fi
+      exe_prefix="$1"
+      shift
+      ;;
+    --exe-suffix)
+      shift
+      if test $# -eq 0; then
+        diag "error: executables name suffix expected after --exe-suffix"
+        diag "$usage"
+        exit 1
+      fi
+      exe_suffix="$1"
+      shift
+      ;;
+    --stage-suffix)
+      shift
+      if test $# -eq 0; then
+        diag "error: staged executables name suffix expected after --stage-suffix"
+        diag "$usage"
+        exit 1
+      fi
+      stage_suffix="$1"
       shift
       ;;
     -j|--jobs)
@@ -274,14 +310,14 @@ fi
 # imply --no-bdep in this case, since bdep is pretty much useless without
 # bpkg.
 #
-if test -z "$bpkg"; then
+if test -z "$bpkg_install"; then
   if test -z "$local"; then
     diag "error: --no-bpkg can only be used for local installation"
     diag "  info: additionally specify --local"
     exit 1
   fi
 
-  bdep=
+  bdep_install=
 fi
 
 module_version () # <name>
@@ -338,6 +374,38 @@ if test "$sudo" = false; then
   sudo=
 fi
 
+# Derive the to be installed executables names based on --exe-{prefix,suffix}.
+# Unless the installation is local, also derive the staged executables names
+# based on --stage-suffix and verify that they don't clash with existing
+# filesystem entries as well as the executables being installed.
+#
+b="${exe_prefix}b$exe_suffix"
+bpkg="${exe_prefix}bpkg$exe_suffix"
+bdep="${exe_prefix}bdep$exe_suffix"
+
+if test -z "$local"; then
+  b_stage="b$stage_suffix"
+  bpkg_stage="bpkg$stage_suffix"
+
+  if test -e "$idir/bin/$b_stage"; then
+    diag "error: staged executable name '$b_stage' clashes with existing $idir/bin/$b_stage"
+    diag "  info: specify alternative staged executables name suffix with --stage-suffix"
+    exit 1
+  fi
+
+  if test -e "$idir/bin/$bpkg_stage"; then
+    diag "error: staged executable name '$bpkg_stage' clashes with existing $idir/bin/$bpkg_stage"
+    diag "  info: specify alternative staged executables name suffix with --stage-suffix"
+    exit 1
+  fi
+
+  if test "$stage_suffix" = "$exe_suffix" -a -z "$exe_prefix"; then
+    diag "error: suffix '$exe_suffix' is used for both final and staged executables"
+    diag "  info: specify alternative staged executables name suffix with --stage-suffix"
+    exit 1
+  fi
+fi
+
 if test -f build/config.build; then
   diag "error: current directory already configured, start with clean source"
   exit 1
@@ -379,9 +447,19 @@ case "$sys" in
 esac
 
 # We don't have arrays in POSIX shell but we should be ok as long as none of
-# the option values contain spaces. Note also that the expansion must be
-# unquoted.
+# the configuration and option values contain spaces. Note also that the
+# expansion must be unquoted.
 #
+conf_exe_affixes=
+
+if test -n "$exe_prefix"; then
+  conf_exe_affixes="config.bin.exe.prefix=$exe_prefix"
+fi
+
+if test -n "$exe_suffix"; then
+  conf_exe_affixes="$conf_exe_affixes config.bin.exe.suffix=$exe_suffix"
+fi
+
 bpkg_fetch_ops=
 bpkg_build_ops=
 
@@ -442,33 +520,34 @@ config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
+$conf_exe_affixes \
 $private
 
   # Install toolchain.
   #
   projects="build2/"
 
-  if test "$bpkg" = true; then
+  if test "$bpkg_install" = true; then
     projects="$projects bpkg/"
   fi
 
-  if test "$bdep" = true; then
+  if test "$bdep_install" = true; then
     projects="$projects bdep/"
   fi
 
   run build2/build2/b-boot $verbose $jobs install: $projects
 
-  run command -v b
-  run b --version
+  run command -v "$b"
+  run "$b" --version
 
-  if test "$bpkg" = true; then
-    run command -v bpkg
-    run bpkg --version
+  if test "$bpkg_install" = true; then
+    run command -v "$bpkg"
+    run "$bpkg" --version
   fi
 
-  if test "$bdep" = true; then
-    run command -v bdep
-    run bdep --version
+  if test "$bdep_install" = true; then
+    run command -v "$bdep"
+    run "$bdep" --version
   fi
 
   # Install modules.
@@ -482,8 +561,8 @@ $private
   done
 
   if test -n "$projects"; then
-    run b $verbose $jobs install: $projects
-    run b $verbose noop: $tests
+    run "$b" $verbose $jobs install: $projects
+    run "$b" $verbose noop: $tests
   fi
 
   diag
@@ -499,7 +578,7 @@ fi
 run build2/build2/b-boot $verbose configure \
 config.cxx="$cxx" \
 config.bin.lib=shared \
-config.bin.suffix=-stage \
+config.bin.suffix="$stage_suffix" \
 config.bin.rpath="$conf_rpath_stage" \
 config.install.root="$idir" \
 config.install.data_root=root/stage \
@@ -507,11 +586,11 @@ config.install.sudo="$conf_sudo"
 
 run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
 
-run command -v b-stage
-run b-stage --version
+run command -v "$b_stage"
+run "$b_stage" --version
 
-run command -v bpkg-stage
-run bpkg-stage --version
+run command -v "$bpkg_stage"
+run "$bpkg_stage" --version
 
 # Build the entire toolchain from packages.
 #
@@ -520,7 +599,7 @@ run mkdir "$cdir"
 run cd "$cdir"
 cdir="$(pwd)" # Save full path for later.
 
-run bpkg-stage $verbose create \
+run "$bpkg_stage" $verbose create \
 cc \
 config.cxx="$cxx" \
 config.cc.coptions="$*" \
@@ -528,28 +607,29 @@ config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
+$conf_exe_affixes \
 $private
 
 packages="build2/$build2_ver bpkg/$bpkg_ver"
 
-if test "$bdep" = true; then
+if test "$bdep_install" = true; then
   packages="$packages bdep/$bdep_ver"
 fi
 
-run bpkg-stage $verbose add "$BUILD2_REPO"
-run bpkg-stage $verbose $bpkg_fetch_ops fetch
-run bpkg-stage $verbose $jobs $bpkg_build_ops build --for install --yes --plan= $packages
-run bpkg-stage $verbose $jobs install --all
+run "$bpkg_stage" $verbose add "$BUILD2_REPO"
+run "$bpkg_stage" $verbose $bpkg_fetch_ops fetch
+run "$bpkg_stage" $verbose $jobs $bpkg_build_ops build --for install --yes --plan= $packages
+run "$bpkg_stage" $verbose $jobs install --all
 
-run command -v b
-run b --version
+run command -v "$b"
+run "$b" --version
 
-run command -v bpkg
-run bpkg --version
+run command -v "$bpkg"
+run "$bpkg" --version
 
-if test "$bdep" = true; then
-  run command -v bdep
-  run bdep --version
+if test "$bdep_install" = true; then
+  run command -v "$bdep"
+  run "$bdep" --version
 fi
 
 # Build, install, and verify the build system modules.
@@ -563,19 +643,19 @@ for m in $module_list; do
 done
 
 if test -n "$packages"; then
-  run bpkg $verbose $jobs $bpkg_build_ops build --for install $packages
-  run bpkg $verbose $jobs install --all-pattern=libbuild2-*
+  run "$bpkg" $verbose $jobs $bpkg_build_ops build --for install $packages
+  run "$bpkg" $verbose $jobs install --all-pattern=libbuild2-*
 fi
 
 run cd "$owd"
 
 if test -n "$tests"; then
-  run b $verbose noop: $tests
+  run "$b" $verbose noop: $tests
 fi
 
 # Clean up stage.
 #
-run b $verbose $jobs uninstall: build2/ bpkg/
+run "$b" $verbose $jobs uninstall: build2/ bpkg/
 
 diag
 diag "Toolchain installation: $idir/bin"

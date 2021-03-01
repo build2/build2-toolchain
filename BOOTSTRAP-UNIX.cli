@@ -222,8 +222,8 @@ a local installation and skip the rest of the steps.
 
 To perform a local installation you will need to change the \c{configure} and
 \c{install} command lines above along these lines (see also notes on the
-following step about only building shared libraries and private installation
-subdirectory):
+following step about only building shared libraries, private installation
+subdirectory, and toolchain executables prefix/suffix):
 
 \
 $ build2/build2/b-boot configure         \
@@ -296,6 +296,9 @@ interfere with anything that is already installed into such a shared location
 and that any further such installations won't interfere with \c{build2}. If,
 however, you are installing into a private location, such as \c{/opt/build2/},
 then you can remove \c{config.install.private=build2}.|
+
+\N|To add a custom suffix/prefix to the toolchain executables names, add
+\c{config.bin.exe.prefix=...} and/or \c{config.bin.exe.suffix=...}.|
 
 Next, we add the package repository, build, and install:
 

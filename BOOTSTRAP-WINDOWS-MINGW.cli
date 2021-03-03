@@ -156,7 +156,8 @@ pass the \c{--local} option.|
 
 To perform a local installation you will need to change the \c{configure} and
 \c{install} command lines above along these lines (see also a note on the
-following step about only building shared libraries):
+following step about only building shared libraries and toolchain executables
+prefix/suffix):
 
 \
 > build2\build2\b-boot configure ^
@@ -213,6 +214,9 @@ previous step and you may want/need to make similar adjustments.
 
 \N|The above configuration will only build shared libraries. If you would like
 to build both shared and static, remove \c{config.bin.lib=shared}.|
+
+\N|To add a custom prefix/suffix to the toolchain executables names, add
+\c{config.bin.exe.prefix=...} and/or \c{config.bin.exe.suffix=...}.|
 
 Next, we add the package repository, build, and install:
 

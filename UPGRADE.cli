@@ -133,6 +133,12 @@ $ bpkg install                        \
   --all
 \
 
+\N|If during installation you have added a custom prefix/suffix to the
+toolchain executables names with \c{config.bin.exe.prefix} and/or
+\c{config.bin.exe.suffix}, add \c{config.bin.exe.prefix=[null]} and/or
+\c{config.bin.exe.suffix=[null]} to suppress them in the executables being
+staged.|
+
 You can also specify the desired packages and/or versions explicitly, again,
 similar to the dirty upgrade.|
 
@@ -169,7 +175,8 @@ $ bpkg-stage install --all
 
 Finally, we clean up by removing the staged toolchain (hint: use the command
 line history to find the corresponding \c{install} command and change it to
-\c{uninstall}):
+\c{uninstall}; see also a note at step 2 about toolchain executables
+prefix/suffix):
 
 \
 $ bpkg uninstall                      \

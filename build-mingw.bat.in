@@ -11,11 +11,14 @@ echo.
 echo Usage: %0 [/?] [^<options^>] ^<c++-compiler^>
 echo Options:
 echo   --local                Don't build from packages, only from local source.
-echo   --no-bpkg              Don't install bpkg nor bdep (requires --local).
+echo   --no-bpkg              Don't install bpkg nor bdep ^(requires --local^).
 echo   --no-bdep              Don't install bdep.
 echo   --no-modules           Don't install standard build system modules.
 echo   --modules "<list>"     Install only specified standard build system modules.
 echo   --install-dir ^<dir^>    Alternative installation directory.
+echo   --exe-prefix ^<pfx^>     Toolchain executables name prefix.
+echo   --exe-suffix ^<sfx^>     Toolchain executables name suffix.
+echo   --stage-suffix ^<sfx^>   Staged executables name suffix ^('-stage' by default^).
 echo   --jobs^|-j ^<num^>        Number of jobs to perform in parallel.
 echo   --repo ^<loc^>           Alternative package repository location.
 echo   --trust ^<fp^>           Repository certificate fingerprint to trust.
@@ -32,7 +35,7 @@ echo serially with the rest of the process using the number of available
 echo hardware threads.
 echo.
 echo The --trust option recognizes two special values: 'yes' ^(trust everything^)
-echo and 'no' (trust nothing).
+echo and 'no' ^(trust nothing^).
 echo.
 echo The --make option can be used to bootstrap using GNU make. The first
 echo --make value should specify the make executable optionally followed by
@@ -73,8 +76,8 @@ set "bdep_ver=@BDEP_VERSION@"
 
 rem Standard modules comma-separated list and versions.
 rem
-rem NOTE: we currently print the list as a single line and will need to somehow
-rem change that when it becomes too long.
+rem NOTE: we currently print the list as a single line and will need to
+rem somehow change that when it becomes too long.
 rem
 set "standard_modules=kconfig"
 set "kconfig_ver=@KCONFIG_VERSION@"
@@ -87,10 +90,13 @@ set "cdir=build2-toolchain-%cver%"
 rem Parse options.
 rem
 set "local="
-set "bpkg=true"
-set "bdep=true"
+set "bpkg_install=true"
+set "bdep_install=true"
 set "modules=%standard_modules%"
 set "idir=C:\build2"
+set "exe_prefix="
+set "exe_suffix="
+set "stage_suffix=-stage"
 set "jobs="
 set "trust="
 set "timeout="
@@ -110,13 +116,13 @@ if "_%~1_" == "_--local_" (
 )
 
 if "_%~1_" == "_--no-bpkg_" (
-  set "bpkg="
+  set "bpkg_install="
   shift
   goto options
 )
 
 if "_%~1_" == "_--no-bdep_" (
-  set "bdep="
+  set "bdep_install="
   shift
   goto options
 )
@@ -140,6 +146,39 @@ if "_%~1_" == "_--install-dir_" (
     goto error
   )
   set "idir=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--exe-prefix_" (
+  if "_%~2_" == "__" (
+    echo error: executables name prefix expected after --exe-prefix
+    goto error
+  )
+  set "exe_prefix=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--exe-suffix_" (
+  if "_%~2_" == "__" (
+    echo error: executables name suffix expected after --exe-suffix
+    goto error
+  )
+  set "exe_suffix=%~2"
+  shift
+  shift
+  goto options
+)
+
+if "_%~1_" == "_--stage-suffix_" (
+  if "_%~2_" == "__" (
+    echo error: staged executables name suffix expected after --stage-suffix
+    goto error
+  )
+  set "stage_suffix=%~2"
   shift
   shift
   goto options
@@ -258,14 +297,14 @@ rem since it won't be possible to build things from packages without bpkg.
 rem Also imply --no-bdep in this case, since bdep is pretty much useless
 rem without bpkg.
 rem
-if "_%bpkg%_" == "__" (
+if "_%bpkg_install%_" == "__" (
   if "_%local%_" == "__" (
     echo error: --no-bpkg can only be used for local installation
     echo   info: additionally specify --local
     goto error
   )
 
-  set "bdep="
+  set "bdep_install="
 )
 
 for %%m in (%modules%) do (
@@ -283,15 +322,9 @@ for /F "delims=|" %%D in ("%idir%") do set "idir=%%~dpnxD"
 rem Certificate to trust.
 rem
 if not "_%trust%_" == "__" (
-  if "_%trust%_" == "_yes_" (
-    set "trust=--trust-yes"
-  ) else (
-    if "_%trust%_" == "_no_" (
-      set "trust=--trust-no"
-    ) else (
-      set "trust=--trust %trust%"
-    )
-  )
+          if "_%trust%_" == "_yes_" (set "trust=--trust-yes"
+  ) else (if "_%trust%_" == "_no_"  (set "trust=--trust-no"
+  ) else                            (set "trust=--trust %trust%"))
 )
 
 rem Network timeout.
@@ -309,6 +342,51 @@ if not "_%verbose%_" == "__" (
 if not exist %idir%\bin\ (
   echo error: %idir%\bin\ does not exist
   goto error
+)
+
+rem Derive the to be installed executables names based on
+rem --exe-{prefix,suffix}. Unless the installation is local, also derive the
+rem staged executables names based on --stage-suffix and verify that they
+rem don't clash with existing filesystem entries as well as the executables
+rem being installed.
+rem
+set "b=%exe_prefix%b%exe_suffix%"
+set "bpkg=%exe_prefix%bpkg%exe_suffix%"
+set "bdep=%exe_prefix%bdep%exe_suffix%"
+
+if "_%local%_" == "__" (
+  set "b_stage=b%stage_suffix%"
+  set "bpkg_stage=bpkg%stage_suffix%"
+
+  if exist %idir%\bin\!b_stage!.exe (
+    echo error: staged executable name '!b_stage!' clashes with existing %idir%\bin\!b_stage!.exe
+    echo   info: specify alternative staged executables name suffix with --stage-suffix
+    goto error
+  )
+
+  if exist %idir%\bin\!bpkg_stage!.exe (
+    echo error: staged executable name '!bpkg_stage!' clashes with existing %idir%\bin\!bpkg_stage!.exe
+    echo   info: specify alternative staged executables name suffix with --stage-suffix
+    goto error
+  )
+
+  if "_%stage_suffix%_" == "_%exe_suffix%_" (
+    if "_%exe_prefix%_" == "__" (
+      echo error: suffix '%exe_suffix%' is used for both final and staged executables
+      echo   info: specify alternative staged executables name suffix with --stage-suffix
+      goto error
+    )
+  )
+)
+
+set "conf_exe_affixes="
+
+if not "_%exe_prefix%_" == "__" (
+  set "conf_exe_affixes=config.bin.exe.prefix=%exe_prefix%"
+)
+
+if not "_%exe_suffix%_" == "__" (
+  set "conf_exe_affixes=%conf_exe_affixes% config.bin.exe.suffix=%exe_suffix%"
 )
 
 if exist build\config.build (
@@ -385,18 +463,19 @@ build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
  config.cc.coptions=-O2^
  config.bin.lib=shared^
- config.install.root=%idir%
+ config.install.root=%idir%^
+ %conf_exe_affixes%
 @if errorlevel 1 goto error
 
 @rem Install toolchain.
 @rem
 @set "projects=build2\"
 
-@if "_%bpkg%_" == "_true_" (
+@if "_%bpkg_install%_" == "_true_" (
   set "projects=%projects% bpkg\"
 )
 
-@if "_%bdep%_" == "_true_" (
+@if "_%bdep_install%_" == "_true_" (
   set "projects=%projects% bdep\"
 )
 
@@ -405,28 +484,28 @@ build2\build2\b-boot %verbose% %jobs% install: %projects%
 
 @rem The where command is not available on XP without the resource kit.
 @rem
-where b
+where %b%
 @rem @if errorlevel 1 goto error
 
-b --version
+%b% --version
 @if errorlevel 1 goto error
 
-@if "_%bpkg%_" == "__" goto bpkg_vle
+@if "_%bpkg_install%_" == "__" goto bpkg_vle
 
-where bpkg
+where %bpkg%
 @rem @if errorlevel 1 goto error
 
-bpkg --version
+%bpkg% --version
 @if errorlevel 1 goto error
 
 :bpkg_vle
 
-@if "_%bdep%_" == "__" goto bdep_vle
+@if "_%bdep_install%_" == "__" goto bdep_vle
 
-where bdep
+where %bdep%
 @rem @if errorlevel 1 goto error
 
-bdep --version
+%bdep% --version
 @if errorlevel 1 goto error
 
 :bdep_vle
@@ -443,10 +522,10 @@ bdep --version
 
 @if "_%projects%_" == "__" goto mods_ile
 
-b %verbose% %jobs% install: %projects:~1%
+%b% %verbose% %jobs% install: %projects:~1%
 @if errorlevel 1 goto error
 
-b %verbose% noop: %tests:~1%
+%b% %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_ile
@@ -467,7 +546,7 @@ goto end
 build2\build2\b-boot %verbose% configure^
  config.cxx=%cxx%^
  config.bin.lib=shared^
- config.bin.suffix=-stage^
+ config.bin.suffix=%stage_suffix%^
  config.install.root=%idir%^
  config.install.data_root=root\stage
 @if errorlevel 1 goto error
@@ -475,16 +554,16 @@ build2\build2\b-boot %verbose% configure^
 build2\build2\b-boot %verbose% %jobs% install: build2\ bpkg\
 @if errorlevel 1 goto error
 
-where b-stage
+where %b_stage%
 @rem @if errorlevel 1 goto error
 
-b-stage --version
+%b_stage% --version
 @if errorlevel 1 goto error
 
-where bpkg-stage
+where %bpkg_stage%
 @rem @if errorlevel 1 goto error
 
-bpkg-stage --version
+%bpkg_stage% --version
 @if errorlevel 1 goto error
 
 @rem Build the entire toolchain from packages.
@@ -500,50 +579,51 @@ cd %cdir%
 @rem
 @set "cdir=%CD%"
 
-bpkg-stage %verbose% create^
+%bpkg_stage% %verbose% create^
  cc^
  config.cxx=%cxx%^
  config.cc.coptions=-O2^
  config.bin.lib=shared^
- config.install.root=%idir%
+ config.install.root=%idir%^
+ %conf_exe_affixes%
 @if errorlevel 1 goto error
 
 @set "packages=build2/%build2_ver% bpkg/%bpkg_ver%"
 
-@if "_%bdep%_" == "_true_" (
+@if "_%bdep_install%_" == "_true_" (
   set "packages=%packages% bdep/%bdep_ver%"
 )
 
-bpkg-stage %verbose% add %BUILD2_REPO%
+%bpkg_stage% %verbose% add %BUILD2_REPO%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% %timeout% %trust% fetch
+%bpkg_stage% %verbose% %timeout% %trust% fetch
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% %jobs% %timeout% build --for install --yes --plan= %packages%
+%bpkg_stage% %verbose% %jobs% %timeout% build --for install --yes --plan= %packages%
 @if errorlevel 1 goto error
 
-bpkg-stage %verbose% %jobs% install --all
+%bpkg_stage% %verbose% %jobs% install --all
 @if errorlevel 1 goto error
 
-where b
+where %b%
 @rem @if errorlevel 1 goto error
 
-b --version
+%b% --version
 @if errorlevel 1 goto error
 
-where bpkg
+where %bpkg%
 @rem @if errorlevel 1 goto error
 
-bpkg --version
+%bpkg% --version
 @if errorlevel 1 goto error
 
-@if "_%bdep%_" == "__" goto bdep_vpe
+@if "_%bdep_install%_" == "__" goto bdep_vpe
 
-where bdep
+where %bdep%
 @rem @if errorlevel 1 goto error
 
-bdep --version
+%bdep% --version
 @if errorlevel 1 goto error
 
 :bdep_vpe
@@ -560,10 +640,10 @@ bdep --version
 
 @if "_%packages%_" == "__" goto mods_ipe
 
-bpkg %verbose% %jobs% %timeout% build --for install %packages:~1%
+%bpkg% %verbose% %jobs% %timeout% build --for install %packages:~1%
 @if errorlevel 1 goto error
 
-bpkg %verbose% %jobs% install --all-pattern=libbuild2-*
+%bpkg% %verbose% %jobs% install --all-pattern=libbuild2-*
 @if errorlevel 1 goto error
 
 :mods_ipe
@@ -572,14 +652,14 @@ cd %owd%
 
 @if "_%tests%_" == "__" goto mods_lpe
 
-b %verbose% noop: %tests:~1%
+%b% %verbose% noop: %tests:~1%
 @if errorlevel 1 goto error
 
 :mods_lpe
 
 @rem Clean up stage.
 @rem
-b %verbose% %jobs% uninstall: build2\ bpkg\
+%b% %verbose% %jobs% uninstall: build2\ bpkg\
 @if errorlevel 1 goto error
 
 @echo off

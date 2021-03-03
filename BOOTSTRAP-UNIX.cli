@@ -297,7 +297,7 @@ and that any further such installations won't interfere with \c{build2}. If,
 however, you are installing into a private location, such as \c{/opt/build2/},
 then you can remove \c{config.install.private=build2}.|
 
-\N|To add a custom suffix/prefix to the toolchain executables names, add
+\N|To add a custom prefix/suffix to the toolchain executables names, add
 \c{config.bin.exe.prefix=...} and/or \c{config.bin.exe.suffix=...}.|
 
 Next, we add the package repository, build, and install:

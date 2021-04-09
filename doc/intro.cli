@@ -395,7 +395,15 @@ an absolute path to \c{cl.exe} that you wish to use. For example:
   ...
 \
 
-|
+In case of the command prompt, you may also want to make your configuration
+\i{hermetic} (\l{b#module-config-hermetic Hermetic Build Configurations}):
+
+\
+> bdep init -C ... cc ... config.config.hermetic=true
+\
+
+Hermetically configuring our project in a suitable Visual Studio command
+prompt makes us free to build it from any other prompt or shell, IDE, etc.|
 
 \N|Besides the \c{coptions} (compile options) and \c{loptions} (link options),
 other commonly used \c{cc} module configuration variables are \c{poptions}

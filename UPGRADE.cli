@@ -199,11 +199,13 @@ For UNIX-like operating systems (GNU/Linux, Mac OS X, FreeBSD, etc):
 \
 $ bpkg-stage create             \
 cc                              \
+config.config.hermetic=true     \
 config.cxx=g++                  \
 config.cc.coptions=-O3          \
 config.bin.lib=shared           \
 config.bin.rpath=/usr/local/lib \
 config.install.root=/usr/local  \
+config.install.private=build2   \
 config.install.sudo=sudo
 \
 
@@ -213,6 +215,7 @@ Prompt\"):
 \
 > bpkg-stage create             ^
   cc                            ^
+  config.config.hermetic=true   ^
   config.cxx=cl                 ^
   config.cc.coptions=/O2        ^
   config.bin.lib=shared         ^
@@ -225,6 +228,7 @@ For Windows with Clang (from a suitable command prompt, see
 \
 > bpkg-stage create             ^
   cc                            ^
+  config.config.hermetic=true   ^
   config.cxx=clang++            ^
   \"config.cc.coptions=-m64 -O2\" ^
   config.bin.lib=shared         ^
@@ -236,6 +240,7 @@ For Windows with MinGW (from the command prompt):
 \
 > bpkg-stage create             ^
   cc                            ^
+  config.config.hermetic=true   ^
   config.cxx=g++                ^
   config.cc.coptions=-O3        ^
   config.bin.lib=shared         ^

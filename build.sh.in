@@ -514,6 +514,7 @@ run cd ..
 if test "$local" = true; then
 
   run build2/build2/b-boot $verbose configure \
+config.config.hermetic=true \
 config.cxx="$cxx" \
 config.cc.coptions="$*" \
 config.bin.lib=shared \
@@ -601,6 +602,7 @@ cdir="$(pwd)" # Save full path for later.
 
 run "$bpkg_stage" $verbose create \
 cc \
+config.config.hermetic=true \
 config.cxx="$cxx" \
 config.cc.coptions="$*" \
 config.bin.lib=shared \

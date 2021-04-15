@@ -223,10 +223,11 @@ a local installation and skip the rest of the steps.
 To perform a local installation you will need to change the \c{configure} and
 \c{install} command lines above along these lines (see also notes on the
 following step about only building shared libraries, private installation
-subdirectory, and toolchain executables prefix/suffix):
+subdirectory, toolchain executables prefix/suffix, etc):
 
 \
 $ build2/build2/b-boot configure         \
+  config.config.hermetic=true            \
   config.cxx=g++                         \
   config.cc.coptions=-O3                 \
   config.bin.lib=shared                  \
@@ -276,6 +277,7 @@ $ cd build2-toolchain-X.Y
 
 $ bpkg-stage create                      \
   cc                                     \
+  config.config.hermetic=true            \
   config.cxx=g++                         \
   config.cc.coptions=-O3                 \
   config.bin.lib=shared                  \
@@ -299,6 +301,13 @@ then you can remove \c{config.install.private=build2}.|
 
 \N|To add a custom prefix/suffix to the toolchain executables names, add
 \c{config.bin.exe.prefix=...} and/or \c{config.bin.exe.suffix=...}.|
+
+\N|The \c{config.config.hermetic=true} configuration variable in the above
+command makes sure the embedded \c{~host} and \c{~build2} configurations
+include the current environment. This is especially important for \c{~build2}
+which is used to dynamically build and load ad hoc recipes and build system
+modules and must therefore match the environment that was used to build the
+build system itself.|
 
 Next, we add the package repository, build, and install:
 

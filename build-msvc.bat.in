@@ -416,6 +416,7 @@ cd ..
 @if "_%local%_" == "__" goto stage
 
 build2\build2\b-boot %verbose% configure^
+ config.config.hermetic=true^
  config.cxx=%cxx%^
  config.cc.coptions=/O2^
  config.bin.lib=shared^
@@ -535,6 +536,7 @@ cd %cdir%
 
 %bpkg_stage% %verbose% create^
  cc^
+ config.config.hermetic=true^
  config.cxx=%cxx%^
  config.cc.coptions=/O2^
  config.bin.lib=shared^

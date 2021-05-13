@@ -932,7 +932,7 @@ to further minor versions. They are equivalent to the following ranges:
 \
 
 \N|Zero major version component is customarily used during early development
-where the minor version effectively becomes major. As a result, the tilde
+where the minor version effectively becomes major. As a result, the caret
 constraint has a special treatment of this case.|
 
 Unless you have good reasons not to (for example, a dependency does not use

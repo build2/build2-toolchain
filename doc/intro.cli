@@ -140,8 +140,8 @@ $ bdep new -l c++ -t exe hello
 created new executable project hello in /tmp/hello/
 \
 
-The \l{bdep-new(1)} command creates a \i{canonical} \c{build2} project. In
-our case it is an executable implemented in C++.
+The \l{bdep-new(1)} command creates a \c{build2} project. In this case it is
+an executable implemented in C++.
 
 \N|To create a library, pass \c{-t\ lib}. By default \c{new} also initializes
 a \c{git} repository and generates suitable \c{.gitignore} files (pass \c{-s\
@@ -173,9 +173,10 @@ hello/
 and rationale behind this layout. While it is recommended, especially for new
 projects, \c{build2} is flexible enough to support various arrangements used
 in today's C and C++ projects. Furthermore, the \l{bdep-new(1)} command
-provides a number of customization options and chances are you will be able to
-create your preferred layout automatically. See \l{bdep-new.xhtml#src-layout
-SOURCE LAYOUT} for more information and examples.|
+provides a number of customization options and chances are good you will be
+able to create your preferred layout automatically. See
+\l{bdep-new.xhtml#src-layout SOURCE LAYOUT} for more information and
+examples.|
 
 Similar to version control tools, we normally run all \c{build2} tools from
 the project's source directory or one of its subdirectories, so:
@@ -311,8 +312,12 @@ designated as the default with additional conveniences.
 
 The \l{bdep-init(1)} command is used to initialize a project in a build
 configuration. As a shortcut, it can also create a new build configuration in
-the process, which is just what we need here. Let's start with GCC (remember
-we are in the project's root directory):
+the process, which is just what we need here.
+
+\N|To create build configurations separately from initialization and to manage
+them after that, use the \l{bdep-config(1)} subcommands.|
+
+Let's start with GCC (remember we are in the project's root directory):
 
 \
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
@@ -420,7 +425,7 @@ complete list with their rough \c{make} equivalents:
 
 We can also use their \c{config.c.*} (C compilation) and \c{config.cxx.*} (C++
 compilation) variants if we only want them applied during the respective
-language compilation. For example:
+language compilation/linking. For example:
 
 \
 $ bdep init ... cc                       \
@@ -530,7 +535,7 @@ project. We call it \i{deep testing}.|
 While we are here, let's also check how hard it would be to cross-compile:
 
 \
-$ bdep init -C ../hello-mingw @mingw cc config.cxx=x86_64-w64-mingw32-g++
+$ bdep init -C @mingw cc config.cxx=x86_64-w64-mingw32-g++
 initializing in project /tmp/hello/
 created configuration @mingw /tmp/hello-mingw/ auto-synchronized
 synchronizing:
@@ -595,6 +600,24 @@ synchronizing:
   drop hello
 \
 
+\N|By default \c{bdep} initializes a project for development by automatically
+passing \c{config.<project>.develop=true} unless a custom value is specified.
+For example:
+
+\
+$ bdep init ... @gcc cc config.cxx=g++ config.hello.develop=false
+\
+
+To change the development mode of an already initialized project, use
+\l{bdep-sync(1)}:
+
+\
+$ bdep sync @gcc config.hello.develop=false
+\
+
+See \l{b#proj-config Project Configuration} for background on the development
+mode.|
+
 As mentioned earlier, by default \l{bdep-new(1)} initializes a \c{git}
 repository for us. Now that we have successfully built and tested our project,
 it might be a good idea to make a first commit and publish it to a remote
@@ -653,17 +676,17 @@ CI request is queued:
 Let's see what's going on here. By default \c{ci} submits a test request to
 \l{https://ci.cppget.org ci.cppget.org}, a public CI service run by the
 \c{build2} project (see available \l{https://ci.cppget.org?build-configs Build
-Configurations} and \l{https://ci.cppget.org?ci Use Policies}). It is testing
-the current working tree state (branch and commit) of our package which should
-be available from our remote repository (on GitHub in this example) since
-that's where the CI service expects to find it. In response we get a URL where
-we can see the build and test results, logs, etc.
+Configurations} and \l{https://ci.cppget.org?ci Use Policies}). In our case it
+will be testing the current working tree state (branch and commit) of our
+package which should be available from our remote repository (on GitHub in
+this example) since that's where the CI service expects to get it from. In
+response we get a URL where we can see the build and test results, logs, etc.
 
 \N|This \i{push} CI model works particularly well with the \"feature branch\"
 development workflow. Specifically, you would develop a new feature in a
 separate branch, publishing and remote-testing it as necessary. When the
 feature is ready, you would merge any changes from \c{master}, test the result
-one more time, and then merge the feature into master.|
+one more time, and then merge (fast-forward) the feature into master.|
 
 Now is a good time to get an overview of the \c{build2} toolchain. After all,
 we have already used two of its tools (\c{bdep} and \c{b}) without a clear
@@ -679,12 +702,12 @@ management toolset.
 \N|While \c{build2} can work without a VCS, this will result in reduced
 functionality.|
 
-At the bottom of the hierarchy is the build system, \l{b(1)}. Next comes the
-package dependency manager, \l{bpkg(1)}. It is primarily used for \i{package
-consumption} and depends on the build system. The top of the hierarchy is the
-project dependency manager, \l{bdep(1)}. It is used for \i{project
-development} and relies on \c{bpkg} for building project packages and their
-dependencies.
+At the bottom of the hierarchy is the \c{build2} build system, which we invoke
+using the \l{b(1)} driver. Next comes the package dependency manager,
+\l{bpkg(1)}. It is primarily used for \i{package consumption} and depends on
+the build system. The top of the hierarchy is the project dependency manager,
+\l{bdep(1)}. It is used for \i{project development} and relies on \c{bpkg} for
+building project packages and their dependencies.
 
 \N|The main reason for this separation is modularity and the resulting
 flexibility: there are situations where we only need the build system (for
@@ -706,9 +729,9 @@ configuration} (those \c{hello-gcc} and \c{hello-clang} directories). A
 \c{bdep} build configuration is actually a \c{bpkg} build configuration which,
 in the build system terms, is an \i{amalgamation} \- a project that contains
 \i{subprojects}. In our case, the subprojects in these amalgamations will be
-the projects we have initialized with \c{init} and, as we will see later,
-packages that they depend on. For example, here is what our \c{hello-gcc}
-contains:
+the projects we have initialized with \c{init} and, as we will see in a
+moment, packages that they depend on. For example, here is what our
+\c{hello-gcc} contains:
 
 \
 $ tree hello-gcc
@@ -730,9 +753,9 @@ meta-operation (see \l{b(1)} for details).
 
 The important point here is that the \c{bdep} build configuration is not a
 black box that you should never look inside of. On the contrary, it is a
-normal and predictable concept of the package manager and the build system and
-as long as you understand what you are doing, you should feel free to interact
-with it directly.|
+well-defined concept of the package manager and the build system and as long
+as you understand what you are doing, you should feel free to interact with it
+directly.|
 
 Let's now move on to the reason why there is \i{dep} in the \c{bdep} name:
 dependency management.
@@ -746,8 +769,8 @@ let's see if we can find something suitable to use in our project.
 
 Where should we look? That's a good question. But before we can try to answer
 it, we need to understand where \c{build2} can source dependencies. In
-\c{build2} packages come from \i{package repositories}. Two commonly used
-repository types are \i{version control} and \i{archive}-based (see
+\c{build2} packages usually come from \i{package repositories}. Two commonly
+used repository types are \i{version control} and \i{archive}-based (see
 \l{bpkg-repository-types(1)} for details).
 
 As the name suggests, a version control-based repository uses a VCS as its
@@ -756,15 +779,16 @@ repository normally contains multiple versions of a single package or,
 perhaps, of a few related packages.
 
 An archive-based repository contains multiple, potentially unrelated
-packages/versions as archives along with some meta information (package list,
+packages/versions as archives along with some metadate (package list,
 prerequisite/complement repositories, signatures, etc) that are all accessible
 via HTTP(S).
 
 Version control and archive-based repositories have different
 trade-offs. Version control-based repositories are great for package
-developers: With services like GitHub they are trivial to setup. In fact, your
-project's (already existing) VCS repository will normally be the \c{build2}
-package repository \- you might need to add a few files, but that's about it.
+developers since with services like GitHub they are trivial to setup. In fact,
+your project's (already existing) VCS repository will normally be the
+\c{build2} package repository \- you might need to add a few files, but that's
+about it.
 
 However, version control-based repositories are not without drawbacks: It will
 be hard for your users to discover your packages (try searching for \"hello
@@ -1003,7 +1027,7 @@ warning: authenticity of the certificate for pkg:cppget.org/stable
          cannot be established
 certificate is for cppget.org, \"Code Synthesis\" <admin@cppget.org>
 certificate SHA256 fingerprint:
-86:BA:D4:DE:2C:87:1A:EE:38:<...>:5A:EA:F4:F7:8C:1D:63:30:C6
+70:64:FE:E4:E0:F3:60:F1:B4:<...>:E5:C2:68:63:4C:A6:47:39:43
 trust this certificate? [y/n] y
 
 hello configured 0.1.0-a.0.19700101000000
@@ -1024,7 +1048,7 @@ the repository's about page):
 \
 role: prerequisite
 location: https://pkg.cppget.org/1/stable
-trust: 86:BA:D4:DE:2C:87:1A:EE:38:<...>:5A:EA:F4:F7:8C:1D:63:30:C6
+trust: 70:64:FE:E4:E0:F3:60:F1:B4:<...>:E5:C2:68:63:4C:A6:47:39:43
 \
 
 To synchronize a project with one or more build configurations we use the
@@ -1243,6 +1267,310 @@ We can also have something in between: patch all (\c{sync\ -pr}), upgrade
 immediate (\c{sync\ -ui}), or even upgrade immediate and patch the rest
 (\c{sync\ -ui} followed by \c{sync\ -pr}).
 
+
+\h#guide-build-time-linked|Build-Time Dependencies and Linked Configurations|
+
+The \c{libhello} dependency we've been playing with in the previous two
+sections is a \i{runtime dependency}, that is, our \c{hello} executable needs
+it at run-time. This is typical of libraries and most of our dependencies will
+be of this kind. However, sometimes we may only wish to use a dependency
+during the build, typically a tool, such as a source code generator. This kind
+of dependency is called a \i{build-time dependency}.
+
+Why do we need to distinguish between the two kinds of dependencies? The
+primary reason is cross-compilation: if we build a tool in the same
+(cross-compiling) build configuration as our project, then we will not be able
+to execute it during the build (since it's built for a different target than
+what we are running). But even if you are not planning to cross-compile, there
+are other good reasons: if you have multiple build configurations for your
+project, you may want to share a single build of your tool between them (why
+waste time building the same thing multiple times). And even if you only have
+a single build of your project, you may want to build the tool with different
+options (for example, optimized instead of debug).
+
+You can probably see where this is going: in order to properly support
+build-time dependencies, we need to distinguish them from runtime and we need
+an ability to build them in a separate build configuration.
+
+Let's see how all this works using the \l{https://cppget.org/xxd \c{xxd}} tool
+as an example. If you are not familiar, \c{xxd} is a hexdump utility which can
+be used to embed external binary data into C/C++ code in a portable manner.
+Specifically, it can read a binary file and produce a C array definition of
+its contents. For example:
+
+\
+$ xxd -i names.txt
+
+unsigned char names_txt[] = {
+  0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x55, 0x6e, 0x69, 0x76, 0x65,
+  0x72, 0x73, 0x65, 0x0a, 0x50, 0x65, 0x6f, 0x70, 0x6c, 0x65, 0x0a,
+  0x4d, 0x61, 0x72, 0x74, 0x69, 0x61, 0x6e, 0x73, 0x0a
+};
+unsigned int names_txt_len = 31;
+\
+
+\N|While the above output is a bit old school (using \c{unsigned int} instead
+of \c{size_t}) and the array/length names are derived from the input file name
+(including directories), \c{xxd} can also produce just the array values
+allowing us to wrap it into an array of our choice. See the
+\l{https://cppget.org/xxd \c{xxd}} package description for examples of
+\c{build2} recipes that do that.|
+
+So here is an idea: instead of failing if the user did not specify the name to
+greet, let's improve our \c{hello} program to greet a random generic name from
+a pre-defined list. To make this list easier to maintain, let's keep it in a
+separate file called \c{names.txt} and use \c{xxd} to embed it into our
+\c{hello} executable. We can use the one name per line format, for example:
+
+\
+$ cat names.txt
+World
+Universe
+People
+Martians
+\
+
+The first step in our plan is to add a build-time dependency on \c{xxd} to our
+project's \c{manifest}, similar to how we did for \c{libhello}:
+
+\
+...
+depends: libhello ^1.0.0
+depends: * xxd >= 8.2.0
+\
+
+The \c{*} mark in front of the \c{xxd} name indicates that it's a build-time
+dependency (think of \c{*} as the executable mark printed by \c{ls}).
+
+Next we import \c{xxd} in our \c{buildfile}:
+
+\
+...
+
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+...
+\
+
+There are two main differences compared to the way we import the \c{libhello}
+library: we request metadata (\c{[metadata]}) and we do immediate importation
+(\c{import!}). Let's briefly discuss what this means (for details, refer to
+\l{b#intro-import Target Importation} in the build system manual). Metadata
+for an executable contains information that helps the build system do a better
+job when an executable is used as part of the build. For example, it includes
+the uniform program name to be used for low-verbosity diagnostics as well as
+the version, checksum, and environment that are used to detect changes.  While
+immediate importation instructs the build system to skip rule-specific
+importation (for example, search for libraries in compiler-specific search
+paths) and import the target here and now, failing if that's not possible. It
+is usually appropriate for importing executables. Note also that the metadata
+can only be requested in immediate importation.
+
+\N|While requesting the metadata means that you will have a simpler
+\c{buildfile} and a more reliable build, it also likely means that you won't
+be able to use the system-installed version of the executable since it needs
+to be patched to provide the metadata.|
+
+Now that we have the \c{xxd} tool, let's use it from an ad hoc recipe to
+convert \c{names.txt} to \c{names.cxx}. Here is the complete \c{buildfile} for
+our \c{hello} executable:
+
+\
+libs =
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+exe{hello}: {hxx ixx txx cxx}{** -names} cxx{names} $libs testscript
+
+cxx{names}: file{names.txt} $xxd
+{{
+  i = $path($<[0])
+  env --cwd $directory($i) -- $xxd -i $leaf($i) >$path($>)
+}}
+\
+
+The last bit that we need do is to modify \c{hello.cxx} to use the list of
+fallback names (the actual implementation is left as an exercise for the
+reader):
+
+\
+#include <iostream>
+
+extern unsigned char names_txt[];
+extern unsigned int names_txt_len;
+
+int main (int argc, char* argv[])
+{
+  using namespace std;
+
+  if (argc < 2)
+  {
+    // TODO: pick a random name from names_txt using newline as
+    //       a name separator.
+  }
+
+  ...
+}
+\
+
+Let's recap what we've achieved so far: we've added a build-time dependency on
+\c{xxd}, we've imported it in our \c{buildfile} and used it in an ad hoc
+recipe to generate \c{names.cxx}, and we've modified \c{hello.cxx} to use the
+generated list of names. The only step left is to actually try to build it.
+But before doing that, let's also print the list of build configurations we
+currently have associated with our project (see the \c{list} subcommand
+in \l{bdep-config(1)}):
+
+\
+$ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized
+\
+
+\
+$ b
+creating configuration of host type in /tmp/hello-host/ and
+associating it with project(s):
+  /tmp/hello/
+as if by executing command(s):
+  bdep config create @host --type host --no-default /tmp/hello-host \
+  cc config.config.load=~host
+while searching for configuration for build-time dependency xxd of
+package hello/0.1.0-a.0.19700101000000#4
+while synchronizing configuration /tmp/hello-gcc/
+continue? [Y/n] y
+
+synchronizing /tmp/hello-gcc/:
+  new xxd/8.2.3075 [/tmp/hello-host/] (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+c ../hello-host/xxd-8.2.3075/c{xxd}
+ld ../hello-host/xxd-8.2.3075/exe{xxd}
+xxd ../hello-gcc/hello/hello/cxx{names}
+c++ ../hello-gcc/hello/hello/cxx{names}
+c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+ld ../hello-gcc/hello/hello/exe{hello}
+\
+
+While the diagnostics is hopefully fairly self-explanatory, let's go over the
+key points. The first part goes exactly as in the previous section: because
+we've added a new dependency, the build configuration needs to be synchronized
+with the project state. However, this is a build-time dependency and
+build-time dependencies are built in configurations of type \c{host}. So
+\c{bdep} first looks for such a configuration among the configurations already
+associated with the project. In our case there isn't one (from the listing
+above we can see that all our configurations are of type \c{target}). In this
+case, \c{bdep} offers to create one automatically. We accept this offer by
+answering \c{y} at the prompt and the rest should again look familiar: the new
+dependency is configured and built (but now in the host configuration) and our
+project is updated (which involves running the new dependency). If we now
+again print the list of build configurations associated with our project, we
+will see the new configuration among them:
+
+\
+$ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized
+@host /tmp/hello-host/ 3 host forwarded,auto-synchronized
+\
+
+Let's also try to update our project in the \c{clang} configuration:
+
+\
+$ bdep update @clang
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+xxd ../hello-clang/hello/hello/cxx{names}
+c++ ../hello-clang/hello/hello/cxx{names}
+c++ hello/cxx{hello}@../hello-clang/hello/hello/
+ld ../hello-clang/hello/hello/exe{hello}
+\
+
+This time we are not prompted to create another configuration nor is a new
+instance of \c{xxd} gets built \- as we would have expected, the existing host
+configuration with the already built \c{xxd} is reused.
+
+From the above output we can see that \c{bdep} creates the host configuration
+using the default host compiler and build options (\c{~host}) which means the
+result will most likely be optimized. But if we don't like something about the
+host configuration that \c{bdep} offers us to create, we can answer \c{n} at
+the prompt, create one ourselves (by perhaps copying and tweaking the command
+line \c{bdep} was going to use), and then restart the build.
+
+Besides the \c{target} and \c{host} types, the third pre-defined configuration
+type is \c{build2}, which is used for build system modules. If you would like
+to try a build-time dependency on a build system module, there is a dummy
+\c{libbuild2-hello} module that you can use. Simply add the following line
+to your \c{manifest}:
+
+\
+depends: * libbuild2-hello
+\
+
+And the following line somewhere in your \c{buildfile}:
+
+\
+using hello
+\
+
+Then build the project and see what happens.
+
+\N|The \c{target} type signifies a configuration for the target or end-result
+of our build. If no type is specified during the configuration creation with
+the \c{--type} option (or \c{--config-type} if using \c{bdep-new}), then
+\c{target} is assumed.
+
+The \c{host} type signifies a configuration corresponding to the host machine,
+that is, the machine on which the build is performed. It is expected that an
+executable built in the host configuration can be executed. Oftentimes, target
+and host are the same. In this case, if you would prefer not to have separate
+configurations, then you can make your target configuration \i{self-hosted} by
+using the \c{host} type rather than \c{target}. For example:
+
+\
+$ bdep init -C ../hello-gcc @gcc --type host cc config.cxx=g++
+\
+
+The \c{build2} type is a special kind of host configuration that is used to
+build build system modules. It cannot be self-hosted.|
+
+Building build-time dependencies in separate configurations is just one
+application of the more general configuration linking mechanism which allows
+us to build a package in one configuration while its dependencies \- in one or
+more linked configurations. This, for example, can be used to create a
+\"base\" configuration with common dependencies that are shared between
+multiple configurations (sometimes also referred to as build configuration
+overlaying).
+
+Let's see how this works on our \c{hello} project. Imagine \c{libhello} that
+we depend on is very big and takes a while to compile. We also aren't really
+interested in building it in both \c{gcc} and \c{clang} configurations (it's
+our project that we are interested in building with different compilers).
+Since these two compilers are ABI-compatible (at least on Linux), we could
+build \c{libhello} with just one of them and reuse the result with the
+other. Let's see how we can achieve this with linked configurations (refer to
+\l{bdep-config(1)} for details on subcommands involved):
+
+\
+$ bdep config create ../hello-base @base --no-default cc config.cxx=g++
+$ bdep config create ../hello-gcc @gcc --default cc config.cxx=g++
+$ bdep config create ../hello-clang @clang cc config.cxx=clang++
+
+$ bdep config link @gcc @base
+$ bdep config link @clang @base
+
+$ bdep init @gcc { @base }+ ?libhello
+$ bdep init @clang
+\
+
+Most of the commands are hopefully self-explanatory except for the \c{{
+@base \}+ ?libhello} part which tells \c{bdep} to build the \c{libhello}
+dependency in the \c{base} configuration (we don't have to do the same for
+\c{clang} since the dependency is already built).
 
 
 \h#guide-versioning-releasing|Versioning and Release Management|
@@ -1991,6 +2319,14 @@ $ bpkg build hello                       # build package by name
 \
 
 |
+
+\N|If building a package involves building a build-time dependency and no
+configuration of type \c{host} (or \c{build2}, if the dependency is a build
+system module) is linked with the target configuration, then a private
+configuration of a suitable type is automatically created and linked. See
+\l{#guide-build-time-linked Build-Time Dependencies and Linked Configurations}
+for background on build-time dependencies and \l{bpkg-cfg-create(1)} for more
+information on \c{bpkg} configuration linking.|
 
 Once built, we can install the package to the location that we have specified
 with \c{config.install.root} using the \l{bpkg-pkg-install(1)} command:

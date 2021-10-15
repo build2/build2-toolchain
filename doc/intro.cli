@@ -845,7 +845,7 @@ along with a list of available versions. Pick a version that you like and you
 will see the package version description page with quite a bit of information,
 including the list of platform/compiler combinations that this version has
 been successfully (or unsuccessfully) tested with. If you like what you see,
-copy the \c{location} value \- this is the repository location where this
+copy the \c{repository} value \- this is the repository location where this
 package version can be sourced from.
 
 \N|The \l{https://cppget.org cppget.org} repository is split into several

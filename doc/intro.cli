@@ -1284,9 +1284,11 @@ to execute it during the build (since it's built for a different target than
 what we are running). But even if you are not planning to cross-compile, there
 are other good reasons: if you have multiple build configurations for your
 project, you may want to share a single build of your tool between them (why
-waste time building the same thing multiple times). And even if you only have
+waste time building the same thing multiple times?). And even if you only have
 a single build of your project, you may want to build the tool with different
 options (for example, optimized instead of debug).
+
+@@ TMP I don't think no question mark is wrong, just my preference.
 
 You can probably see where this is going: in order to properly support
 build-time dependencies, we need to distinguish them from runtime and we need
@@ -1356,17 +1358,26 @@ import! [metadata] xxd = xxd%exe{xxd}
 
 There are two main differences compared to the way we import the \c{libhello}
 library: we request metadata (\c{[metadata]}) and we do immediate importation
-(\c{import!}). Let's briefly discuss what this means (for details, refer to
+(\c{import!}). Let's briefly discuss what this means (for background on target importation, refer to
 \l{b#intro-import Target Importation} in the build system manual). Metadata
 for an executable contains information that helps the build system do a better
 job when an executable is used as part of the build. For example, it includes
 the uniform program name to be used for low-verbosity diagnostics as well as
-the version, checksum, and environment that are used to detect changes.  While
+the version, checksum, and environment that are used to detect changes.  And
 immediate importation instructs the build system to skip rule-specific
 importation (for example, search for libraries in compiler-specific search
 paths) and import the target here and now, failing if that's not possible. It
 is usually appropriate for importing executables. Note also that the metadata
 can only be requested in immediate importation.
+
+@@ TMP The way I read it I was expecting to get more details about [metadata]
+   and import! at the above link to \l{b#intro-import Target Importation}.
+
+@@ TMP Because the part about metadata is more than one sentence long, when we
+   get to the immediate importation part (which used to start with While...)
+   it feels like the connection between the two have been lost and as a result
+   I was looking for a second part to the first immediate importation sentence
+   to match the While at the beginning.
 
 \N|While requesting the metadata means that you will have a simpler
 \c{buildfile} and a more reliable build, it also likely means that you won't
@@ -1490,8 +1501,8 @@ c++ hello/cxx{hello}@../hello-clang/hello/hello/
 ld ../hello-clang/hello/hello/exe{hello}
 \
 
-This time we are not prompted to create another configuration nor is a new
-instance of \c{xxd} gets built \- as we would have expected, the existing host
+This time we are neither prompted to create another configuration nor is a new
+instance of \c{xxd} built \- as we would have expected, the existing host
 configuration with the already built \c{xxd} is reused.
 
 From the above output we can see that \c{bdep} creates the host configuration
@@ -1519,10 +1530,13 @@ using hello
 
 Then build the project and see what happens.
 
-\N|The \c{target} type signifies a configuration for the target or end-result
+\N|The \c{target} type signifies a configuration for the target machine or end-result
 of our build. If no type is specified during the configuration creation with
 the \c{--type} option (or \c{--config-type} if using \c{bdep-new}), then
 \c{target} is assumed.
+
+@@ TMP Only made it 'target machine' because it's 'host machine' in the next
+   paragraph. It did make sense as it was.
 
 The \c{host} type signifies a configuration corresponding to the host machine,
 that is, the machine on which the build is performed. It is expected that an
@@ -1572,6 +1586,18 @@ Most of the commands are hopefully self-explanatory except for the \c{{
 dependency in the \c{base} configuration (we don't have to do the same for
 \c{clang} since the dependency is already built).
 
+@@ TMP (This is new to me so I guess this is what a new user might also
+   wonder:) If @base is as complete a config as @gcc and already linked to it
+   then why can't it just be something like
+
+     $ bdep init @gcc
+     $ bdep init { @base }+ ?libhello
+     $ bdep init @clang
+
+   Just seems like there's some redundancy given that @base has already been
+   configured to use g++ and linked to @gcc. `bdep init @gcc { @base }+
+   ?libhello` feels like a second linking or something. Or is it actually just
+   a combo of the first two commands (directly above)?
 
 \h#guide-versioning-releasing|Versioning and Release Management|
 

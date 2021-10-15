@@ -1361,7 +1361,7 @@ library: we request metadata (\c{[metadata]}) and we do immediate importation
 for an executable contains information that helps the build system do a better
 job when an executable is used as part of the build. For example, it includes
 the uniform program name to be used for low-verbosity diagnostics as well as
-the version, checksum, and environment that are used to detect changes.  While
+the version, checksum, and environment that are used to detect changes. And
 immediate importation instructs the build system to skip rule-specific
 importation (for example, search for libraries in compiler-specific search
 paths) and import the target here and now, failing if that's not possible. It
@@ -1392,7 +1392,7 @@ cxx{names}: file{names.txt} $xxd
 }}
 \
 
-The last bit that we need do is to modify \c{hello.cxx} to use the list of
+The last bit that we need to do is to modify \c{hello.cxx} to use the list of
 fallback names (the actual implementation is left as an exercise for the
 reader):
 
@@ -1490,8 +1490,8 @@ c++ hello/cxx{hello}@../hello-clang/hello/hello/
 ld ../hello-clang/hello/hello/exe{hello}
 \
 
-This time we are not prompted to create another configuration nor is a new
-instance of \c{xxd} gets built \- as we would have expected, the existing host
+This time we are neither prompted to create another configuration nor is a new
+instance of \c{xxd} built \- as we would have expected, the existing host
 configuration with the already built \c{xxd} is reused.
 
 From the above output we can see that \c{bdep} creates the host configuration
@@ -1519,9 +1519,9 @@ using hello
 
 Then build the project and see what happens.
 
-\N|The \c{target} type signifies a configuration for the target or end-result
-of our build. If no type is specified during the configuration creation with
-the \c{--type} option (or \c{--config-type} if using \c{bdep-new}), then
+\N|The \c{target} type signifies a configuration for the end-result of our
+build. If no type is specified during the configuration creation with the
+\c{--type} option (or \c{--config-type} if using \c{bdep-new}), then
 \c{target} is assumed.
 
 The \c{host} type signifies a configuration corresponding to the host machine,

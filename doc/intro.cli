@@ -1567,10 +1567,12 @@ $ bdep init @gcc { @base }+ ?libhello
 $ bdep init @clang
 \
 
-Most of the commands are hopefully self-explanatory except for the \c{{
-@base \}+ ?libhello} part which tells \c{bdep} to build the \c{libhello}
-dependency in the \c{base} configuration (we don't have to do the same for
-\c{clang} since the dependency is already built).
+Most of the commands are hopefully self-explanatory except for the \c{{ @base
+\}+ ?libhello} part. Here \c{?} is a package flag that instructs \c{bdep}
+to treat \c{libhello} as a dependency. And \c{{ @base \}+} tells it to build
+this dependency in the \c{base} configuration (we don't have to do the same
+for \c{clang} since the dependency is already built). See \l{bdep-sync(1)} for
+details on this syntax.
 
 
 \h#guide-versioning-releasing|Versioning and Release Management|
@@ -2513,9 +2515,9 @@ synchronizing:
   upgrade hello/0.1.0-a.0.19700101000000#3
 \
 
-Here \cb{?} is a package \i{flag} that instructs \c{build2} to treat it as a
-dependency and \cb{sys} is a package \i{scheme} that tells \c{build2} it comes
-from the system. See \l{bpkg-pkg-build(1)} for details.
+Here \c{?} is a package flag that instructs \c{build2} to treat it as a
+dependency and \c{sys} is a package scheme that tells \c{build2} it comes from
+the system. See \l{bpkg-pkg-build(1)} for details.
 
 \N|The system-installed dependency doesn't really have to come from the system
 package manager. It can also be manually installed and, as discussed in

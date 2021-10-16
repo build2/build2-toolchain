@@ -725,13 +725,19 @@ order to automate project versioning. Note that currently only \c{git(1)} is
 supported.|
 
 Now that we understand the tooling, let's also revisit the notion of \i{build
-configuration} (those \c{hello-gcc} and \c{hello-clang} directories). A
-\c{bdep} build configuration is actually a \c{bpkg} build configuration which,
-in the build system terms, is an \i{amalgamation} \- a project that contains
-\i{subprojects}. In our case, the subprojects in these amalgamations will be
-the projects we have initialized with \c{init} and, as we will see in a
-moment, packages that they depend on. For example, here is what our
-\c{hello-gcc} contains:
+configuration} (those \c{hello-gcc} and \c{hello-clang} directories). While we
+often talk of build configurations in the abstract, as a set of common options
+used to build our code, in \c{build2} this term also has a very concrete
+meaning \- a directory where our projects and their dependencies are built
+with such a set of common options.
+
+The concept of a build configuration appears prominently throughout the
+toolchain: a \c{bdep} build configuration is actually a \c{bpkg} build
+configuration which, in the build system terms, is a special kind of an
+\i{amalgamation} \- a project that contains \i{subprojects}. In our case, the
+subprojects in these amalgamations will be the projects we have initialized
+with \c{init} and, as we will see in a moment, packages that they depend
+on. For example, here is what our \c{hello-gcc} contains:
 
 \
 $ tree hello-gcc

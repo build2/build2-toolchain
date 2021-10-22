@@ -25,17 +25,11 @@
 // - Maximum <pre> line is 70 characters.
 //
 
-"
-\h0#preface|Preface|
-
-This document is an overall introduction to the \c{build2} toolchain that
-shows how the main components, namely the build system, the package dependency
-manager, and the project dependency manager are used together to handle the
-entire C/C++ project development lifecycle: creation, development, testing,
-and delivery. For additional information, including documentation for
-individual toolchain components, man pages, etc., refer to the \c{build2}
-project \l{https://build2.org/doc.xhtml Documentation} page.
-
+// Some people say the find the TLDR "abhorrent" (because it doesn't look
+// like something they can understand without reading the rest of the doc
+// first).
+//
+/*
 
 \h1#tldr|TL;DR|
 
@@ -99,6 +93,20 @@ synchronizing:
   downgrade libhello/1.0.0
   reconfigure hello/0.1.0
 \
+
+*/
+
+"
+\h0#preface|Preface|
+
+This document is an overall introduction to the \c{build2} toolchain that
+shows how the main components, namely the build system, the package dependency
+manager, and the project dependency manager are used together to handle the
+entire C/C++ project development lifecycle: creation, development, testing,
+and delivery. For additional information, including documentation for
+individual toolchain components, man pages, etc., refer to the \c{build2}
+project \l{https://build2.org/doc.xhtml Documentation} page.
+
 
 \h1#guide|Getting Started Guide|
 
@@ -1283,6 +1291,10 @@ be of this kind. However, sometimes we may only wish to use a dependency
 during the build, typically a tool, such as a source code generator. This kind
 of dependency is called a \i{build-time dependency}.
 
+\N|Build-time dependencies are an advanced topic and if you don't have an
+immediate need for this functionality, you may skip this section without any
+loss of continuity.|
+
 Why do we need to distinguish between the two kinds of dependencies? The
 primary reason is cross-compilation: if we build a tool in the same
 (cross-compiling) build configuration as our project, then we will not be able
@@ -1346,7 +1358,7 @@ depends: * xxd >= 8.2.0
 \
 
 The \c{*} mark in front of the \c{xxd} name indicates that it's a build-time
-dependency (think of \c{*} as the executable mark printed by \c{ls}).
+dependency.
 
 Next we import \c{xxd} in our \c{buildfile}:
 

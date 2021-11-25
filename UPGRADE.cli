@@ -122,6 +122,7 @@ previous releases):
 $ bpkg build --for install ...
 
 # new in 0.14.0: libbuild2-kconfig
+# new in 0.15.0: libbuild2-autoconf
 \
 
 Once this is done, we can proceed to installing:

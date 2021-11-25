@@ -35,3 +35,6 @@
 [submodule "submodules/libbuild2-kconfig"]
 	path = submodules/libbuild2-kconfig
 	url = https://github.com/build2/libbuild2-kconfig.git
+[submodule "submodules/libbuild2-autoconf"]
+	path = submodules/libbuild2-autoconf
+	url = https://github.com/build2/libbuild2-autoconf.git

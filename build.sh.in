@@ -22,7 +22,8 @@ bdep_ver="@BDEP_VERSION@"
 # NOTE: we currently print the list as a single line and will need to somehow
 # change that when it becomes too long.
 #
-standard_modules="kconfig"
+standard_modules="autoconf, kconfig"
+autoconf_ver="@AUTOCONF_VERSION@"
 kconfig_ver="@KCONFIG_VERSION@"
 
 # The bpkg configuration directory.

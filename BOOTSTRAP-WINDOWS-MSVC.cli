@@ -238,7 +238,7 @@ C:\build2\bin\bdep.exe
 Finally, we build and install the standard build system modules:
 
 \
-> bpkg build --for install libbuild2-kconfig
+> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
 > bpkg install --all-pattern=libbuild2-*
 \
 

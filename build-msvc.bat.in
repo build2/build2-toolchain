@@ -69,7 +69,8 @@ rem
 rem NOTE: we currently print the list as a single line and will need to
 rem somehow change that when it becomes too long.
 rem
-set "standard_modules=kconfig"
+set "standard_modules=autoconf, kconfig"
+set "autoconf_ver=@AUTOCONF_VERSION@"
 set "kconfig_ver=@KCONFIG_VERSION@"
 
 rem The bpkg configuration directory.

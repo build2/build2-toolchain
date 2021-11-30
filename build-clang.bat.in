@@ -513,7 +513,7 @@ where %bdep%
 
 @if "_%projects%_" == "__" goto mods_ile
 
-%b% %verbose% %jobs% install: %projects:~1%
+%b% %verbose% %jobs% install: ^^!config.install.scope=project %projects:~1%
 @if errorlevel 1 goto error
 
 %b% %verbose% noop: %tests:~1%
@@ -636,7 +636,7 @@ where %bdep%
 %bpkg% %verbose% %jobs% %timeout% build --for install %packages:~1%
 @if errorlevel 1 goto error
 
-%bpkg% %verbose% %jobs% install --all-pattern=libbuild2-*
+%bpkg% %verbose% %jobs% install ^^!config.install.scope=project --all-pattern=libbuild2-*
 @if errorlevel 1 goto error
 
 :mods_ipe

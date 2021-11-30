@@ -173,7 +173,7 @@ prefix/suffix, etc):
 You will also need to build and install the standard build system modules:
 
 \
-> b install: libbuild2-*\
+> b install: !config.install.scope=project libbuild2-*\
 \
 
 \N|To verify the build system modules installation you can load them with the
@@ -268,7 +268,8 @@ Finally, we build and install the standard build system modules:
 
 \
 > bpkg build --for install libbuild2-autoconf libbuild2-kconfig
-> bpkg install --all-pattern=libbuild2-*
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*
 \
 
 \N|To get a list of the standard pre-installed build system modules in a

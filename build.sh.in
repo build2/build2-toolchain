@@ -563,7 +563,7 @@ $private
   done
 
   if test -n "$projects"; then
-    run "$b" $verbose $jobs install: $projects
+    run "$b" $verbose $jobs install: '!config.install.scope=project' $projects
     run "$b" $verbose noop: $tests
   fi
 
@@ -647,7 +647,7 @@ done
 
 if test -n "$packages"; then
   run "$bpkg" $verbose $jobs $bpkg_build_ops build --for install $packages
-  run "$bpkg" $verbose $jobs install --all-pattern=libbuild2-*
+  run "$bpkg" $verbose $jobs install '!config.install.scope=project' --all-pattern=libbuild2-*
 fi
 
 run cd "$owd"

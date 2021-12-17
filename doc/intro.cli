@@ -60,8 +60,8 @@ Hello, World!
 
 $ edit repositories.manifest   # add https://example.org/libhello.git
 $ edit manifest                # add 'depends: libhello ^1.0.0'
-$ edit hello/buildfile         # import libhello
-$ edit hello/hello.cxx         # use libhello
+$ edit hello/buildfile         # import libhello library
+$ edit hello/hello.cxx         # include libhello header
 
 $ b
 fetching from https://example.org/libhello.git
@@ -1028,9 +1028,19 @@ to our project:
 \
 repositories.manifest   # add https://pkg.cppget.org/1/stable
 manifest                # add 'depends: libhello ^1.0.0'
-buildfile               # import libhello
-hello.cxx               # use libhello
+buildfile               # import libhello library
+hello.cxx               # include libhello header (or import module)
 \
+
+\N|While the repository URL and package name are easy to find on the
+\l{https://cppget.org cppget.org}'s package description page, the C/C++
+library ecosystem unfortunately does not follow any predictable library or
+header naming scheme. If the library documentation does not provide any clues,
+then another place to check are the library tests and examples that can often
+be found in the package source directory (or source repository). In
+particular, every library in the \c{stable} section of the
+\l{https://cppget.org cppget.org} repository should provide at least a basic
+test.|
 
 With a new dependency added, let's check the status of our project:
 

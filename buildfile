@@ -58,6 +58,7 @@ pt = '^version: (.+)$'
 # - install scripts: prepare, build2-install.sh, and build2-install-*.bat
 # - build2.org/www/ (module docs symlinks for both public and stage, etc)
 # - make sure the module has `builds: all` in its manifest
+# - make sure the module is listed in the mod array in etc/bootstrap
 #
 ver          = $process.run_regex($bp 'info:' $src_root/,                    "$pt", '\1')
 build2_ver   = $process.run_regex($bp 'info:' $src_root/build2/,             "$pt", '\1')

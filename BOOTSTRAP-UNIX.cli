@@ -177,6 +177,20 @@ $ build2/build2/b-boot configure      \
 $ build2/build2/b-boot install: build2/ bpkg/
 \
 
+\N|The above command will build all the dependencies of \c{build2} and
+\c{bpkg} from sources bundled with \c{build2-toolchain}. If instead you would
+like to use system-installed versions for some of them, then you can specify
+empty \c{config.import.*} values to disable the use of the bundled versions.
+For example, to use the system-installed SQLite:
+
+\
+$ build2/build2/b-boot configure \
+  ...                            \
+  config.import.libsqlite3=
+\
+
+|
+
 The strange-looking \c{config.install.data_root=root/stage} means install
 data files (as opposed to executable files) into the \c{stage/} subdirectory
 of wherever \c{config.install.root} points to (so in our case it will be
@@ -317,6 +331,19 @@ $ bpkg-stage fetch
 $ bpkg-stage build --for install build2 bpkg bdep
 $ bpkg-stage install --all
 \
+
+\N|The above command will build all the dependencies of \c{build2}, \c{bpkg},
+and \c{bdep} from source packages. If instead you would like to use
+system-installed versions for some of them, then you can list them with the
+\c{sys} scheme to make \c{bpkg-stage} treat them as available from the system
+rather than building them from source. For example, to use the
+system-installed SQLite:
+
+\
+$ bpkg-stage build --for install build2 bpkg bdep ?sys:libsqlite3
+\
+
+|
 
 \N|By default \c{bpkg} will build the latest available version of each
 package. You can, however, specify the desired versions explicitly, for

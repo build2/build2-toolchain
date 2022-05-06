@@ -3280,9 +3280,9 @@ of an out of source build) or next to the sources (in case of an in source
 build). See \l{b#intro-dirs-scopes Output Directories and Scopes} for details
 on in and out of source builds.
 
-Projects managed with \l{bdep(1)} are always built out-of-source. However, by
+Projects managed with \l{bdep(1)} are always built out of source. However, by
 default, the source directory is configured as \i{forwarded} to one of the
-out-of-source builds. This has two effects: we can run the build system driver
+out of source builds. This has two effects: we can run the build system driver
 \l{b(1)} directly in the source directory and certain \"interesting\" targets
 (such as executables, documentation, test results, etc) will be automatically
 \i{backlinked} to the source directory (see \l{b#intro-operations-config
@@ -3299,7 +3299,7 @@ hello/    ~~>    └── hello/
     └── hello     -->    └── *hello
 \
 
-The result is an \i{as-if} in-source build with all the benefits (such as
+The result is an \i{as-if} in source build with all the benefits (such as
 having both source and relevant output in the same directory) but without any
 of the drawbacks (such as the inability to have multiple builds or source
 directory cluttered with object files).

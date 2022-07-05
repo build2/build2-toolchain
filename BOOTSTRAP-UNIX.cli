@@ -189,6 +189,14 @@ $ build2/build2/b-boot configure \
   config.import.libsqlite3=
 \
 
+If performing an installation with the \c{build.sh} script, then to use the
+system-installed dependencies pass the \c{--system} option, specifying such
+dependencies as a comma-separated list. For example:
+
+\
+$ ./build.sh --system libsqlite3,libpkg-config g++
+\
+
 |
 
 The strange-looking \c{config.install.data_root=root/stage} means install

@@ -54,6 +54,7 @@ local=
 bpkg_install=true
 bdep_install=true
 modules="$standard_modules"
+system=
 private=
 idir=
 exe_prefix=
@@ -81,6 +82,7 @@ while test $# -ne 0; do
       diag "  --no-modules          Don't install standard build system modules."
       diag "  --modules <list>      Install only specified standard build system modules."
       diag "  --install-dir <dir>   Alternative installation directory."
+      diag "  --system <list>       Use system-installed versions of specified dependencies."
       diag "  --exe-prefix <pfx>    Toolchain executables name prefix."
       diag "  --exe-suffix <sfx>    Toolchain executables name suffix."
       diag "  --stage-suffix <sfx>  Staged executables name suffix ('-stage' by default)."
@@ -123,6 +125,12 @@ while test $# -ne 0; do
       diag
       diag "$0 g++ -g"
       diag
+      diag "Use --system <list> to specify a comma-separated list of dependencies"
+      diag "to use from the system rather than building them from source, for"
+      diag "example:"
+      diag
+      diag "$0 --system libsqlite3,libpkg-config g++"
+      diag
       diag "The script by default installs the following standard build system"
       diag "modules:"
       diag
@@ -154,6 +162,11 @@ while test $# -ne 0; do
     --modules)
       shift
       modules="$1"
+      shift
+      ;;
+    --system)
+      shift
+      system="$1"
       shift
       ;;
     --private)
@@ -338,6 +351,73 @@ for m in $module_list; do
   fi
 done
 
+# Convert the comma-separated list of system dependencies into a
+# space-separated list.
+#
+system_list="$(echo "$system" | sed 's/,/ /g')"
+
+# If any dependencies are specified to be used from the system, then specify
+# the respective config.import.*= variables for the bootstrap stage 2 command
+# and for the local or staged build configurations. If the installation is not
+# local, then also specify these dependencies as system for the bpkg-build
+# commands.
+#
+# As a special case, recognize the libpkgconf dependency as a request to force
+# build2 to use that instead of libpkg-config.
+#
+# Note that the build2 driver bootstrapped at stage 1 doesn't read .pc
+# files. Thus, for the bootstrap stage 2 command it is assumed that the
+# headers and libraries of the system dependencies can be found by the
+# compiler and linker at the standard locations. That, however, is not the
+# case for libpkgconf. Thus, if specifying libpkgconf as a system dependency
+# also specify its headers location via, for example, the CPATH environment
+# variable:
+#
+# $ CPATH=/usr/local/include/pkgconf ./build.sh --local --system libpkgconf g++
+#
+bootstrap_system_imports=
+system_imports=
+system_packages=
+
+for d in $system_list; do
+  v="$(echo "$d" | sed 's/[.+-]/_/g')" # Convert to variable name.
+
+  if test "$d" != "libpkgconf"; then
+    si="config.import.$v="
+  else
+    if test -z "$local"; then
+      diag "error: '--system libpkgconf' can only be used for local installation"
+      diag "  info: additionally specify --local"
+      exit 1
+    fi
+
+    si="config.build2.libpkgconf=true"
+  fi
+
+  # For now these are the only third-party libraries that are used by the
+  # build system.
+  #
+  if test "$d" = "libpkg-config" -o "$d" = "libpkgconf"; then
+    bootstrap_system_imports="$si"
+  fi
+
+  # Suppress the 'dropping no longer used variable' warnings.
+  #
+  if test -z "$system_imports"; then
+    system_imports="config.config.persist='config.*'@unused=drop"
+  fi
+
+  system_imports="$system_imports $si"
+
+  if test -z "$local"; then
+    if test -n "$system_packages"; then
+      system_packages="$system_packages ?sys:$d"
+    else
+      system_packages="?sys:$d"
+    fi
+  fi
+done
+
 # If the installation directory is unspecified, then assume it is /usr/local.
 # Otherwise, if it is a relative path, then convert it to an absolute path,
 # unless the realpath program is not present on the system or doesn't
@@ -504,7 +584,7 @@ run build2/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run build2/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static build2/exe{b}
+run build2/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static $bootstrap_system_imports build2/exe{b}
 mv build2/b build2/b-boot
 run build2/b-boot --version
 
@@ -523,7 +603,8 @@ config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
 config.install.sudo="$conf_sudo" \
 $conf_exe_affixes \
-$private
+$private \
+$system_imports
 
   # Install toolchain.
   #
@@ -584,7 +665,8 @@ config.bin.suffix="$stage_suffix" \
 config.bin.rpath="$conf_rpath_stage" \
 config.install.root="$idir" \
 config.install.data_root=root/stage \
-config.install.sudo="$conf_sudo"
+config.install.sudo="$conf_sudo" \
+$system_imports
 
 run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
 
@@ -621,7 +703,7 @@ fi
 
 run "$bpkg_stage" $verbose add "$BUILD2_REPO"
 run "$bpkg_stage" $verbose $bpkg_fetch_ops fetch
-run "$bpkg_stage" $verbose $jobs $bpkg_build_ops build --for install --yes --plan= $packages
+run "$bpkg_stage" $verbose $jobs $bpkg_build_ops build --for install --yes --plan= $packages $system_packages
 run "$bpkg_stage" $verbose $jobs install --all
 
 run command -v "$b"
@@ -646,7 +728,7 @@ for m in $module_list; do
 done
 
 if test -n "$packages"; then
-  run "$bpkg" $verbose $jobs $bpkg_build_ops build --for install $packages
+  run "$bpkg" $verbose $jobs $bpkg_build_ops build --for install $packages $system_packages
   run "$bpkg" $verbose $jobs install '!config.install.scope=project' --all-pattern=libbuild2-*
 fi
 

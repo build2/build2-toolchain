@@ -978,6 +978,11 @@ semantic versioning), we suggest that you use the \c{^} constraint which
 provides a good balance between compatibility and upgradability with \c{~}
 being a more conservative option.
 
+Besides the version constraint, the dependency declaration supports a number
+of more advanced features, including conditional dependencies, dependency
+alternatives, and dependency configuration. For details, see the
+\l{bpkg#manifest-package-depends \c{depends}} value documentation.
+
 Ok, we've specified where our package comes from (\c{repositories.manifest})
 and which versions we find acceptable (\c{manifest}). The next step is to edit
 \c{hello/buildfile} and import the \c{libhello} library into our build:

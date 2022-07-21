@@ -54,7 +54,7 @@ pt = '^version: (.+)$'
 #
 # - this buildfile
 # - build scripts: build.sh.in and build-*.bat.in
-# - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (mention as new module)
+# - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (multiple places)
 # - install scripts: prepare, build2-install.sh, and build2-install-*.bat
 # - build2.org/www/ (module docs symlinks for both public and stage, etc)
 # - make sure the module has `builds: all` in its manifest

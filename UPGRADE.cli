@@ -37,13 +37,26 @@ Windows} for details). We recommend using the bootstrap process to upgrade
 these packages since all the straightforward upgrade sequences would lead to
 either the old toolchain using the new utilities or vice versa.|
 
+\N|For both ways of upgrading we need to make sure that the build system
+modules are built and installed with the new version of the toolchain. The set
+of build system modules can also change from version to version.|
+
+\N|If using the Windows command prompt, the \c{!config.install.scope=project}
+command line argument should not be quoted.|
+
 The dirty upgrade is straightforward:
 
 \
 $ cd build2-toolchain-X.Y
+$ bpkg uninstall '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
+$ bpkg drop --all-pattern=libbuild2-*
 $ bpkg fetch
 $ bpkg build --for install -pr
 $ bpkg install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
 \
 
 \N|The \c{-pr} options stands for \c{--patch} and \c{--recursive} \- upgrade
@@ -111,18 +124,8 @@ configuration, upgrade (\c{--upgrade|-u}) instead of patching
 
 \
 $ cd build2-toolchain-X.Z
+$ bpkg drop --all-pattern=libbuild2-*
 $ bpkg build --for install -ur
-\
-
-In addition to upgrading existing packages, we may also need to build packages
-that were added in the new version (listed after the command for a number of
-previous releases):
-
-\
-$ bpkg build --for install ...
-
-# new in 0.14.0: libbuild2-kconfig
-# new in 0.15.0: libbuild2-autoconf
 \
 
 Once this is done, we can proceed to installing:
@@ -168,6 +171,9 @@ $ bpkg uninstall --all
 
 $ cd ../build2-toolchain-X.Z
 $ bpkg-stage install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
 \
 
 |

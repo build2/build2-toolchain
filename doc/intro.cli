@@ -2544,7 +2544,7 @@ configures the \c{libsqlite3} package as coming from the system:
 \
 $ bdep sync ?sys:libsqlite3
 synchronizing:
-  configure sys:libsqlite3/*
+  configure sys:libsqlite3/* (required by hello)
   upgrade hello/0.1.0-a.0.19700101000000#3
 \
 

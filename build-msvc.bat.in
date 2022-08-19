@@ -8,8 +8,7 @@ goto start
 
 :usage
 echo.
-rem echo Usage: %0 [/?] [^<options^>] [^<cl-compiler^>]
-echo Usage: %0 [/?] [^<options^>]
+echo Usage: %0 [/?] [^<options^>] [--] [^<cl-compiler^>] [^<compile-options^>] [-- ^<link-options^>]
 echo Options:
 echo   --local                Don't build from packages, only from local source.
 echo   --no-bpkg              Don't install bpkg nor bdep ^(requires --local^).
@@ -234,24 +233,52 @@ if "_%~1_" == "_--verbose_" (
 
 if "_%~1_" == "_--_" shift
 
-rem Validate options and arguments.
-rem
-
-rem @@ Temporarily retained for backwards compatibility.
-rem
-if not "_%1_" == "__" (
-  set "idir=%1"
-)
-if not "_%2_" == "__" (
-  set "trust=%2"
-)
 rem Compiler.
 rem
-rem if "_%1_" == "__" (
+if "_%1_" == "__" (
   set "cxx=cl"
-rem ) else (
-rem  set "cxx=%1"
-rem )
+) else (
+  set "cxx=%~1"
+  shift
+)
+
+rem Compile and link options.
+rem
+set "compile_ops="
+set "link_ops="
+
+:compile_options
+if not "_%1_" == "__" (
+  if not "_%~1_" == "_--_" (
+    set "compile_ops=%compile_ops% %~1"
+    shift
+    goto compile_options
+  ) else (
+    shift
+  )
+)
+
+:link_options
+if not "_%1_" == "__" (
+  set "link_ops=%link_ops% %~1"
+  shift
+  goto link_options
+)
+
+if not "_%compile_ops%_" == "__" (
+  set coptions="config.cc.coptions=%compile_ops:~1%"
+) else (
+  set "coptions=config.cc.coptions=/O2"
+)
+
+if not "_%link_ops%_" == "__" (
+  set loptions="config.cc.loptions=%link_ops:~1%"
+) else (
+  set "loptions="
+)
+
+rem Validate options and arguments.
+rem
 
 rem If --no-bpkg is specified, then we require --local to also be specified
 rem since it won't be possible to build things from packages without bpkg.
@@ -419,7 +446,8 @@ cd ..
 build2\build2\b-boot %verbose% configure^
  config.config.hermetic=true^
  config.cxx=%cxx%^
- config.cc.coptions=/O2^
+ %coptions%^
+ %loptions%^
  config.bin.lib=shared^
  config.install.root=%idir%^
  %conf_exe_affixes%
@@ -539,7 +567,8 @@ cd %cdir%
  cc^
  config.config.hermetic=true^
  config.cxx=%cxx%^
- config.cc.coptions=/O2^
+ %coptions%^
+ %loptions%^
  config.bin.lib=shared^
  config.install.root=%idir%^
  %conf_exe_affixes%

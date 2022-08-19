@@ -3,7 +3,7 @@
 # file      : build.sh.in
 # license   : MIT; see accompanying LICENSE file
 
-usage="Usage: $0 [-h|--help] [<options>] <c++-compiler> [<compile-options>]"
+usage="Usage: $0 [-h|--help] [<options>] [--] <c++-compiler> [<compile-options>] [-- <link-options>]"
 
 # Package repository URL (or path).
 #
@@ -67,8 +67,6 @@ timeout=
 make=
 make_options=
 verbose=
-
-cxx=
 
 while test $# -ne 0; do
   case "$1" in
@@ -287,24 +285,53 @@ while test $# -ne 0; do
       verbose="$1"
       shift
       ;;
-    *)
-      cxx="$1"
+    --)
       shift
+      break
+      ;;
+    *)
       break
       ;;
   esac
 done
 
-if test -z "$cxx"; then
+# Compiler.
+#
+if test $# -eq 0; then
   diag "error: compiler executable expected"
   diag "$usage"
   exit 1
+else
+  cxx="$1"
+  shift
 fi
 
-# Place default <compile-options> into the $@ array.
+# Compile and link options.
 #
-if test $# -eq 0; then
-  set -- -O3
+compile_ops=
+link_ops=
+
+while test $# -ne 0; do
+  if test "$1" != "--"; then
+    compile_ops="$compile_ops $1"
+    shift
+  else
+    shift
+    break
+  fi
+done
+
+while test $# -ne 0; do
+  link_ops="$link_ops $1"
+  shift
+done
+
+if test -z "$compile_ops"; then
+  compile_ops=-O3
+fi
+
+if test -z "$link_ops"; then
+  link_ops="[null]"
 fi
 
 # Merge jobs and make_options into make.
@@ -597,7 +624,8 @@ if test "$local" = true; then
   run build2/build2/b-boot $verbose configure \
 config.config.hermetic=true \
 config.cxx="$cxx" \
-config.cc.coptions="$*" \
+config.cc.coptions="${compile_ops# }" \
+config.cc.loptions="${link_ops# }" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \
@@ -687,7 +715,8 @@ run "$bpkg_stage" $verbose create \
 cc \
 config.config.hermetic=true \
 config.cxx="$cxx" \
-config.cc.coptions="$*" \
+config.cc.coptions="${compile_ops# }" \
+config.cc.loptions="${link_ops# }" \
 config.bin.lib=shared \
 config.bin.rpath="$conf_rpath" \
 config.install.root="$idir" \

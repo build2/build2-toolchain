@@ -8,7 +8,7 @@ goto start
 
 :usage
 echo.
-echo Usage: %0 [/?] [^<options^>] ^<c++-compiler^>
+echo Usage: %0 [/?] [^<options^>] [--] ^<c++-compiler^> [^<compile-options^>] [-- ^<link-options^>]
 echo Options:
 echo   --local                Don't build from packages, only from local source.
 echo   --no-bpkg              Don't install bpkg nor bdep ^(requires --local^).
@@ -262,25 +262,49 @@ if "_%~1_" == "_--verbose_" (
 
 if "_%~1_" == "_--_" shift
 
-rem Validate options and arguments.
-rem
-
 rem Compiler.
 rem
 if "_%1_" == "__" (
   echo error: compiler executable expected, run %0 /? for details
   goto error
 ) else (
-  set "cxx=%1"
+  set "cxx=%~1"
+  shift
 )
 
-rem @@ Temporarily retained for backwards compatibility.
+rem Compile and link options.
 rem
-if not "_%2_" == "__" (
-  set "idir=%2"
+set "compile_ops="
+set "link_ops="
+
+:compile_options
+if not "_%1_" == "__" (
+  if not "_%~1_" == "_--_" (
+    set "compile_ops=%compile_ops% %~1"
+    shift
+    goto compile_options
+  ) else (
+    shift
+  )
 )
-if not "_%3_" == "__" (
-  set "trust=%3"
+
+:link_options
+if not "_%1_" == "__" (
+  set "link_ops=%link_ops% %~1"
+  shift
+  goto link_options
+)
+
+if not "_%compile_ops%_" == "__" (
+  set coptions="config.cc.coptions=%compile_ops:~1%"
+) else (
+  set "coptions=config.cc.coptions=-O2"
+)
+
+if not "_%link_ops%_" == "__" (
+  set loptions="config.cc.loptions=%link_ops:~1%"
+) else (
+  set "loptions="
 )
 
 rem Merge jobs and make_options into make.
@@ -292,6 +316,9 @@ if not "_%make%_" == "__" (
   rem
   if not "_%make_options%_" == "__" set "make=!make!%make_options%"
 )
+
+rem Validate options and arguments.
+rem
 
 rem If --no-bpkg is specified, then we require --local to also be specified
 rem since it won't be possible to build things from packages without bpkg.
@@ -463,7 +490,8 @@ cd ..
 build2\build2\b-boot %verbose% configure^
  config.config.hermetic=true^
  config.cxx=%cxx%^
- config.cc.coptions=-O2^
+ %coptions%^
+ %loptions%^
  config.bin.lib=shared^
  config.install.root=%idir%^
  %conf_exe_affixes%
@@ -585,7 +613,8 @@ cd %cdir%
  cc^
  config.config.hermetic=true^
  config.cxx=%cxx%^
- config.cc.coptions=-O2^
+ %coptions%^
+ %loptions%^
  config.bin.lib=shared^
  config.install.root=%idir%^
  %conf_exe_affixes%

@@ -2,8 +2,15 @@
 # license   : MIT; see accompanying LICENSE file
 
 project = build2-toolchain
+
 amalgamation = # Disable amalgamation.
-subprojects  = {*/ -build/ -doc/ -tests/ -submodules/}
+
+# Note: list them (mostly) explicitly without using wildcards to handle stray
+# subdirectories in the root (debian/, installation location, etc).
+#
+subprojects += libpkg-config/ libbutl/ build2/ libsqlite3/ libodb/ \
+               libodb-sqlite/ libbpkg/ bpkg/ bdep/
+subprojects += libbuild2-*/
 subprojects += tests/*/
 
 using version

@@ -19,7 +19,7 @@ build2_repo="https://stage.build2.org/1"
 # @@ Note that the project directories order is important (prerequisites go
 #    first).
 #
-# See also subprojects in bootstrap.build.
+# NOTE: see also subprojects in bootstrap.build if changing anything here.
 #
 d = libpkg-config/ libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ \
 libbpkg/ bpkg/ bdep/ doc/ libbuild2-*/
@@ -53,6 +53,7 @@ pt = '^version: (.+)$'
 # modules to locate all the places):
 #
 # - this buildfile
+# - build/bootstrap.build (submodules; should be handled automatically)
 # - build scripts: build.sh.in and build-*.bat.in
 # - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (multiple places)
 # - install scripts: prepare, build2-install.sh, and build2-install-*.bat

@@ -461,30 +461,19 @@ if test -z "$idir"; then
   if test -z "$sudo"; then
     sudo="sudo"
   fi
-else
-  if test -n "$(echo "$idir" | sed -n 's#^[^/].*$#true#p')"; then
-    if ! command -v realpath >/dev/null 2>&1; then
-      diag "error: unable to execute realpath: command not found"
-      diag "  info: specify absolute installation directory path"
-      exit 1
-    fi
+elif test -n "$(echo "$idir" | sed -n 's#^[^/].*$#true#p')"; then
 
-    # Don't resolve symlinks and allow non-existent path components.
-    #
-    if ! idir="$(realpath -s -m "$idir" 2>/dev/null)"; then
-      diag "error: realpath does not recognize -s -m"
-      diag "  info: specify absolute installation directory path"
-      exit 1
-    fi
+  if ! command -v realpath >/dev/null 2>&1; then
+    diag "error: unable to execute realpath: command not found"
+    diag "  info: specify absolute installation directory path"
+    exit 1
   fi
 
-  # Check that it's not inside the build directory (we assume nobody
-  # is going to specify a path containing `#` or other special sed
-  # characters).
+  # Don't resolve symlinks and allow non-existent path components.
   #
-  eowd="$(echo "$owd" | sed 's%\([#.*^$\\[\]]\)%\\\1%g')"
-  if test -n "$(echo "$idir/" | sed -n "s#^$eowd/.*#true#p")"; then
-    diag "error: installation directory is inside current directory"
+  if ! idir="$(realpath -s -m "$idir" 2>/dev/null)"; then
+    diag "error: realpath does not recognize -s -m"
+    diag "  info: specify absolute installation directory path"
     exit 1
   fi
 fi

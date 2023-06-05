@@ -77,7 +77,7 @@ compile options; run \c{bootstrap-mingw.bat /?} and see the
 
 \
 > cd build2
-> .\bootstrap-mingw.bat g++ -static
+> .\bootstrap-mingw.bat g++ -w -static
 
 > build2\b-boot --version
 \
@@ -87,7 +87,7 @@ in parallel:
 
 \
 > cd build2
-> mingw32-make -f bootstrap.gmake -j 8 CXX=g++ LDFLAGS=-static
+> mingw32-make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w LDFLAGS=-static
 
 > build2\b-boot --version
 \

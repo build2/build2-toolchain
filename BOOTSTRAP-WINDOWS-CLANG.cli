@@ -69,7 +69,7 @@ compile options; run \c{bootstrap-clang.bat /?} and see the
 
 \
 > cd build2
-> .\bootstrap-clang.bat clang++
+> .\bootstrap-clang.bat clang++ -m64 -w
 
 > build2\b-boot --version
 \
@@ -79,7 +79,7 @@ in parallel:
 
 \
 > cd build2
-> mingw32-make -f bootstrap.gmake -j 8 CXX=clang++
+> mingw32-make -f bootstrap.gmake -j 8 CXX=clang++ \"CXXFLAGS=-m64 -w\"
 
 > build2\b-boot --version
 \

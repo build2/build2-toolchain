@@ -601,11 +601,14 @@ export BDEP_DEF_OPT
 
 # Bootstrap, stage 1.
 #
+# Note: disable all warnings since we cannot do anything more granular during
+# bootstrap stage 1.
+#
 run cd build2
 if test -z "$make"; then
-  run ./bootstrap.sh "$cxx"
+  run ./bootstrap.sh "$cxx" -w
 else
-  run $make -f ./bootstrap.gmake "CXX=$cxx"
+  run $make -f ./bootstrap.gmake "CXX=$cxx" CXXFLAGS=-w
 fi
 run build2/b-boot --version
 

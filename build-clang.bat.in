@@ -448,6 +448,9 @@ set "BDEP_DEF_OPT=0"
 
 @rem Bootstrap.
 @rem
+@rem Note: disable all warnings since we cannot do anything more granular
+@rem during bootstrap stage 1.
+@rem
 cd build2
 
 @if "_%make%_" == "__" (
@@ -459,12 +462,12 @@ cd build2
 :batchfile
 @rem Execute in a separate cmd.exe to preserve the echo mode.
 @rem
-cmd /C bootstrap-clang.bat %cxx%
+cmd /C bootstrap-clang.bat %cxx% -m64 -w
 @if errorlevel 1 goto error
 @goto endfile
 
 :makefile
-%make% -f bootstrap.gmake CXX=%cxx%
+%make% -f bootstrap.gmake CXX=%cxx% "CXXFLAGS=-m64 -w"
 @if errorlevel 1 goto error
 @goto endfile
 

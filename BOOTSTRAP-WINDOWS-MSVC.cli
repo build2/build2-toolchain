@@ -59,7 +59,7 @@ file for details.
 
 \
 > cd build2
-> .\bootstrap-msvc.bat cl
+> .\bootstrap-msvc.bat cl /w /MP8
 
 > build2\b-boot --version
 \

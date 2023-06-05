@@ -118,7 +118,7 @@ file for details.
 
 \
 $ cd build2
-$ ./bootstrap.sh g++
+$ ./bootstrap.sh g++ -w
 
 $ build2/b-boot --version
 \
@@ -128,7 +128,7 @@ in parallel:
 
 \
 $ cd build2
-$ make -f bootstrap.gmake -j 8 CXX=g++
+$ make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w
 
 $ build2/b-boot --version
 \

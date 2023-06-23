@@ -296,7 +296,7 @@ if not "_%1_" == "__" (
 )
 
 if not "_%compile_ops%_" == "__" (
-  set coptions="config.cc.coptions=%compile_ops%"
+  set coptions="config.cc.coptions=%compile_ops:~1%"
 ) else (
   set coptions="config.cc.coptions=-O2"
 )

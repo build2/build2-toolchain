@@ -236,8 +236,8 @@ For Windows with Clang (from a suitable command prompt, see
 > bpkg-stage create             ^
   cc                            ^
   config.config.hermetic=true   ^
-  config.cxx=clang++            ^
-  \"config.cc.coptions=-m64 -O2\" ^
+  \"config.cxx=clang++ -m64\"     ^
+  config.cc.coptions=-O2        ^
   config.bin.lib=shared         ^
   config.install.root=C:\build2
 \

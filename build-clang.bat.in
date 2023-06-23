@@ -296,9 +296,9 @@ if not "_%1_" == "__" (
 )
 
 if not "_%compile_ops%_" == "__" (
-  set coptions="config.cc.coptions=-m64%compile_ops%"
+  set coptions="config.cc.coptions=%compile_ops%"
 ) else (
-  set coptions="config.cc.coptions=-m64 -O2"
+  set coptions="config.cc.coptions=-O2"
 )
 
 if not "_%link_ops%_" == "__" (
@@ -475,7 +475,7 @@ cmd /C bootstrap-clang.bat %cxx% -m64 -w
 build2\b-boot --version
 @if errorlevel 1 goto error
 
-build2\b-boot %verbose% %jobs% config.cxx=%cxx% config.cc.coptions=-m64 config.bin.lib=static build2\exe{b}
+build2\b-boot %verbose% %jobs% "config.cxx=%cxx% -m64" config.bin.lib=static build2\exe{b}
 @if errorlevel 1 goto error
 
 move /y build2\b.exe build2\b-boot.exe
@@ -492,7 +492,7 @@ cd ..
 
 build2\build2\b-boot %verbose% configure^
  config.config.hermetic=true^
- config.cxx=%cxx%^
+ "config.cxx=%cxx% -m64"^
  %coptions%^
  %loptions%^
  config.bin.lib=shared^
@@ -575,8 +575,7 @@ goto end
 :stage
 
 build2\build2\b-boot %verbose% configure^
- config.cxx=%cxx%^
- config.cc.coptions=-m64^
+ "config.cxx=%cxx% -m64"^
  config.bin.lib=shared^
  config.bin.suffix=%stage_suffix%^
  config.install.root=%idir%^
@@ -614,7 +613,7 @@ cd %cdir%
 %bpkg_stage% %verbose% create^
  cc^
  config.config.hermetic=true^
- config.cxx=%cxx%^
+ "config.cxx=%cxx% -m64"^
  %coptions%^
  %loptions%^
  config.bin.lib=shared^

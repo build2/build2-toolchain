@@ -25,9 +25,11 @@
 // - Maximum <pre> line is 70 characters.
 //
 
-// Some people say the find the TLDR "abhorrent" (because it doesn't look
+// Some people say they find the TLDR "abhorrent" (because it doesn't look
 // like something they can understand without reading the rest of the doc
 // first).
+//
+// Note: command output is most likely outdated.
 //
 /*
 
@@ -280,6 +282,7 @@ $ cat manifest
 : 1
 name: hello
 version: 0.1.0-a.0.z
+language: c++
 summary: hello C++ executable
 license: other: proprietary
 description-file: README.md
@@ -480,12 +483,12 @@ $ bdep status
 hello configured 0.1.0-a.0.19700101000000
 
 $ b
-c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
 ld ../hello-gcc/hello/hello/exe{hello}
 ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 
 $ b test
-test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
 
 $ hello/hello World
 Hello, World!
@@ -502,11 +505,12 @@ $ bdep status @clang
 hello configured 0.1.0-a.0.19700101000000
 
 $ b ../hello-clang/hello/
-c++ hello/cxx{hello}@../hello-clang/hello/hello/
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
 ld ../hello-clang/hello/hello/exe{hello}
 
 $ b test: ../hello-clang/hello/
-test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
 
 $ ../hello-clang/hello/hello/hello World
 Hello, World!
@@ -519,9 +523,10 @@ more convenient if we could refer to them by names. The \l{bdep-update(1)} and
 
 \
 $ bdep test @clang
-c++ hello/cxx{hello}@../hello-clang/hello/hello/
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
 ld ../hello-clang/hello/hello/exe{hello}
-test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
 \
 
 And we can also perform the desired build system operation on several (or
@@ -530,10 +535,11 @@ And we can also perform the desired build system operation on several (or
 \
 $ bdep test @gcc @clang
 in configuration @gcc:
-test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
 
 in configuration @clang:
-test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
 \
 
 \N|As we will see later, the \l{bdep-test(1)} command also allows us to test
@@ -550,7 +556,7 @@ synchronizing:
   new hello/0.1.0-a.0.19700101000000
 
 $ bdep update @mingw
-c++ hello/cxx{hello}@../hello-mingw/hello/hello/
+c++ hello/cxx{hello} -> ../hello-mingw/hello/hello/obje{hello}
 ld ../hello-mingw/hello/hello/exe{hello}
 \
 
@@ -561,7 +567,8 @@ on a properly setup GNU/Linux machine (that automatically uses \c{wine} as an
 
 \
 $ bdep test @mingw
-test hello/testscript{testscript} ../hello-mingw/hello/hello/exe{hello}
+test ../hello-mingw/hello/hello/exe{hello} +
+     hello/testscript{testscript}
 
 $ ../hello-mingw/hello/hello/hello.exe Windows
 Hello, Windows!
@@ -1098,9 +1105,10 @@ $ b
 synchronizing:
   new libhello/1.0.0 (required by hello)
   upgrade hello/0.1.0-a.0.19700101000000#1
-c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello}
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello} ->
+    ../hello-gcc/libhello-1.0.0/libhello/objs{hello}
 ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
-c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
 ld ../hello-gcc/hello/hello/exe{hello}
 ln ../hello-gcc/hello/hello/exe{hello} -> hello/
 \
@@ -1151,12 +1159,13 @@ For example:
 \
 $ bdep test -ai
 in configuration @gcc:
-test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
 
 in configuration @clang:
-test hello/testscript{testscript} ../hello-clang/hello/hello/exe{hello}
 test ../hello-clang/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
 \
 
 To get rid of a dependency, we simply remove it from the \c{manifest} file
@@ -1480,11 +1489,13 @@ synchronizing /tmp/hello-gcc/:
   new xxd/8.2.3075 [/tmp/hello-host/] (required by hello)
   upgrade hello/0.1.0-a.0.19700101000000#4
 
-c ../hello-host/xxd-8.2.3075/c{xxd}
+c ../hello-host/xxd-8.2.3075+1/c{xxd} ->
+  ../hello-host/xxd-8.2.3075+1/obje{xxd}
 ld ../hello-host/xxd-8.2.3075/exe{xxd}
-xxd ../hello-gcc/hello/hello/cxx{names}
-c++ ../hello-gcc/hello/hello/cxx{names}
-c++ hello/cxx{hello}@../hello-gcc/hello/hello/
+xxd hello/file{names.txt} -> ../hello-gcc/hello/hello/cxx{names}
+c++ ../hello-gcc/hello/hello/cxx{names} ->
+    ../hello-gcc/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
 ld ../hello-gcc/hello/hello/exe{hello}
 \
 
@@ -1517,9 +1528,10 @@ $ bdep update @clang
 synchronizing:
   upgrade hello/0.1.0-a.0.19700101000000#4
 
-xxd ../hello-clang/hello/hello/cxx{names}
-c++ ../hello-clang/hello/hello/cxx{names}
-c++ hello/cxx{hello}@../hello-clang/hello/hello/
+xxd hello/file{names.txt} -> ../hello-clang/hello/hello/cxx{names}
+c++ ../hello-clang/hello/hello/cxx{names} ->
+    ../hello-clang/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
 ld ../hello-clang/hello/hello/exe{hello}
 \
 
@@ -2093,14 +2105,16 @@ And that's it, now we can build and test our new arrangement:
 \
 $ cd ../hello   # back to hello project root
 $ bdep test -i
-c++ ../libhello/libhello/cxx{hello}
-c++ ../libhello/tests/basics/cxx{driver}
-c++ hello/cxx{hello}
+c++ ../libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ ../libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
 ld ../hello-gcc/libhello/libhello/libs{hello}
 ld ../hello-gcc/libhello/tests/basics/exe{driver}
 ld ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello/tests/basics/exe{driver}
-test hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
 \
 
 This is also the approach we would use if we wanted to fix a bug in someone
@@ -2242,14 +2256,17 @@ however, that in this case we don't need to add anything to
 \
 $ cd ..      # back to hello project root
 $ bdep test
-c++ libhello/libhello/cxx{hello}
-c++ libhello/tests/basics/cxx{driver}
-c++ hello/hello/cxx{hello}
+c++ libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
 ld ../hello-gcc/libhello/libhello/libs{hello}
 ld ../hello-gcc/libhello/tests/basics/exe{driver}
 ld ../hello-gcc/hello/hello/exe{hello}
 test ../hello-gcc/libhello/tests/basics/exe{driver}
-test hello/hello/testscript{testscript} ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/hello/hello/exe{hello} +
+     hello/hello/testscript{testscript}
 \
 
 \N|A multi-package project could have several files, such as \c{README.md} and
@@ -2333,10 +2350,13 @@ configured libformat/1.0.0
 configured libprint/1.0.0
 configured libhello/1.1.0
 configured hello/1.0.0
-c++ libprint-1.0.0/libprint/cxx{print}
-c++ hello-1.0.0/hello/cxx{hello}
-c++ libhello-1.1.0/libhello/cxx{hello}
-c++ libformat-1.0.0/libformat/cxx{format}
+c++ libprint-1.0.0/libprint/cxx{print} ->
+    libprint-1.0.0/libprint/objs{print}
+c++ hello-1.0.0/hello/cxx{hello} -> hello-1.0.0/hello/obje{hello}
+c++ libhello-1.1.0/libhello/cxx{hello} ->
+    libhello-1.1.0/libhello/objs{hello}
+c++ libformat-1.0.0/libformat/cxx{format} ->
+    libformat-1.0.0/libformat/objs{format}
 ld libprint-1.0.0/libprint/libs{print}
 ld libformat-1.0.0/libformat/libs{format}
 ld libhello-1.1.0/libhello/libs{hello}
@@ -2369,10 +2389,10 @@ with \c{config.install.root} using the \l{bpkg-pkg-install(1)} command:
 \
 $ bpkg install hello
 ...
-install libformat-1.0.0/libformat/libs{format}
-install libprint-1.0.0/libprint/libs{print}
-install libhello-1.1.0/libhello/libs{hello}
-install hello-1.0.0/hello/exe{hello}
+install libformat-1.0.0/libformat/libs{format} -> /usr/local/lib/
+install libprint-1.0.0/libprint/libs{print} -> /usr/local/lib/
+install libhello-1.1.0/libhello/libs{hello} -> /usr/local/lib/
+install hello-1.0.0/hello/exe{hello} -> /usr/local/bin/
 
 $ hello World
 Hello, World!
@@ -2458,10 +2478,10 @@ If we need to uninstall a previously installed package, there is the
 
 \
 $ bpkg uninstall hello
-uninstall hello-1.0.0/hello/exe{hello}
-uninstall libhello-1.1.0/libhello/libs{hello}
-uninstall libprint-1.0.0/libprint/libs{print}
-uninstall libformat-1.0.0/libformat/libs{format}
+uninstall hello-1.0.0/hello/exe{hello} <- /usr/local/bin/
+uninstall libhello-1.1.0/libhello/libs{hello} <- /usr/local/lib/
+uninstall libprint-1.0.0/libprint/libs{print} <- /usr/local/lib/
+uninstall libformat-1.0.0/libformat/libs{format} <- /usr/local/lib/
 ...
 \
 

@@ -2118,12 +2118,30 @@ test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
 \
 
 This is also the approach we would use if we wanted to fix a bug in someone
-else's library. That is, we would clone their project repository and
+else's library. That is, we would clone their library repository and
 initialize it in the build configurations of our project which will
 \"upgrade\" the dependency to use the local version. Then we make the fix,
 submit it upstream, and continue using the local version until our fix is
-merged/published, at which point we deinitialize the project and switch
-back to using the upstream version.
+merged/published, at which point we deinitialize their library repository and
+our project will be automatically switched back to using the new upstream
+version of the library. Here is the summary of the steps in this workflow:
+
+\
+$ cd hello/                      # Our project.
+$ bdep init -C @gcc ...          # Configures libhello as a dependency.
+
+$ git clone .../libhello.git     # Need to fix a bug in libhello.
+$ cd libhello
+$ bdep init -A ../hello-gcc @gcc # Upgrades libhello to local version.
+
+# Fix the bug in libhello, test, and submit upstream.
+# Continue using local libhello until the bugfix is published.
+
+$ cd libhello                    # Bugfix has been published.
+$ bdep deinit @gcc               # Switches libhello back to dependency.
+
+$ rm -r libhello                 # If no longer needed.
+\
 
 Let's now examine the second option: making \c{libhello} a package inside
 \c{hello}. Here is the original structure of our \c{hello} project:
@@ -2485,6 +2503,53 @@ uninstall libformat-1.0.0/libformat/libs{format} <- /usr/local/lib/
 ...
 \
 
+Rather than installing the package locally we could instead generate a
+\i{binary distribution package} for it using the \l{bpkg-pkg-bindist(1)}
+command. Such a binary package can then be installed on a different
+machine. Currently, the \c{bindist} command supports producing Debian (and
+alike, such as Ubuntu) and Fedora (and alike, such as RHEL) packages as well
+as installation archives for all operating systems. For example, to generate a
+Debian package for our \c{hello} (running on Debian or alike):
+
+\
+$ bpkg bindist --recursive=auto --private -o /tmp/hello-deb/ hello
+...
+generated debian package for hello/1.0.0:
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello-dbgsym_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.buildinfo
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.changes
+
+$ sudo apt-get install /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb
+\
+
+And to generate a Fedora package (running on Fedora or alike):
+
+\
+$ bpkg bindist --recursive=auto --private hello
+...
+generated fedora package for hello/1.0.0:
+  ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm
+  ~/rpmbuild/RPMS/x86_64/hello-debuginfo-1.0.0-1.fc38.x86_64.rpm
+
+$ sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm
+\
+
+And to generate an installation archive (running on Windows in this
+example):
+
+\
+$ bpkg bindist --recursive=auto   ^
+  --private                       ^
+  --distribution=archive          ^
+  -o C:\tmp\hello-zip\            ^
+  config.install.relocatable=true ^
+  hello
+...
+generated archive package for hello/1.0.0:
+  C:\tmp\hello-zip\hello-1.0.0-x86_64-windows10.zip
+\
+
 To upgrade or downgrade packages we again use the \c{build} command. Here
 is a typical upgrade workflow:
 
@@ -2531,6 +2596,7 @@ purged libformat
 purged libprint
 \
 
+
 \h#guide-system-deps|Using System-Installed Dependencies|
 
 Our operating system might already have a package manager (which we will refer
@@ -2545,16 +2611,25 @@ and/or test with multiple versions (which is not something that many system
 package managers support).
 
 We can also have some build configurations using a system-installed version of
-a dependency while others building it from source, for example, for testing.|
+a dependency while in others building it from source, for example, for
+testing.|
 
 We can instruct \c{build2} to configure a dependency package as available from
-the system rather than building it from source. Let's see how this works in an
-example. Say, we want to use \l{https://cppget.org/libsqlite3 \c{libsqlite3}}
-in our \c{hello} project.
+the system rather than building it from source. Specifically, we can install a
+suitable version manually (for example, using the system package manager) and
+then communicate this fact as well as the version installed to \c{build2} so
+that it can use this information when resolving version constraints.
+Furthermore, for Debian (and alike, such as Ubuntu) and Fedora (and alike,
+such as RHEL) \c{build2} can automatically query the system package manager
+for the installed version and, if requested, automatically install a suitable
+version from the system repository if none is already installed.
 
-The first step is to add it as a dependency, just like we did for \c{libhello}.
-That is, add another \c{depends} entry to \c{manifest}, then import it in
-\c{buildfile}, and so on.
+Let's see how all this works in an example. Say, we want to use
+\l{https://cppget.org/libsqlite3 \c{libsqlite3}} in our \c{hello} project.
+
+The first step is to add it as a dependency, just like we did for
+\c{libhello}. That is, add another \c{depends} entry to \c{manifest}, then
+import it in \c{buildfile}, and so on.
 
 Now, if we just run \c{sync} or try to build our project, \c{build2} will
 download and build the new dependency from source, just like it did for
@@ -2563,39 +2638,126 @@ configures the \c{libsqlite3} package as coming from the system:
 
 \
 $ bdep sync ?sys:libsqlite3
-synchronizing:
-  configure sys:libsqlite3/* (required by hello)
-  upgrade hello/0.1.0-a.0.19700101000000#3
 \
 
 Here \c{?} is a package flag that instructs \c{build2} to treat it as a
 dependency and \c{sys} is a package scheme that tells \c{build2} it comes from
 the system. See \l{bpkg-pkg-build(1)} for details.
 
+Now what exactly happens in this case depends on which operating system we are
+running as well as whether \c{libsqlite3} is already installed. Let's examine
+each combination in turn.
+
+If we are running on an operating system for which there is \c{build2} support
+for the system package manager interactions (currently Debian, Fedora, or
+alike) and \c{libsqlite3} is already installed, then \c{build2} will get its
+version from the system package manager and use that when resolving version
+constraints.  For example, running the above command on Debian with
+\c{libsqlite3-dev} version \c{3.42.0} already installed:
+
+\
+$ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/3.42.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3
+\
+
+If, on the other hand, we are running on an operating system for which there
+is \c{build2} support for the system package manager interactions but
+\c{libsqlite3} is not installed, then \c{build2} will fail:
+
+\
+$ bdep sync ?sys:libsqlite3
+error: no installed system package for libsqlite3
+  info: specify --sys-install to try to install it
+  info: specify libsqlite3/* if package is not installed with system
+        package manager
+  info: specify --sys-no-query to disable system package manager
+        interactions
+\
+
+As you can see, \c{build2} will not attempt to automatically install system
+packages unless explicitly requested with the \c{--sys-install} option. Let's
+try to add that (again, running on Debian):
+
+\
+$ bdep sync --sys-install ?sys:libsqlite3
+updating debian package index...
+synchronizing:
+  sys-install libsqlite3-0/3.42.0-1 (required by sys:libsqlite3)
+  configure sys:libsqlite3/3.42.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3
+installing debian packages...
+The following NEW packages will be installed:
+  libsqlite3-dev
+The following packages will be upgraded:
+  libsqlite3-0 sqlite3
+Do you want to continue? [Y/n] y
+...
+Setting up libsqlite3-0:amd64 (3.42.0-1) ...
+Setting up libsqlite3-dev:amd64 (3.42.0-1) ...
+Setting up sqlite3 (3.42.0-1) ...
+\
+
+\N|You can suppress the system package manager confirmation prompt with the
+\c{--sys-yes} option. By default \c{build2} uses \c{sudo} for system package
+manager interactions that normally require administrative privileges (fetch
+package metadata, install packages, etc). This can be customized with the
+\c{--sys-sudo} option.|
+
+Finally, if we are running on an operating system for which there is no
+\c{build2} support for the system package manager interactions, then, as
+mentioned earlier, it is the user's responsibility to make sure a suitable
+package is installed and, optionally, communicate its version. In this case,
+unless we specify the installed version explicitly, a system-installed package
+is assumed to satisfy any dependency constraint (indicated with the \c{*}
+wildcard instead of the version):
+
+\
+$ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/* (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3
+\
+
+\N|You can reduce the supported system package manager case to this case by
+disabling the system package manager interactions with the \c{--sys-no-query}
+option.|
+
 \N|The system-installed dependency doesn't really have to come from the system
 package manager. It can also be manually installed and, as discussed in
 \l{#guide-unpackaged-deps Using Unpackaged Dependencies}, not necessarily into
 the system-default location like \c{/usr/local}.|
 
-In the above example our dependency still has to be packaged and available
-from one of the project's prerequisite repositories. But it can be a \i{stub}
-\- a package that does not contain any source code and that can only be
-\"obtained\" from the system (see \l{bpkg#package-version Package Version} for
-details). However, if we would like to use a completely unpackaged dependency,
-then we will have to specify its version explicitly either as the actual
-version or as the \c{*} wildcard, for example:
+In the above examples our dependency (\c{libsqlite3}) still has to be packaged
+and available from one of the project's prerequisite repositories. But it can
+be a \i{stub} \- a package that does not contain any source code and that can
+only be \"obtained\" from the system.
+
+\N|The purpose of a stub is to provide the \c{build2} package to system
+package name and version mapping, in case it cannot be deduced automatically.
+See \l{bpkg#package-version Package Version} and
+\l{bpkg#manifest-package-distribution \c{*-{name, version,
+to-downstream-version\}}} package manifest values for details.|
+
+If we would like to use a completely unpackaged dependency, then, for the
+supported system package manager case, we will need to pass the
+\c{--sys-no-stub} option:
+
+\
+$ bdep sync --sys-install --sys-no-stub ?sys:libsqlite3
+\
+
+And for the unsupported system package manager case we will have to specify
+the system version explicitly either as the actual version or as the \c{*}
+wildcard, for example:
 
 \
 $ bdep sync ?sys:libsqlite3/* ?sys:libcurl/7.47.0
 \
 
-\N|Currently, unless we specify the installed version explicitly, a
-system-installed package is assumed to satisfy any dependency constraint. In
-the future, \c{build2} will automatically query commonly used system package
-managers for the installed version and maybe even request installation of the
-absent packages. To support this functionality, the package manifest may need
-to specify package name mappings for various system package managers (which is
-the rationale behind stub packages).|
+\N|The reason at least a stub is required by default is due to the automatic
+mapping between \c{build2} and system packages often being unreliable.|
 
 
 \h#guide-unpackaged-deps|Using Unpackaged Dependencies|

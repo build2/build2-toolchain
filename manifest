@@ -2,6 +2,6 @@
 
 # Note: not a real package, just for the version module.
 #
-version: 0.16.0
+version: 0.17.0-a.0.z
 depends: * build2 >= 0.16.0-
 depends: * bpkg >= 0.16.0-

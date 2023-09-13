@@ -392,7 +392,7 @@ with Visual Studio, start a command prompt and then run:
 > bdep init -C ..\hello-debug @debug cc ^
   \"config.cxx=cl /MDd\"                  ^
   \"config.cc.coptions=/Od /Zi\"          ^
-  config.cc.loptions=/DEBUG
+  config.cc.loptions=/DEBUG:FULL
 
 > bdep init -C ..\hello-release @release cc ^
   config.cxx=cl                             ^

@@ -15,7 +15,9 @@ while [ $# -gt 0 ]; do
   case $1 in
     --clean)
       rm -f build2-toolchain-intro.xhtml build2-toolchain-intro*.ps \
- build2-toolchain-intro*.pdf
+build2-toolchain-intro*.pdf
+      rm -f build2-packaging-guide.xhtml build2-packaging-guide*.ps \
+build2-packaging-guide*.pdf
       rm -f build2-toolchain-install.xhtml build2-toolchain-install*.ps \
 build2-toolchain-install*.pdf
       exit 0
@@ -64,8 +66,9 @@ function gen () # <name>
   ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
 }
 
-gen intro
 #gen intro1
+gen intro
+gen packaging
 
 # Auto-heading doesn't work since it is broken into multiple doc strings.
 #

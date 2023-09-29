@@ -106,8 +106,8 @@ shows how the main components, namely the build system, the package dependency
 manager, and the project dependency manager are used together to handle the
 entire C/C++ project development lifecycle: creation, development, testing,
 and delivery. For additional information, including documentation for
-individual toolchain components, man pages, etc., refer to the \c{build2}
-project \l{https://build2.org/doc.xhtml Documentation} page.
+individual toolchain components, man pages, HOWTOs, etc., refer to the
+\c{build2} project \l{https://build2.org/doc.xhtml Documentation} page.
 
 
 \h1#guide|Getting Started Guide|

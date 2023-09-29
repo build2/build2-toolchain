@@ -4,7 +4,7 @@
 define css: file
 css{*}: extension = css
 
-./: doc{build2-toolchain-*}     \
+./: doc{build2-*} \
     css{code-box common doc pre-box toc} \
     file{install.cli intro.cli doc-* *.html2ps}
 

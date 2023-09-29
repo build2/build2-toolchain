@@ -1,0 +1,212 @@
+// file      : doc/packaging.cli
+// license   : MIT; see accompanying LICENSE file
+
+"\name=build2-packaging-guide"
+"\subject=toolchain"
+"\title=Packaging Guide"
+
+// NOTES
+//
+// - Maximum <pre> line is 70 characters.
+//
+
+"
+\h0#preface|Preface|
+
+This document provides guidelines for converting third-party projects to the
+\c{build2} build system and making them available as packages from
+\l{https://cppget.org cppget.org}, the \c{build2} community's central package
+repository. For additional information, including documentation for individual
+\c{build2} toolchain components, man pages, HOWTOs, etc., refer to the project
+\l{https://build2.org/doc.xhtml Documentation} page.
+
+\N|This document is a work in progress and is incomplete.|
+
+
+\h1#dont-do|What Not to Do|
+
+
+\h#dont-from-scratch|Don't write \c{buildfile}s from scratch, use \c{bdep-new}|
+
+Unless you have good reasons not to, create the initial project layout
+automatically using \l{bdep-new(1)}, then tweak it if necessary and fill with
+upstream source code.
+
+The main rationale here is that there are many nuances in getting the build
+right and auto-generated \c{buildfile}s had years of refinement and
+fine-tuning. The familiar structure also makes it easier for others to
+understand your build, for example while reviewing your package submission.
+
+The \l{bdep-new(1)} command supports a wide variety of
+\l{bdep-new.xhtml#src-layout source layouts}. While it may take a bit of time
+to understand the customization points necessary to achieve the desired layout
+for your first package, this will pay off in spades when you work on
+converting subsequent packages. The recommended sequence of steps is
+as follows:
+
+\ol|
+
+\li|Study the upstream source layout. We want to stay as close to upstream as
+possible since this has the best chance of producing an issues-free result
+(see \l{#dont-change-upstream Don't change upstream source code layout} for
+details).|
+
+\li|Craft and execute the \l{bdep-new(1)} command line necessary to achieve
+the upstream layout.|
+
+\li|Study the auto-generated \c{buildfile}s for things that don't fit and need
+to change. But don't rush to start manually editing the result. First get an
+overview of the required changes and then check if it's possible to achieve
+these changes automatically using one of \l{bdep-new(1)} sub-options.
+
+For example, if you see that the generated project assumes the wrong C++ file
+extensions, these can be changed with \c{--lang|-l} sub-options.|
+
+\li|Once you have squeezed as much as possible out of \l{bdep-new(1)}, it's
+time for manual customizations. These would normally include:
+
+\ul|
+
+\li|Replace generated source code with upstream, normally as symlinks from the
+    \c{upstream/} \c{git} submodule.|
+
+\li|Tweak source subdirectory \c{buildfile} that builds the main target
+    (library, executable).|
+
+\li|Add tests and, if necessary, examples.|
+
+\li|Tweak \c{manifest} (in particular the \c{version}, \c{summary}, and
+    \c{license} values).|
+
+\li|Fill in \c{README.md}.|||
+
+|
+
+
+\h#dont-change-upstream|Don't change upstream source code layout|
+
+It's a good idea to stay as close to the upstream's source code layout as
+possible. This has the best chance of giving us a build without any compile
+errors since the header inclusion in the project can be sensitive to this
+layout. This also makes it easier for upstream to adopt the \c{build2}
+build.
+
+Sometimes, however, there are good reasons for deviating from upstream,
+especially in cases where upstream is clearly following bad practices, for
+example installing generically-named headers without a library prefix. If you
+do decide to change the layout, it's usually less disruptive (to the build) to
+rearrange things at the outer levels than at the inner. For example, it should
+normally be possible to move/rename the top-level \c{tests/} directory or to
+place the library source directory into a subdirectory.
+
+
+\h#dont-header-only|Don't make a library header-only if it can be compiled|
+
+Some libraries offer two alternative modes: header-only and compiled. Unless
+there are good reasons not to, a \c{build2} build of such a library should use
+the compiled mode.
+
+\N|Some libraries use the \i{precompiled} term to describe the non-header-only
+mode. We don't recommend using this term in the \c{build2} build since it has
+a strong association with precompiled headers and can therefore be
+confusing. Instead, use the \i{compiled} term.|
+
+The main rationale here is that a library would not be offering a compiled
+mode if there were no benefits (usually faster compile times of library
+consumers) and there is no reason not to take advantage of it in the
+\c{build2} build.
+
+There are, however, reasons why a compiled mode cannot be used, the most
+common of which are:
+
+\ul|
+
+\li|The compiled mode is not well maintained/tested by upstream and therefore
+offers inferior user experience.|
+
+\li|The compiled mode does not work on some platforms, usually Windows due to
+the lack of symbol export support (but see \l{b##cc-auto-symexport Automatic
+DLL Symbol Exporting}).|
+
+\li|Uses of the compiled version of the library requires changes to the
+library consumers, for example, inclusion of different headers.|
+
+|
+
+If a compiled mode cannot be always used, then it may be tempting to support
+both modes potentially making the mode user-configurable. Unless there are
+strong reasons to, you should resist this temptation and, if the compiled
+mode is not universally usable, then use the header-only mode everywhere.
+
+The main rationale here is that variability adds complexity which makes the
+result more prone to bugs, more difficult to use, and harder to review and
+maintain. If you really want to have the compiled mode, then the right
+way to do it is to work with upstream to fix any issues that prevent its
+use in \c{build2}.
+
+There are, however, reasons why supporting both mode may be needed, the most
+common of which are:
+
+\ul|
+
+\li|The library is widely used in both modes but switching from one mode to
+the other requires changes to the library consumers (for example, inclusion of
+different headers). In this case only supporting one mode would mean not
+supporting a large number of library consumers.|
+
+\li|The library consists of a large number of independent components and its
+common for applications to only use a small subset of them. On the other hand,
+compiling all of them in the compiled mode takes a substantial amount of time.
+(Note that this can also be addressed by making the presence of optional
+components user-configurable.)|
+
+|
+
+
+\h#dont-main-target-root-buildfile|Don't build your main targets in root \c{buldfile}|
+
+It may be tempting to have your main targets (libraries, executables) in the
+root \c{buildfile}, especially if it allows you to symlink entire directories
+from \c{upstream/} (which is not possible if you have to have a \c{buildfile}
+inside). However, this is a bad idea except for the simplest projects.
+
+Firstly, this quickly gets messy since you have to combine managing
+\c{README}s, \c{LICENSE}s, and subdirectories with you main target builds.
+But, more importantly, this means that when you main target is imported (and
+thus the \c{buildfile} that defines this target must be loaded), your entire
+project will be loaded, including any \c{tests/} and \c{examples/} subproject,
+which is wasteful.
+
+Note also that it's easy to continue symlinking entire directories from
+\c{upstream/} without moving everything to the root \c{buildfile} by simply
+creating another subdirectory. Let's look at a concrete example. Here is
+the directory structure where everything is in the root \c{buildfile}:
+
+\
+libigl-core/
+├── igl/ -> upstream/igl/
+├── tests/
+└── buildfile                      # Defines lib{igl-core}.
+\
+
+And here is the alternative structure where we have added the \c{libigl-core}
+subdirectory with its own \c{buildfile}:
+
+\
+libigl-core/
+├── libigl-core/
+│   ├── igl/ -> ../upstream/igl/
+│   └── buildfile                 # Defines lib{igl-core}.
+├── tests/
+└── buildfile
+\
+
+Below is the \l{bdep-new(1)} invocation that can be used to automatically
+create this alternative structure (see \l{bdep-new.xhtml#src-layout SOURCE
+LAYOUT} for details):
+
+\
+$ bdep new -t lib,prefix=libigl-core,no-subdir,no-version libigl-core
+\
+
+"

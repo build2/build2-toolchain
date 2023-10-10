@@ -281,4 +281,56 @@ LAYOUT} for details):
 $ bdep new -t lib,prefix=libigl-core,no-subdir,no-version libigl-core
 \
 
+
+\h1#faq|Packaging FAQ|
+
+\h#faq-publish-stage|Where to publish if package requires staged toolchain?|
+
+If your package requires the \l{https://build2.org/community.xhtml#stage staged
+toolchain}, for example, because it needs a feature or bugfix that is not yet
+available in the released toolchain, then you won't be able to publish it to
+\c{cppget.org}. Specifically, if your package has the accurate \c{build2}
+version constraint and you attempt to publish it, you will get an error like
+this:
+
+\
+error: package archive is not valid
+  info: unable to satisfy constraint (build2 >= 0.17.0-) for package foo
+  info: available build2 version is 0.16.0
+\
+
+There are three alternative ways to proceed in this situation:
+
+\ol|
+
+\li|Wait until the next release and then publish the package to
+\c{cppget.org}.|
+
+\li|If the requirement for the staged toolchain is \"minor\", that is, it
+doesn't affect the common functionality of the package or only affects a small
+subset of platforms/compilers, then you can lower the toolchain version
+requirement and publish the package to \c{cppget.org}. For example, if
+you require the staged toolchain because of a bugfix that only affects
+one platform, it doesn't make sense to delay publishing the package
+since it is perfectly usable on all the platforms in the meantime.|
+
+\li|Publish it to \l{https://queue.stage.build2.org queue.stage.build2.org},
+the staging package repository. This repository contain new packages that
+require the staged toolchain to work and which will be automatically
+moved to \c{cppget.org} once the staged version is released. The other
+advantage of publishing to this repository (besides not having to remember
+to manually publish the package once the staged version is released) is
+that your package becomes available from an archive repository (which is
+substantially faster than a \c{git} repository).
+
+To publish to this repository, use the following \c{bdep-publish} command
+line:
+
+\
+$ bdep publish --repository=https://stage.build2.org ...
+\
+
+||
+
+
 "

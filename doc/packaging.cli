@@ -104,7 +104,12 @@ place the library source directory into a subdirectory.
 
 After \l{#dont-from-scratch generating the project template with \c{bdep-new}},
 don't forget to update at least the key values in the generated \c{manifest}:
-\c{version}, \c{license}, and \c{summary}.
+\l{#dont-forget-update-manifest-version \c{version}},
+\l{#dont-forget-update-manifest-license \c{license}}, and
+\l{#dont-forget-update-manifest-summary \c{summary}}.
+
+
+\h2#dont-forget-update-manifest-version|Don't forget to update \c{manifest} value \c{version}|
 
 For \c{version}, use the upstream version directly if it is semver (or
 semver-like, that is, has three version components). Otherwise, see
@@ -113,12 +118,18 @@ How do I handle projects that don't use semantic versioning?} and
 \l{https://github.com/build2/HOWTO/blob/master/entries/handle-projects-which-dont-use-version.md
 How do I handle projects that don't use versions at all?}
 
+
+\h2#dont-forget-update-manifest-license|Don't forget to update \c{manifest} value \c{license}|
+
 For \c{license}, use the \l{https://spdx.org/licenses/ SPDX license ID} if at
 all possible. If multiple licenses are involved, use the SPDX License
 expression. See the
 \l{https://build2.org/bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license
 \c{license} manifest value} documentation for details and the list of the
 most commonly used SPDX license IDs.
+
+
+\h2#dont-forget-update-manifest-summary|Don't forget to update \c{manifest} value \c{summary}|
 
 For \c{summary} use a brief description of the functionality provided by the
 package. Less than 70 characters is a good target to aim for. Don't capitalize

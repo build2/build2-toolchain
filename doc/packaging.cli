@@ -13,8 +13,8 @@
 "
 \h0#preface|Preface|
 
-This document provides guidelines for converting third-party projects to the
-\c{build2} build system and making them available as packages from
+This document provides guidelines for converting third-party C/C++ projects to
+the \c{build2} build system and making them available as packages from
 \l{https://cppget.org cppget.org}, the \c{build2} community's central package
 repository. For additional information, including documentation for individual
 \c{build2} toolchain components, man pages, HOWTOs, etc., refer to the project
@@ -22,6 +22,94 @@ repository. For additional information, including documentation for individual
 
 \N|This document is a work in progress and is incomplete.|
 
+
+\h1#intro|Introduction|
+
+The aim of this guide is to ease the convertion of third-party C/C++ projects
+to the \c{build2} build system and publishing them to the
+\l{https://cppget.org cppget.org} package repository by codifying the best
+practices and techniques. By following the presented guidelines you also make
+it easier for others to review your work and help with ongoing maintenance.
+
+The primary focus of this guide are existing C/C++ projects that use a
+different build system and that are maintained by a third-party, which we will
+refer to as \i{upstream}. Unless upstream is willing to incorporate support
+for \c{build2} directly into their repository, such projects are normally
+packaged for \c{build2} in a separate \c{git} repository under the
+\l{https://github.com/build2-packaging github.com/build2-packaging}
+organization. Note, however, that many of the presented guidelines are also
+applicable when converting your own projects (that is, where you are the
+upstream) as well as projects that use languages other than C or C++.
+
+Most C/C++ packages that are published to \l{https://cppget.org cppget.org}
+are either libraries or executables (projects that provide both are normally
+split into several packages) with libraries being in the strong majority.
+Libraries are also generally more difficult to build correctly. As a result,
+this guide uses libraries as a baseline. In most cases, a library-specific
+step is easily distinguished as such and can be skipped when dealing with
+executables. And in cases where a more nuanced change is required, a note will
+be provided.
+
+At the high-level, packaging a third-party project involves the following
+steps:
+
+\ol|
+
+\li|Create the \c{git} repository and import upstream source code.|
+
+\li|Generate \c{buildfile} templates that match upstream layout.|
+
+\li|Tweak the generated \c{buildfiles} to match upstream build.|
+
+\li|Test using the \l{https://ci.cppget.org \c{build2} CI service}.|
+
+\li|Publish the package to \l{https://cppget.org cppget.org}.|
+
+|
+
+Once this process is completed and the package is published, new releases
+normally require a small amount of work provided there are no drastic changes
+in the upstream layout or build. The sequence of steps for a new release would
+typical look like this:
+
+\ol|
+
+\li|Add new and/or remove old upstream source code, if any.|
+
+\li|Tweak \c{buildfiles} to match changes to upstream build, if any.|
+
+\li|Test using the \l{https://ci.cppget.org \c{build2} CI service}.|
+
+\li|Publish the package to \l{https://cppget.org cppget.org}.|
+
+|
+
+While packaging a simple library or executable is relatively straightforward,
+the C and C++ languages and their ecosystem is famous for a large amount
+varience in the platforms, compilers, and build systems used. This leads to
+what appears to be an endless list of special considerations that are
+applicable in certain, more complex cases.
+
+As result, the presented guidelines are divided into four chapters: The
+\l{#core Core Guidelines} cover steps that are applicable to all or most
+packaging efforts. As mentioned earlier, these steps will assume packaging a
+library but they should be easy to adapt to executables. This chapter is
+followed by \l{#dont-do What Not to Do} which covers the common packaging
+mistakes and omissions. These are unfortunately relatively common because
+experience with other build systems often does not translate directly to
+\c{build2} and some techniques (such as header-only libraries) are
+discouraged. The last two chapters are \l{#howto HOWTO} and \l{#faq FAQ} which
+cover the above-mentioned long list of special considerations that are only
+applicable in certain cases as well as answer frequent packaging-related
+questions, respectively.
+
+Besides the presented guidelines you may also find the existing packages found
+in \l{https://github.com/build2-packaging github.com/build2-packaging} a good
+source of example material. The repositories pinned to the front page are the
+recommended starting point.
+
+
+\h1#core|Core Guidelines|
 
 \h1#dont-do|What Not to Do|
 
@@ -292,6 +380,7 @@ LAYOUT} for details):
 $ bdep new -t lib,prefix=libigl-core,no-subdir,no-version libigl-core
 \
 
+\h1#howto|Packaging HOWTO|
 
 \h1#faq|Packaging FAQ|
 

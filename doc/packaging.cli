@@ -9,6 +9,10 @@
 //
 // - Maximum <pre> line is 70 characters.
 //
+// - In guideline titles (do/don't) omit a/the.
+//
+
+// @@ Close the issue in WISHLIST.
 
 "
 \h0#preface|Preface|
@@ -103,13 +107,185 @@ cover the above-mentioned long list of special considerations that are only
 applicable in certain cases as well as answer frequent packaging-related
 questions, respectively.
 
+@@ Purpose of notes to provide rationale.
+
 Besides the presented guidelines you may also find the existing packages found
 in \l{https://github.com/build2-packaging github.com/build2-packaging} a good
 source of example material. The repositories pinned to the front page are the
 recommended starting point.
 
+\h#intro-term|Terminology|
+
+upstream
+upstream repository
+project
+package (third-party project)
+package \c{git} repository
+
 
 \h1#core|Core Guidelines|
+
+\h#core-repo|Setup the package repository|
+
+This section covers the creation of the package \c{git} repository and
+the importation of the upstream source code.
+
+\h2#core-repo-exists|Check if package repository already exists|
+
+Before deciding to package a third-party project you have presumably checked
+on \l{https://cppget.org cppget.org} if someone has already packaged it. There
+are several other places that make sense to check as well:
+
+\ul|
+
+\li|\l{https://queue.cppget.org queue.cppget.org} contains packages that
+have been submitted but not yet published.|
+
+\li|\l{https://queue.stage.build2.org queue.stage.build2.org} contains
+packages that have been submitted but can only be published after the next
+release of the \c{build2} toolchain (see \l{#faq-publish-stage Where to
+publish if package requires staged toolchain?} for background).|
+
+\li|\l{https://github.com/build2-packaging github.com/build2-packaging}
+contains all the third-party package repositories. Someone could already be
+working on the package but haven't they finished it.|
+
+\li|\l{https://github.com/build2-packaging/WISHLIST/issues
+github.com/build2-packaging/WISHLIST} contains as issues projects that people
+wish were packaged. These may contain offers to collaborate or announcements
+of ongoing work.||
+
+
+In all these cases you should be able to locate the package \c{git} repository
+and/or connect with others in order to collaborate on the packaging work. If
+the existing effort looks abandoned (for example, there hasn't been any
+progress for a while and the existing maintainer doesn't respond) and you
+would like to take over the package,
+\l{https://build2.org/community.xhtml#help get in touch}.
+
+
+\h2#core-repo-name|Use upstream repository name as package repository name|
+
+It is almost always best to use the upstream repository name as the package
+repository name. If there is no upstream repository (for example, because the
+project doesn't use a version control system), the name used in the source
+archive distribution would be the natural fallback.
+
+
+\h2#core-repo-create|Create package repository in personal workspace|
+
+For a third-party project, the end result that we are aiming for is a package
+repository under the \l{https://github.com/build2-packaging
+github.com/build2-packaging} organization.
+
+\N|We require all the third-party projects that are published to
+\l{https://cppget.org cppget.org} to be under the
+\l{https://github.com/build2-packaging github.com/build2-packaging}
+organization in order to ensure some continuity in case the original
+maintainer loose interest, etc. You will still be the owner of the repository
+and by hosting your packaging efforts under this organization (as opposed to,
+say, your personal workspace) you make it easier for others to discover your
+work and to contribute to the package maintenance.
+
+Note that this requirement does not apply to your own projects (that is, where
+you are the upstream) and where the \c{build2} support is normally part of the
+upstream repository.
+
+Finally, a note on the use of \c{git} and GitHub: if for some reason you are
+unable to use either, \l{https://build2.org/community.xhtml#help get in touch}
+to discuss alternatives.|
+
+However, the recommended approach is to start with a repository in your
+personal workspace and then, when it is ready or in a reasonably stable shape,
+transfer it to \l{https://github.com/build2-packaging
+github.com/build2-packaging}. This gives you the freedom to make destructive
+changes to the repository (including deleting it and strating over) during the
+initial packaging work. It also removes the pressure to perform: you can give
+it a try and if things turn out more difficult than you expected, you can
+just drop the repository.
+
+\N|For repositories under \l{https://github.com/build2-packaging
+github.com/build2-packaging} the \c{master}/\c{main} branch is protected: it
+cannot be deleted and its commit history cannot be overwritten with a forced
+push.|
+
+\N|While you can use any name for a repository under the personal workspace,
+under \l{https://github.com/build2-packaging github.com/build2-packaging} it
+should follow the \l{core-repo-name Use upstream repository name as package
+repository name} guideline. In particular, there should be no prefixes like
+\c{build2-} or suffixes like \c{-package}. If the repository under your
+personal workspace does not follow this guideline, you should rename it before
+transferring it to the \l{https://github.com/build2-packaging
+github.com/build2-packaging} organization.|
+
+There is one potenential problem with this approach: it is possible that
+several people start working on the same third-party project without being
+aware of each other's efforts. If the project you are packaging is relatively
+small and you don't expect it to take more than a day or two, then this is
+probably not worth worrying about. For bigger projects, however, it makes
+sense to announce your work by creating (or updating) the corresponding issue
+in \l{https://github.com/build2-packaging/WISHLIST
+github.com/build2-packaging/WISHLIST}.
+
+To put it all together, the recommended sequence of actions for this step:
+
+\ol|
+
+\li|Create a new empty repository under your personal workspace from GitHub
+    UI. Don't automatically add any files (\c{README}, \c{LICENSE}, etc).|
+
+\li|Set the repository description in GitHub UI to the \c{build2 package
+for <name>} line, where \c{<name>} is the project name.|
+
+\li|Clone the repository to your machine.||
+
+\N|Since this is your personal repository, you can do the initial work
+directly in \c{master}/\c{main} or in a separate branch, it's up to you.|
+
+
+\h2#core-repo-init|Initialize package repository with \c{bdep new -t empty}|
+
+From the repository root directory, run:
+
+\
+bdep new -t empty
+\
+
+This command will create a number of files, including:
+
+\dl|
+
+\li|\n\c{README.md}\n
+
+This is the project \c{README}. We will discuss the recommended content for
+this file later.|
+
+\li|\n\c{repositories.manifest}\n
+
+This file specifies the repositories from which this project will obtain its
+dependencies (see \l{intro#guide-add-remove-deps Adding and Removing
+Dependencies}). If the project you are packaging has no dependencies, then you
+can safely remove this file (it's easy to add later if this changes). And for
+projects that do have dependecies we will discuss the appropriate changes to
+this file later.|
+
+
+\li|\n\c{.gitattributes} and \c{.gitignore}\n
+
+These are the \c{git} infrastrucutre files for the repository. You shouldn't
+normally need to change anything in them at this stage (see the comments
+inside for details).||
+
+Next add and commit these files:
+
+\
+git add .
+git commit -m \"Initialize repository\"
+\
+
+@@ TODO: note on multi-package repository
+
+
 
 \h1#dont-do|What Not to Do|
 
@@ -271,7 +447,7 @@ summary: Geometry processing C++ library, core module examples
 \
 
 
-\h#dont-header-only|Don't make a library header-only if it can be compiled|
+\h#dont-header-only|Don't make library header-only if it can be compiled|
 
 Some libraries offer two alternative modes: header-only and compiled. Unless
 there are good reasons not to, a \c{build2} build of such a library should use

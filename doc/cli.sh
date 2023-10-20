@@ -50,6 +50,7 @@ function gen () # <name>
 --generate-html --html-suffix .xhtml \
 --html-prologue-file doc-prologue.xhtml \
 --html-epilogue-file doc-epilogue.xhtml \
+--link-regex '%intro(#.+)?%build2-toolchain-intro.xhtml$1%' \
 --link-regex '%b([-.].+)%../../build2/doc/b$1%' \
 --link-regex '%bpkg([-.].+)%../../bpkg/doc/bpkg$1%' \
 --link-regex '%bdep([-.].+)%../../bdep/doc/bdep$1%' \

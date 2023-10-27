@@ -121,6 +121,7 @@ upstream repository
 project
 package (third-party project)
 package \c{git} repository
+multi-package repository
 
 
 \h1#core|Core Guidelines|
@@ -171,6 +172,8 @@ repository name. If there is no upstream repository (for example, because the
 project doesn't use a version control system), the name used in the source
 archive distribution would be the natural fallback.
 
+\N|See \l{#core-package-name Decide on the package name} for the complete
+picture on choosing names.|
 
 \h2#core-repo-create|Create package repository in personal workspace|
 
@@ -280,10 +283,274 @@ Next add and commit these files:
 
 \
 git add .
+git status
 git commit -m \"Initialize repository\"
 \
 
-@@ TODO: note on multi-package repository
+\N|In these guidelines we will be using the package repository setup that is
+capable of having multiple packages. This is recommended even for upstream
+projects that only provides a single package because it gives us the
+flexibility of adding new packages at a later stage without having to perform
+a major restructuring of our repository.
+
+Note also that upstream providing multiple package is not the only reason we
+may end up having multiple \c{build2} packages. Another common reason is
+factoring tests into a separate package due to a dependency on a testing
+framework
+(see \l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for background and
+details). While upstream adding new packages may not be very common, upstream
+deciding to use a testing framework is a lot more plausible.
+
+The only notable drawback of using a multi-package setup with a single package
+is the extra subdirectory for the package and a few extra files (such as
+\c{packages.manifest} that lists the packages) in the root of the repository.
+If you are certain that the project that you are converting is unlikely to
+have multiple packages (for example, because you are the upstream) or need
+extra dependencies for its tests (a reasonable assumption for a C project),
+then you could instead go with the single-package repository where the
+repository root is the package root. See \l{bdep-new(1)} for details on how to
+initialize such a repository. In this guide, however, we will continue to
+assume a multi-package repository setup.|
+
+
+\h2#core-repo-submodule|Add upstream repository as \c{git} submodule|
+
+If the third-party project is available from a \c{git} repository, then the
+recommended approach is to use the \c{git} submodule mechanism to make the
+upstream source code available inside the package repository, customarily in a
+subdirectory called \c{upstream/}.
+
+\N|While \c{git} submodules receive much criticism, in our case we use them
+exactly as indended: to select and track specific (release) commits of an
+external project. As a result, there is nothing tricky about their use for our
+purpose and all the relevant commands will be provided and explained, in case
+you are not familiar with this \c{git} mechanism.|
+
+Given the upstream repository URL, to add it as a submodule, run the following
+command from the package repository root:
+
+\
+git submodule add https://github.com/.../<project>.git upstream
+\
+
+\N|You should prefer \c{https://} over \c{git://} for the upstream repository
+URL since the \c{git://} protocol may not be accessible from all networks.
+Naturally, never use a URL that requires authentication, for example, SSH.|
+
+Besides the repository URL, you also need the commit of the upstream release
+which you will be packaging. It is common practice to tag releases so the
+upstream tags would be the first place to check. Failed that, you can always
+use the commit id.
+
+Assuming the upstream release tag you are interested in is called \c{vX.Y.Z},
+to update the \c{upstream} submodule to point to this release commit, run the
+following command:
+
+\
+cd upstream
+git checkout vX.Y.Z
+cd ..
+\
+
+Then add and commit these changes:
+
+\
+git add .
+git status
+git commit -m \"Add upstream submodule\"
+\
+
+Now we have all the upstream source code for the release that we are
+interested in available in the \c{upstream/} subdirectory of our repository.
+
+The plan is to then use symbolic links (symlinks) to non-invasively overlay
+the \c{build2} files (\c{buildfile}, \c{manifest}, etc) with the upstream
+source code, if necessary adjusting upstream structure to split it into
+multiple packages and/or to better align with the source/output layouts
+recommended by \c{build2} (see \l{https://build2.org/article/symlinks.xhtml
+Using Symlinks in \c{build2} Projects} for background and rationale). But
+before we can start adding symlinks to the upstream source (and other files
+like \c{README}, \c{LICENSE}, etc), we want to generate the \c{buildfile}
+templates that match the upstream source code layout. This is the subject of
+the next section.
+
+\N|While on UNIX-like operating systems symlinks are in widespread use, on
+Windows it's a niche feature that unfortunately could be cumbersome to use
+(see \l{https://build2.org/article/symlinks.xhtml#windows Symlinks and
+Windows} for details). However, the flexibility afforded by symlinks when
+packaging third-party projects is unmatched by any other mechanism and we
+therefore use them despite potentially sub-optimal experience on Windows.|
+
+
+\h#core-package|Create package and generate \c{buildfile} templates|
+
+This section covers the addition of the package to the repository we have
+prepared in the previous steps and the generation of the \c{buildfile}
+templates that match the upstream source code layout.
+
+
+\h2#core-package-name|Decide on the package name|
+
+While choosing the package repository name was pretty straightforward, things
+get less clear cut when it comes to the package name.
+
+\N|If you need a refresher on the distinction between projects and packages,
+see \l{#intro-term Terminology}.|
+
+Picking a name for a package that provides an executable is still relatively
+straightforward: you should use the upstream name (which is usually the same
+as the upstream project name) unless there is a good reason to deviate. One
+recommended place to check before deciding on a name is the
+\l{https://packages.debian.org Debian package repository}. If their package
+name differs from upstream, then there is likely a good reason for that and
+it is worth trying to understand what it is.
+
+\N|Tip: when trying to find the corresponding Debain package, search for the
+executable file name in the package contents if you cannot fine the package by
+its upstream name. Also consider searching in the \c{unstable} distribution in
+addition to \c{testing} for newer packages.|
+
+Picking a name for a package that provides a library is where things can get
+more complicated. While all the recommendation that have been listed for
+executables apply equally to libraries, there are additional considerations.
+
+In \c{build2} we recommend (but not require) that new library projects use a
+name that starts with \c{lib} in order to easily distinguish them from
+executables and avoid any clashes, potential in the future (see
+\l{intro#proj-struct Canonical Project Structure} for details). To illustrate
+the problem, consider the \c{zstd} project which provides a library and an
+executable. In upstream repository both are part of the same codebase that
+doesn't try to separate them into packages so that, for example, library could
+be used without downloading and building the executable. In \c{build2},
+however, we do need to split them into two separate packages and both packages
+cannot be called \c{zstd}. So we call them \c{zstd} and \c{libzstd}.
+
+\N|If you are familiar with the Debian package naming policy, you will
+undoubtedly recognize the approach. In Debian all the library packages (with
+very few exceptions) start with the \c{lib} prefix. So when searching for an
+upstream name in the \l{https://packages.debian.org Debian package repository}
+make sure to prefix it with \c{lib} (unless it already starts with this
+prefix, of course).|
+
+This brings the question of what to do about third-party libraries: should we
+add the \c{lib} prefix to the package name if it's not already there?
+Unfortunately, there is no clear cut answer and whichever decision you make,
+there will be drawbacks. Specifically, if you add the \c{lib} prefix, the main
+drawback is that the package name now deviates from upstream name and if the
+project maintainer ever decides to add \c{build2} support the upstream
+repository, there could be substantial friction. On the other handle, if you
+don't add the \c{lib} prefix, then you will always run the risk of a future
+clash with an executable name. And, as was illustrated with the \c{zstd}
+example, a late addition of an executable won't necessarily cause any issues
+to upstream. As a result, we don't have a hard requirement for the \c{lib}
+prefix unless there is already an executable that would cause the clash (this
+applies even if it's not being packaged yet or is provided by an unrelated
+project). If you don't have a strong preference, we recommend that you add the
+\c{lib} prefix (unless it is already there). In particular, this will free you
+from having to check for any potential clashes. See
+\l{https://github.com/build2/HOWTO/blob/master/entries/name-packages-in-project.md
+How should I name packages when packaging third-party projects?} for
+additional background and details.
+
+To build some intuition for choosing package names, let's consider several
+real examples. We start with executables:
+
+\
+  upstream  |   upstream    |   Debian   | build2 package|   build2
+project name|executable name|package name|repository name|package name
+------------+---------------+------------+---------------+------------
+byacc        byacc           byacc        byacc           byacc
+sqlite       sqlite3         sqlite3      sqlite          sqlite3
+vim          xxd             xxd          xxd             xxd
+OpenBSD      m4              -            openbsd-m4      openbsd-m4
+qtbase 5     moc             qtbase5-\    Qt5             Qt5Moc
+                             dev-tools
+qtbase 6     moc             qt6-base-\   Qt6             Qt6Moc
+                             dev-tools
+\
+
+The examples are arranged from the most straightforward naming to the
+least. The last two examples show that sometimes, after carefully considering
+upstream naming, you nevertheless have no choice but to ignore it and forge
+your own path.
+
+Next let's look at library examples. Notice that some use the same \c{build2}
+package repository name as the executables above. That means they are part of
+the same multi-package repository.
+
+\
+  upstream  |  upstream     |   Debian   | build2 package|   build2
+project name|library name   |package name|repository name|package name
+------------+---------------+------------+---------------+------------
+libevent     libevent        libevent     libevent        libevent
+brotli       brotli          libbrotli    brotli          libbrotli
+zlib         zlib            zlib         zlib            libz
+sqlite       libsqlite3      libsqlite3   sqlite          libsqlite3
+libsig\      libsigc++       libsigc++    libsig\         libsigc++
+cplusplus                                 cplusplus
+qtbase 5     QtCore          qtbase5-dev  Qt5             libQt5Core
+qtbase 6     QtCore          qt6-base-dev Qt6             libQt6Core
+\
+
+If an upstream project is just a single library, then the project name is
+normally the same as the library name (but there are exceptions, like
+\c{libsigcplusplus} in the above table). However, when looking at upstream
+repository that contains multiple components (libraries and/or executables,
+like \c{qtcore} in the above example), it may not be immediately obvious what
+the upstream's library names are. In such cases, the corresponding Debian
+packages can really help clarify the situation. Failed that, look into the
+existing build system. In particular, if it generates the \c{pkg-config} file,
+then the name of this file is usually the upstream library name.
+
+\N|Looking at the names of the library binaries is less helpful because on
+UNIX-like systems they must start with the \c{lib} prefix. And on Windows the
+names of library binaries often embed extra information (static/import,
+debug/release, etc) and may not correspond directly to the library name.|
+
+And, speaking of multiple components, if you realize the upstream project
+provides multiple libraries and/or executables, then you need to decide
+whether to split them into seperate \c{build2} packages and if so, how. Here,
+again, the corresponding Debian packages can be a good strating point. Note,
+however, that in this case we often deviate from their split, especially when
+it comes to libraries. For example, \c{libevent} shown in the above table
+provides several libraries (\c{libevent-core}, \c{libevent-extra}, etc) and in
+Debian it is actually split into several binary packages along these lines. In
+\c{build2}, however, there is a single package that provides all these
+libraries with everything except \c{libevent-core} being optional. An example
+which shows the decision made in a different direction would be the Boost
+libraries: in Debian all the header-only Boost libraries are bundled into a
+single package while in \c{build2} they are all seperate packages.
+
+The overall criteria here can be stated as follows: if a small family of
+libraries provide complimentary functionality (like \c{libevent}), then we put
+them all into a single package, usually making the additional functionality
+optional. However, if the libraries are independent (like Boost) or provide
+alternative rather than complimentary functionality (for example, like
+different backends in \c{imgui}), then we make them separate packages. Note
+that we never bundle an executable and a (public) library in a single package.
+
+Note also that while it's a good idea to decide on the package split and all
+the package names upfront to avoid suprises later, you don't have to actually
+provide all the packages right away. For example, if upstream provides a
+library and an executable (like \c{zstd}), you can start with the library and
+the executable package can be added later (potentially by someone else).
+
+Admittedly, the recommendation in this section are all a bit fuzzy and one can
+choose different names or different package splits that could all seem
+reasonable. If you are unsure how to split the upstream project or what names
+to use, \l{https://build2.org/community.xhtml#help get in touch} to discuss
+the alternatives. It can be quite painful to change these things after you
+have completed the remaining packaging steps.
+
+
+@@ Where do we overlay the source code?
+
+======================================================================
+
+
+
+
 
 
 

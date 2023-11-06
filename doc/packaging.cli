@@ -816,7 +816,7 @@ project include:
 
 \dl|
 
-\li|\n\c{no-version}
+\li|\n\cb{no-version}
 
 Omit the auto-generated version header. Usually upstream will provided its own
 equivalent to this functionality.
@@ -827,7 +827,7 @@ since upstream may add it in a future version and you may end up with a
 conflict. Instead, work with the project maintainer to rectify this in
 upstream.||
 
-\li|\n\c{no-symexport}\n\c{auto-symexport}
+\li|\n\cb{no-symexport}\n\cb{auto-symexport}
 
 The \c{no-symexport} sub-option suppresses the generation of the DLL symbol
 exporting header. This is an appropriate option if upstream provides its
@@ -840,12 +840,72 @@ support in the existing build system. It is also recommended that you give
 this functionality a try even if upstream does not support building
 shared libraries on Windows.|
 
-\li|\n\c{binless}
+\li|\n\cb{binless}
 
 Create a header-only library template. See \l{#dont-header-only Don't make
 library header-only if it can be compiled} and
 \l{https://github.com/build2/HOWTO/blob/master/entries/make-header-only-library.md
-How do I make a header-only C/C++ library?}||
+How do I make a header-only C/C++ library?}|
+
+\li|\n\cb{buildfile-in-prefix}
+
+Place header/source \c{buildfile}s into the header/source prefix directory
+instead of include subdirectory. To illustrate the difference, compare these
+two auto-generated layouts paying attention to the location of \c{buildfile}s:
+
+\
+$ bdep new ... --type lib,split libfoo
+$ tree libfoo/
+libfoo/
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       └── foo.hpp
+└── src/
+    └── foo/
+        ├── buildfile
+        └── foo.cpp
+\
+
+\
+$ bdep new ... --type lib,split,buildfile-in-prefix libfoo
+$ tree libfoo/
+libfoo/
+├── include/
+│   ├── foo/
+│   │   └── foo.hpp
+│   └── buildfile
+└── src/
+    ├── foo/
+    │   └── foo.cpp
+    └── buildfile
+\
+
+Note that this sub-option can only be used if both the header and source
+directories (\c{include/} and \c{src/} in our case) have an include
+subdirectory (\c{foo/} in our case).
+
+Why would we want to do this? The main reason is to be able to symlink the
+entire upstream directories rather than individual files. In the first
+listing, the generated \c{buildfile}s are inside the \c{foo/} subdirectories
+which mean we cannot just symlink \c{foo/} from upstream. This can be such a
+strong motivation that it may make sense to invent an include subdirectory in
+the source directory even if upstream doesn't have one. See
+\l{#dont-main-target-root-buildfile Don't build your main targets in root
+\c{buldfile}} for details on this technique.
+
+Another reason we may want to move \c{buildfile}s to prefix is to be able to
+handle upstream projects that may have multiple such include subdirectories.
+While this situation not very common in the header directory, it can be
+enountered in the source directory of more complex projects where upstream
+wishes to seperate the source code into components.||
+
+@@ Terminology does not match bdep-new 'include subdirectory'. Maybe change
+in bdep-new? 'source prefix directory' and 'source subdirectory' are quite
+close. But then include subdirectory inside src sounds like an oxymoron.
+I believe this is also consistent with Canonical Project Structure.
+
+@@ 'Don't build your main targets in root buldfile' needs work.
 
 Continuing with our \c{libfoo} example, assuming upstream provides own symbol
 exporting, the final \c{bdep-new} command line would be:

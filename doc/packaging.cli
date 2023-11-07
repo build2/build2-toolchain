@@ -579,11 +579,11 @@ the \c{build2} build.
 
 Sometimes, however, there are good reasons for deviating from upstream,
 especially in cases where upstream is clearly following bad practices, for
-example including generically-named public headers without the library
-subdirectory. If you do decide to change the layout, it's usually less
-disruptive (to the build) to rearrange things at the outer levels than at the
-inner. For example, it should normally be possible to move/rename the
-top-level \c{tests/} directory or to place the library source directory into a
+example including generically-named public headers without the library name as
+a subdirectory prefix. If you do decide to change the layout, it's usually
+less disruptive (to the build) to rearrange things at the outer levels than at
+the inner. For example, it should normally be possible to move/rename the
+top-level \c{tests/} directory or to place the library source files into a
 subdirectory.
 
 Our overall plan for the package is to create the initial layout and
@@ -603,20 +603,20 @@ to understand the customization points necessary to achieve the desired layout
 for your first package, this will pay off in spades when you work on
 converting subsequent packages.
 
-And so the focus of the following steps is to iteratively discover the
+And so the focus of the following several steps is to iteratively discover the
 \l{bdep-new(1)} command line that best approximates the upstream layout. The
 recommended procedure is as follows:
 
 \ol|
 
-\li|Study the upstream source layout and existing build system.|
+\li|\nStudy the upstream source layout and existing build system.|
 
-\li|Craft and execute the \l{bdep-new(1)} command line necessary to achieve
+\li|\nCraft and execute the \l{bdep-new(1)} command line necessary to achieve
 the upstream layout.|
 
-\li|Study the auto-generated \c{buildfile}s for things that don't fit and need
-to change. But don't rush to start manually editing the result. First get an
-overview of the required changes and then check if it's possible to achieve
+\li|\nStudy the auto-generated \c{buildfile}s for things that don't fit and
+need to change. But don't rush to start manually editing the result. First get
+an overview of the required changes and then check if it's possible to achieve
 these changes automatically using one of \l{bdep-new(1)} sub-options. If
 that's the case, delete the package subdirectory, and restart from step #2.||
 
@@ -646,7 +646,7 @@ library name into each public header name, for example, \c{#include\
 <foo_util.h>} or \c{#include\ <foo.h>} (in the last example the header name is
 the library name itself, which is also fairly common). Unfortunately, there is
 also a fairly common \i{bad} practice: having generically named headers (such
-as \c{util.h}) included without the library subdirectory.
+as \c{util.h}) included without the library name as a subdirectory.
 
 \N|The reason this is a bad practice is that libraries that have such headers
 cannot coexist, neither in the same build nor when installed. See
@@ -673,18 +673,18 @@ not always) installed directly into, say, \c{/usr/include/}, for example as
 
 \N|While these are the commonly used installation schemes, there are
 deviations. In particular, in both cases upstream may choose to add an
-additional subdirectory when installing (so the above examples we instead
-end up with, say, \c{/usr/include/sub/foo/util.h} and
-\c{/usr/include/sub/foo_util.h}). See \l{#howto-extra-header-install-subdir
-How do I handle extra header installation subdirectory} if you encounter such
-a case.|
+additional subdirectory when installing (so the above examples we instead end
+up with, say, \c{/usr/include/foo_v1/foo/util.h} and
+\c{/usr/include/foo_v1/sub/foo_util.h}). See
+\l{#howto-extra-header-install-subdir How do I handle extra header
+installation subdirectory} if you encounter such a case.|
 
 The inclusion scheme would normally be recreated in the upstream source code
-layout. In particular, if upstream includes public headers with a
-subdirectory, then this subdirectory would normally also be present in the
-upstream layout so that such a header can be included form the upstream
-codebase directly. As an example, let's say we determined that public headers
-of \c{libfoo} are included with the \c{foo/} subdirectory, such as
+layout. In particular, if upstream includes public headers with a subdirectory
+prefix, then this subdirectory would normally also be present in the upstream
+layout so that such a header can be included form the upstream codebase
+directly. As an example, let's say we determined that public headers of
+\c{libfoo} are included with the \c{foo/} subdirectory, such as
 \c{<foo/util.hpp>}. One of the typical upstream layouts for such a library
 would look like this:
 
@@ -716,14 +716,14 @@ upstream/
     └── util.hpp
 \
 
-\N|In multi-package projects, for example, those that provide both a library and
-an executable, you would also want to understand how the sources are split
+\N|In multi-package projects, for example, those that provide both a library
+and an executable, you would also want to understand how the sources are split
 between the packages.|
 
 If the headers and sources are split into different directories, then the
-source directory may or may not have the include subdirectory, similar to the
-header directory. In the above split layout the \c{src/} directory doesn't
-contain the include subdirectory (\c{foo/}) while the following layout does:
+source directory may or may not have the inclusion subdirectory, similar to
+the header directory. In the above split layout the \c{src/} directory doesn't
+contain the inclusion subdirectory (\c{foo/}) while the following layout does:
 
 \
 upstream/
@@ -749,6 +749,14 @@ number of examples) while experimenting with various options in an attempt to
 create the desired layout. If the layout you've got isn't quite right yet,
 simply remove the package directory along with the \c{packages.manifest} file
 and try again.
+
+\N|The \c{bdep-new} documentation uses a slightly more general terminology
+compared to what we used in the previous section in order to also be
+applicable to projects that use modules instead of headers.
+
+Specifically, the inclusion subdirectory (\c{foo/}) is called \i{source
+subdirectory} while the header directory (\c{include/}) and source directory
+(\c{src/}) are called \i{header prefix} and \i{source prefix}, respectively.|
 
 Let's illustrate this approach on the original example of the split layout:
 
@@ -791,7 +799,7 @@ libfoo/
 \
 
 The outer structure looks right, but inside \c{include/} and \c{src/} things
-are a bit off. Specifically, the include subdirectory should be \c{foo/}, not
+are a bit off. Specifically, the source subdirectory should be \c{foo/}, not
 \c{libfoo/}, there shouldn't be one inside \c{src/}, and the file extensions
 don't match upstream. All this can be easily tweaked, however:
 
@@ -842,7 +850,7 @@ shared libraries on Windows.|
 
 \li|\n\cb{binless}
 
-Create a header-only library template. See \l{#dont-header-only Don't make
+Create a header-only library. See \l{#dont-header-only Don't make
 library header-only if it can be compiled} and
 \l{https://github.com/build2/HOWTO/blob/master/entries/make-header-only-library.md
 How do I make a header-only C/C++ library?}|
@@ -850,7 +858,7 @@ How do I make a header-only C/C++ library?}|
 \li|\n\cb{buildfile-in-prefix}
 
 Place header/source \c{buildfile}s into the header/source prefix directory
-instead of include subdirectory. To illustrate the difference, compare these
+instead of source subdirectory. To illustrate the difference, compare these
 two auto-generated layouts paying attention to the location of \c{buildfile}s:
 
 \
@@ -881,31 +889,26 @@ libfoo/
     └── buildfile
 \
 
-Note that this sub-option can only be used if both the header and source
-directories (\c{include/} and \c{src/} in our case) have an include
+Note that this sub-option only makes sense if we have the header and/or source
+prefixes (\c{include/} and \c{src/} in our case) as well as the source
 subdirectory (\c{foo/} in our case).
 
 Why would we want to do this? The main reason is to be able to symlink the
 entire upstream directories rather than individual files. In the first
 listing, the generated \c{buildfile}s are inside the \c{foo/} subdirectories
-which mean we cannot just symlink \c{foo/} from upstream. This can be such a
-strong motivation that it may make sense to invent an include subdirectory in
-the source directory even if upstream doesn't have one. See
-\l{#dont-main-target-root-buildfile Don't build your main targets in root
-\c{buldfile}} for details on this technique.
+which mean we cannot just symlink \c{foo/} from upstream.
+
+With a large number of files to symlink, this can be such a strong motivation
+that it may make sense to invent a source subdirectory in the source prefix
+even if upstream doesn't have one. See \l{#dont-main-target-root-buildfile
+Don't build your main targets in root \c{buldfile}} for details on this
+technique.
 
 Another reason we may want to move \c{buildfile}s to prefix is to be able to
-handle upstream projects that may have multiple such include subdirectories.
-While this situation not very common in the header directory, it can be
-enountered in the source directory of more complex projects where upstream
-wishes to seperate the source code into components.||
-
-@@ Terminology does not match bdep-new 'include subdirectory'. Maybe change
-in bdep-new? 'source prefix directory' and 'source subdirectory' are quite
-close. But then include subdirectory inside src sounds like an oxymoron.
-I believe this is also consistent with Canonical Project Structure.
-
-@@ 'Don't build your main targets in root buldfile' needs work.
+handle upstream projects that have multiple source subdirectories. While this
+situation is not very common in the header prefix, it can be enountered in the
+source prefix of more complex projects, where upstream wishes to organize the
+source files into components.||
 
 Continuing with our \c{libfoo} example, assuming upstream provides own symbol
 exporting, the final \c{bdep-new} command line would be:
@@ -917,7 +920,11 @@ $ bdep new --package \
   libfoo
 \
 
-Let's also get a more complete view of what it generates:
+
+\h2#core-package-review|Review and test auto-genetated \c{buildfile} templates|
+
+Let's get a more complete view of what got generated by the final \c{bdep-new}
+command line from the previous section:
 
 \
 $ tree libfoo/
@@ -943,21 +950,19 @@ libfoo/
 └── README.md
 \
 
-\h2#core-package-review|Review and test auto-genetated \c{buildfile} templates|
-
 Once the overall layout looks right, the next step is to take a closer look at
 the generated \c{buildfile}s to make sure that overall they match the upstrem
 build. Of particular interest are the header and source directory
-\c{buildfile}s (\c{libfoo/include/buildifle} and \c{libfoo/src/buildifle} in
-the above listing) which define how the library is built and installed.
+\c{buildfile}s (\c{libfoo/include/foo/buildifle} and \c{libfoo/src/buildifle}
+in the above listing) which define how the library is built and installed.
 
 Here we are focusing on the macro-level differences that are easier to change
 by tweaking the \c{bdep-new} command line rather than manually. For example,
 if we look at the generated source directory \c{buildfile} and realize it
-builds a \"binful\" library (that is, a library that includes source files and
+builds a \i{binful} library (that is, a library that includes source files and
 therefore produces library binaries) while the upsteam library is header-only,
 it is much easier to fix this by re-running \c{bdep-new} with the \c{binless}
-sub-option than by changing the \c{buildfile} manually.
+sub-option than by changing the \c{buildfile}s manually.
 
 \N|Don't be tempted to start making manual changes at this stage even if you
 cannot see anything else that can be fixed with a \c{bdep-new} re-run. This
@@ -992,7 +997,7 @@ Let's also briefly discuss other subdirectories and files found in the
 
 The \c{build/} subdirectory is the standard \c{build2} place for project-wide
 build system information (see \l{b#intro-proj-struct Project Structure} for
-details). We will look close at its contents in the following steps.
+details). We will look closer at its contents in the following sections.
 
 In the root directory of our package we find the root \c{buildfile} and
 package \c{manifest}. We will be tweaking both in the following steps. There
@@ -1010,6 +1015,8 @@ the root \c{buildfile}. In pacticular, if upstream provides examples that you
 wish to port, it is recommended that you use a copy of the generated
 \c{tests/} subproject as a starting point (not forgeting to add the
 corresponding entry in the root \c{buildfile}).|
+
+@@ 'Don't build your main targets in root buldfile' needs work (buildfile-in-prefix).
 
 @@ We can actually do the final creation here (with symlinking, etc).
 
@@ -1291,7 +1298,7 @@ $ bdep new -t lib,prefix=libigl-core,no-subdir,no-version libigl-core
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
 
 This sections explains how to deal with libraries that include their public,
-generically-named headers without a library name as directory prefix. Such
+generically-named headers without the library name as directory prefix. Such
 libraries cannot coexist, neither in the same build nor when installed. For
 background and details, see \l{intro#proj-struct Canonical Project Structure}.
 

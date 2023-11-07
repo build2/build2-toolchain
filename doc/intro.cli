@@ -2954,8 +2954,8 @@ below.
 \li|\n\n\i{Header and source files (or module interface and implementation
 files) are next to each other (no \c{include/} and \c{src/} split).}|
 
-\li|\n\i{Headers are included with \c{<>} and contain the project directory
-prefix, for example, \c{<libhello/hello.hxx>}.}|
+\li|\n\i{Headers are included with \c{<>} and contain the project name as
+a subdirectory prefix, for example, \c{<libhello/hello.hxx>}.}|
 
 \li|\n\i{Header and source file extensions are either \c{.hpp/.cpp} or
 \c{.hxx/.cxx} (\c{.mpp} or \c{.mxx} for module interfaces).}|
@@ -3005,7 +3005,7 @@ subdirectories (\c{build/}) as well as the available alternative naming
 scheme.
 
 
-\h#proj-struct-src-dir|Source Directory|
+\h#proj-struct-src-dir|Source Subdirectory|
 
 The project's source code is placed into a subdirectory of the root directory
 named the same as the project, for example, \c{hello/hello/} or
@@ -3013,11 +3013,11 @@ named the same as the project, for example, \c{hello/hello/} or
 
 There are several reasons for this layout: It implements the canonical
 inclusion scheme (discussed below) where each header is prefixed with its
-project name. It also has a predictable name where users (and tools) can
-expect to find our project's source code. Finally, this layout prevents
-clutter in the project's root directory which usually contains various other
-files (like \c{README}, \c{LICENSE}) and directories (like \c{doc/},
-\c{tests/}, \c{examples/}).
+project name as a subdirectory. It also has a predictable name where users
+(and tools) can expect to find our project's source code. Finally, this layout
+prevents clutter in the project's root directory which usually contains
+various other files (like \c{README}, \c{LICENSE}) and directories (like
+\c{doc/}, \c{tests/}, \c{examples/}).
 
 \N|Another popular approach is to place public headers into the \c{include/}
 subdirectory and source files as well as private headers into \c{src/}. The
@@ -3080,8 +3080,8 @@ suffix, a mechanism that is readily available in the combined directory
 layout.|
 
 All headers within a project should be included using the \c{<>} style
-inclusion and contain the project name as a directory prefix. And all headers
-means \i{all headers} \- public, private, or implementation detail, in
+inclusion and contain the project name as a subdirectory prefix. And all
+headers means \i{all headers} \- public, private, or implementation detail, in
 executables or in libraries.
 
 As an example, let's say we've added \c{utility.hxx} to our \c{hello} project.
@@ -3110,10 +3110,11 @@ listed as to be installed), chances are that a completely unrelated header
 with the same name will be found and included. Needless to say, debugging
 situations like these is unpleasant.
 
-Prefixing all inclusions with the project name also makes sure that headers
-with common names (for example, \c{utility.hxx}) can coexist (for example,
-when installed into a system-wide directory, such as \c{/usr/include}). The
-prefix also plays an important role in supporting auto-generated headers.
+Prefixing all inclusions with the project name as subdirectory also makes sure
+that headers with common names (for example, \c{utility.hxx}) can coexist (for
+example, when installed into a system-wide directory, such as
+\c{/usr/include}). The subdirectory prefix also plays an important role in
+supporting auto-generated headers.
 
 Note also that this header inclusion scheme is consistent with the module
 importation, for example:
@@ -3122,7 +3123,7 @@ importation, for example:
 import hello.utility;
 \
 
-Finally, note that while adding the project prefix to the \c{\"\"} style
+Finally, note that while adding the subdirectory prefix to the \c{\"\"} style
 inclusion (for example, \c{\"libhello/hello.hxx\"}) will make finding an
 unrelated header unlikely, there is still a possibility. And it is not clear
 why take the chance when there are no benefits. So let's imagine the \c{\"\"}
@@ -3131,7 +3132,7 @@ style inclusion does not exist and we will all have a much better time.|
 If you have to disregard every rule and recommendation in this section but
 one, for example, because you are working on an existing library, then at
 minimum insist on this: \b{public header inclusions must use the library name
-as a directory prefix}.
+as a subdirectory prefix}.
 
 The project's source subdirectory can have subdirectories of its own, for
 example, to organize the code into components. Naturally, header inclusions
@@ -3168,10 +3169,10 @@ details/hxx{*}: install = false
 \
 
 \N|If you are creating a \i{family of libraries} with a common name prefix,
-then it may make sense to use a nested source directory layout with a common
-top-level directory. As an example, let's say we have the \c{libstud-path} and
-\c{libstud-url} libraries that belong to the same \c{libstud} family. Their
-source subdirectory layouts could look like this:
+then it may make sense to use a nested source subdirectory layout with a
+common top-level directory. As an example, let's say we have the
+\c{libstud-path} and \c{libstud-url} libraries that belong to the same
+\c{libstud} family. Their source subdirectory layouts could look like this:
 
 \
 libstud-path/
@@ -3403,8 +3404,8 @@ automatically excluded from the library/executable sources.|
 A library's functional/integration tests should go into the \c{tests/}
 subdirectory. Each such test should reside in a separate subdirectory,
 potentially organized into nested subdirectories (for instance, to correspond
-to the source directory components). For example, if we were creating an XML
-parsing and serialization library, then our \c{tests/} could have the
+to the source subdirectory components). For example, if we were creating an
+XML parsing and serialization library, then our \c{tests/} could have the
 following layout:
 
 \

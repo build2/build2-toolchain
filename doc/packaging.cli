@@ -740,6 +740,14 @@ With the understanding of these key properties of upstream layout you should
 be in a good position to start crafting the \l{bdep-new(1)} command line that
 recreates it.
 
+\N|The \c{bdep-new} documentation uses a slightly more general terminology
+compared to what we used in the previous section in order to also be
+applicable to projects that use modules instead of headers.
+
+Specifically, the inclusion subdirectory (\c{foo/}) is called \i{source
+subdirectory} while the header directory (\c{include/}) and source directory
+(\c{src/}) are called \i{header prefix} and \i{source prefix}, respectively.|
+
 
 \h2#core-package-craft-cmd|Craft \c{bdep new} command line to create package|
 
@@ -749,14 +757,6 @@ number of examples) while experimenting with various options in an attempt to
 create the desired layout. If the layout you've got isn't quite right yet,
 simply remove the package directory along with the \c{packages.manifest} file
 and try again.
-
-\N|The \c{bdep-new} documentation uses a slightly more general terminology
-compared to what we used in the previous section in order to also be
-applicable to projects that use modules instead of headers.
-
-Specifically, the inclusion subdirectory (\c{foo/}) is called \i{source
-subdirectory} while the header directory (\c{include/}) and source directory
-(\c{src/}) are called \i{header prefix} and \i{source prefix}, respectively.|
 
 Let's illustrate this approach on the original example of the split layout:
 
@@ -862,7 +862,7 @@ instead of source subdirectory. To illustrate the difference, compare these
 two auto-generated layouts paying attention to the location of \c{buildfile}s:
 
 \
-$ bdep new ... --type lib,split libfoo
+$ bdep new ... --type lib,split,subdir=foo libfoo
 $ tree libfoo/
 libfoo/
 ├── include/
@@ -876,7 +876,7 @@ libfoo/
 \
 
 \
-$ bdep new ... --type lib,split,buildfile-in-prefix libfoo
+$ bdep new ... --type lib,split,subdir=foo,buildfile-in-prefix libfoo
 $ tree libfoo/
 libfoo/
 ├── include/
@@ -1016,18 +1016,78 @@ wish to port, it is recommended that you use a copy of the generated
 \c{tests/} subproject as a starting point (not forgeting to add the
 corresponding entry in the root \c{buildfile}).|
 
-@@ 'Don't build your main targets in root buldfile' needs work (buildfile-in-prefix).
 
-@@ We can actually do the final creation here (with symlinking, etc).
+\h2#core-package-create|Create final package|
 
-@@ Adding additional subdirectories to avoid symlinking individual files.
-   Ideally would want bdep-new mode.
+If you are satisfied with the \c{bdep-new} command line and there are no more
+automatic adjustments you can squeeze out of it, then it's time to re-run
+\c{bdep-new} one last time to create the final package.
 
-@@ Pre-symlink README, LICENSE, PACKAGE-README.md?
-@@ Auto-detect the license?
-@@ Where do we overlay the source code?
+\N|While redoing this step later will require more effort, especially if
+you've made manual modifications to \c{buildfile} and \c{manifest}, nothing is
+set in stone and it can be done again by simply removing the package directory
+and removing (or editing, if you have multiple packages and only want to redo
+some of them) \c{packages.manifest} and starting over.|
 
-@@ The Don't write buildfiles by hand entry is now duplicate/redundant.
+This time, however, we will do things a bit differently in order to take
+advantage of some additional automation offered by \c{bdep-new}. If the
+package directory already exists and contains certain files, \c{bdep-new} can
+take this into account when generating the root \c{buildfile} and package
+\c{manifest}. In particular, it will try to guess the license from the
+\c{LICENSE} file and extract the summary from \c{README.md} and use this
+information in \c{manifest}.
+
+\N|If the file names or formats used by upstream don't match those recognized
+by \c{bdep-new} or if an attempt to extra the information is unsuccessful,
+then for now simply omit the corresponding files from the package directory
+and add them later manually.
+
+Specifically, for \c{README}, \c{bdep-new} only recognizes \c{README.md}.
+
+For license files, \c{bdep-new} recognizes \c{LICENSE}, \c{LICENSE.txt}
+\c{LICENSE.md}, \c{COPYING}, and \c{UNLICENSE}.
+
+
+@@ TODO: PACKAGE-README.md and README-PACKAGE.md (and below)
+
+|
+
+Continuing with our \c{libfoo} example and assuming upstream provides the
+\c{README.md} and \c{LICENSE} files, we first manually create the package
+directory, then add the symlinks, and finally run \c{bdep-new} (notice that we
+have omitted the package name from the \c{bdep-new} command line since we are
+running from inside the package directory):
+
+\
+$ cd foo/ # Change to the package repository root.
+$ rm -r libfoo/ packages.manifest
+$ cd foo/ # Change to the package root.
+
+$ mkdir libfoo/
+$ ln -s ../upstream/README.md ./
+$ ln -s ../upstream/LICENSE   ./
+
+$ bdep new --package \
+  --lang c++,cpp   \
+  --type lib,split,subdir=foo,no-subdir-source,no-version,no-symexport
+\
+
+If auto-detection succeeds, then you should see the \c{summary} and
+\c{license} values automatically populated in \c{manifest} and the symlinked
+files listed in the root \c{buildfile}.
+
+
+\h#core-adjust|Fill package and adjust \c{buildfiles}, \c{manifest}, etc|
+
+@@ What should be the order? E.g., cannot build without dependencies.
+
+   - when do we bdep-init it? Maybe do it with generated code?
+
+@@ repository.manifest if have dependencies
+
+@@ Any other upstream files besides source? Doc?
+
+@@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
 
 ======================================================================
 
@@ -1259,10 +1319,15 @@ thus the \c{buildfile} that defines this target must be loaded), your entire
 project will be loaded, including any \c{tests/} and \c{examples/} subproject,
 which is wasteful.
 
-Note also that it's easy to continue symlinking entire directories from
-\c{upstream/} without moving everything to the root \c{buildfile} by simply
-creating another subdirectory. Let's look at a concrete example. Here is
-the directory structure where everything is in the root \c{buildfile}:
+
+If you want to continue symlinking entire directories from \c{upstream/} but
+without moving everything to the root \c{buildfile}, the recommended approach
+is to simply add another subdirectory level. Let's look at a few concrete
+example to illustrate the technique (see \l{#core-package-struct Decide on the
+package source code layout} for background on the terminology used).
+
+Here is the directory structure of a package which uses a combined layout (no
+header/source split) and where everything is in the root \c{buildfile}:
 
 \
 libigl-core/
@@ -1271,8 +1336,8 @@ libigl-core/
 └── buildfile                      # Defines lib{igl-core}.
 \
 
-And here is the alternative structure where we have added the \c{libigl-core}
-subdirectory with its own \c{buildfile}:
+And here is the alternative structure where we have added the extra
+\c{libigl-core} subdirectory with its own \c{buildfile}:
 
 \
 libigl-core/
@@ -1283,13 +1348,54 @@ libigl-core/
 └── buildfile
 \
 
-Below is the \l{bdep-new(1)} invocation that can be used to automatically
-create this alternative structure (see \l{bdep-new.xhtml#src-layout SOURCE
-LAYOUT} for details):
+Below is the \c{bdep-new} invocation that can be used to automatically
+create this alternative structure (see \l{#core-package-craft-cmd Craft
+\c{bdep\ new} command line to create package} for background and
+\l{bdep-new(1)} for details):
 
 \
-$ bdep new -t lib,prefix=libigl-core,no-subdir,no-version libigl-core
+$ bdep new \
+ --type lib,prefix=libigl-core,subdir=igl,buildfile-in-prefix \
+ libigl-core
 \
+
+Let's also look at an example of a split layout, which may require a slightly
+different \c{bdep-new} sub-options to achieve the same result. Here is the
+layout which matched upstream exactly:
+
+\
+$ bdep new --type lib,split,subdir=foo,no-subdir-source libfoo
+$ tree libfoo
+libfoo/
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       └── ...
+└── src/
+    ├── buildfile
+    └── ...
+\
+
+However, with this layout we will not be able to symlink the entire
+\c{include/foo/} and \c{src/} subdirectories because there are \c{buildfile}s
+inside (and which may tempt you to just move everything to the root
+\c{buidfile}). To fix this we can move the \c{buildfile}s out of source
+subdirectory \c{foo/} and into prefixes (\c{include/} and \c{src/}) using the
+\c{buildfile-in-prefix} sub-option. And since \c{src/} doesn't have a source
+subdirectory, we have to invent one:
+
+\
+$ bdep new --type lib,split,subdir=foo,buildfile-in-prefix libfoo
+$ tree libfoo
+libfoo/
+├── include/
+│   ├── foo/ -> ../upstream/include/foo/
+│   └── buildfile
+└── src/
+    ├── foo/ -> ../upstream/src/
+    └── buildfile
+\
+
 
 \h1#howto|Packaging HOWTO|
 

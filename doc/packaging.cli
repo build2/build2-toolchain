@@ -1421,6 +1421,27 @@ subdirectory.
 
 \h1#faq|Packaging FAQ|
 
+\h#faq-alpha-stable|Why is my package in \c{alpha} rather than \c{stable}?|
+
+If your package uses a semver version (or semver-like, that is, has three
+version components) and the first component is zero (for example, \c{0.1.0}),
+then, according to the semver specification, this is an alpha version and
+\l{bdep-publish(1)} automatically published such a version to the \c{alpha}
+section of the repository.
+
+Sometimes, however, in a third-party package, while the version may look like
+semver, upstream may not assign the zero first component any special
+meaning. In such cases you can override the \c{bdep-publish} behavior with the
+\c{--section} option, for example:
+
+\
+$ bdep publish --section=stable
+\
+
+Note that you should only do this if you are satisfied that by having the zero
+first component upstream does not imply alpha quality.
+
+
 \h#faq-publish-stage|Where to publish if package requires staged toolchain?|
 
 If your package requires the \l{https://build2.org/community.xhtml#stage staged

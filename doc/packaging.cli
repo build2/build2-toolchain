@@ -1060,10 +1060,11 @@ running from inside the package directory):
 
 \
 $ cd foo/ # Change to the package repository root.
-$ rm -r libfoo/ packages.manifest
-$ cd foo/ # Change to the package root.
 
+$ rm -r libfoo/ packages.manifest
 $ mkdir libfoo/
+
+$ cd libfoo/ # Change to the package root.
 $ ln -s ../upstream/README.md ./
 $ ln -s ../upstream/LICENSE   ./
 
@@ -1079,9 +1080,185 @@ files listed in the root \c{buildfile}.
 
 \h#core-adjust|Fill package and adjust \c{buildfiles}, \c{manifest}, etc|
 
-@@ What should be the order? E.g., cannot build without dependencies.
+With the package skeleton ready, the next step is to fill it with upstream
+source code and make any necessary manual adjustments to the generated
+\c{buildfiles}, \c{manifest}, etc. If we do this all at once, however, it can
+be hard to pin-point the cause of build failures. For example, if we convert
+both the library and its tests right away and something doesn't work, it can
+be hard to determine whether the mistake is in the library or in the tests.
+As a result, we are going to split this work into a sequence or smaller steps
+that incrementally replace the \c{bdep-new}-generated code with upstream while
+allowing us to test each change individually. We will also commit the changes
+on each step for easy roll backs. Specifically, the overall plan is as
+follows:
 
-   - when do we bdep-init it? Maybe do it with generated code?
+\ol|
+
+\li|Initialize (\c{bdep-init}) the package in one or more build configurations.|
+
+\li|Add dependencies, if any.|
+
+\li|Fill with upstream source code and adjust the library.|
+
+\li|Make a smoke test for the library.|
+
+\li|Fill with upstream source code and adjust the tests.|
+
+\li|Tweak root \c{buildfile} and \c{manifest}.|
+
+\li|Test the result using the CI service.|
+
+|
+
+\N|As you become more experienced with packaging third-party projects for
+\c{build2} it may make sense to start combining or omitting some steps,
+especially for simpler libraries. For example, if you see that a library
+comes with a simple test that shouldn't cause any complications, then you
+could omit the smoke test.|
+
+
+\h2#core-adjust-init|Initialize package in build configurations|
+
+Before we start making any changes to the \c{bdep-new}-generated files, let's
+initialize the package in at least one build configuration so that we are able
+to build and test our changes (see \l{intro#guide Getting Started Guide} for
+background on \c{bdep}-based development workflow). Continuing with our
+\c{libfoo} example from the earlier steps:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ bdep init -C ../foo-gcc @gcc cc config.cxx=g++
+\
+
+Let's build and test the \c{bdep-new}-generated package to make sure
+everything is in order:
+
+\
+$ bdep update
+$ bdep test
+$ bdep clean
+\
+
+Let's also verify that the resulting package repository is clean (doesn't have
+any uncommitted or untracked files):
+
+\
+$ git status
+\
+
+\h2#core-adjust-depend|Add dependencies|
+
+If the upstream project has any dependencies, now is a good time to specify
+them so that when we attempt to build upstream source code, they are already
+present.
+
+Identifiying whether the upstream project has dependencies is not always easy.
+The natural first places to check are the documentation and the existing build
+system. Sometimes projects also bundle their dependencies with the project
+source code (also called vendoring). So it makes sense to look around the
+upstream repository for anything that looks like bundled dependencies.
+Normally we would need to \"unbundle\" such dependencies when converting
+to \c{build2} by instead specifying a dependency on an external package.
+
+\N|While there are several reasons we insist on unbundling of dependencies,
+the main one is that bundling can cause multiple, potentially conflicting
+copied of the same dependency to exist in the build. This can cause subtle
+build failures that are hard to understand and to track down.|
+
+One particularly common case to check for is bundling of the testing
+framework, such as Catch2, by C++ projects. If you have identified that the
+upstream tests depend on a testing framework (whether bundled or not), see
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?}
+
+If you have concluded that the upstream project doesn't have any dependencies,
+then you can remove \c{repositories.manifest} from the package repository root
+(uness you have already done so), commit this change, and skip the rest of
+this section.
+
+And if you are still reading, then we assume you have a list of dependencies
+you need to add, preferably with their minimum required versions. If you could
+not identify the minimum required version for a dependency, then you can
+fallback to the latest available version, as will be described in a moment.
+
+With the list of dependencies in hand, the next step is to determine whether
+they are already available as \c{build2} packages. For that, head over to
+\l{https://cppget.org cppget.org} and seach for each dependency.
+
+If you are unable to find a package for a dependency, then it means it hasn't
+been packaged for \c{build2} yet. Check the places mentioned in the
+\l{#core-repo-exists Check if package repository already exists} step to see
+if perhaps someone is already working on the package. If not and the
+dependency is not optional, then the only way forward is to first package
+the dependency.
+
+If you do find a package for a dependency, then note the section of the
+repository (\c{stable}, \c{testing}, etc; see \l{intro#guide-repositories
+Package Repositories} for background) from which the minimum required version
+of the package is available. If you were unable to identify the minimum
+required version, then note the latest version available from the \c{stable}
+section.
+
+Given the list of repository sections, edit the \c{repositories.manifest} file
+in the package repository root and uncomment the entry for \c{cppget.org}:
+
+\
+:
+role: prerequisite
+location: https://pkg.cppget.org/1/stable
+#trust: ...
+\
+
+Next, replace \c{stable} at the end of the \c{location} value with the least
+stable section from your list. For example, if your list contains \c{stable},
+\c{testing}, and \c{beta}, then you need \c{beta} (the sections form a
+hierarchy so that \c{beta} includes \c{testing} which in turn inclues
+\c{stable}).
+
+\N|If you wish, you can also uncomment the \c{trust} value and replace \c{...}
+with the \l{https://cppget.org/?about repostitory fingerprint}. This way you
+won't be prompted to confirm the repository authenticity on first fetch. See
+\l{intro#guide-add-remove-deps Adding and Removing Dependencies} for details.|
+
+Once this is done, edit \c{manifest} in package root and add the \c{depends}
+value for each dependency. See \l{intro#guide-add-remove-deps Adding and
+Removing Dependencies} for background. In particular, here you will use the
+minimum required version (or the latest available) to form a version
+contraint. Which constaint operator to use will depend on the dependency's
+versioning policies. If the dependency uses semver, then a \c{^}-based
+constraint is a sensible default.
+
+With all the dependencies specified, now let's synchronize the state of the
+build configurations with our changes by running \l{bdep-sync(1)} from the
+package repository root:
+
+\
+$ bdep sync -a
+\
+
+This command should first fetch the metadata for the repository we specified
+in \c{repositories.manifest} and then fetch, unpack and configure each
+dependency that we specified in \c{manifest}. We can examine the resulting
+state, including the version of each dependency, with \l{bdep-status(1)}:
+
+\
+$ bdep status -ai
+\
+
+The last step for this section is to commit our changes:
+
+\
+$ git add .
+$ git status
+$ git commit -m \"Add dependencies\"
+\
+
+@@ Are we commiting anything after each step?
+
+========
+
+
+@@ How can we test installed?
 
 @@ repository.manifest if have dependencies
 

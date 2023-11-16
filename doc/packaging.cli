@@ -1738,6 +1738,54 @@ subdirectory.
 @@ TODO
 
 
+\h#howto-no-extension-header|How do I handle headers without extensions|
+
+If all the headers in a project have no extension, then you can simply
+specify the empty \c{extension} value for the \c{hxx{\}} target type
+in \c{build/root.build}:
+
+\
+hxx{*}: extension =
+cxx{*}: extension = cpp
+\
+
+Note, however, that using wildcard patterns for such headers in your
+\c{buildfile} is a bad idea since such a wildcard will most likely pick up
+other files that also have no extension (such as \c{buildfile}, executables on
+UNIX-like systems, etc). Instead, it's best to spell the names of such headers
+explicitly. For example, instead of:
+
+\
+lib{hello}: {hxx cxx}{*}
+\
+
+Write:
+
+\
+lib{hello}: cxx{*} hxx{hello}
+\
+
+If only some headers in a project have no extension, then it's best to specify
+the non-empty extension for the \c{extension} variable in \c{build/root.build}
+(so that you can still use wildcard for headers with extensions) and spell out
+the headers with no extension explicitly. Continuing with the above example,
+if we have both the \c{hello.hpp} and \c{hello} headers, then we can handle
+them like this:
+
+\
+hxx{*}: extension = hpp
+cxx{*}: extension = cpp
+\
+
+\
+lib{hello}: {hxx cxx}{*} hxx{hello.}
+\
+
+Notice the trailing dot in \c{hxx{hello.\}} \- this is the explicit \"no
+extension\" specification. See \l{b#targets Targets and Target Types}
+for details.
+
+
 \h1#faq|Packaging FAQ|
 
 \h#faq-alpha-stable|Why is my package in \c{alpha} rather than \c{stable}?|

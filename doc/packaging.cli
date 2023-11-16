@@ -1089,7 +1089,7 @@ be hard to determine whether the mistake is in the library or in the tests.
 As a result, we are going to split this work into a sequence or smaller steps
 that incrementally replace the \c{bdep-new}-generated code with upstream while
 allowing us to test each change individually. We will also commit the changes
-on each step for easy roll backs. Specifically, the overall plan is as
+on each step for easy rollbacks. Specifically, the overall plan is as
 follows:
 
 \ol|
@@ -1098,11 +1098,11 @@ follows:
 
 \li|Add dependencies, if any.|
 
-\li|Fill with upstream source code and adjust the library.|
+\li|Fill the library with upstream source code and adjust its build.|
 
 \li|Make a smoke test for the library.|
 
-\li|Fill with upstream source code and adjust the tests.|
+\li|Replace the smoke tests with upstream tests.|
 
 \li|Tweak root \c{buildfile} and \c{manifest}.|
 
@@ -1253,14 +1253,151 @@ $ git status
 $ git commit -m \"Add dependencies\"
 \
 
-@@ Are we commiting anything after each step?
+
+\h2#core-adjust-fill|Fill with upstream source code|
+
+Now we are ready to begin replacing the \c{bdep-new}-generated files with
+upstream source code symlinks and we start with library's header and source
+files. Continuing with our \c{libfoo} example, this is what we currently have
+(notice that \c{LICENSE} and \c{README.md} are already symlinks to upstream):
+
+\
+$ cd foo/ # Change to the package repository root.
+
+$ tree libfoo/
+libfoo/
+├── build/
+│   └── ...
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       └── foo.hpp
+├── src/
+│   ├── buildfile
+│   └── foo.cpp
+├── tests/
+│   └── ...
+├── LICENSE   -> ../upstream/LICENSE
+├── README.md -> ../upstream/README.md
+├── buildfile
+└── manifest
+\
+
+Now we replace generated \c{include/foo/foo.hpp} with library's real headers
+and \c{src/foo.cpp} with its real source files:
+
+\
+$ cd libfoo/ # Change to the package root.
+
+$ cd include/foo/
+$ rm foo.hpp
+$ ln -s ../../../upstream/include/foo/*.hpp ./
+$ cd -
+
+$ cd src
+$ rm foo.cpp
+$ ln -s ../../upstream/src/*.cpp ./
+$ cd -
+
+$ tree libfoo/
+libfoo/
+├── build/
+│   └── ...
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       ├── core.hpp -> ../../../upstream/include/foo/core.hpp
+│       └── util.hpp -> ../../../upstream/include/foo/util.hpp
+├── src/
+│   ├── buildfile
+│   ├── core.cpp -> ../../upstream/src/core.cpp
+│   └── util.cpp -> ../../upstream/src/util.cpp
+├── tests/
+│   └── ...
+└── ...
+\
+
+Note that the wildcards used above may not be enough in all situations and
+it's a good idea to manually examine the relevant upstream directories and
+make sure nothing is missing. Specifically, look out for:
+
+\ul|
+
+\li|Header/sources with other extensions, for example, C, Objective-C, etc.|
+
+\li|Other files that may be need during the build, for example, \c{.def},
+\c{config.h.in}, etc.|
+
+\li|Subdirectories that contain more header/source files.||
+
+If upstream contains subdirectories with addition header/source files, then
+you can symlink entire subdirectories instead of doing it file by file. For
+example, let's say \c{libfoo}'s upstream source directory contains the
+\c{impl/} subdirectory with additional source files:
+
+\
+$ cd src
+$ ln -s ../../upstream/impl ./
+$ cd -
+
+$ tree libfoo/
+libfoo/
+├── build/
+│   └── ...
+├── include/
+│   └── ...
+├── src/
+│   ├── impl/ -> ../../upstream/src/impl/
+│   │   ├── bar.cpp
+│   │   └── baz.cpp
+│   ├── buildfile
+│   ├── core.cpp -> ../../upstream/src/core.cpp
+│   └── util.cpp -> ../../upstream/src/util.cpp
+├── tests/
+│   └── ...
+└── ...
+\
+
+Wouldn't it be nice if we could symlink the entire top-level subdirectories
+(\c{include/foo/} and \c{src/}) in our case instead of symlinking individual
+files? As discussed in \l{#core-package-craft-cmd Craft \c{bdep new} command
+line to create package}, we can but we will need to change the package layout.
+Specifically, we will need to move the \c{buildfiles} out of the source
+subdirectories with the help of the \c{buildfile-in-prefix} sub-option of
+\c{bdep-new}. In the above case, we will need to invent a source subdirectory
+in \c{src/}. Whether this is a worthwhile change largely depends on how many
+files you have to symlink individually. If it's just a handful, then it's
+probably not worth the complication, especially if you have to invent source
+subdirectories. On the other hand, if you are looking at symlinking hundreds
+of files, changing the layout makes perfect sense.
+
+\N|One minor drawback of symlinking entire directories is that you cannot
+easily patch individual upstream files (see \l{#howto-patch-upstream-source
+How do I patch upstream source code}).
+
+You will also need to explicitly list such directories as symlinks in
+\c{.gitattributes} if you want your package to be usable from the \c{git}
+repository on Windows. See
+\l{https://build2.org/article/symlinks.xhtml#windows Symlinks and Windows} for
+details.|
+
+We won't be able to test this change yet because to make things build will
+most likely also need to tweak the generated \c{buildfiles}, which is the
+subject of the next section. However, it still makes sense to commit our
+changes to make rollbacks easier:
+
+\
+$ git add .
+$ git status
+$ git commit -m \"Add upstream source symlinks\"
+\
+
 
 ========
 
+@@ Squash commits?
 
 @@ How can we test installed?
-
-@@ repository.manifest if have dependencies
 
 @@ Any other upstream files besides source? Doc?
 
@@ -1576,7 +1713,12 @@ libfoo/
 
 \h1#howto|Packaging HOWTO|
 
-@@ howto make smoke test (and fix ref)
+@@ howto make smoke test (and fix ref). Actually, we now have a step for
+this.
+
+\h#howto-patch-upstream-source|How do I patch upstream source code|
+
+@@ TODO
 
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
 

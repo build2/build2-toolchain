@@ -1325,8 +1325,7 @@ make sure nothing is missing. Specifically, look out for:
 
 \li|Header/sources with other extensions, for example, C, Objective-C, etc.|
 
-\li|Other files that may be need during the build, for example, \c{.def},
-\c{config.h.in}, etc.|
+\li|Other files that may be need, for example, \c{.def}, \c{config.h.in}, etc.|
 
 \li|Subdirectories that contain more header/source files.||
 
@@ -1393,6 +1392,77 @@ $ git commit -m \"Add upstream source symlinks\"
 \
 
 
+\h2#core-adjust-build|Review project-wide build system files in \c{build/}|
+
+With sources ready, the only step remaining before we can build the library is
+to adjust the regenerated \c{buildfile}s. We start with reviwing the files in
+the \c{build/} subdirectory of our package.
+
+There you will find three files: \c{bootstrap.build}, \c{root.build}, and
+\c{export.build}. To recap, the first two contain the project-wide build
+system setup (see \l{b#intro-proj-struct Project Structure} for details) while
+the last is an export stub that facilitates the importation of targets from
+our package (see \l{b#intro-import Target Importation} for details).
+
+Normally you don't need to change anything in \c{bootstrap.build} \- all it
+does is specify the build system project name and load a standard set of core
+build system modules. Likewise, \c{export.build} is good as generated unless
+you need to do something special, like exporting targets from different
+subdirectories of your package.
+
+While \c{root.build} is also often good as is, situations where you may
+need to tweak it are not uncommon and include:
+
+\ul|
+
+\li|Loading additional build system module.
+
+    For example, if your package makes use of Objective-C/C++ (see \l{b#c-objc
+    Objective-C Compilation} and \l{b#cxx-objcxx Objective-C++ Compilation})
+    or Assembler (see \l{b#c-as-cpp Assembler with C Preprocessor
+    Compilation}), then \c{root.build} would be the natural place to load the
+    correponding modules.
+
+    \N|If your package uses a mixture of C and C++, then it's recommended to
+    set this up using the \c{--lang} sub-option of \c{bdep-new} rather
+    than manually. For example:
+
+    \
+    bdep new --lang c++,c ...
+    \
+
+    ||
+
+\li|Specifying package configuration variable.
+
+    If upstream provides the ability to configure their code, for example to
+    enable optional features, then you may want to translate this to
+    \c{build2} configuration variables, which must be specified in
+    \c{root.build} (see \l{b#proj-config Project Configuration} for background
+    and details).
+
+    Note that you don't need to add all the configuration variables right
+    away. Instead, you could first handle the \"core\" functionality which
+    doesn't require any configuration and then add the configuration variables
+    one by one while also making the corresponding changes in \c{buildfile}s.
+
+    \N|One type of configuration that you should normally not expose when
+    packaging for \c{build2} is support for both header-only and compiled
+    modes. See \l{b#dont-header-only Don't make library header-only if it
+    can be compiled}.|||
+
+If you have made any changes, commit them (similar to the previous step, we
+cannot test things just yet):
+
+\
+$ git add .
+$ git status
+$ git commit -m \"Adjust project-wide build system files\"
+\
+
+
+@@ Show how to sync with config vars?
+
 ========
 
 @@ Squash commits?
@@ -1431,8 +1501,8 @@ as follows:
 
 \li|Study the upstream source layout. We want to stay as close to upstream as
 possible since this has the best chance of producing an issues-free result
-(see \l{#dont-change-upstream Don't change upstream source code layout} for
-details).|
+(see \l{#dont-change-upstream Don't change upstream source code layout
+unnecessarily} for details).|
 
 \li|Craft and execute the \l{bdep-new(1)} command line necessary to achieve
 the upstream layout.|
@@ -1466,7 +1536,7 @@ time for manual customizations. These would normally include:
 |
 
 
-\h#dont-change-upstream|Don't change upstream source code layout|
+\h#dont-change-upstream|Don't change upstream source code layout unnecessarily|
 
 It's a good idea to stay as close to the upstream's source code layout as
 possible. For background and rationale, see \l{#core-package-struct Decide on

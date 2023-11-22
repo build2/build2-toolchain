@@ -1461,6 +1461,91 @@ $ git commit -m \"Adjust project-wide build system files\"
 \
 
 
+\h2#core-adjust-buildfile|Adjust source subdirectory \c{buildfile}s|
+
+The last step we need to perform before we can build our library for the first
+time is to adjust its \c{buildfile}s. These \c{buildfiles} are found in the
+source subdirectory or, if we used the \c{buildfile-in-prefix} sub-option, in
+the prefix directory. There will be two \c{buildfile}s if we use the split
+layout (\c{split} sub-option) or a single \c{buildfile} in the combined
+layout. The single \c{buildfile} in the combined layout contains essentially
+the same definitions as the split \c{buildfile}s but combined into one and
+with some minor simplifications that this allows. So here we will assume the
+split layout and will continue with our \c{libfoo} from the previous
+sections. To recap, here is the layout we've got with the \c{buildfile}s of
+interest found in \c{include/foo/} and in \c{src/}:
+
+\
+libfoo/
+├── build/
+│   └── ...
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       ├── core.hpp -> ../../../upstream/include/foo/core.hpp
+│       └── util.hpp -> ../../../upstream/include/foo/util.hpp
+├── src/
+│   ├── buildfile
+│   ├── core.cpp -> ../../upstream/src/core.cpp
+│   └── util.cpp -> ../../upstream/src/util.cpp
+├── tests/
+│   └── ...
+└── ...
+\
+
+The \c{buildfile} in \c{include/foo/} is pretty simple:
+
+\
+pub_hdrs = {hxx ixx txx}{**}
+
+./: $pub_hdrs
+
+# Install into the foo/ subdirectory of, say, /usr/include/
+# recreating subdirectories.
+#
+{hxx ixx txx}{*}:
+{
+  install         = include/foo/
+  install.subdirs = true
+}
+\
+
+Normally the only change that you would make to this \c{buildfile} is to
+adjust the installation location of headers (see \l{b#intro-operations-install
+Installing} for background). In particular, if our headers were included
+without the \c{<foo/...>} prefix but instead contained the library name in
+their names (for example, \c{foo_util.hpp}), then the installation setup would
+instead look like this:
+
+\
+# Install directly into say, /usr/include/ recreating subdirectories.
+#
+{hxx ixx txx}{*}:
+{
+  install         = include/
+  install.subdirs = true
+}
+\
+
+If the library doesn't have any headers in subdirectories, you can drop
+the \c{install.subdirs} variable:
+
+\
+# Install into the foo/ subdirectory of, say, /usr/include/.
+#
+{hxx ixx txx}{*}: install = include/foo/
+\
+
+See also \l{#howto-extra-header-install-subdir How do I handle extra header
+installation subdirectory}.
+
+
+
+@@ List of common 'tasks' like Objective-C, Assembler, symexport,
+   relevant HOWTO.
+
+========
+
 @@ Show how to sync with config vars?
 
 ========

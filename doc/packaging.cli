@@ -1228,6 +1228,16 @@ contraint. Which constaint operator to use will depend on the dependency's
 versioning policies. If the dependency uses semver, then a \c{^}-based
 constraint is a sensible default.
 
+As an example, let's say our \c{libfoo} depends on \c{libz}, \c{libasio}, and
+\c{libsqlite3}. To specify these dependencies we would add the following
+entries to its \c{manifest}:
+
+\
+depends: libz ^1.2.0
+depends: libasio ^1.28.0
+depends: libsqlite3 ^3.39.4
+\
+
 With all the dependencies specified, now let's synchronize the state of the
 build configurations with our changes by running \l{bdep-sync(1)} from the
 package repository root:
@@ -1495,6 +1505,10 @@ libfoo/
 
 The \c{buildfile} in \c{include/foo/} is pretty simple:
 
+\N|The \c{buildfile} in your package may look slightly different depending on
+the exact \c{bdep-new} sub-options used. However, all the relevant definitions
+discussed below should still be easily recognizable.|
+
 \
 pub_hdrs = {hxx ixx txx}{**}
 
@@ -1536,13 +1550,230 @@ the \c{install.subdirs} variable:
 {hxx ixx txx}{*}: install = include/foo/
 \
 
+\N|In the combined layout, the installation-related definitions are at
+the end of the combined \c{buildfile}.|
+
 See also \l{#howto-extra-header-install-subdir How do I handle extra header
 installation subdirectory}.
 
+Next is the \c{buildfile} in \c{src/}:
+
+\N|Again, the \c{buildfile} in your package may look slightly different
+depending on the exact \c{bdep-new} sub-options used. However, all the
+relevant definitions discussed below should still be easily recognizable.|
+
+\
+intf_libs = # Interface dependencies.
+impl_libs = # Implementation dependencies.
+#import xxxx_libs += libhello%lib{hello}
+
+# Public headers.
+#
+pub = [dir_path] ../include/foo/
+
+include $pub
+
+pub_hdrs = $($pub/ pub_hdrs)
+
+lib{foo}: $pub/{$pub_hdrs}
+
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+
+# Build options.
+#
+out_pfx_inc = [dir_path] $out_root/include/
+src_pfx_inc = [dir_path] $src_root/include/
+out_pfx_src = [dir_path] $out_root/src/
+src_pfx_src = [dir_path] $src_root/src/
+
+cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
+                \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+
+#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+  cxx.export.libs = $intf_libs
+}
+
+#liba{foo}: cxx.export.poptions += -DFOO_STATIC
+#libs{foo}: cxx.export.poptions += -DFOO_SHARED
+
+# For pre-releases use the complete version to make sure they cannot
+# be used in place of another pre-release or the final version. See
+# the version module for details on the version.* variable values.
+#
+if $version.pre_release
+  lib{foo}: bin.lib.version = \"-$version.project_id\"
+else
+  lib{foo}: bin.lib.version = \"-$version.major.$version.minor\"
+
+# Don't install private headers.
+#
+{hxx ixx txx}{*}: install = false
+\
+
+As a first step, let's remove all the definitions that we don't need in our
+library. The two common pieces of functionality that are often not needed
+are support for auto-generated headers (such as \c{config.h} generated from
+\c{config.h.in}) and dependencies on other libraries.
+
+If you don't have any auto-generated headers, then remove all the assignments
+and expansions of the \c{out_pfx_inc} and \c{out_pfx_src} variables. Here
+is what the relevant lines in the above \c{buildfile} should look like after
+this change:
+
+\
+# Build options.
+#
+src_pfx_inc = [dir_path] $src_root/include/
+src_pfx_src = [dir_path] $src_root/src/
+
+cxx.poptions =+ \"-I$src_pfx_src\" \"-I$src_pfx_inc\"
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$src_pfx_inc\"
+}
+\
+
+\N|If you do have auto-genetated headers, then in the split layout you can
+remove \c{out_pfx_inc} if you only have private auto-generated headers and
+\c{out_pfx_src} if you only have public.|
+
+\N|In the combined layout the single \c{buildfile} does not set the
+\c{*_pfx_*} variables. Instead it uses the \c{src_root} and \c{out_root}
+variables directly. For example:
+
+\
+# Build options.
+#
+cxx.poptions =+ \"-I$out_root\" \"-I$src_root\"
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_root\" \"-I$src_root\"
+}
+\
+
+To remove support for auto-generated headers in the combined \c{buildfile},
+simply remove the corresponding \c{out_root} expansions:
+
+\
+# Build options.
+#
+cxx.poptions =+ \"-I$src_root\"
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$src_root\"
+}
+\
+
+If you only have private auto-genertated headers, then only remove the
+expansion from \c{cxx.export.poptions}.|
+
+If you don't have any dependencies, then remove all the assignments and
+expansions of the \c{intf_libs} and \c{intf_libs} variables. That is,
+the following lines in the original \c{buildfile}:
+
+\
+intf_libs = # Interface dependencies.
+impl_libs = # Implementation dependencies.
+#import xxxx_libs += libhello%lib{hello}
+
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+  cxx.export.libs = $intf_libs
+}
+\
+
+Become just these:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx ixx txx cxx}{**}
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+}
+\
+
+And if you do have have dependencies, then let's handle them now.
+
+\N|Here we will assume dependencies on other libraries, which is the common
+case. If you have dependencies on executables, for example, source code
+generators, see \l{intro#guide-build-time-linked Build-Time Dependencies and
+Linked Configurations} on how to handle that.|
+
+For each library that your package depends on (and which you have added
+to \c{manifest} on the \l{#core-adjust-depend Add dependencies} step),
+you need to first determine whether it's an interface of implementation
+dependency and then import it either into \c{intf_libs} or \c{impl_libs}
+variable, respectively.
+
+See \l{b#intro-lib Library Exportation and Versioning} for background on the
+interface vs implementation distinction. But as a quick rule of thumb, if your
+library includes a header from the dependency library in one of its public
+headers, then it's an interface dependency. Otherwise, it's an implementation
+dependency.
+
+Continuing with our \c{libfoo} example, as we have established in
+\l{#core-adjust-depend Add dependencies}, it depends on \c{libasio}, \c{libz},
+and \c{libsqlite3} and let's say we've determined that \c{libasio} is an
+interface dependency because it's included from \c{include/foo/core.hpp} while
+the other two are implementation dependencies because they are only included
+from \c{src/}. Here is how we would change our \c{buildfile} to import them:
+
+\
+intf_libs = # Interface dependencies.
+impl_libs = # Implementation dependencies.
+import intf_libs += libasio%lib{asio}
+import impl_libs += libz%lib{z}
+import impl_libs += libsqlite3%lib{sqlite3}
+\
+
+And you can tidy this a bit further if you would like:
+
+\
+import intf_libs = libasio%lib{asio}
+import impl_libs = libz%lib{z}
+import impl_libs += libsqlite3%lib{sqlite3}
+\
+
+\N|If you don't have any implementation or interface dependencies, you can
+remove the assignment and all the expansion of the corresponding \c{*_libs}
+variable.|
+
+
+@@ Dependency on system library.
 
 
 @@ List of common 'tasks' like Objective-C, Assembler, symexport,
-   relevant HOWTO.
+   relevant HOWTO. autoconf.
 
 ========
 

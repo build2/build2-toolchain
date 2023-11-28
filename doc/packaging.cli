@@ -1461,6 +1461,10 @@ need to tweak it are not uncommon and include:
     modes. See \l{b#dont-header-only Don't make library header-only if it
     can be compiled}.|||
 
+Also, in C++ projects, if you don't have any inline or template files, then
+you can drop the assignment of the file extension for the \c{ixx} and \c{txx}
+target types, respectively.
+
 If you have made any changes, commit them (similar to the previous step, we
 cannot test things just yet):
 
@@ -1560,7 +1564,13 @@ Next is the \c{buildfile} in \c{src/}:
 
 \N|Again, the \c{buildfile} in your package may look slightly different
 depending on the exact \c{bdep-new} sub-options used. However, all the
-relevant definitions discussed below should still be easily recognizable.|
+relevant definitions discussed below should still be easily recognizable.
+
+For a binless (header-only) library, this \c{buildfile} will contain only a
+small subset of the definitions shown below. See
+\l{https://github.com/build2/HOWTO/blob/master/entries/make-header-only-library.md
+How do I make a header-only C/C++ library?} for additional considerations
+when packaging header-only libraries.|
 
 \
 intf_libs = # Interface dependencies.
@@ -1768,12 +1778,118 @@ import impl_libs += libsqlite3%lib{sqlite3}
 remove the assignment and all the expansion of the corresponding \c{*_libs}
 variable.|
 
+Note also that system libraries like \c{-lm}, \c{-ldl} on UNIX or
+\c{advapi32.lib}, \c{ws2_32.lib} on Windows should not be imported. Instead,
+they should be listed in the \c{c.libs} or \c{cxx.libs} variables. See
+\l{https://github.com/build2/HOWTO/blob/master/entries/link-system-library.md
+How do I link a system library} for details.
 
-@@ Dependency on system library.
+With the unnecessary parts of the \c{buildfile} cleaned up and dependenies
+handled, let's discuss the common changes to the remaining definitions, going
+from top to bottom. We start with the public headers block:
+
+\
+# Public headers.
+#
+pub = [dir_path] ../include/foo/
+
+include $pub
+
+pub_hdrs = $($pub/ pub_hdrs)
+
+lib{foo}: $pub/{$pub_hdrs}
+\
+
+This block gets hold of the list of public headers and makes them
+prerequisites of the library. Normally you shouldn't need to make any changes
+here. If you need to exclude some headers, it should be done in the
+\c{buildfile} in the \c{inlcude/} directory.
+
+\N|In the combined layout the single \c{buildfile} does not have such code.
+Instead, all headers are covered by the wildcard pattern in following block.|
+
+The next block deals with sources, private headers, and dependencies, if
+any:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+\
+
+By default it will list all the relevant files as prerequisites of the
+library, starting from the directory of the \c{buildfile} and including all
+the subdirectories, recursively (see \l{b#name-patterns Name Patterns} for
+background on wildcard patterns).
+
+If your C++ package doesn't have any inline or template files, then you can
+remove the \c{ixx} and \c{txx} target types, respectively (which is parallel
+to the change made in \c{root.build}; see \l{#core-adjust-build Review
+project-wide build system files in \c{build/}}). For example:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx cxx}{**} $impl_libs $intf_libs
+\
+
+The other common change to this block is the exclusion of certain files or
+making them conditionally included. As an example, let's say in our \c{libfoo}
+the source subdirectory contains a bunch of \c{*-test.cpp} files which are
+unit tests and should not be listed as prerequisites of a library. Here is how
+we can exclude them:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx cxx}{** -**-test} $impl_libs $intf_libs
+\
+
+Let's also assume our \c{libfoo} contains \c{impl-win32.cpp} and
+\c{impl-posix.cpp} which provide alternative implementations of the same
+functionality for Windows and POSIX and should only be included as
+prerequisites on the respective platforms. Here is how we can handle that:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx cxx}{** -impl-win32 -impl-posix -**-test}
+lib{foo}: cxx{impl-win32}: include = ($cxx.target.class == 'windows')
+lib{foo}: cxx{impl-posix}: include = ($cxx.target.class != 'windows')
+lib{foo}: $impl_libs $intf_libs
+\
+
+There are two nuances in the above example worth highlighting. Firstly, we
+have to exclude the files from the wildcard pattern before we can
+conditionally include them. Secondly, we have to always link libraries
+last. In particual, the following is a shorter but an incorrect version of the
+above:
+
+\
+lib{foo}: {hxx cxx}{** -impl-win32 -impl-posix -**-test} \
+          $impl_libs $intf_libs
+lib{foo}: cxx{impl-win32}: include = ($cxx.target.class == 'windows')
+lib{foo}: cxx{impl-posix}: include = ($cxx.target.class != 'windows')
+\
+
+\N|You may also be tempted to use the \c{if} directive instead of the
+\c{include} variable for conditional prerequisites. For example:
+
+\
+if ($cxx.target.class == 'windows')
+  lib{foo}: cxx{impl-win32}
+else
+  lib{foo}: cxx{impl-posix}
+\
+
+This would also be incorrect. For background and details, see
+\l{https://github.com/build2/HOWTO/blob/master/entries/keep-build-graph-config-independent.md
+How do I keep the build graph configuration-independent?}|
+
 
 
 @@ List of common 'tasks' like Objective-C, Assembler, symexport,
-   relevant HOWTO. autoconf.
+   relevant HOWTO. autoconf. unit tests
 
 ========
 

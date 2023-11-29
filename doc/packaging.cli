@@ -1886,7 +1886,136 @@ This would also be incorrect. For background and details, see
 \l{https://github.com/build2/HOWTO/blob/master/entries/keep-build-graph-config-independent.md
 How do I keep the build graph configuration-independent?}|
 
+The next two blocks are the build and export options, which we will
+discuss together:
 
+\
+# Build options.
+#
+out_pfx_inc = [dir_path] $out_root/include/
+src_pfx_inc = [dir_path] $src_root/include/
+out_pfx_src = [dir_path] $out_root/src/
+src_pfx_src = [dir_path] $src_root/src/
+
+cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
+                \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+
+#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+  cxx.export.libs = $intf_libs
+}
+
+#liba{foo}: cxx.export.poptions += -DFOO_STATIC
+#libs{foo}: cxx.export.poptions += -DFOO_SHARED
+\
+
+The build options are in effect when the library itself is being build and the
+exported options are propagated to the library consumers (see \l{b#intro-lib
+Library Exportation and Versioning} for background on exported options). For
+now we will ignore the commented out lines that add \c{-DFOO_STATIC*} and
+\c{-DFOO_SHARED*} macros \- they are for symbol exporting and we will discuss
+this topic separately.
+
+If the library you are packaging only uses portable APIs, then chances are you
+won't need to change anything here. On the other hand, if it does anything
+platform-specific, then you will most likely need to add some options here.
+
+As discussed in the \l{b#intro-dirs-scopes Output Directories and Scopes}
+section of the build system introduction, there is a number of variables that
+are used to specify compilation and linking options, such as \c{*.poptions}
+(\c{cxx.poptions} in the above example), \c{*.coptions}, etc. The below table
+shows all of them with their rough \c{make} equivalents in the third column:
+
+\
+*.poptions   preprocess        CPPFLAGS
+*.coptions   compile           CFLAGS/CXXFLAGS
+*.loptions   link              LDFLAGS
+*.aoptions   archive           ARFLAGS
+*.libs       system libraries  LIBS/LDLIBS
+\
+
+The recommended approach here is to study the upstream build system definition
+and copy custom compile/link options to the appropriate \c{build2} variables.
+Note, however, that doing it thoughtlessly/faithfully by copying all the
+options may not always be a good idea. See
+\l{https://github.com/build2/HOWTO/blob/master/entries/compile-options-in-buildfile.md
+Which C/C++ compile/link options are OK to specify in a project's buildfile?}
+for the guidelines.
+
+Also, oftentimes, such custom options must only be specified for certain
+target platforms or when using a certain compiler. While \c{build2} provides a
+large amount of information to identiy the build configuration as well as more
+advanced \c{buildfile} language mechanism (such as \l{b#intro-switch Pattern
+Matching (\c{switch})) to make sense of it, this is a large topic for which we
+refer you to \l{b The \c{build2} Build System} manual. Additionally,
+\l{https://github.com/build2-packaging github.com/build2-packaging} now
+contains a large number of packages that you can study and search for
+examples.
+
+Let's also consider a few simple examples based on our \c{libfoo} to give a
+sense of what this normally looks like as well as to highlight a few nuances.
+
+- macro to distinguish between POSIX and WIN32
+- export FOO_EXTRAS
+- -fno-strict-aliasing
+- link pthread, ws2_32
+
+This is how we would work it into the above fragment:
+
+\
+# Build options.
+#
+out_pfx_inc = [dir_path] $out_root/include/
+src_pfx_inc = [dir_path] $src_root/include/
+out_pfx_src = [dir_path] $out_root/src/
+src_pfx_src = [dir_path] $src_root/src/
+
+cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
+                \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+
+cxx.poptions += -DFOO_EXTRAS
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DFOO_WIN32
+else
+  cxx.poptions += -DFOO_POSIX
+
+#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+
+if ($cxx.class == 'gcc')
+  cxx.coptions += -fno-strict-aliasing
+
+switch $cxx.target.class, $cxx.target.system
+{
+  case 'windows', 'mingw32'
+    cxx.libs += -lws2_32
+  case 'windows'
+    cxx.libs += ws2_32.lib
+  default
+    cxx.libs += -pthread
+}
+
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\" -DFOO_EXTRAS
+  cxx.export.libs = $intf_libs
+}
+
+#liba{foo}: cxx.export.poptions += -DFOO_STATIC
+#libs{foo}: cxx.export.poptions += -DFOO_SHARED
+\
+
+@@ append, not assign
+@@ note options appending order
 
 @@ List of common 'tasks' like Objective-C, Assembler, symexport,
    relevant HOWTO. autoconf. unit tests

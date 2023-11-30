@@ -1952,21 +1952,22 @@ Also, oftentimes, such custom options must only be specified for certain
 target platforms or when using a certain compiler. While \c{build2} provides a
 large amount of information to identiy the build configuration as well as more
 advanced \c{buildfile} language mechanism (such as \l{b#intro-switch Pattern
-Matching (\c{switch})) to make sense of it, this is a large topic for which we
+Matching (\c{switch})} to make sense of it, this is a large topic for which we
 refer you to \l{b The \c{build2} Build System} manual. Additionally,
 \l{https://github.com/build2-packaging github.com/build2-packaging} now
 contains a large number of packages that you can study and search for
 examples.
 
-Let's also consider a few simple examples based on our \c{libfoo} to give a
+Let's also consider a representative example based on our \c{libfoo} to get a
 sense of what this normally looks like as well as to highlight a few nuances.
-
-- macro to distinguish between POSIX and WIN32
-- export FOO_EXTRAS
-- -fno-strict-aliasing
-- link pthread, ws2_32
-
-This is how we would work it into the above fragment:
+Let's assume our \c{libfoo} requires either the \c{FOO_POSIX} or \c{FOO_WIN32}
+macro to be defined during the build in order to identify the target
+platform. Additionaly, extra features can be enabled by defining
+\c{FOO_EXTRAS} both during the build and for consumption (so this macro must
+also be exported). Next, this library requires the \c{-fno-strict-aliasing}
+compile option for the GCC-class compilers (GCC, Clang, etc). Finally, we need
+to link \c{pthread} on POSIX and \c{ws2_32.lib} on Windows. This is how we
+would work all this into the above fragment:
 
 \
 # Build options.
@@ -2014,10 +2015,125 @@ lib{foo}:
 #libs{foo}: cxx.export.poptions += -DFOO_SHARED
 \
 
-@@ append, not assign
-@@ note options appending order
+There are a few nuances in the above code worth keeping in mind. Firstly,
+notice that we append (rather than assign) to all the non-export variables
+(\c{*.poptions}, \c{*.coptions}, \c{*.libs}). This is because they may already
+contain some values specified by the user with their \c{config.*.*}
+counterparts. On the other hand, the \c{*.export.*} variables are assigned.
 
-@@ List of common 'tasks' like Objective-C, Assembler, symexport,
+Secondly, the order in which we append to the variables is important for the
+value to accumulate correctly. You want to fist append all the scope-level
+values, then target type/pattern-specific, and finally any target-specific;
+that is, from more general to more specific (see \l{b#intro-lang Buildfile
+Language} for background). To illustrate this point, let's say in our
+\c{libfoo}, the \c{FOO_POSIX} or \c{FOO_WIN32} macro are only necessary when
+compiling \c{util.cpp}. Below would be the correct order of assigning to
+\c{cxx.poptions}:
+
+\
+cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
+                \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
+
+cxx.poptions += -DFOO_EXTRAS
+
+#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+
+if ($cxx.target.class == 'windows')
+  {obja objs}{util}: cxx.poptions += -DFOO_WIN32
+else
+  {obja objs}{util}: cxx.poptions += -DFOO_POSIX
+\
+
+\N|Not that target-specific \c{*.poptions} and \c{*.coptions} must be
+specified on the object file targets while \c{*.loptions} and \c{*.libs} \- on
+the library or executable targets.|
+
+Let's now turn to a special sub-topic of the build and export options that
+relates to the shared library symbol exporting. To recap, a shared library on
+Windows must explicitly specify the symbols (functions and global data) that
+it wishes to make accessible to its users. This can be achieved in three
+different way: The library can explicitly mark in its source code the names
+whose symbols should be exported. Alternatively, the library can profide a
+\c{.def} file to the linker that lists the symbols to be exported. Finally,
+the library can request automatic exporting of all symbols, which is the
+default semantics on non-Windows platforms. Note that the last two approaches
+only work for exporting functions, not data, unless extra steps are taken by
+the library users. Let's discuss each of these approaches in the reverse
+order, that is, starting with the automatic symbol exporting.
+
+The automatic symbol exporting is implemented in \c{build2} by generating a
+\c{.def} file that exports all the relevant symbols. It requires a few
+additional definitions in our \c{buildfile} as described in
+\l{b#cc-auto-symexport Automatic DLL Symbol Exporting}. You can automacially
+generate the necessary setup with the \c{auto-symexport} \c{bdep-new}
+sub-option.
+
+Using a custom \c{.def} file to export symbols is fairly straightforward:
+simply list it as a prerequsite of the library and it will be automatically
+passed to the linker. For example:
+
+\
+# Private headers and sources as well as dependencies.
+#
+lib{foo}: {hxx cxx}{**} $impl_libs $intf_libs def{foo}
+\
+
+The last approach is to explicitly specify in the source code which symbols
+must be exported by marking the corresponding declarations with
+\c{__declspec(dllexport)} during the library build and
+\c{__declspec(dllimport)} during the library use. This is commonly achieved
+with a macro, customarily called \c{*_EXPORT} or \c{*_API}, which is defined
+to one of the above specifiers based on whether static or shared library is
+being build or being consumed, which, in turn, is also normally signalled with
+a few more macros, such as \c{*_BUILD_DLL} and \c{*_USE_STATIC}.
+
+In \c{build2} you can explicitly signal any of the four situations by
+uncommending and adjusting the following four lines in the build and export
+options blocks:
+
+\
+# Build options.
+#
+
+...
+
+#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+
+# Export options.
+#
+
+...
+
+#liba{foo}: cxx.export.poptions += -DFOO_STATIC
+#libs{foo}: cxx.export.poptions += -DFOO_SHARED
+\
+
+As an example, let's assume our \c{libfoo} defines in one of its headers the
+\c{FOO_EXPORT} macro based on the \c{FOO_BUILD_DLL} (shared library is being
+build) and \c{FOO_USE_STATIC} (static library is being used) macros that it
+expects to be appropriately defined by the build system. This is how we would
+modify the above fragment to handle this setup:
+
+\
+# Build options.
+#
+
+...
+
+{hbmis objs}{*}: cxx.poptions += -DFOO_BUILD_DLL
+
+# Export options.
+#
+
+...
+
+liba{foo}: cxx.export.poptions += -DFOO_USE_STATIC
+\
+
+
+@@ List of common 'tasks' like Objective-C, Assembler,
    relevant HOWTO. autoconf. unit tests
 
 ========

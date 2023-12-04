@@ -2132,15 +2132,86 @@ modify the above fragment to handle this setup:
 liba{foo}: cxx.export.poptions += -DFOO_USE_STATIC
 \
 
+The final few lines in the above \c{buildfile} deal with shared library binary
+(ABI) versioning:
 
-@@ List of common 'tasks' like Objective-C, Assembler,
-   relevant HOWTO. autoconf. unit tests
+\
+# For pre-releases use the complete version to make sure they cannot
+# be used in place of another pre-release or the final version. See
+# the version module for details on the version.* variable values.
+#
+if $version.pre_release
+  lib{foo}: bin.lib.version = \"-$version.project_id\"
+else
+  lib{foo}: bin.lib.version = \"-$version.major.$version.minor\"
+\
+
+The \c{bdep-new}-generated setup arranges for the platform-independent
+versioning where the package's major and minor version components are embedded
+into the shared library binary name (and \c{soname}) under the assumption
+that only patch versions are ABI-compatible.
+
+The two situation where you would want to change this are when the above
+assumption does not hold and/or when the upstream provides platform-specific
+shared library versions which you would like to re-create in your \c{build2}
+build. See \l{b#intro-lib Library Exportation and Versioning} for background
+and details.
+
+The changes discussed so far should be sufficient to handle a typical library
+that is written in C and/or C++ and is able to handle platform differences
+with the preprocessor and compile/link options. However, sooner or later you
+will run into a more complex library that may use additional languages,
+require more elaborate platform detection, or use additional functionality,
+such as support for source code generators. The below list provides pointers
+to resources that cover the more commonly encountered additional requirements.
+
+\ul|
+
+\li|\l{b#module-in The \c{in} build system module}
+
+Use to process \c{config.h.in} (or other \c{.in} files) that don't require
+Autoconf-style platform probing (\c{HAVE_*} options).|
+
+\li|\l{https://github.com/build2/libbuild2-autoconf The \c{autoconf} build
+    system module}
+
+Use to process \c{config.h.in} (or their CMake/Meson variants) that require
+Autoconf-style platform probing (\c{HAVE_*} options).|
+
+\li|\l{b#c-objc Objective-C Compilation} and
+    \l{b#cxx-objcxx Objective-C++ Compilation}
+
+Use to compile Objective-C (\c{.m}) or Objective-C++ (\c{.mm}) source files.|
+
+\li|\l{b#c-as-cpp Assembler with C Preprocessor Compilation}
+
+Use to compile Assembler with C Preprocessor (\c{.S}) source files.|
+
+\li|\l{b#intro-unit-test Implementing Unit Testing}
+
+Use if upstream has tests (normally unit tests) in the source subdirectory.|
+
+\li|\l{intro#guide-build-time-linked Build-Time Dependencies and Linked
+    Configurations}
+
+Use if upstream relies on source code generators, such as
+\l{https://cppget.org/reflex \c{lex}} and \l{https://cppget.org/byacc
+\c{yacc}}.|
+
+\li|\l{https://github.com/build2/HOWTO/ The \c{build2} HOWTO}
+
+See the \c{build2} HOWTO article collection for more unusual requirements.||
+
+
+@@ Note on library metadata where talk about configuration.
 
 ========
 
 @@ Show how to sync with config vars?
 
 ========
+
+@@ Use of the version module and non-semver versions? Links to HOWTO entries!
 
 @@ Squash commits?
 

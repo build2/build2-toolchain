@@ -588,12 +588,12 @@ subdirectory.
 
 Our overall plan for the package is to create the initial layout and
 \c{buildfile} templates automatically using \l{bdep-new(1)} in the
-\c{--package} mode, then tweak \c{buildfile}s if necessary, and finally
+\c{--package} mode, then tweak \c{buildfiles} if necessary, and finally
 \"fill\" the package with upstream source code using symlinks.
 
 The main rationale for using \l{bdep-new(1)} instead of doing everything by
 hand is that there are many nuances in getting the build right and
-auto-generated \c{buildfile}s had years of refinement and fine-tuning. The
+auto-generated \c{buildfiles} had years of refinement and fine-tuning. The
 familiar structure also makes it easier for others to understand your build,
 for example while reviewing your package submission.
 
@@ -614,7 +614,7 @@ recommended procedure is as follows:
 \li|\nCraft and execute the \l{bdep-new(1)} command line necessary to achieve
 the upstream layout.|
 
-\li|\nStudy the auto-generated \c{buildfile}s for things that don't fit and
+\li|\nStudy the auto-generated \c{buildfiles} for things that don't fit and
 need to change. But don't rush to start manually editing the result. First get
 an overview of the required changes and then check if it's possible to achieve
 these changes automatically using one of \l{bdep-new(1)} sub-options. If
@@ -857,9 +857,9 @@ How do I make a header-only C/C++ library?}|
 
 \li|\n\cb{buildfile-in-prefix}
 
-Place header/source \c{buildfile}s into the header/source prefix directory
+Place header/source \c{buildfiles} into the header/source prefix directory
 instead of source subdirectory. To illustrate the difference, compare these
-two auto-generated layouts paying attention to the location of \c{buildfile}s:
+two auto-generated layouts paying attention to the location of \c{buildfiles}:
 
 \
 $ bdep new ... --type lib,split,subdir=foo libfoo
@@ -895,7 +895,7 @@ subdirectory (\c{foo/} in our case).
 
 Why would we want to do this? The main reason is to be able to symlink the
 entire upstream directories rather than individual files. In the first
-listing, the generated \c{buildfile}s are inside the \c{foo/} subdirectories
+listing, the generated \c{buildfiles} are inside the \c{foo/} subdirectories
 which mean we cannot just symlink \c{foo/} from upstream.
 
 With a large number of files to symlink, this can be such a strong motivation
@@ -904,7 +904,7 @@ even if upstream doesn't have one. See \l{#dont-main-target-root-buildfile
 Don't build your main targets in root \c{buldfile}} for details on this
 technique.
 
-Another reason we may want to move \c{buildfile}s to prefix is to be able to
+Another reason we may want to move \c{buildfiles} to prefix is to be able to
 handle upstream projects that have multiple source subdirectories. While this
 situation is not very common in the header prefix, it can be enountered in the
 source prefix of more complex projects, where upstream wishes to organize the
@@ -951,9 +951,9 @@ libfoo/
 \
 
 Once the overall layout looks right, the next step is to take a closer look at
-the generated \c{buildfile}s to make sure that overall they match the upstrem
+the generated \c{buildfiles} to make sure that overall they match the upstrem
 build. Of particular interest are the header and source directory
-\c{buildfile}s (\c{libfoo/include/foo/buildifle} and \c{libfoo/src/buildifle}
+\c{buildfiles} (\c{libfoo/include/foo/buildifle} and \c{libfoo/src/buildifle}
 in the above listing) which define how the library is built and installed.
 
 Here we are focusing on the macro-level differences that are easier to change
@@ -962,14 +962,14 @@ if we look at the generated source directory \c{buildfile} and realize it
 builds a \i{binful} library (that is, a library that includes source files and
 therefore produces library binaries) while the upsteam library is header-only,
 it is much easier to fix this by re-running \c{bdep-new} with the \c{binless}
-sub-option than by changing the \c{buildfile}s manually.
+sub-option than by changing the \c{buildfiles} manually.
 
 \N|Don't be tempted to start making manual changes at this stage even if you
 cannot see anything else that can be fixed with a \c{bdep-new} re-run. This
 is still a dry-run and we will recreate the package one more time in the
 following section before starting manual adjustments.|
 
-Besides examining the generated \c{buildfile}s, it's also a good idea to
+Besides examining the generated \c{buildfiles}, it's also a good idea to
 build, test, and install the generated package to make sure everything ends up
 where you expected and matches upstream where necessary. In particular, make
 sure public headers are installed into the same location as upstream.
@@ -1078,19 +1078,19 @@ If auto-detection succeeds, then you should see the \c{summary} and
 files listed in the root \c{buildfile}.
 
 
-\h#core-adjust|Fill package and adjust \c{buildfiles}, \c{manifest}, etc|
+\h#core-fill|Fill package with source code and add dependencies|
 
-With the package skeleton ready, the next step is to fill it with upstream
-source code and make any necessary manual adjustments to the generated
-\c{buildfiles}, \c{manifest}, etc. If we do this all at once, however, it can
-be hard to pin-point the cause of build failures. For example, if we convert
-both the library and its tests right away and something doesn't work, it can
-be hard to determine whether the mistake is in the library or in the tests.
-As a result, we are going to split this work into a sequence or smaller steps
-that incrementally replace the \c{bdep-new}-generated code with upstream while
-allowing us to test each change individually. We will also commit the changes
-on each step for easy rollbacks. Specifically, the overall plan is as
-follows:
+With the package skeleton ready, the next steps are to fill it with upstream
+source code, add dependencies, and make any necessary manual adjustments to
+the generated \c{buildfiles}, \c{manifest}, etc. If we do this all at once,
+however, it can be hard to pin-point the cause of build failures. For example,
+if we convert both the library and its tests right away and something doesn't
+work, it can be hard to determine whether the mistake is in the library or in
+the tests.  As a result, we are going to split this work into a sequence or
+smaller steps that incrementally replace the \c{bdep-new}-generated code with
+upstream while allowing us to test each change individually. We will also
+commit the changes on each step for easy rollbacks. Specifically, the overall
+plan is as follows:
 
 \ol|
 
@@ -1098,7 +1098,9 @@ follows:
 
 \li|Add dependencies, if any.|
 
-\li|Fill the library with upstream source code and adjust its build.|
+\li|Fill the library with upstream source code.|
+
+\li|Adjust project-wide and source subdirectory \c{buildfiles}.|
 
 \li|Make a smoke test for the library.|
 
@@ -1110,6 +1112,9 @@ follows:
 
 |
 
+The first three steps are the subject of this section with the following
+sections covering the rest of the plan.
+
 \N|As you become more experienced with packaging third-party projects for
 \c{build2} it may make sense to start combining or omitting some steps,
 especially for simpler libraries. For example, if you see that a library
@@ -1117,7 +1122,7 @@ comes with a simple test that shouldn't cause any complications, then you
 could omit the smoke test.|
 
 
-\h2#core-adjust-init|Initialize package in build configurations|
+\h2#core-fill-init|Initialize package in build configurations|
 
 Before we start making any changes to the \c{bdep-new}-generated files, let's
 initialize the package in at least one build configuration so that we are able
@@ -1146,7 +1151,7 @@ any uncommitted or untracked files):
 $ git status
 \
 
-\h2#core-adjust-depend|Add dependencies|
+\h2#core-fill-depend|Add dependencies|
 
 If the upstream project has any dependencies, now is a good time to specify
 them so that when we attempt to build upstream source code, they are already
@@ -1264,7 +1269,7 @@ $ git commit -m \"Add dependencies\"
 \
 
 
-\h2#core-adjust-fill|Fill with upstream source code|
+\h2#core-fill-source|Fill with upstream source code|
 
 Now we are ready to begin replacing the \c{bdep-new}-generated files with
 upstream source code symlinks and we start with library's header and source
@@ -1402,14 +1407,19 @@ $ git commit -m \"Add upstream source symlinks\"
 \
 
 
-\h2#core-adjust-build|Review project-wide build system files in \c{build/}|
+\h#core-adjust-build|Adjust project-wide and source \c{buildfiles}|
 
-With sources ready, the only step remaining before we can build the library is
-to adjust the regenerated \c{buildfile}s. We start with reviwing the files in
-the \c{build/} subdirectory of our package.
+With source code and dependencies added, the next step is to adjust the
+regenerated \c{buildfiles} that build the library. This involves two places:
+the project-wide build system files in \c{build/} and the source subdirectory
+\c{buildfiles} (in \c{include/} and \c{src/} for our \c{libfoo} example).
 
-There you will find three files: \c{bootstrap.build}, \c{root.build}, and
-\c{export.build}. To recap, the first two contain the project-wide build
+
+\h2#core-adjust-build-wide|Review project-wide build system files in \c{build/}|
+
+We start with reviwing the files in the \c{build/} subdirectory of our
+package, where you will find three files: \c{bootstrap.build}, \c{root.build},
+and \c{export.build}. To recap, the first two contain the project-wide build
 system setup (see \l{b#intro-proj-struct Project Structure} for details) while
 the last is an export stub that facilitates the importation of targets from
 our package (see \l{b#intro-import Target Importation} for details).
@@ -1454,7 +1464,7 @@ need to tweak it are not uncommon and include:
     Note that you don't need to add all the configuration variables right
     away. Instead, you could first handle the \"core\" functionality which
     doesn't require any configuration and then add the configuration variables
-    one by one while also making the corresponding changes in \c{buildfile}s.
+    one by one while also making the corresponding changes in \c{buildfiles}.
 
     \N|One type of configuration that you should normally not expose when
     packaging for \c{build2} is support for both header-only and compiled
@@ -1475,19 +1485,19 @@ $ git commit -m \"Adjust project-wide build system files\"
 \
 
 
-\h2#core-adjust-buildfile|Adjust source subdirectory \c{buildfile}s|
+\h2#core-adjust-build-src|Adjust source subdirectory \c{buildfiles}|
 
-The last step we need to perform before we can build our library for the first
-time is to adjust its \c{buildfile}s. These \c{buildfiles} are found in the
-source subdirectory or, if we used the \c{buildfile-in-prefix} sub-option, in
-the prefix directory. There will be two \c{buildfile}s if we use the split
-layout (\c{split} sub-option) or a single \c{buildfile} in the combined
-layout. The single \c{buildfile} in the combined layout contains essentially
-the same definitions as the split \c{buildfile}s but combined into one and
-with some minor simplifications that this allows. So here we will assume the
-split layout and will continue with our \c{libfoo} from the previous
-sections. To recap, here is the layout we've got with the \c{buildfile}s of
-interest found in \c{include/foo/} and in \c{src/}:
+The next step we need to perform before we can build our library is to adjust
+its \c{buildfiles}. These \c{buildfiles} are found in the source subdirectory
+or, if we used the \c{buildfile-in-prefix} sub-option, in the prefix
+directory. There will be two \c{buildfiles} if we use the split layout
+(\c{split} sub-option) or a single \c{buildfile} in the combined layout. The
+single \c{buildfile} in the combined layout contains essentially the same
+definitions as the split \c{buildfiles} but combined into one and with some
+minor simplifications that this allows. So here we will assume the split
+layout and will continue with our \c{libfoo} from the previous sections. To
+recap, here is the layout we've got with the \c{buildfiles} of interest found
+in \c{include/foo/} and in \c{src/}:
 
 \
 libfoo/
@@ -1506,6 +1516,9 @@ libfoo/
 │   └── ...
 └── ...
 \
+
+
+\h2#core-adjust-build-src-header|Adjust header \c{buildfile}|
 
 The \c{buildfile} in \c{include/foo/} is pretty simple:
 
@@ -1559,6 +1572,9 @@ the end of the combined \c{buildfile}.|
 
 See also \l{#howto-extra-header-install-subdir How do I handle extra header
 installation subdirectory}.
+
+
+\h2#core-adjust-build-src-source|Adjust source \c{buildfile}: overview|
 
 Next is the \c{buildfile} in \c{src/}:
 
@@ -1628,6 +1644,9 @@ else
 #
 {hxx ixx txx}{*}: install = false
 \
+
+
+\h2#core-adjust-build-src-source-clean|Adjust source \c{buildfile}: cleanup|
 
 As a first step, let's remove all the definitions that we don't need in our
 library. The two common pieces of functionality that are often not needed
@@ -1732,7 +1751,10 @@ lib{foo}:
 }
 \
 
-And if you do have have dependencies, then let's handle them now.
+
+\h2#core-adjust-build-src-source-dep|Adjust source \c{buildfile}: dependencies|
+
+If you do have have dependencies, then let's handle them now.
 
 \N|Here we will assume dependencies on other libraries, which is the common
 case. If you have dependencies on executables, for example, source code
@@ -1740,7 +1762,7 @@ generators, see \l{intro#guide-build-time-linked Build-Time Dependencies and
 Linked Configurations} on how to handle that.|
 
 For each library that your package depends on (and which you have added
-to \c{manifest} on the \l{#core-adjust-depend Add dependencies} step),
+to \c{manifest} on the \l{#core-fill-depend Add dependencies} step),
 you need to first determine whether it's an interface of implementation
 dependency and then import it either into \c{intf_libs} or \c{impl_libs}
 variable, respectively.
@@ -1752,7 +1774,7 @@ headers, then it's an interface dependency. Otherwise, it's an implementation
 dependency.
 
 Continuing with our \c{libfoo} example, as we have established in
-\l{#core-adjust-depend Add dependencies}, it depends on \c{libasio}, \c{libz},
+\l{#core-fill-depend Add dependencies}, it depends on \c{libasio}, \c{libz},
 and \c{libsqlite3} and let's say we've determined that \c{libasio} is an
 interface dependency because it's included from \c{include/foo/core.hpp} while
 the other two are implementation dependencies because they are only included
@@ -1784,6 +1806,9 @@ they should be listed in the \c{c.libs} or \c{cxx.libs} variables. See
 \l{https://github.com/build2/HOWTO/blob/master/entries/link-system-library.md
 How do I link a system library} for details.
 
+
+\h2#core-adjust-build-src-source-pub|Adjust source \c{buildfile}: public headers|
+
 With the unnecessary parts of the \c{buildfile} cleaned up and dependenies
 handled, let's discuss the common changes to the remaining definitions, going
 from top to bottom. We start with the public headers block:
@@ -1808,8 +1833,10 @@ here. If you need to exclude some headers, it should be done in the
 \N|In the combined layout the single \c{buildfile} does not have such code.
 Instead, all headers are covered by the wildcard pattern in following block.|
 
-The next block deals with sources, private headers, and dependencies, if
-any:
+
+\h2#core-adjust-build-src-source-src|Adjust source \c{buildfile}: sources, private headers|
+
+The next block deals with sources, private headers, and dependencies, if any:
 
 \
 # Private headers and sources as well as dependencies.
@@ -1824,7 +1851,7 @@ background on wildcard patterns).
 
 If your C++ package doesn't have any inline or template files, then you can
 remove the \c{ixx} and \c{txx} target types, respectively (which is parallel
-to the change made in \c{root.build}; see \l{#core-adjust-build Review
+to the change made in \c{root.build}; see \l{#core-adjust-build-wide Review
 project-wide build system files in \c{build/}}). For example:
 
 \
@@ -1886,8 +1913,11 @@ This would also be incorrect. For background and details, see
 \l{https://github.com/build2/HOWTO/blob/master/entries/keep-build-graph-config-independent.md
 How do I keep the build graph configuration-independent?}|
 
-The next two blocks are the build and export options, which we will
-discuss together:
+
+\h2#core-adjust-build-src-source-opt|Adjust source \c{buildfile}: build and export options|
+
+The next two blocks are the build and export options, which we will discuss
+together:
 
 \
 # Build options.
@@ -2049,6 +2079,9 @@ else
 specified on the object file targets while \c{*.loptions} and \c{*.libs} \- on
 the library or executable targets.|
 
+
+\h2#core-adjust-build-src-source-sym|Adjust source \c{buildfile}: symbol exporting|
+
 Let's now turn to a special sub-topic of the build and export options that
 relates to the shared library symbol exporting. To recap, a shared library on
 Windows must explicitly specify the symbols (functions and global data) that
@@ -2132,6 +2165,9 @@ modify the above fragment to handle this setup:
 liba{foo}: cxx.export.poptions += -DFOO_USE_STATIC
 \
 
+
+\h2#core-adjust-build-src-source-ver|Adjust source \c{buildfile}: shared library version|
+
 The final few lines in the above \c{buildfile} deal with shared library binary
 (ABI) versioning:
 
@@ -2156,6 +2192,9 @@ assumption does not hold and/or when the upstream provides platform-specific
 shared library versions which you would like to re-create in your \c{build2}
 build. See \l{b#intro-lib Library Exportation and Versioning} for background
 and details.
+
+
+\h2#core-adjust-build-src-source-ext|Adjust source \c{buildfile}: extra requirements|
 
 The changes discussed so far should be sufficient to handle a typical library
 that is written in C and/or C++ and is able to handle platform differences
@@ -2203,11 +2242,15 @@ Use if upstream relies on source code generators, such as
 See the \c{build2} HOWTO article collection for more unusual requirements.||
 
 
-@@ Note on library metadata where talk about configuration.
+@@ Note on library metadata where talk about configuration. Also about
+   autoconf.
+
+@@ Commit? Can't test since smoke test might be not configurable.
 
 ========
 
-@@ Show how to sync with config vars?
+@@ Show how to sync with config vars? Actually, can't do without fixing
+up smoke test first.
 
 ========
 
@@ -2227,14 +2270,14 @@ See the \c{build2} HOWTO article collection for more unusual requirements.||
 \h1#dont-do|What Not to Do|
 
 
-\h#dont-from-scratch|Don't write \c{buildfile}s from scratch, use \c{bdep-new}|
+\h#dont-from-scratch|Don't write \c{buildfiles} from scratch, use \c{bdep-new}|
 
 Unless you have good reasons not to, create the initial project layout
 automatically using \l{bdep-new(1)}, then tweak it if necessary and fill with
 upstream source code.
 
 The main rationale here is that there are many nuances in getting the build
-right and auto-generated \c{buildfile}s had years of refinement and
+right and auto-generated \c{buildfiles} had years of refinement and
 fine-tuning. The familiar structure also makes it easier for others to
 understand your build, for example while reviewing your package submission.
 
@@ -2255,7 +2298,7 @@ unnecessarily} for details).|
 \li|Craft and execute the \l{bdep-new(1)} command line necessary to achieve
 the upstream layout.|
 
-\li|Study the auto-generated \c{buildfile}s for things that don't fit and need
+\li|Study the auto-generated \c{buildfiles} for things that don't fit and need
 to change. But don't rush to start manually editing the result. First get an
 overview of the required changes and then check if it's possible to achieve
 these changes automatically using one of \l{bdep-new(1)} sub-options.
@@ -2445,7 +2488,7 @@ from \c{upstream/} (which is not possible if you have to have a \c{buildfile}
 inside). However, this is a bad idea except for the simplest projects.
 
 Firstly, this quickly gets messy since you have to combine managing
-\c{README}s, \c{LICENSE}s, and subdirectories with you main target builds.
+\c{README}, \c{LICENSE}, etc., and subdirectories with you main target builds.
 But, more importantly, this means that when you main target is imported (and
 thus the \c{buildfile} that defines this target must be loaded), your entire
 project will be loaded, including any \c{tests/} and \c{examples/} subproject,
@@ -2509,9 +2552,9 @@ libfoo/
 \
 
 However, with this layout we will not be able to symlink the entire
-\c{include/foo/} and \c{src/} subdirectories because there are \c{buildfile}s
+\c{include/foo/} and \c{src/} subdirectories because there are \c{buildfiles}
 inside (and which may tempt you to just move everything to the root
-\c{buidfile}). To fix this we can move the \c{buildfile}s out of source
+\c{buidfile}). To fix this we can move the \c{buildfiles} out of source
 subdirectory \c{foo/} and into prefixes (\c{include/} and \c{src/}) using the
 \c{buildfile-in-prefix} sub-option. And since \c{src/} doesn't have a source
 subdirectory, we have to invent one:

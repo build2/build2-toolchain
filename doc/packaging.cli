@@ -2241,18 +2241,117 @@ Use if upstream relies on source code generators, such as
 
 See the \c{build2} HOWTO article collection for more unusual requirements.||
 
+@@ TODO: build the library only here? Can't test since smoke test might be not
+configurable. Doesn't feel sensible to commit a potentially broken smoke
+test, but maybe.
+
+@@ Show how to sync with config vars? Actually, can't do without fixing
+up smoke test first. Unless do it right after adding imports for
+dependencies and before modifying the rest of src buildfile.
+
+
+\h#core-test-smoke|Make smoke test|
+
+With the library build sorted, we need tests to make sure it is actually
+functional. As \l{#core-fill discussed earlier}, it is recommended to start
+with a simple smoke test, make sure that works, and then replace it with
+upstream tests. However, if upstream tests look simple enough, you can skip
+the smoke test. For example, if upstream has all its tests in a single source
+file and its build doesn't look too complicated, then you can just use that
+source file in place of the smoke test.
+
+\N|If upstream has no tests, then the smoke test will have to stay. A library
+can only be published if it has at least one test.
+
+It is also recommended to have the smoke test if upstream tests are in a
+separate package. See
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for background and
+details.|
+
+To recap, the \c{bdep-new}-generated \c{tests/} subdirectory looks like this
+(continuing with our \c{libfoo} example):
+
+\
+libfoo/
+├── ...
+└── tests/
+    ├── build/
+    │   ├── bootstrap.build
+    │   └── root.build
+    ├── basics/
+    │   ├── driver.cpp
+    │   └── buildfile
+    └── buildfile
+\
+
+The \c{tests/} subdirectory is a build system subproject, meaning that it can
+be built independently, for example, to test the installed version of the
+library (see \l{b#intro-operations-test Testing} for background). In
+particular, this means it has the \c{build/} subdirectory with project-wide
+build system files the same as our library. Then there is the \c{basics/}
+subdirectory which contains the generated test and which is what we will be
+turning into a smoke test. The subproject root \c{buildfile} rarely needs
+changing.
+
+\h2#core-test-smoke-build-wide|Review project-wide build system files in \c{tests/build/}|
+
+Review the generated \c{bootstrap.build} and \c{root.build} (there will be no
+\c{export.build}) similar to \l{#core-adjust-build-wide Review project-wide
+build system files in \c{build/}}.
+
+Here the only change you would normally make is in \c{root.build} to drop the
+assignment of extensions for target types that are not used in tests.
+
+
+\h2#core-test-smoke-adjust|Convert generated test to library smoke test|
+
+The \c{basics/} subdirectory contains the \c{driver.cpp} source file that
+implements the test and \c{buildfile} that builds it. You can rename both the
+test directory (\c{basics/}) and the source file \c{driver.cpp}, for example,
+if you are going with the upstream tests directly. You can also add more tests
+by simply copying \c{basics/}.
+
+The purpose of a smoke test is to make sure the library's public headers can
+be included (including in the installed case, no pun intended), it can be
+linked, and its basic functionality works.
+
+To achieve this, we modify \c{driver.cpp} to include the library's main
+headers and call a few functions. For example, if the library has the
+init/deinit type of functions, those are good candidates to call. If the
+library is not header-only, make sure that the smoke test calls at least one
+non-inline/template function to test symbol exporting.
+
+Continuing with our \c{libfoo} example, this is what its smoke test might look
+like:
+
+\
+#include <foo/core.hpp>
+#include <foo/util.hpp>
+
+#undef NDEBUG
+#include <cassert>
+
+int main ()
+{
+  foo::context* c (foo::init (0 /* flags */));
+  assert (c != nullptr);
+  foo::deinit (c);
+}
+\
+
+\N|The C/C++ \c{assert()} macro is often an adequate \"testing framework\" for
+simple tests and does not require extra dependencies. But see
+\l{https://github.com/build2/HOWTO/blob/master/entries/use-assert-in-tests.md
+How do I correctly use C/C++ assert() in tests?}|
+
+
+@@ Next: test locally, commit, test with CI.
+
+========
 
 @@ Note on library metadata where talk about configuration. Also about
    autoconf.
-
-@@ Commit? Can't test since smoke test might be not configurable.
-
-========
-
-@@ Show how to sync with config vars? Actually, can't do without fixing
-up smoke test first.
-
-========
 
 @@ Use of the version module and non-semver versions? Links to HOWTO entries!
 

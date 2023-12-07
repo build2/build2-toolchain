@@ -1144,6 +1144,22 @@ $ bdep test
 $ bdep clean
 \
 
+You can create additional configurations, for example, if you have access to
+several compilers. For instance, to create a build configuration for Clang:
+
+\
+$ bdep init -C ../foo-clang @clang cc config.cxx=clang++
+\
+
+If you would like to perform a certain operation on all the build
+configurations, pass the \c{-a|--all} flag to \c{bdep}:
+
+\
+$ bdep update -a
+$ bdep test -a
+$ bdep clean -a
+\
+
 Let's also verify that the resulting package repository is clean (doesn't have
 any uncommitted or untracked files):
 
@@ -2322,6 +2338,9 @@ init/deinit type of functions, those are good candidates to call. If the
 library is not header-only, make sure that the smoke test calls at least one
 non-inline/template function to test symbol exporting.
 
+\N|Make sure that your test includes the library's public headers the same way
+as would be used by the library users.|
+
 Continuing with our \c{libfoo} example, this is what its smoke test might look
 like:
 
@@ -2340,15 +2359,143 @@ int main ()
 }
 \
 
-\N|The C/C++ \c{assert()} macro is often an adequate \"testing framework\" for
-simple tests and does not require extra dependencies. But see
+\N|The C/C++ \c{assert()} macro is often adequate for simple tests and does
+not require extra dependencies. But see
 \l{https://github.com/build2/HOWTO/blob/master/entries/use-assert-in-tests.md
 How do I correctly use C/C++ assert() in tests?}|
 
+The test \c{buildfile} is pretty simple:
+
+\
+import libs = libfoo%lib{foo}
+
+exe{driver}: {hxx ixx txx cxx}{**} $libs testscript{**}
+\
+
+If you have adjusted the library target name (\c{lib{foo\}}) in the source
+subdirectory \c{buildfile}, then you will need to make the corresponding
+change in the \c{import} directive here. You may also want to tidy it up by
+removing unused prerequisite types. For example:
+
+\
+import libs = libfoo%lib{foo}
+
+exe{driver}: {hxx cxx}{**} $libs
+\
+
+
+\h2#core-test-smoke-localy|Test locally|
+
+With the smoke test ready, we can finally do some end-to-end testing of our
+library build. We will start with doing some local testing to catch basic
+mistakes and then do the full CI to detect any platform/compiler-specific
+issues.
+
+First let's run the test in the default build configuration by invoking
+the build system directly:
+
+\
+$ cd libfoo/tests/ # Change to the tests/ subproject.
+$ b test
+\
+
+If there are any issues (compile/link errors, test failures), try to address
+them and re-run the test.
+
+Once the default configuration builds and passes the tests, you can do the
+same for all the build configurations, in case you have \l{#core-fill-init
+initialized} your library in several:
+
+\
+$ bdep test -a
+\
+
+Once this works, let's test the installed version of the library. In
+particular, this makes sure that the public headers are installed in a way
+that is compatible with how they are included by our test (and would be
+included by the users of our library). To test this we first install
+the library into some temporary directory:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ b install config.install.root=/tmp/install
+\
+
+Next we build just the \c{tests/} subproject arranging for it to find
+the installed library:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ b test: tests/@/tmp/libfoo-tests-out/ \
+  config.cc.loptions=-L/tmp/install/lib \
+  config.bin.rpath=/tmp/install/lib
+\
+
+\N|The equivalent MSVC command line would be:
+
+\
+> b install config.install.root=c:\tmp\install
+
+> b test: tests\@c:\tmp\libfoo-tests-out\^
+  config.cc.loptions=/LIBPATH:c:\tmp/\install\lib
+\
+
+|
+
+\N|It is a good idea to look over the installed files and make sure there is
+nothing unexpected, for example, missing or extraneous files.|
+
+Once done testing the installed case, let's clean things up:
+
+\
+$ rm -r /tmp/install /tmp/libfoo-tests-out
+\
+
+Another special case worth testing is the preparation of the source
+distribution (see \l{} for background). This, in particular, is how your
+package will be turned into the source archive for publishing to
+\l{https://cppget.org cppget.org}. Here we are primarily looking for missing
+files. As a bonus, this will also allow us to test the in source build. First
+we distribute our package to some temporary directory:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ b dist config.dist.root=/tmp/dist config.dist.uncommitted=true
+\
+
+The result will be in the \c{/tmp/dist/libfoo-<version>/} directory which
+should resemble our \c{libfoo/} package but without files like \c{.gitignore}.
+Next we build and test the distribution in source:
+
+\
+$ cd /tmp/dist/libfoo-<version>/
+$ b configure config.cxx=g++
+$ b update
+$ b test
+\
+
+@@ Not going to work if there are dependencies. Can probably satisfy with
+   imports from one of the build configurations.
+
+\N|It is a good idea to look over the distributed files and make sure there is
+nothing missing or extraneous.|
+
+Once done testing the distribution, let's clean things up:
+
+\
+$ rm -r /tmp/dist
+\
+
+@@ Split into subsections?
 
 @@ Next: test locally, commit, test with CI.
 
+@@ bdep sync -a
+@@ library unit tests: can run them earlier
+
 ========
+
+@@ Upstream tests: link to HOWTO on how to sanitize.
 
 @@ Note on library metadata where talk about configuration. Also about
    autoconf.

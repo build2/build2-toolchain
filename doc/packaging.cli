@@ -2410,6 +2410,8 @@ initialized} your library in several:
 $ bdep test -a
 \
 
+\h2#core-test-smoke-localy-install|Test locally: installation|
+
 Once this works, let's test the installed version of the library. In
 particular, this makes sure that the public headers are installed in a way
 that is compatible with how they are included by our test (and would be
@@ -2451,12 +2453,15 @@ Once done testing the installed case, let's clean things up:
 $ rm -r /tmp/install /tmp/libfoo-tests-out
 \
 
+\h2#core-test-smoke-localy-dist|Test locally: distribution|
+
 Another special case worth testing is the preparation of the source
-distribution (see \l{} for background). This, in particular, is how your
-package will be turned into the source archive for publishing to
-\l{https://cppget.org cppget.org}. Here we are primarily looking for missing
-files. As a bonus, this will also allow us to test the in source build. First
-we distribute our package to some temporary directory:
+distribution (see \l{b#intro-operations-dist Distributing} for
+background). This, in particular, is how your package will be turned into the
+source archive for publishing to \l{https://cppget.org cppget.org}. Here we
+are primarily looking for missing files. As a bonus, this will also allow us
+to test the in source build. First we distribute our package to some temporary
+directory:
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -2474,8 +2479,25 @@ $ b update
 $ b test
 \
 
-@@ Not going to work if there are dependencies. Can probably satisfy with
-   imports from one of the build configurations.
+\N|If your package has dependencies that you import in your \c{buildfile},
+then the above \c{configure} operation will most likely fail because such
+dependencies cannot be found (it may succeed if they are available as
+system-installed). The error message will suggest specifying the location of
+each dependency with \c{config.import.*} variable. You can fix this by setting
+each such \c{config.import.*} to the location of the build configuration
+\l{#core-fill-init created by \c{bdep}} which should contain all the necessary
+dependecies. Simply re-run the \c{configure} operation until you have
+discovered and specified all the necessary \c{config.import.*} variables,
+for example:
+
+\
+$ b configure config.cxx=g++ \
+  config.import.libz=.../foo-gcc \
+  config.import.libasio=.../foo-gcc \
+  config.import.libsqlite3=.../foo-gcc
+\
+
+|
 
 \N|It is a good idea to look over the distributed files and make sure there is
 nothing missing or extraneous.|
@@ -2486,12 +2508,54 @@ Once done testing the distribution, let's clean things up:
 $ rm -r /tmp/dist
 \
 
-@@ Split into subsections?
 
-@@ Next: test locally, commit, test with CI.
+\h2#core-test-smoke-ci|Test with CI|
+
+With local testing complete, let's commit our changes and submit a remote CI
+job to test our library on all the major platforms and with all the major
+compilers:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Add smoke test\"
+
+$ bdep ci
+\
+
+The result of the \l{bdep-ci(1)} command is a link where you can see the
+status of the builds. If any fail, view the logs to determine the cause, try
+to fix it, commit your fix, and CI again.
+
+\N|It is possible that upstream does not support some platforms or compilers.
+For example, it's common for smaller projects not to bother with supporting
+\"secondary\" compilers, such as MinGW GCC on Windows or Homebrew GCC on Mac
+OS.
+
+If upstream expressly does not support some platform or compiler, it's probably
+not worth spending time and energy trying to support it in the package. Most
+likely it will require changes to upstream source code and that is best done
+upstream rather than in the package (see \l{#dont-fix-upstream Don't try to
+fix upstream issues in the package} for background). In this case you would
+want to exclude these platforms/compilers from the CI builds using the
+\l{bpkg#manifest-package-builds \c{builds} package \c{manifest} value}.
+
+The other common cause of a failed build is a newer version of a compiler or
+platform that breaks upstream. In this case there are three options: Ideally
+you would want to fix this upstream and have a new version released. Failed
+that, you may want to patch the upstream code to fix the issues, especially if
+this is one of the major platforms and/or primary compilers. Finally, you can
+just leave the build failing with the expectation that it will be fixed in the
+next upstream version. Note that in this case you should not exclude the
+failing build from CI.|
+
+
+@@ Are we committing (untested) library build?
 
 @@ bdep sync -a
 @@ library unit tests: can run them earlier
+
 
 ========
 
@@ -2504,8 +2568,6 @@ $ rm -r /tmp/dist
 
 @@ Squash commits?
 
-@@ How can we test installed?
-
 @@ Any other upstream files besides source? Doc?
 
 @@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
@@ -2514,6 +2576,19 @@ $ rm -r /tmp/dist
 
 
 \h1#dont-do|What Not to Do|
+
+@@ Reorder.
+
+\h#dont-fix-upstream|Don't try to fix upstream issues in the package|
+
+@@ TODO
+
+- support officially unsupported platforms/compiler
+- suppress warnings
+
+Any deviations from upstream makes it more difficult to maintain. If your
+package makes a large number of changes to upstream, releasing a new version
+will require a lot of work.
 
 
 \h#dont-from-scratch|Don't write \c{buildfiles} from scratch, use \c{bdep-new}|

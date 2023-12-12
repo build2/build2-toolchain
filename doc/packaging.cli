@@ -1267,6 +1267,14 @@ package repository root:
 $ bdep sync -a
 \
 
+\N|If you have any build-time dependencies (see
+\l{intro#guide-build-time-linked Build-Time Dependencies and Linked
+Configurations} for background), then you will get a warning about the
+corresponding \c{config.import.*} variable being unused and therefore
+dropped. This is because we haven't yet added the corresponding \c{import}
+directives to our \c{buildfiles}. For now you can ignore this warning and we
+will fix it later, when we adjust the generated \c{buildfiles}.|
+
 This command should first fetch the metadata for the repository we specified
 in \c{repositories.manifest} and then fetch, unpack and configure each
 dependency that we specified in \c{manifest}. We can examine the resulting
@@ -1464,7 +1472,7 @@ need to tweak it are not uncommon and include:
     than manually. For example:
 
     \
-    bdep new --lang c++,c ...
+    $ bdep new --lang c++,c ...
     \
 
     ||
@@ -1490,6 +1498,17 @@ need to tweak it are not uncommon and include:
 Also, in C++ projects, if you don't have any inline or template files, then
 you can drop the assignment of the file extension for the \c{ixx} and \c{txx}
 target types, respectively.
+
+If you have added any configuration variables and would like to use
+non-default values for some of them in your build, then you will need to
+reconfigure the package. For example, let' say we have added the
+\c{config.libfoo.debug} variable to our \c{libfoo} package which enables
+additional debugging facilities in the library. This is how we can reconfigure
+all our builds to enable this functionality:
+
+\
+$ bdep sync -a config.libfoo.debug=true
+\
 
 If you have made any changes, commit them (similar to the previous step, we
 cannot test things just yet):
@@ -1775,7 +1794,16 @@ If you do have have dependencies, then let's handle them now.
 \N|Here we will assume dependencies on other libraries, which is the common
 case. If you have dependencies on executables, for example, source code
 generators, see \l{intro#guide-build-time-linked Build-Time Dependencies and
-Linked Configurations} on how to handle that.|
+Linked Configurations} on how to handle that. In this case you will also
+need to reconfigure your package after adding the corresponding \c{import}
+directives in order to re-acquire the previously dropped \c{config.import.*}
+values:
+
+\
+$ bdep sync -a --disfigure
+\
+
+|
 
 For each library that your package depends on (and which you have added
 to \c{manifest} on the \l{#core-fill-depend Add dependencies} step),
@@ -2509,7 +2537,7 @@ $ rm -r /tmp/dist
 \
 
 
-\h2#core-test-smoke-ci|Test with CI|
+\h2#core-test-smoke-ci|Commit and test with CI|
 
 With local testing complete, let's commit our changes and submit a remote CI
 job to test our library on all the major platforms and with all the major
@@ -2545,19 +2573,25 @@ The other common cause of a failed build is a newer version of a compiler or
 platform that breaks upstream. In this case there are three options: Ideally
 you would want to fix this upstream and have a new version released. Failed
 that, you may want to patch the upstream code to fix the issues, especially if
-this is one of the major platforms and/or primary compilers. Finally, you can
-just leave the build failing with the expectation that it will be fixed in the
-next upstream version. Note that in this case you should not exclude the
-failing build from CI.|
+this is one of the major platforms and/or primary compilers (see
+\l{#howto-patch-upstream-source How do I patch upstream source code} for
+details). Finally, you can just leave the build failing with the expectation
+that it will be fixed in the next upstream version. Note that in this case you
+should not exclude the failing build from CI.|
 
 
-@@ Are we committing (untested) library build?
+@@ Are we committing (untested) library build? Yes
 
 @@ bdep sync -a
 @@ library unit tests: can run them earlier
 
+@@ Next section: convert smoke test to upstream tests.
+@@ Next section: adjust root buildfile and manifest.
+@@ Next section: release and publish (see README in build2-packaging/).
 
 ========
+
+@@ Add example of propagating config.libfoo.debug to macro on build options?
 
 @@ Upstream tests: link to HOWTO on how to sanitize.
 

@@ -1514,6 +1514,7 @@ If you have made any changes, commit them (similar to the previous step, we
 cannot test things just yet):
 
 \
+$ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Adjust project-wide build system files\"
@@ -1794,13 +1795,15 @@ If you do have have dependencies, then let's handle them now.
 \N|Here we will assume dependencies on other libraries, which is the common
 case. If you have dependencies on executables, for example, source code
 generators, see \l{intro#guide-build-time-linked Build-Time Dependencies and
-Linked Configurations} on how to handle that. In this case you will also
-need to reconfigure your package after adding the corresponding \c{import}
+Linked Configurations} on how to handle that. In this case you will also need
+to reconfigure your package after adding the corresponding \c{import}
 directives in order to re-acquire the previously dropped \c{config.import.*}
-values:
+values. Make sure to also pass any configuration variables you specified in
+\l{#core-adjust-build-wide Review project-wide build system files in
+\c{build/}}. For example:
 
 \
-$ bdep sync -a --disfigure
+$ bdep sync -a --disfigure config.libfoo.debug=true
 \
 
 |
@@ -2285,13 +2288,43 @@ Use if upstream relies on source code generators, such as
 
 See the \c{build2} HOWTO article collection for more unusual requirements.||
 
-@@ TODO: build the library only here? Can't test since smoke test might be not
-configurable. Doesn't feel sensible to commit a potentially broken smoke
-test, but maybe.
 
-@@ Show how to sync with config vars? Actually, can't do without fixing
-up smoke test first. Unless do it right after adding imports for
-dependencies and before modifying the rest of src buildfile.
+\h2#core-adjust-build-test|Test library build|
+
+At this point our library should be ready to build, at least in theory. While
+we cannot build and test the entire package before adjusting the generated
+\c{tests/} subproject (the subject of the next step), we can try to build just
+the library and, if it has any unit tests in the source subdirectory, even run
+some tests.
+
+\N|Is the library is header only, there won't be anything to build unless
+there unit tests. Still you may want to continue with this exercise to detect
+any syntactic mistakes in the \c{buildfiles}, etc.|
+
+To build only a specific subdirectory of our package we use the build system
+directly (continuing with our \c{libfoo} example):
+
+\
+$ cd libfoo/src/ # Change to the source subdirectory.
+$ b update
+\
+
+If there are any issues, try to fix them and then build again. Once the
+library builds and if you have unit tests, you can try to run them:
+
+\
+$ b test
+\
+
+Once the library builds, it makes sense to commit our changes for easier
+rollbacks:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Adjust source subdirectory buildfiles\"
+\
 
 
 \h#core-test-smoke|Make smoke test|
@@ -2580,10 +2613,6 @@ that it will be fixed in the next upstream version. Note that in this case you
 should not exclude the failing build from CI.|
 
 
-@@ Are we committing (untested) library build? Yes
-
-@@ bdep sync -a
-@@ library unit tests: can run them earlier
 
 @@ Next section: convert smoke test to upstream tests.
 @@ Next section: adjust root buildfile and manifest.
@@ -2931,6 +2960,92 @@ libfoo/
 
 @@ howto make smoke test (and fix ref). Actually, we now have a step for
 this.
+
+
+\h#howto-debug-macro|How do I expose extra debug macros of a library|
+
+Sometime libraries provide extra debugging facilities that are usually enabled
+or disabled with a macro. For example, \c{libfoo} may provide the
+\c{LIBFOO_DEBUG} macro that enables additional sanity checks, tracing, etc.
+Normally such facilities are disable by default.
+
+While it may seem like a good idea to detect a debug build and enable this
+automatically, it is not: such facilities usually impose substantial overhead
+and the presence of debug information does not mean that performance is not
+important (people routinely make optimized builds with debug information).
+
+As a result, the recommended approach is to expose this as a configuration
+variable that the end-users of the library can use (see \l{b#proj-config
+Project Configuration} for background). Continue with the \c{libfoo} example,
+we can add \c{config.libfoo.debug} to its \c{build/root.build}:
+
+\
+# build/root.build
+
+config [bool] config.libfoo.debug ?= false
+\
+
+And then define the \c{LIBFOO_DEBUG} macro based on that in the \c{buildfile}:
+
+\
+# src/buildfile
+
+if $config.libfoo.debug
+  cxx.poptions += -DLIBFOO_DEBUG
+\
+
+If the macro is also used in the library's interface (for example, in inline
+or template functions), then we will also need to export it:
+
+\
+# src/buildfile
+
+if $config.libfoo.debug
+{
+  cxx.poptions += -DLIBFOO_DEBUG
+  lib{foo}: cxx.export.poptions += -DLIBFOO_DEBUG
+}
+\
+
+\N|If the debug facility in question should be enabled by default even in the
+optimized builds (in which case the macro usually has the \c{NO_DEBUG}
+semantics), the other option is to hook it up to the standard \c{NDEBUG}
+macro, for example, in the library's configuration header file.|
+
+Such \c{.debug} configuration variables should primarily be meant for the
+end-user to selectively enabled extra debugging support in certain libraries
+of their build. However, if your project depends on a number of libraries with
+such extra debuggin support and it generally makes sense to also enable this
+support in dependencies if it is enabled in your project, then you may want to
+propagate your \c{.debug} configuration value to the dependencies (see the
+\l{bpkg#manifest-package-depends \c{depends} package \c{manifest} value} for
+details on dependency configuration). You, however, should still allow the
+user to override this decision on the per-dependency basis.
+
+Continuing with the above example, let's say we have \c{libbar} with
+\c{config.libbar.debug} that depends on \c{libfoo} and that wishes to by
+default enable debugging in \c{libfoo} if it is enabled in \c{libbar}.
+This is how we can correctly arrange for this in \c{libbar}'s \c{manifest}:
+
+\
+depends:
+\\
+libfoo ^1.2.3
+{
+  # We prefer to enable debug in libfoo if enabled in libbar
+  # but accept if it's disabled (for example, by the user).
+  #
+  prefer
+  {
+    if $config.libbar.debug
+      config.libfoo.debug = true
+  }
+
+  accept (true)
+}
+\\
+\
+
 
 \h#howto-patch-upstream-source|How do I patch upstream source code|
 

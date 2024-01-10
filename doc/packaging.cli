@@ -1104,11 +1104,11 @@ plan is as follows:
 
 \li|Make a smoke test for the library.|
 
-\li|Replace the smoke tests with upstream tests.|
+\li|Replace the smoke test with upstream tests.|
 
 \li|Tweak root \c{buildfile} and \c{manifest}.|
 
-\li|Test the result using the CI service.|
+\li|Test the result using the CI service. @@ Actually doing it as ready.|
 
 |
 
@@ -2371,6 +2371,7 @@ subdirectory which contains the generated test and which is what we will be
 turning into a smoke test. The subproject root \c{buildfile} rarely needs
 changing.
 
+
 \h2#core-test-smoke-build-wide|Review project-wide build system files in \c{tests/build/}|
 
 Review the generated \c{bootstrap.build} and \c{root.build} (there will be no
@@ -2445,7 +2446,7 @@ exe{driver}: {hxx cxx}{**} $libs
 \
 
 
-\h2#core-test-smoke-localy|Test locally|
+\h2#core-test-smoke-locally|Test locally|
 
 With the smoke test ready, we can finally do some end-to-end testing of our
 library build. We will start with doing some local testing to catch basic
@@ -2471,7 +2472,7 @@ initialized} your library in several:
 $ bdep test -a
 \
 
-\h2#core-test-smoke-localy-install|Test locally: installation|
+\h2#core-test-smoke-locally-install|Test locally: installation|
 
 Once this works, let's test the installed version of the library. In
 particular, this makes sure that the public headers are installed in a way
@@ -2514,7 +2515,7 @@ Once done testing the installed case, let's clean things up:
 $ rm -r /tmp/install /tmp/libfoo-tests-out
 \
 
-\h2#core-test-smoke-localy-dist|Test locally: distribution|
+\h2#core-test-smoke-locally-dist|Test locally: distribution|
 
 Another special case worth testing is the preparation of the source
 distribution (see \l{b#intro-operations-dist Distributing} for
@@ -2581,6 +2582,7 @@ $ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Add smoke test\"
+$ git push
 
 $ bdep ci
 \
@@ -2613,16 +2615,297 @@ that it will be fixed in the next upstream version. Note that in this case you
 should not exclude the failing build from CI.|
 
 
+\h#core-test-upstream|Replace smoke test with upstream tests|
 
-@@ Next section: convert smoke test to upstream tests.
-@@ Next section: adjust root buildfile and manifest.
+With the smoke test working we can now proceed with replacing it with the
+upstream tests.
+
+
+\h2#core-test-upstream-understand|Understand how upstream tests work|
+
+While there are some commonalities in how C/C++ libraries are normally built,
+when it comes to tests there is unfortunately little common ground in how they
+are arranged, built, and executed. As a result, the first step in dealing with
+upstream tests is to study the existing build system and try to understand how
+they work. To get you started, below are some of the questions you would
+likely need answered before you can proceed:
+
+\ul|
+
+\li|\b{Are upstream tests unit tests or integration tests?}
+
+While the distinction is often fuzzy, for our purposes the key differentiator
+between unit and integration tests is which API they use: integration tests
+only use the library's public API while unit tests need access to the
+implementation details.
+
+Normally (but not always), unit tests will reside next to the library source
+code since they need access to more than just the library binary (individual
+object files, utility libraries, etc). While integration tests are normally
+(but again not always) placed into a seperate subdirectory, usually called
+\c{tests} or \c{test}.
+
+If the library has unit tests, then refer to \l{b#intro-unit-test Implementing
+Unit Testing} for background on how to hanle them in \c{build2}.
+
+If the library has integration tests, then use them to to replace (or
+complement) the smoke test.
+
+If the library has unit tests but no integration tests, then it's recommended
+to keep the smoke test since that's the only way the library will be tested
+via its public API.|
+
+
+\li|\b{Do upstream tests use an external testing framework?}
+
+Oftentimes a C++ library will use an external testing framework to implement
+tests. Popular choices include \l{https://cppget.org/catch2 \c{catch2}},
+\l{https://cppget.org/gtest \c{gtest}}, \l{https://cppget.org/doctest
+\c{doctest}}, and \l{https://cppget.org/libboost-test \c{libboost-test}}.
+
+If a library uses such an external testing framework, then it is recommended
+to factor tests into a separate package in order to avoid making the library
+package depend on the testing framework (which is only required during
+testing). See
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for details.
+
+\N|Sometimes you will find that upstream bundles the source code of the
+testing framework with their tests. This is especially common with
+\c{catch2}. If that's the case, it is strongly recommended that you
+\"unbundle\" it by making it a proper external dependency.||
+
+
+\li|\b{Are upstream tests in a single or multiple executables?}
+
+It's not unusual for libraries to have a single test executable that runs all
+the test cases. This is especially common if a C++ testing framework is used.
+In this case it is natural to replace the contents of the smoke test with the
+upstream source code, potentially renaming the test subdirectory (\c{basics/})
+to better match upstream naming.
+
+If upstream has multiple test executables, then they could all be in single
+test subdirectory (potentially reusing some common bits) or spread over
+multiple subdirectories. In both cases it's a good idea to follow the upstream
+structure unless you have good reasons to deviate. In the former case (all
+executables in the same subdirectory), you can re-purpose the smoke test
+subdirectory. In the latter case (each executable in a separate subdirectory)
+you can make copies of the smoke test subdirectory.|
+
+
+\li|\b{Are upstream tests well behaved?}
+
+Unfortunately it's not uncommon for upstream tests not to behave well, such as
+write diagnostics to \c{stdout} instead of \c{stderr}, create temporary files
+without cleaning them up, or assume presence of input files in the current
+working directory. For details on how to deal with such situations see
+\l{https://github.com/build2/HOWTO/blob/master/entries/sanitize-test-execution.md
+How do I sanitize the execution of my tests?}||
+
+
+\h2#core-test-upstream-convert|Convert smoke test to upstream tests|
+
+Once you have a good grasp of how upstream tests work, convert or replace the
+smoke test with the upstream tests. If upstream has multiple test executables,
+you may want to deal with one test at a time, making sure that it passes
+before moving to the next one.
+
+It's normally a good idea to use the smoke test \c{buildfile} as a starting
+point for upstream tests. To recap, the smoke test \c{buildfile} for our
+\c{libfoo} example ended up looking like this:
+
+\
+import libs = libfoo%lib{foo}
+
+exe{driver}: {hxx cxx}{**} $libs
+\
+
+At a minimum you will most likely need to change the name of the executable to
+match upstream. If you need to build multiple executables in the same
+directory, then it's probably best to get rid of the name pattern for the
+source files and specify the prerequisite names explicitly, for example:
+
+\
+import libs = libfoo%lib{foo}
+
+./: exe{test1}: cxx{test1} $libs
+./: exe{test2}: cxx{test2} $libs
+\
+
+If you have a large number of such test executables, then a \c{for}-loop might
+be a more scalable option:
+
+\
+import libs = libfoo%lib{foo}
+
+for src: cxx{test*}
+  ./: exe{$name($src)}: $src $libs
+\
+
+
+\h2#core-test-upstream-locally|Test locally|
+
+With the upstream tests ready, we re-do the same end-to-end testing as we did
+with the smoke test:
+
+\l{#core-test-smoke-locally Test locally}\n
+\l{#core-test-smoke-locally-install Test locally: installation}\n
+\l{#core-test-smoke-locally-dist Test locally: distribution}\n
+
+
+\h2#core-test-upstream-ci|Commit and test with CI|
+
+With local testing complete, we commit our changes and submit a remote CI
+job. This step is similar to what \l{#core-test-smoke-ci we did for the smoke
+test} but this time we are using the upstream tests:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Add upstream tests\"
+$ git push
+
+$ bdep ci
+\
+
+
+\h#core-examples-banchmarks|Add upstream examples, benchmarks, if any|
+
+If the upstream project provides examples and/or benchmarks and you wish to
+add them to the \c{build2} build (which is not strictly necessary for the
+\c{build2} package to be usable), then now is a good time to do that.
+
+As was mentioned in \l{#core-package-review Review and test auto-genetated
+\c{buildfile} templates}, the recommended approach is to copy the \c{tests/}
+subproject (potentially from the commit history before the smoke test was
+replaced with the upstream tests) and use that as a starting point for
+examples and/or benchmarks. Just do not forgeting to add the corresponding
+entry in the root \c{buildfile}.
+
+Once that is done, follow the same steps as in \l{#core-test-upstream Replace
+smoke test with upstream tests} to add upstream examples/benchmarks and test
+the result.
+
+
+\h#core-root|Adjust root \c{buildfile} and \c{manifest}|
+
+The last few files that we need to review and potentially adjust are
+the root \c{buildfile} and package \c{manifest}.
+
+
+\h2#core-root-buildfile|Adjust root \c{buildfile}|
+
+The main function of the root \c{buildfile} is to pull all the subdirectories
+that need building plus list targets that are usually found in the root
+directory of a project, typically \c{README.md}, \c{LICENSE}, etc. This is
+what the generated root \c{buildfile} looks like for our \c{libfoo} project
+assuming we have symlinked \c{README.md} and \c{LICENSE} from upstream on the
+\l{#core-package-create Create final package} step:
+
+@@ PACKAGE-README.md?
+
+\
+./: {*/ -build/} doc{README.md} legal{LICENSE} manifest
+
+# Don't install tests.
+#
+tests/: install = false
+\
+
+If the upstream project provides any other documentation (change log, news,
+etc) or legal files (list of authorts, code of conduct, etc), then you may
+want to symlink and list them as the \c{doc{\}} and \c{legal{\}}
+prerequisites, respectively.
+
+\N|One file you don't need listing is \c{INSTALL} (or equivalent) which
+normally contains the installation instructions for the upstream build
+system. In the \c{build2} package the \c{PACKAGE-README.md} file serves this
+purpose.|
+
+
+\h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
+
+If the upstream project has other subdirectories that makes sense to include
+into the \c{build2} package, then now is good time to take care of that.  The
+most common such case will be extra documentation (besides the root
+\c{README}), typically in a subdirectory called \c{doc/}, \c{docs/}, or
+\c{documentation/}.
+
+The typical procedure for handling such subdirectories will be to symlink the
+relevant files (or the entire subdirectory) and then list the files as
+prerequisites. For this last step, there are two options: we can list the
+files directly in the root \c{buildfile} or we can create a seperate
+\c{buildfile} in the subdirectory.
+
+Let's examine both approaches using our \c{libfoo} as an example. Assume that
+upstream \c{libfoo} contains the \c{docs/} subdirectory with additional
+\c{*.md} files that document its API. It would make sense to include them into
+the \c{build2} package.
+
+Listing the subdirectory files directly in the root \c{buildfile} works best
+for simple case, where you have a bunch of static files that don't require any
+customizations, such as to their installation location. In this case we can
+symlink the entire \c{docs/} subdirectory:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ ln -s ../upstream/docs ./
+\
+
+The adjustment to the root \c{buildfile} are pretty straightforward: we
+exclude the \c{docs/} subdirectory (since it has no \c{buildfile}) and list
+the \c{*.md} files as prerequisites using the \c{doc{\}} target type (which,
+in particular, makes sure they are installed into the appropriate location):
+
+\
+./: {*/ -build/ -docs/} \
+    doc{README.md} docs/doc{*.md} \
+    legal{LICENSE} manifest
+\
+
+The alternative approach (create a seperate \c{buildfile}) is a good choice if
+things are more complicated then that. Let's say we need to adjust the
+installation location of the files in \c{docs/} because there is another
+\c{README.md} that would conflict with the root one when installed into the
+same location. This time we cannot symlink the top-level \c{docs/}
+subdirectory (because we need to place a \c{buildfile} there). The two options
+here is to either symlink the individual files or introduce another
+subdirectory level inside \c{docs/} (which is the same approach as discussed
+in \l{#dont-main-target-root-buildfile Don't build your main targets in root
+\c{buldfile}}). Let's illustrate both sub-cases.
+
+Symlinking individual files works best when you don't expect the set of
+files to change often. For example, if \c{docs/} contains a man page and
+its HTML rendering, then it's unlikely this set will change often. On the
+other hand, if \c{docs/} contains a manual split into an \c{.md} file per
+chapter, then there is good chance this set of files will fluctuate between
+releases.
+
+
+@@ Commit.
+
+
+@@ Any other upstream files besides source? Maybe do Doc here?
+@@ We could just list them in the root buildfile... Could do any
+@@ extra files like this.
+
+
+\h2#core-root-manifest|Adjust \c{manifest}|
+
+@@ changes-file
+
+@@ Maybe we should start with pre-release of upstream version? If want
+   strict versioning?
+
+@@ Maybe re-CI at the ends?
+
 @@ Next section: release and publish (see README in build2-packaging/).
+@@ GH issue #?? has some notes.
 
 ========
 
 @@ Add example of propagating config.libfoo.debug to macro on build options?
-
-@@ Upstream tests: link to HOWTO on how to sanitize.
 
 @@ Note on library metadata where talk about configuration. Also about
    autoconf.
@@ -2630,8 +2913,6 @@ should not exclude the failing build from CI.|
 @@ Use of the version module and non-semver versions? Links to HOWTO entries!
 
 @@ Squash commits?
-
-@@ Any other upstream files besides source? Doc?
 
 @@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
 

@@ -1068,7 +1068,7 @@ $ cd libfoo/ # Change to the package root.
 $ ln -s ../upstream/README.md ./
 $ ln -s ../upstream/LICENSE   ./
 
-$ bdep new --package \
+$ bdep new --package                            \
   --lang c++,cpp   \
   --type lib,split,subdir=foo,no-subdir-source,no-version,no-symexport
 \
@@ -2875,25 +2875,235 @@ subdirectory level inside \c{docs/} (which is the same approach as discussed
 in \l{#dont-main-target-root-buildfile Don't build your main targets in root
 \c{buldfile}}). Let's illustrate both sub-cases.
 
-Symlinking individual files works best when you don't expect the set of
-files to change often. For example, if \c{docs/} contains a man page and
-its HTML rendering, then it's unlikely this set will change often. On the
-other hand, if \c{docs/} contains a manual split into an \c{.md} file per
-chapter, then there is good chance this set of files will fluctuate between
-releases.
+Symlinking individual files works best when you don't expect the set of files
+to change often. For example, if \c{docs/} contains a man page and its HTML
+rendering, then it's unlikely this set will change. On the other hand, if
+\c{docs/} contains a manual split into an \c{.md} file per chapter, then there
+is good chance this set of files will fluctuate between releases.
+
+Continuing with our \c{libfoo} example, this is how we symlink the individual
+\c{*.md} files in \c{docs/}:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ mkdir docs
+$ cd docs/
+$ ln -s ../../upstream/docs/*.md ./
+\
+
+Then write a new \c{buildfile} in \c{docs/}:
+
+\
+./: doc{*.md}
+
+# Install the documentation in docs/ into the manual/ subdirectory of,
+# say, /usr/share/doc/libfoo/ since we cannot install both its and root
+# README.md into the same location.
+#
+doc{*.md}: install = doc/manual/
+\
+
+Note that we don't need to make any changes to the root \c{buildfile} since
+this subdirectory will automatically get picked up by the \c{{*/\ -build/\}}
+name pattern that we have there.
+
+Let's now look at the alternative arrangement with another subdirectory level
+inside \c{docs/}. Here we achieve the same result but in a slightly different
+way. Specifically, we call the subdirectory \c{manual/} and install recreating
+subdirectories (see \l{b#intro-operations-install Installing} for background):
+
+\
+$ cd libfoo/ # Change to the package root.
+$ mkdir -p docs/manual
+$ cd docs/manual/
+$ ln -s ../../../upstream/docs/*.md ./
+\
+
+And the corresponding \c{buildfile} in \c{docs/}:
+
+\
+./: doc{**.md}
+
+# Install the documentation in docs/ into, say, /usr/share/doc/libfoo/
+# recreating subdirectories.
+#
+doc{*}:
+{
+  install = doc/
+  install.subdirs = true
+}
+\
 
 
-@@ Commit.
+\h2#core-root-buildfile-commit|Adjust root \c{buildfile}: commit and test|
 
+Once all the adjustments to the root \c{buildfile} are made, it makes sense to
+test it locally (this time from the root of the package), commit our changes,
+and test with CI:
 
-@@ Any other upstream files besides source? Maybe do Doc here?
-@@ We could just list them in the root buildfile... Could do any
-@@ extra files like this.
+\
+$ cd libfoo/ # Change to the package root.
+$ b test
+$ bdep test -a
+\
+
+If you had to add any extra files to the root \c{buildfile} or add
+\c{buildfile} in extra subdirectories, then it also makes sense to test
+installation (\l{#core-test-smoke-locally-install Test locally: installation})
+and preparation of the source distribution (\l{#core-test-smoke-locally-dist
+Test locally: distribution}) and make sure the extra files end up in the right
+places.
+
+Then commit our changes and CI:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Adjust root buildfile\"
+$ git push
+
+$ bdep ci
+\
 
 
 \h2#core-root-manifest|Adjust \c{manifest}|
 
-@@ changes-file
+The last file we need to look over is the package's \c{manifest}. Here is what
+it typically looks like, using our \c{libfoo} as an example:
+
+@@ TODO: regenerate with final version.
+
+\
+: 1
+name: libfoo
+version: 0.1.0-a.0.z
+language: c++
+project: foo
+summary: C++ library implementing secure Foo protocol
+license: MIT ; MIT License.
+description-file: README.md
+url: https://example.org/foo
+email: boris@codesynthesis.com
+#build-error-email: boris@codesynthesis.com
+depends: * build2 >= 0.16.0
+depends: * bpkg >= 0.16.0
+#depends: libhello ^1.0.0
+\
+
+You can find the description of these and other package \c{manifest} values in
+the \l{bpkg#manifest-package Package Manifest} section of the \l{bpkg The
+\c{build2} Package Manager} manual.
+
+In the above listing the values that we likely need to adjust are \c{summary}
+and \c{license} (@@ see sections below), unless correctly auto-detected by
+\c{bpkg-new} on the \l{#core-package-create Create final package} step, as
+well as \c{url}, \c{email}, @@ TODO: update with final list (\c{package-*},
+etc). Also make links.
+
+You may also want to add the following value in certain cases:
+
+\dl|
+
+\li|\l{bpkg#manifest-package-changes \cb{changes-file}}
+
+If you have added a news of change log file to the root \c{buildfile} (see
+\l{#core-root-buildfile Adjust root buildfile}), then it also makes sense
+to list it in the \c{manifest}. For example:
+
+\
+changes-file: NEWS
+\
+
+|
+
+\li|\l{bpkg#manifest-package-topics \cb{topics}}
+
+Package topics. For example:
+
+\
+topics: network protocol, network security
+\
+
+\N|If the upstream project is hosted on GitHub or similar, then you can
+usually copy the topics from the upstream repository description.||
+
+\li|\l{bpkg#manifest-package-doc-url \cb{doc-url}}\n
+    \l{bpkg#manifest-package-src-url \cb{src-url}}
+
+Documentation and source code URLs. For example:
+
+\
+doc-url: https://example.org/foo/doc/
+src-url: https://github.com/.../foo
+\
+
+||
+
+
+\h2#core-root-manifest-license|Adjust \c{manifest}: \c{license}|
+
+For \c{license}, use the \l{https://spdx.org/licenses/ SPDX license ID} if at
+all possible. If multiple licenses are involved, use the SPDX License
+expression. See the
+\l{https://build2.org/bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license
+\c{license} manifest value} documentation for details, including the list of
+the SPDX IDs for the commonly used licenses.
+
+
+\h2#core-root-manifest-summary|Adjust \c{manifest}: \c{summary}|
+
+For \c{summary} use a brief description of the functionality provided by the
+package. Less than 70 characters is a good target to aim for. Don't capitalize
+subsequent words unless proper nouns and omit the trailing dot. For example:
+
+\
+summary: Vim xxd hexdump utility
+\
+
+Omit weasel words such as \"modern\", \"simple\", \"fast\", \"small\", etc.,
+since they don't convey anything specific. Omit \"header-only\" or
+\"single-header\" for C/C++ libraries since, at least in the context of
+\c{build2}, it does not imply any advantage.
+
+If upstream does not offer a sensible summary, the following template is
+recommended for libraries:
+
+\
+summary: <functionality> C library
+summary: <functionality> C++ library
+\
+
+For example:
+
+\
+summary: Event notification C library
+summary: Validating XML parsing and serialization C++ library
+\
+
+If the project consists of multiple packages it may be tempting to name each
+package in terms of the overall project name, for example:
+
+\
+summary: libigl's core module
+\
+
+This doesn't give the user any clue about what functionality is provided
+unless they find out what \c{libigl} is about. Better:
+
+\
+summary: Geometry processing C++ library, core module
+\
+
+If you follow the above pattern, then to produce a summary for external tests
+or examples packages simply add \"tests\" or \"examples\" at the end,
+for example:
+
+\
+summary: Event notification C library tests
+summary: Geometry processing C++ library, core module examples
+\
+
 
 @@ Maybe we should start with pre-release of upstream version? If want
    strict versioning?
@@ -2911,8 +3121,6 @@ releases.
    autoconf.
 
 @@ Use of the version module and non-semver versions? Links to HOWTO entries!
-
-@@ Squash commits?
 
 @@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
 
@@ -3020,67 +3228,7 @@ How do I handle projects that don't use versions at all?}
 
 \h2#dont-forget-update-manifest-license|Don't forget to update \c{manifest} value \c{license}|
 
-For \c{license}, use the \l{https://spdx.org/licenses/ SPDX license ID} if at
-all possible. If multiple licenses are involved, use the SPDX License
-expression. See the
-\l{https://build2.org/bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license
-\c{license} manifest value} documentation for details and the list of the
-most commonly used SPDX license IDs.
-
-
 \h2#dont-forget-update-manifest-summary|Don't forget to update \c{manifest} value \c{summary}|
-
-For \c{summary} use a brief description of the functionality provided by the
-package. Less than 70 characters is a good target to aim for. Don't capitalize
-subsequent words unless proper nouns and omit the trailing dot. For example:
-
-\
-summary: Vim xxd hexdump utility
-\
-
-Omit weasel words such as \"modern\", \"simple\", \"fast\", \"small\", etc.,
-since they don't convey anything specific. Omit \"header-only\" or
-\"single-header\" for C/C++ libraries since at least in the context of
-\c{build2} it does not imply any advantage.
-
-If upstream does not offer a sensible summary, the following template is
-recommended for libraries:
-
-\
-summary: <functionality> C library
-summary: <functionality> C++ library
-\
-
-For example:
-
-\
-summary: Event notification C library
-summary: Validating XML parsing and serialization C++ library
-\
-
-If the project consists of multiple packages it may be tempting to name each
-package in terms of the overall project name, for example:
-
-\
-summary: libigl's core module
-\
-
-This doesn't give the user any clue about what functionality is provided
-unless they find out what \c{libigl} is about. Better:
-
-\
-summary: Geometry processing C++ library, core module
-\
-
-If you follow the above pattern, then to produce a summary for external tests
-or examples packages simply add \"tests\" or \"examples\" at the end,
-for example:
-
-\
-summary: Event notification C library tests
-summary: Geometry processing C++ library, core module examples
-\
-
 
 \h#dont-header-only|Don't make library header-only if it can be compiled|
 

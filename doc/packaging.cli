@@ -303,6 +303,7 @@ inside for details).||
 Next add and commit these files:
 
 \
+$ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Initialize repository\"
@@ -377,6 +378,7 @@ $ cd ..
 Then add and commit these changes:
 
 \
+$ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Add upstream submodule\"
@@ -1078,6 +1080,63 @@ If auto-detection succeeds, then you should see the \c{summary} and
 files listed in the root \c{buildfile}.
 
 
+\h2#core-package-adjust-version|Adjust package version|
+
+While adjusting the \c{bdep-new}-generated code is the subject of the
+following sections, one tweak that we want to make right away is to change the
+package version in the \c{manifest} file.
+
+In this guide we will assume the upstream package uses semver (semantic
+version) or semver-like (that is, has three version components) and will rely
+on the \i{continuous versioning} feature of \c{build2} to make sure that each
+commit in our package repository has a distinct version (see
+\l{intro#guide-versioning-releasing Versioning and Release Management} for
+background).
+
+\N|If upstream does not use semver, then see
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-projects-which-dont-use-semver.md
+How do I handle projects that don't use semantic versioning?} and
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-projects-which-dont-use-version.md
+How do I handle projects that don't use versions at all?} for available
+options. If you decide to use the non-semver upstream version as is, then you
+will have to forgo \i{continuous versioning} as well as the use of
+\l{bdep-release(1)} for release management. The rest of the guide, however,
+will still apply. In particular, you will still be able to use \l{bdep-ci(1)}
+and \l{bdep-publish(1)} with a bit of extra effort.|
+
+The overall plan to implement continous versioning is to start with a
+pre-release snapshot of the upsream version, keep it like that while we are
+adjusting the \c{bdep-new}-generated package and committing our changes (at
+which point we get distinct snapshot versions), and finally, when the package
+is ready to publish, change to the final upstream version with the help of
+\l{bdep-release(1)}. Specifically, if the upstream version is
+\c{\i{X}.\i{Y}.\i{Z}}, then we start with the \c{\i{X}.\i{Y}.\i{Z}-a.0.z}
+pre-release snapshot.
+
+Let's see how this works for our \c{libfoo} example. Say, the upstream version
+that we are packaging is \c{2.1.0}. This means we start with \c{2.1.0-a.0.z}.
+
+\N|Naturally, the upstream version that we are using should correspond to the
+commit of the \c{upstream} submodule we have added on the
+\l{#core-repo-submodule Add upstream repository as \c{git} submodule} step.|
+
+Next we edit the \c{manifest} file in the \c{libfoo} package and change the
+\c{version} value to read:
+
+\
+version: 2.1.0-a.0.z
+\
+
+Let's also commit this initial state of the package for easier rollbacks:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Initialize package\"
+\
+
+
 \h#core-fill|Fill package with source code and add dependencies|
 
 With the package skeleton ready, the next steps are to fill it with upstream
@@ -1287,6 +1346,7 @@ $ bdep status -ai
 The last step for this section is to commit our changes:
 
 \
+$ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Add dependencies\"
@@ -1425,6 +1485,7 @@ subject of the next section. However, it still makes sense to commit our
 changes to make rollbacks easier:
 
 \
+$ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Add upstream source symlinks\"

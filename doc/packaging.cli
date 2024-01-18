@@ -903,7 +903,7 @@ which mean we cannot just symlink \c{foo/} from upstream.
 With a large number of files to symlink, this can be such a strong motivation
 that it may make sense to invent a source subdirectory in the source prefix
 even if upstream doesn't have one. See \l{#dont-main-target-root-buildfile
-Don't build your main targets in root \c{buldfile}} for details on this
+Don't build your main targets in the root \c{buldfile}} for details on this
 technique.
 
 Another reason we may want to move \c{buildfiles} to prefix is to be able to
@@ -2933,8 +2933,8 @@ same location. This time we cannot symlink the top-level \c{docs/}
 subdirectory (because we need to place a \c{buildfile} there). The two options
 here is to either symlink the individual files or introduce another
 subdirectory level inside \c{docs/} (which is the same approach as discussed
-in \l{#dont-main-target-root-buildfile Don't build your main targets in root
-\c{buldfile}}). Let's illustrate both sub-cases.
+in \l{#dont-main-target-root-buildfile Don't build your main targets in the
+root \c{buldfile}}). Let's illustrate both sub-cases.
 
 Symlinking individual files works best when you don't expect the set of files
 to change often. For example, if \c{docs/} contains a man page and its HTML
@@ -3038,7 +3038,7 @@ it typically looks like, using our \c{libfoo} as an example:
 \
 : 1
 name: libfoo
-version: 0.1.0-a.0.z
+version: 2.1.0-a.0.z
 language: c++
 project: foo
 summary: C++ library implementing secure Foo protocol
@@ -3060,7 +3060,12 @@ In the above listing the values that we likely need to adjust are \c{summary}
 and \c{license} (@@ see sections below), unless correctly auto-detected by
 \c{bpkg-new} on the \l{#core-package-create Create final package} step, as
 well as \c{url}, \c{email}, @@ TODO: update with final list (\c{package-*},
-etc). Also make links.
+etc), also make links. While you may be tempted to also adjust the \c{version}
+value, don't since this will be done automatically by \l{bdep-release(1)}
+later.
+
+@@ Should we give quick recommendations for url, email, etc and also an
+   example for libfoo?
 
 You may also want to add the following value in certain cases:
 
@@ -3166,12 +3171,175 @@ summary: Geometry processing C++ library, core module examples
 \
 
 
-@@ Maybe we should start with pre-release of upstream version? If want
-   strict versioning?
+\h2#core-root-manifest-commit|Adjust \c{manifest}: commit and test|
 
-@@ Maybe re-CI at the ends?
+Once all the adjustments to the \c{manifest} are made, it makes sense to
+test it locally (this time from the root of the package), commit our changes,
+and test with CI:
 
-@@ Next section: release and publish (see README in build2-packaging/).
+\
+$ cd libfoo/ # Change to the package root.
+$ b test
+$ bdep test -a
+\
+
+Then commit our changes and CI:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ git add .
+$ git status
+$ git commit -m \"Adjust manifest\"
+$ git push
+
+$ bdep ci
+\
+
+
+\h#core-release-publish|Release and publish|
+
+Once all the adjustments are in and everything is tested, we can finally
+release the final version of the package as well as publish it to
+\l{https://cppget.org cppget.org}. Both of these steps are automated with the
+corresponding \c{bdep} commands.
+
+
+\h2#core-release-publish-release|Release final version|
+
+As you may recall, our package currently has a pre-release snapshot version of
+the upstream version (see \l{#core-package-adjust-version Adjust package
+version}). Once all the changes are in, we can change to the final upstream
+version, in a sense signalling that this package version is ready.
+
+The recommended way to do this is with the \l{bdep-release(1)} command (see
+\l{intro#guide-versioning-releasing Versioning and Release Management} for
+background). Besides replacing the \c{version} value in the package
+\c{manifest} file, it also commits this change, tags it with the
+\c{v\i{X}.\i{Y}.\i{Z}} tag, and can be instructed to push the changes (or show
+the \c{git} command to do so). This command also by default \"opens\" the next
+development version, which is something that we normally want for our own
+projects but not when we package a third-party one (since we cannot predict
+which version the upstream will release next). So we disable this
+functionality. For example:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ bdep release --no-open --show-push
+\
+
+Then review the commit made by \c{bdep-release} and push the changes by
+copying the command that it printed:
+
+\
+$ git diff HEAD~1
+$ git push ...
+\
+
+\N|If something is wrong and you need to undo this commit, don't forget to
+also remove the tag. Note also that once you have pushed your changes, you
+cannot undo the commit. Instead, you will need to make a revision. See
+\l{#core-release-publish-management Version management} for background and
+details.|
+
+
+\h2#core-release-publish-publish|Publish released version|
+
+Once the version is released we can publish the package to
+\l{https://cppget.org cppget.org} with the \l{bdep-publish(1)} command (see
+\l{intro#guide-versioning-releasing Versioning and Release Management} for
+background):
+
+\
+$ cd foo/ # Change to the package repository root.
+$ bdep publish
+\
+
+The \c{bdep-publish} command prepares the source distributin of your package,
+uploads the resulting archive to the package repository, and prints a link to
+the package submission in the queue. Open this link in the browser and check
+that there are no surprises in build results (they should match the earlier CI
+results) or in the displayed package information (\c{README.md}, etc).
+
+\N|While there should normally be no discrepancies in the build results
+compared to our earlier CI submissions, the way the packages are built on CI
+and in the package repository are not exactly the same. Specifically, CI
+builds them from \c{git} while the package repository \- from the submitted
+package archives. If there are differences, it's almost always due to issues
+in the source distribution preparation \l{#core-test-smoke-locally-dist Test
+locally: distribution}.|
+
+If everything looks good, then you are done: the package submission will be
+reviewed and, if there are no problems, moved to \l{https://cppget.org
+cppget.org}. If there are problems, then an issue will be created in the
+package repository with the review feedback. @@ Link to new version section.
+
+
+\h2#core-release-publish-management|Package version management|
+
+Once we have pushed the release commit, in order to preserve continous
+versioning, no further changes should be made to the package without also
+changing its version.
+
+\N|More precisely, you can make and commit changes without changing the
+version provided they don't affect the package. For example, you may keep a
+\c{TODO} file in the root of your repository which is not part of any
+package. Updating such a file without changing the version is ok since the
+package remains unchanged.|
+
+While with our own projects we can change the versions as we see fit, with
+third-party projects the versions are dictated by the upstream and as a result
+we are limited to which versions we can use to fix issues in the package
+itself. It may be tempting (and maybe even conceptually correct) to release a
+patch version for our own fixes, nut we will be in trouble if later upstream
+releases the same patch version but with a different set of changes (plus the
+users of our package may wonder where did this version come from). As a
+result, we should only change the major, minor, or patch components of the
+package version in response to the corresponding upstream releases. For fixes
+to the package itself we should instead use version revisions.
+
+\N|Because a revision replaces the existing version, we should try to limit
+revision changes to bug fixes and preferably only to the package
+\"infrastructure\" (\c{buildfiles}, etc). Fixes to upstream source code should
+be limited to critical bug fixes, preferably backported from upstream. To put
+it another way, changes in a revision should have an even more limited
+scope than a patch release.|
+
+Based on this, the recommended \"version lifecycle\" for a third-party
+package is as follows:
+
+\ol|
+
+\li|After a release (the \l{#core-release-publish-release Release final
+version} step above), for example, version \c{2.1.0}, the package enters a
+\"revision phase\" where we can release revisions (\c{2.1.0+1}, \c{2.1.0+2},
+etc) to address any issues in the package. See @@ for details.|
+
+\li|When a new upstream version is released, for example version \c{2.2.0},
+and we wish to upgrade our package to this version, we switch to its
+pre-release snapshot version (\c{2.2.0-a.0.z}) the same as we did on the
+\l{#core-package-adjust-version Adjust package version} step initially. See
+@@ for details.|
+
+\li|Once we are done upgrading to the new upstream version, we release the
+final version just like on the \l{#core-release-publish-release Release final
+version} step initially.||
+
+Note also that in the above example, once we have switched to \c{2.2.0-a.0.z},
+we cannot go back and release another revision or patch version for \c{2.1.0}
+on the current branch. Instead, we will need to create a separate branch for
+the \c{2.1.Z} release series and make a revision or patch version there. See
+@@ for details.
+
+
+\h2#core-release-publish-revision|Release and publish revision|
+
+
+
+@@ What if need to release a revision/patch release for older version
+   (e.g., like in Thrift)?
+
+@@ When do we transfer the repository to build2-packaging? Should not
+   publish until then.
 @@ GH issue #?? has some notes.
 
 ========
@@ -3354,7 +3522,7 @@ components user-configurable.)|
 |
 
 
-\h#dont-main-target-root-buildfile|Don't build your main targets in root \c{buldfile}|
+\h#dont-main-target-root-buildfile|Don't build your main targets in the root \c{buldfile}|
 
 It may be tempting to have your main targets (libraries, executables) in the
 root \c{buildfile}, especially if it allows you to symlink entire directories

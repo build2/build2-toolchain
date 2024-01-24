@@ -3238,7 +3238,7 @@ $ git push ...
 \N|If something is wrong and you need to undo this commit, don't forget to
 also remove the tag. Note also that once you have pushed your changes, you
 cannot undo the commit. Instead, you will need to make a revision. See
-\l{#core-release-publish-management Version management} for background and
+\l{#core-version-management Version management} for background and
 details.|
 
 
@@ -3272,13 +3272,13 @@ If everything looks good, then you are done: the package submission will be
 reviewed and, if there are no problems, moved to \l{https://cppget.org
 cppget.org}. If there are problems, then an issue will be created in the
 package repository with the review feedback. In this case you will need to
-\l{#core-release-publish-new-revision release and publish a version revision}
-to address these problems. But in both cases you should first read through
-\l{#core-release-publish-management Package version management} to understand
+\l{#core-version-management-new-revision release and publish a version
+revision} to address these problems. But in both cases you should first read
+through \l{#core-version-management Package version management} to understand
 the recommended \"version lifecycle\" of a third-party package.
 
 
-\h#core-release-publish-management|Package version management|
+\h#core-version-management|Package version management|
 
 Once we have pushed the release commit, in order to preserve continous
 versioning, no further changes should be made to the package without also
@@ -3335,12 +3335,12 @@ the \c{2.1.Z} release series and make a revision or patch version there. See
 @@ for details.
 
 
-\h2#core-release-publish-new-revision|Release and publish new revision|
+\h2#core-version-management-new-revision|New revision|
 
-As discussed in \l{#core-release-publish-management Package version
-management}, we release revisions to fix issues in the package
-\"infrastructure\" (\c{buildfiles}, \c{manifest}, etc) as well as critical
-bugs in upstream source code.
+As discussed in \l{#core-version-management Package version management}, we
+release revisions to fix issues in the package \"infrastructure\"
+(\c{buildfiles}, \c{manifest}, etc) as well as critical bugs in upstream
+source code.
 
 In the revision phase of the package version lifecycle (i.e., when the version
 does not end with \c{-a.0.z}), every commit must be accompanies by the
@@ -3408,11 +3408,10 @@ $ bdep publish
 \
 
 
-\h2#core-release-publish-new-version|Release and publish new version|
+\h2#core-version-management-new-version|New version|
 
-As discussed in \l{#core-release-publish-management Package version
-management}, we release new versions in reponse to the corresponding upstream
-releases.
+As discussed in \l{#core-version-management Package version management}, we
+release new versions in reponse to the corresponding upstream releases.
 
 The amount or work required to upgrade a package to a new upstream version
 depends on the extend of changes in the new version.
@@ -3422,7 +3421,7 @@ the upstream source code without any changes to the set of source files,
 upstream build system, etc. In such cases, upgrading a package is a simple
 matter of creating a new work branch, pointing the \c{upstream} \c{git}
 submodule to the new release, running tests, and releasing and publishing a
-new package version. @@ make list with links.
+new package version. @@ make list with links. @@ Open the version.
 
 On the other extreme you may have a new major upstream release which is
 essentially a from-scratch rewrite with new source code layout, different
@@ -3441,22 +3440,95 @@ The following sections provide a checklist-like sequence of steps that can be
 used to review upstream changes with links to the relevant earlier sections in
 case undjustments are required.
 
-@@ New branch? But can also do on master theoretically. This closes the
-door to stopping/dropping the work so I think create a branch. Also can
-be base for PR. But we don't need to squash.
+
+\h2#core-version-management-new-version-branch|New version: create new work branch|
+
+When upgrading a package to a new upstream version it's recommended to do this
+in a new work branch which, upon completion, is merged into \c{master}. For
+example, if the new upstream version is \c{2.2.0}:
+
+\
+$ git checkout -b wip-2.2.0
+\
+
+
+\h2#core-version-management-new-version-open|New version: open new version|
+
+This step corresponds to \l{#core-package-adjust-version Adjust package
+version} during the initial packaging. Here we can make use of the
+\c{bdep-release} command to automatically open the new version and make
+the corresponding commit. For example, if the new upstream version is
+\c{2.2.0}:
+
+\
+$ bdep release --open --no-push --open-base 2.2.0
+\
+
+
+\h2#core-version-management-new-version-submodule|New version: update \c{upstream} submodule|
+
+This step corresponds to \l{#core-repo-submodule Add upstream repository as
+\c{git} submodule} during the initial packaging. Here we need to update
+the submodule to point to the upstream commit that corresponds to the
+new version.
+
+For example, if the upstream release tag we are interested in is called
+\c{v2.2.0}, to update the \c{upstream} submodule to point to this release
+commit, run the following command:
+
+\
+$ cd upstream
+$ git checkout v2.2.0
+$ cd ..
+
+$ git add .
+$ git status
+$ git commit -m \"Update upstream submodule to 2.2.0\"
+\
+
+
+\h2#core-version-management-new-version-review|New version: review upstream changes|
+
+At this point it's a good idea to get an overview of the upstream changes
+between the two releases in order to determine which adjustments are likely to
+be required in the \c{build2} package. We can use the \c{upstream} submodule
+for that, which contains the change history we need.
+
+One way to get an overview of changes between the releases is to use a
+graphical repository browser such as \c{gitk} and view a cumulative \c{diff}
+of changes between the two versions. For example, assuming the latest packaged
+version is tagged \c{v2.1.0} and the new version is tagged \c{v2.2.0}:
+
+\
+$ cd upstream
+$ gitk&
+\
+
+Then scroll down and click on the commit tagged \c{v2.1.0}, scroll up and
+righ-click on the commit tagged \c{v2.2.0} and select the \"Diff this ->
+selected\" menu item. This will display a cumulative set of changes between
+the two upstream versions. Look through them for the following types of
+changes:
+
+- changes to the source code layout
+- new source files beging added or removed
+- changes to the upstream build system
+
 
 @@ Maybe in the initial instructions makes sense to identify and note
 the point where to merge the branch to master if working in a branch
 (e.g., because of a new version).
 
+@@ Add item to review issues in case good opportunity to fix any.
 
-\h2#core-release-publish-old-version|Release and publish version/revision in old release series|
 
-As discussed in \l{#core-release-publish-management Package version
-management}, if we have already switched to the next upstream version in the
-\c{master} branch, we cannot go back and release a new version or a revision
-for an older release series on the same branch. Instead, we need to create a
-seperate, long-lived branch for this work.
+\h2#core-version-management-old-series|New version/revision in old release series|
+
+As discussed in \l{#core-version-management Package version management}, if we
+have already switched to the next upstream version in the \c{master} branch,
+we cannot go back and release a new version or a revision for an older release
+series on the same branch. Instead, we need to create a seperate, long-lived
+branch for this work.
 
 As an example, let's say we need to release another revision or a patch
 version for an already released \c{2.1.0} while our \c{master} branch has
@@ -3473,13 +3545,13 @@ $ git checkout -b 2.1 v2.1.0+2
 \
 
 Once this is done, we continue with the same steps as in
-\l{#core-release-publish-new-revision Release and publish new revision} or
-\l{#core-release-publish-new-version Release and publish new version} except
-that we never merge this branch to \c{master}. If we ever need to release
-another revision or version in this release series, then we continue using
-this branch. In a sense, this branch becomes the equivalent of the \c{master}
-branch for this release series and you should treat it as such (once
-published, never delete, rewrite its history, etc).
+\l{#core-version-management-new-revision New revision} or
+\l{#core-version-management-new-version New version} except that we never
+merge this branch to \c{master}. If we ever need to release another revision
+or version in this release series, then we continue using this branch. In a
+sense, this branch becomes the equivalent of the \c{master} branch for this
+release series and you should treat it as such (once published, never delete,
+rewrite its history, etc).
 
 \N|It is less likely but possible that you may need to release a new minor
 version in an old release series. For example, the master branch may have

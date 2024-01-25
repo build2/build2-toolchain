@@ -1500,14 +1500,15 @@ the project-wide build system files in \c{build/} and the source subdirectory
 \c{buildfiles} (in \c{include/} and \c{src/} for our \c{libfoo} example).
 
 
-\h2#core-adjust-build-wide|Review project-wide build system files in \c{build/}|
+\h2#core-adjust-build-wide|Adjust project-wide build system files in \c{build/}|
 
-We start with reviwing the files in the \c{build/} subdirectory of our
-package, where you will find three files: \c{bootstrap.build}, \c{root.build},
-and \c{export.build}. To recap, the first two contain the project-wide build
-system setup (see \l{b#intro-proj-struct Project Structure} for details) while
-the last is an export stub that facilitates the importation of targets from
-our package (see \l{b#intro-import Target Importation} for details).
+We start with reviwing and adjusting the files in the \c{build/} subdirectory
+of our package, where you will find three files: \c{bootstrap.build},
+\c{root.build}, and \c{export.build}. To recap, the first two contain the
+project-wide build system setup (see \l{b#intro-proj-struct Project Structure}
+for details) while the last is an export stub that facilitates the importation
+of targets from our package (see \l{b#intro-import Target Importation} for
+details).
 
 Normally you don't need to change anything in \c{bootstrap.build} \- all it
 does is specify the build system project name and load a standard set of core
@@ -1860,7 +1861,7 @@ Linked Configurations} on how to handle that. In this case you will also need
 to reconfigure your package after adding the corresponding \c{import}
 directives in order to re-acquire the previously dropped \c{config.import.*}
 values. Make sure to also pass any configuration variables you specified in
-\l{#core-adjust-build-wide Review project-wide build system files in
+\l{#core-adjust-build-wide Adjust project-wide build system files in
 \c{build/}}. For example:
 
 \
@@ -1959,7 +1960,7 @@ background on wildcard patterns).
 
 If your C++ package doesn't have any inline or template files, then you can
 remove the \c{ixx} and \c{txx} target types, respectively (which is parallel
-to the change made in \c{root.build}; see \l{#core-adjust-build-wide Review
+to the change made in \c{root.build}; see \l{#core-adjust-build-wide Adjust
 project-wide build system files in \c{build/}}). For example:
 
 \
@@ -2433,11 +2434,11 @@ turning into a smoke test. The subproject root \c{buildfile} rarely needs
 changing.
 
 
-\h2#core-test-smoke-build-wide|Review project-wide build system files in \c{tests/build/}|
+\h2#core-test-smoke-build-wide|Adjust project-wide build system files in \c{tests/build/}|
 
-Review the generated \c{bootstrap.build} and \c{root.build} (there will be no
-\c{export.build}) similar to \l{#core-adjust-build-wide Review project-wide
-build system files in \c{build/}}.
+Review and adjust the generated \c{bootstrap.build} and \c{root.build} (there
+will be no \c{export.build}) similar to \l{#core-adjust-build-wide Adjust
+project-wide build system files in \c{build/}}.
 
 Here the only change you would normally make is in \c{root.build} to drop the
 assignment of extensions for target types that are not used in tests.
@@ -3501,18 +3502,107 @@ version is tagged \c{v2.1.0} and the new version is tagged \c{v2.2.0}:
 
 \
 $ cd upstream
-$ gitk&
+$ gitk v2.1.0..v2.2.0 &
 \
 
-Then scroll down and click on the commit tagged \c{v2.1.0}, scroll up and
-righ-click on the commit tagged \c{v2.2.0} and select the \"Diff this ->
-selected\" menu item. This will display a cumulative set of changes between
-the two upstream versions. Look through them for the following types of
-changes:
+Then click on the commit tagged \c{v2.2.0}, scroll down and right-click on the
+commit tagged \c{v2.1.0}, and select the \"Diff this -> selected\" menu item.
+This will display the cumulative set of changes between these two upstream
+versions. Review them looking for the following types of changes in
+particular (discussed in the following sections):
 
-- changes to the source code layout
-- new source files beging added or removed
-- changes to the upstream build system
+\ul|
+
+\li|Changes to the source code layout.|
+
+\li|New dependencies being added or old removed.|
+
+\li|New source files beging added or old removed (including in tests, etc).|
+
+\li|Changes to the upstream build system.|
+
+\li|Other new files/subdirectories being added or old removed.||
+
+
+\h2#core-version-management-new-version-layout|New version: layout changes|
+
+As mentioned earlier, for drastic layout changes it may make sense to start
+from scratch and re-generate the package with the \c{bdep-new} command
+(\l{#core-package-struct Decide on the package source code layout} starting
+point). On the other hand, if the changes are minor, then you can try to
+adjust things manually. An in-between strategy is to generate the new layout
+using \c{bdep-new} on the side and then retrofit the relevant changes in
+\c{buildfiles} to the existing package. In a sense, this approach uses
+\c{bdep-new} as a guide to figure out how to implement the new layout.
+
+
+\h2#core-version-management-new-version-dependecies|New version: new/old dependencies|
+
+If upsream added new or removed old dependecies, then you will need to
+replicate these changes in your package as on the \l{#core-fill-depend Add
+dependencies} and \l{#core-adjust-build-src-source-dep Adjust source
+\c{buildfile}: dependencies} initial packaging steps.
+
+
+\h2#core-version-management-new-version-sources|New version: new/old source files|
+
+If upsream added new or removed old source files, then you will need to
+replicate these changes in your package as on the \c{#core-fill-source Fill
+with upstream source code} and possibly \c{#core-adjust-build-src-header
+Adjust header \c{buildfile}} and \l{#core-adjust-build-src-source-src Adjust
+source \c{buildfile}: sources, private headers} initial packaging steps.
+
+Also don't forget about tests, examples, etc., which may also add new or
+remove old source files (typically new tests). See
+\l{#core-test-upstream-convert Convert smoke test to upstream tests}.
+
+
+\h2#core-version-management-new-version-build|New version: changes to build system|
+
+If upsream changed anything in the build system, then you may need to
+replicate these changes in your package's \c{buildfiles}. The relevant initial
+packaging steps are: \l{#core-adjust-build-wide Adjust project-wide build system files in
+\c{build/}} and \l{#core-adjust-build-src-source-opt Adjust source
+\c{buildfile}: build and export options}.
+
+The corresponding steps for tests are: \l{#core-test-smoke-build-wide Adjust
+project-wide build system files in \c{tests/build/}} and
+\l{#core-test-upstream-convert Convert smoke test to upstream tests}.
+
+
+\h2#core-version-management-new-version-other|New version: other new/old files/subdirectories|
+
+If upsream added or removed any other files or subdirectories that are
+relevant to our package (such as documentation), then adjust the package
+similar to the \l{#core-root-buildfile Adjust root \c{buildfile}} and
+\l{#core-root-buildfile-doc Adjust root \c{buildfile}: other subdirectories}
+initial packaging steps.
+
+
+\h2#core-version-management-new-version-test|New version: test locally and with CI|
+
+Once all the adjustments are in, test the package both locally and with CI
+similart to how we did after completing the smoke test during the initial
+packaging:
+
+\l{#core-test-smoke-locally Test locally}\n
+\l{#core-test-smoke-locally-install Test locally: installation}\n
+\l{#core-test-smoke-locally-dist Test locally: distribution}\n
+\l{#core-test-smoke-ci Commit and test with CI}
+
+
+\h2#core-version-management-new-version-release|New version: merge, release, and publish|
+
+When the new version of the package is ready to be released, merge the
+work branch to \c{master}:
+
+\
+$ git checkout master
+$ git merge --ff-only wip-2.2.0
+\
+
+Then release and publish using the same steps as after the initial packaging:
+\l{#core-release-publish Release and publish}.
 
 
 @@ Maybe in the initial instructions makes sense to identify and note

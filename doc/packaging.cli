@@ -10,9 +10,6 @@
 // - Maximum <pre> line is 70 characters.
 //
 // - In guideline titles (do/don't) omit a/the.
-//
-
-// @@ Close the issue in WISHLIST.
 
 "
 \h0#preface|Preface|
@@ -217,7 +214,7 @@ push.|
 
 \N|While you can use any name for a repository under the personal workspace,
 under \l{https://github.com/build2-packaging github.com/build2-packaging} it
-should follow the \l{core-repo-name Use upstream repository name as package
+should follow the \l{#core-repo-name Use upstream repository name as package
 repository name} guideline. In particular, there should be no prefixes like
 \c{build2-} or suffixes like \c{-package}. If the repository under your
 personal workspace does not follow this guideline, you should rename it before
@@ -3202,7 +3199,40 @@ $ bdep ci
 Once all the adjustments are in and everything is tested, we can finally
 release the final version of the package as well as publish it to
 \l{https://cppget.org cppget.org}. Both of these steps are automated with the
-corresponding \c{bdep} commands.
+corresponding \c{bdep} commands. But before performing these steps we need to
+transfer the package repository to \l{https://github.com/build2-packaging
+github.com/build2-packaging}.
+
+
+\h2#core-release-publish-transfer|Transfer package repository|
+
+If you have been doing your work in a repository in your personal workspace,
+then now is the time to transfer it to the
+\l{https://github.com/build2-packaging github.com/build2-packaging}
+organization.
+
+\N|It is important to transfer the repository before publishing the first
+version of the package since the repository is used as a proxy for package
+name ownership (see \l{bdep-publish(1)} for details). If you publish the
+package from your personal workspace and then transfer the repository, the
+ownership information will have to be adjusted manually, which we would
+prefer to avoid.|
+
+First you will need to become a member of this organization. This will give
+you permissions to create new repositories, which is required to perform a
+tranfer (you will also have full read/write access to the repository once
+transferred). To get an invite, \l{https://build2.org/community.xhtml#help get
+in touch} not forgetting to mention your GitHub user name.
+
+Then, if your repository has any prefixes, such as \c{build2-}, or suffixes
+such as \c{-package}, then the first step is to rename it to follow the
+\l{#core-repo-name Use upstream repository name as package repository name}
+guideline. Go to the repository's Settings on GitHub where you should see the
+Rename button.
+
+Finally, to perform the transfer, go to the repository's Settings, Danger Zone
+section, where you should see the Transfer button. Select \c{build2-packaging}
+as the organization to transfer to, and complete the transfer.
 
 
 \h2#core-release-publish-release|Release final version|
@@ -3211,6 +3241,9 @@ As you may recall, our package currently has a pre-release snapshot version of
 the upstream version (see \l{#core-package-adjust-version Adjust package
 version}). Once all the changes are in, we can change to the final upstream
 version, in a sense signalling that this package version is ready.
+
+\N|If you are working in a branch, then now is the time to merge it into
+\c{master}.|
 
 The recommended way to do this is with the \l{bdep-release(1)} command (see
 \l{intro#guide-versioning-releasing Versioning and Release Management} for
@@ -3278,6 +3311,11 @@ revision} to address these problems. But in both cases you should first read
 through \l{#core-version-management Package version management} to understand
 the recommended \"version lifecycle\" of a third-party package.
 
+Also, if there is an issue for this package in
+\l{https://github.com/build2-packaging/WISHLIST
+github.com/build2-packaging/WISHLIST}, then you would want to add a comment
+and close it once the package has been published.
+
 
 \h#core-version-management|Package version management|
 
@@ -3342,6 +3380,11 @@ As discussed in \l{#core-version-management Package version management}, we
 release revisions to fix issues in the package \"infrastructure\"
 (\c{buildfiles}, \c{manifest}, etc) as well as critical bugs in upstream
 source code.
+
+\N|Releasing a new revision is also a good opportunity to review and fix any
+accumulated issues that didn't warrant a revision on their own. See
+\l{#core-version-management-new-version-issues New version: review/fix
+accumulated issues} for background.|
 
 In the revision phase of the package version lifecycle (i.e., when the version
 does not end with \c{-a.0.z}), every commit must be accompanies by the
@@ -3579,6 +3622,19 @@ similar to the \l{#core-root-buildfile Adjust root \c{buildfile}} and
 initial packaging steps.
 
 
+\h2#core-version-management-new-version-issues|New version: review/fix accumulated issues|
+
+When a bug is identified in an already released package version, we may not
+always be able to fix it immediately (for example, by
+\l{#core-version-management-new-revision releasing a revision}). This could be
+because the change is too extensive/risky for a revision or simply not
+critical enough to warrant a release. In such cases it's recommended to file
+an issue in the package's repository with the view to fix it when the next
+opportunity arises. Releasing a new upstream version is one such opportunity
+and it makes sense to review any accumulated package issues and see if any
+of them can be addressed.
+
+
 \h2#core-version-management-new-version-test|New version: test locally and with CI|
 
 Once all the adjustments are in, test the package both locally and with CI
@@ -3603,13 +3659,6 @@ $ git merge --ff-only wip-2.2.0
 
 Then release and publish using the same steps as after the initial packaging:
 \l{#core-release-publish Release and publish}.
-
-
-@@ Maybe in the initial instructions makes sense to identify and note
-the point where to merge the branch to master if working in a branch
-(e.g., because of a new version).
-
-@@ Add item to review issues in case good opportunity to fix any.
 
 
 \h2#core-version-management-old-series|New version/revision in old release series|
@@ -3650,16 +3699,9 @@ released \c{2.1.0}. In this case it makes sense to call the branch \c{2} since
 it corresponds to the \c{2.Y.Z} release series. If you already have the
 \c{2.1} branch, then it makes sense to rename it to \c{2}.|
 
-
-
-@@ Enforce continous versioning?
-
-@@ When do we transfer the repository to build2-packaging? Should not
-   publish until then.
-
-@@ GH issue #?? has some notes.
-
 ========
+
+@@ Enforce continous versioning with pre-commit hook -- maybe add a note?
 
 @@ Add example of propagating config.libfoo.debug to macro on build options?
 

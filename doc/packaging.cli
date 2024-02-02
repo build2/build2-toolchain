@@ -1712,8 +1712,8 @@ src_pfx_src = [dir_path] $src_root/src/
 cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
                 \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
 
-#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
-#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+#obja{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#objs{*}: cxx.poptions += -DFOO_SHARED_BUILD
 
 # Export options.
 #
@@ -2036,8 +2036,8 @@ src_pfx_src = [dir_path] $src_root/src/
 cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
                 \"-I$out_pfx_inc\" \"-I$src_pfx_inc\"
 
-#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
-#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+#obja{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#objs{*}: cxx.poptions += -DFOO_SHARED_BUILD
 
 # Export options.
 #
@@ -2123,8 +2123,8 @@ if ($cxx.target.class == 'windows')
 else
   cxx.poptions += -DFOO_POSIX
 
-#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
-#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+#obja{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#objs{*}: cxx.poptions += -DFOO_SHARED_BUILD
 
 if ($cxx.class == 'gcc')
   cxx.coptions += -fno-strict-aliasing
@@ -2172,8 +2172,8 @@ cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \
 
 cxx.poptions += -DFOO_EXTRAS
 
-#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
-#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+#obja{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#objs{*}: cxx.poptions += -DFOO_SHARED_BUILD
 
 if ($cxx.target.class == 'windows')
   {obja objs}{util}: cxx.poptions += -DFOO_WIN32
@@ -2237,8 +2237,8 @@ options blocks:
 
 ...
 
-#{hbmia obja}{*}: cxx.poptions += -DFOO_STATIC_BUILD
-#{hbmis objs}{*}: cxx.poptions += -DFOO_SHARED_BUILD
+#obja{*}: cxx.poptions += -DFOO_STATIC_BUILD
+#objs{*}: cxx.poptions += -DFOO_SHARED_BUILD
 
 # Export options.
 #
@@ -2261,7 +2261,7 @@ modify the above fragment to handle this setup:
 
 ...
 
-{hbmis objs}{*}: cxx.poptions += -DFOO_BUILD_DLL
+objs{*}: cxx.poptions += -DFOO_BUILD_DLL
 
 # Export options.
 #

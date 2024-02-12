@@ -1029,32 +1029,46 @@ and removing (or editing, if you have multiple packages and only want to redo
 some of them) \c{packages.manifest} and starting over.|
 
 This time, however, we will do things a bit differently in order to take
-advantage of some additional automation offered by \c{bdep-new}. If the
-package directory already exists and contains certain files, \c{bdep-new} can
-take this into account when generating the root \c{buildfile} and package
-\c{manifest}. In particular, it will try to guess the license from the
-\c{LICENSE} file and extract the summary from \c{README.md} and use this
-information in \c{manifest}.
+advantage of some additional automation offered by \c{bdep-new}.
+
+Firstly, we will use the special \c{third-party} sub-option which is meant for
+converting third-party projects to \c{build2}. Specifically, this sub-option
+automatically enables \c{no-version} and \c{no-symexport} unless
+\c{auto-symexport} is specified. It also adds a number of values to
+\c{manifest} that makes sense to specify in a package of a third-party
+project. Finally, it generates the \c{PACKAGE-README.md} template which
+describes how to use the package from a \c{build2}-based project (see the
+\l{bpkg#manifest-package-description \c{package-description}} \c{manifest}
+value for background).
+
+Secondly, if the package directory already exists and contains certain files,
+\c{bdep-new} can take this into account when generating the root \c{buildfile}
+and package \c{manifest}. In particular, it will try to guess the license from
+the \c{LICENSE} file and extract the summary from \c{README.md} and use this
+information in \c{manifest} as well as generated \c{PACKAGE-README.md}.
 
 \N|If the file names or formats used by upstream don't match those recognized
-by \c{bdep-new} or if an attempt to extra the information is unsuccessful,
-then for now simply omit the corresponding files from the package directory
-and add them later manually.
+by \c{bdep-new}, then for now simply omit the corresponding files from the
+package directory and add them later manually. Similarly, if an attempt to
+extra the information is unsuccessful, we will have a chance to adjust it in
+\c{manifest} later.
 
-Specifically, for \c{README}, \c{bdep-new} only recognizes \c{README.md}.
+Specifically, for \c{README}, \c{bdep-new} recognizes \c{README.md},
+\c{README.txt} and \c{README} but will only attempt to extract the summary
+from \c{README.md}.
 
 For license files, \c{bdep-new} recognizes \c{LICENSE}, \c{LICENSE.txt}
 \c{LICENSE.md}, \c{COPYING}, and \c{UNLICENSE}.
 
-
-@@ TODO: PACKAGE-README.md and README-PACKAGE.md (and below)
-
-|
+For changes files, \c{bdep-new} recognizes \c{NEWS}, \c{CHANGES}, and
+\c{CHANGELOG} in various cases as well as with the \c{.md}, \c{.txt}
+extensions.|
 
 Continuing with our \c{libfoo} example and assuming upstream provides the
-\c{README.md} and \c{LICENSE} files, we first manually create the package
-directory, then add the symlinks, and finally run \c{bdep-new} (notice that we
-have omitted the package name from the \c{bdep-new} command line since we are
+\c{README.md}, \c{LICENSE}, and \c{NEWS} files, we first manually create the
+package directory, then add the symlinks, and finally run \c{bdep-new} (notice
+that we have replaced \c{no-version} and \c{no-symexport} with \c{third-party}
+and omitted the package name from the \c{bdep-new} command line since we are
 running from inside the package directory):
 
 \
@@ -1066,15 +1080,46 @@ $ mkdir libfoo/
 $ cd libfoo/ # Change to the package root.
 $ ln -s ../upstream/README.md ./
 $ ln -s ../upstream/LICENSE   ./
+$ ln -s ../upstream/NEWS      ./
 
-$ bdep new --package                            \
-  --lang c++,cpp   \
-  --type lib,split,subdir=foo,no-subdir-source,no-version,no-symexport
+$ bdep new --package \
+  --lang c++,cpp     \
+  --type lib,split,subdir=foo,no-subdir-source,third-party
 \
 
-If auto-detection succeeds, then you should see the \c{summary} and
-\c{license} values automatically populated in \c{manifest} and the symlinked
-files listed in the root \c{buildfile}.
+The final contents of our package will look like this:
+
+\
+$ cd ../
+$ tree libfoo/
+libfoo/
+├── build/
+│   └── ...
+├── include/
+│   └── foo/
+│       ├── buildfile
+│       └── foo.hpp
+├── src/
+│   ├── buildfile
+│   └── foo.cpp
+├── tests/
+│   ├── build/
+│   │   └── ...
+│   ├── basics/
+│   │   ├── buildfile
+│   │   └── driver.cpp
+│   └── buildfile
+├── buildfile
+├── manifest
+├── NEWS       -> ../upstream/NEWS
+├── LICENSE    -> ../upstream/LICENSE
+├── README.md  -> ../upstream/README.md
+└── PACKAGE-README.md
+\
+
+If auto-detection of \c{README}, \c{LICENSE}, and \c{NEWS} succeeds, then you
+should see the \c{summary} and \c{license} values automatically populated in
+\c{manifest} and the symlinked files listed in the root \c{buildfile}.
 
 
 \h2#core-package-adjust-version|Adjust package version|
@@ -1355,7 +1400,8 @@ $ git commit -m \"Add dependencies\"
 Now we are ready to begin replacing the \c{bdep-new}-generated files with
 upstream source code symlinks and we start with library's header and source
 files. Continuing with our \c{libfoo} example, this is what we currently have
-(notice that \c{LICENSE} and \c{README.md} are already symlinks to upstream):
+(notice that \c{LICENSE}, \c{README.md}, and \c{NEWS} are already symlinks to
+upstream):
 
 \
 $ cd foo/ # Change to the package repository root.
@@ -1373,10 +1419,12 @@ libfoo/
 │   └── foo.cpp
 ├── tests/
 │   └── ...
-├── LICENSE   -> ../upstream/LICENSE
-├── README.md -> ../upstream/README.md
 ├── buildfile
-└── manifest
+├── manifest
+├── NEWS       -> ../upstream/NEWS
+├── LICENSE    -> ../upstream/LICENSE
+├── README.md  -> ../upstream/README.md
+└── PACKAGE-README.md
 \
 
 Now we replace generated \c{include/foo/foo.hpp} with library's real headers
@@ -2859,28 +2907,28 @@ The main function of the root \c{buildfile} is to pull all the subdirectories
 that need building plus list targets that are usually found in the root
 directory of a project, typically \c{README.md}, \c{LICENSE}, etc. This is
 what the generated root \c{buildfile} looks like for our \c{libfoo} project
-assuming we have symlinked \c{README.md} and \c{LICENSE} from upstream on the
-\l{#core-package-create Create final package} step:
-
-@@ PACKAGE-README.md?
+assuming we have symlinked \c{README.md}, \c{LICENSE}, and \c{NEWS} from
+upstream on the \l{#core-package-create Create final package} step:
 
 \
-./: {*/ -build/} doc{README.md} legal{LICENSE} manifest
+./: {*/ -build/}                          \
+    doc{README.md PACKAGE-README.md NEWS} \
+    legal{LICENSE} manifest
 
 # Don't install tests.
 #
 tests/: install = false
 \
 
-If the upstream project provides any other documentation (change log, news,
-etc) or legal files (list of authorts, code of conduct, etc), then you may
-want to symlink and list them as the \c{doc{\}} and \c{legal{\}}
-prerequisites, respectively.
+If the upstream project provides any other documentation (detailed change
+logs, contributing guidelines, etc) or legal files (list of authorts, code of
+conduct, etc), then you may want to symlink and list them as the \c{doc{\}}
+and \c{legal{\}} prerequisites, respectively.
 
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
 system. In the \c{build2} package the \c{PACKAGE-README.md} file serves this
-purpose.|
+purpose (see @@ ref to where we adit it).|
 
 
 \h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
@@ -2918,8 +2966,9 @@ the \c{*.md} files as prerequisites using the \c{doc{\}} target type (which,
 in particular, makes sure they are installed into the appropriate location):
 
 \
-./: {*/ -build/ -docs/} \
-    doc{README.md} docs/doc{*.md} \
+./: {*/ -build/ -docs/}                   \
+    doc{README.md PACKAGE-README.md NEWS} \
+    docs/doc{*.md}                        \
     legal{LICENSE} manifest
 \
 
@@ -3292,7 +3341,7 @@ The \c{bdep-publish} command prepares the source distributin of your package,
 uploads the resulting archive to the package repository, and prints a link to
 the package submission in the queue. Open this link in the browser and check
 that there are no surprises in build results (they should match the earlier CI
-results) or in the displayed package information (\c{README.md}, etc).
+results) or in the displayed package information (\c{PACKAGE-README.md}, etc).
 
 \N|While there should normally be no discrepancies in the build results
 compared to our earlier CI submissions, the way the packages are built on CI
@@ -3700,6 +3749,8 @@ it corresponds to the \c{2.Y.Z} release series. If you already have the
 \c{2.1} branch, then it makes sense to rename it to \c{2}.|
 
 ========
+
+@@ Edit PACKAGE-README.md section somewhere.
 
 @@ Enforce continous versioning with pre-commit hook -- maybe add a note?
 

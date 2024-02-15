@@ -3264,7 +3264,17 @@ section.
 Similarly, if the package has no configuration variables, then it makes sense
 to drop the \"Configuration variables\" section.
 
-@@ Fix libeven, byacc/xxd PACKAGE-README.md and recomment for inspiration.
+For inspiration, see
+\l{https://github.com/build2-packaging/libevent/blob/main/PACKAGE-README.md
+\c{PACKAGE-README.md}} in \l{https://github.com/build2-packaging/libevent
+\c{libevent}} (library) and
+\l{https://github.com/build2-packaging/xxd/blob/master/xxd/README.md
+\c{README.md}} in \l{https://github.com/build2-packaging/xxd \c{xxd}}
+(executable).
+
+\N|If upstream does not provide a \c{README} file, then it makes sense to
+rename \c{PACKAGE-README.md} to just \c{README.md} in the \c{build2} package,
+as was done in \c{xxd} mentioned above.|
 
 Once \c{PACKAGE-README.md} is ready, commit and push the changes. You may also
 want to view the result on GitHub to make sure everything is rendered

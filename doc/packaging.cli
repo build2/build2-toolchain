@@ -26,9 +26,6 @@ repository. For additional information, including documentation for individual
 
 \h1#intro|Introduction|
 
-@@ Assume read through toolchain introduction and build system introduction.
-Also, ideally, have some experience using \c{build2} in your own projects.
-
 The aim of this guide is to ease the convertion of third-party C/C++ projects
 to the \c{build2} build system and publishing them to the
 \l{https://cppget.org cppget.org} package repository by codifying the best
@@ -107,21 +104,74 @@ cover the above-mentioned long list of special considerations that are only
 applicable in certain cases as well as answer frequent packaging-related
 questions, respectively.
 
-@@ Purpose of notes to provide rationale.
-
 Besides the presented guidelines you may also find the existing packages found
 in \l{https://github.com/build2-packaging github.com/build2-packaging} a good
 source of example material. The repositories pinned to the front page are the
 recommended starting point.
 
+This guide assumes familiarity with the \c{build2} toolchain. At the minimum
+you should have read through \l{intro The \c{build2} Toolchain Introduction}
+and the \l{b#intro Introduction} chapter in the build system manual. Ideally,
+you should also have some experience using \c{build2} in your own projects.
+
+
 \h#intro-term|Terminology|
 
-upstream
-upstream repository
-project
-package (third-party project)
-package \c{git} repository
-multi-package repository
+We use the term \i{upstream} to refer collectively to the third-party project
+as well as to its authors. For example, we may say, \"upstream does not use
+semver\" meaning that the upstream project does not use semver for
+versioning. Or we may say, \"upstream released a new version\" meaning that
+the upstream project's authors released a new version.
+
+We will often use \i{upstream} as a qualifier to refer to a specific part of
+the upstream project. Commonly used qualified terms like this include:
+
+\dl|
+
+\li|\i{upstream repository}
+
+The version control (normally \c{git}) repository of the third-party project.|
+
+\li|\i{upstream source code}
+
+The C/C++ source code that constitutes the third-party project.
+
+|
+
+\li|\i{upstream layout}
+
+The directory structure and location of source code in the third-party
+project.
+
+|
+
+\li|\i{upstream build system}
+
+The equivalents of \c{buildfiles} that are used by the third-party project to
+build its source code, run tests, etc. For example, if upstream uses CMake,
+then all the \c{CMakeLists.txt}, \c{*.cmake}, etc., files will constitute its
+build system.||
+
+To avoid confusion, in this guide we will always use the term \i{project} to
+refer to upstream and \i{package} to refer to its \c{build2} conversion,
+even though we would normally call our own \c{build2}-based work a project,
+not a package (see \l{b#intro-proj-struct Project Structure} for details on
+the \c{build2} terminology). Some commonly used \c{build2}-side terms in this
+guide include:
+
+
+\dl|
+
+\li|\i{package \c{git} repository}
+
+The \c{git} repository that hosts the package of the upstream project.|
+
+
+\li|\i{multi-package repository}
+
+Sometimes it makes sense to split the upstream project into multiple
+\c{build2} packages (for example, a library and an executable). In this case
+the package repository structure must become multi-package.||
 
 
 \h1#core|Core Guidelines|
@@ -841,7 +891,7 @@ exporting header. This is an appropriate option if upstream provides its
 own symbol exporting arrangements.
 
 The \c{auto-symexport} sub-option enables automatic DLL symbol exporting
-support (see \l{b##cc-auto-symexport Automatic DLL Symbol Exporting} for
+support (see \l{b#cc-auto-symexport Automatic DLL Symbol Exporting} for
 background). This is an appropriate option if upstream relies on similar
 support in the existing build system. It is also recommended that you give
 this functionality a try even if upstream does not support building
@@ -2928,7 +2978,7 @@ and \c{legal{\}} prerequisites, respectively.
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
 system. In the \c{build2} package the \c{PACKAGE-README.md} file serves this
-purpose (see @@ ref to where we adit it).|
+purpose (see @@ ref to where we edit it).|
 
 
 \h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
@@ -3814,6 +3864,8 @@ it corresponds to the \c{2.Y.Z} release series. If you already have the
 
 @@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
 
+@@ Update pinned repositories (libevent, libasio, xxd).
+
 ======================================================================
 
 
@@ -3945,7 +3997,7 @@ common of which are:
 offers inferior user experience.|
 
 \li|The compiled mode does not work on some platforms, usually Windows due to
-the lack of symbol export support (but see \l{b##cc-auto-symexport Automatic
+the lack of symbol export support (but see \l{b#cc-auto-symexport Automatic
 DLL Symbol Exporting}).|
 
 \li|Uses of the compiled version of the library requires changes to the

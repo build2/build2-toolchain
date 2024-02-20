@@ -11,6 +11,17 @@
 //
 // - In guideline titles (do/don't) omit a/the.
 
+// TODO:
+//
+// @@ Update pinned repositories (libevent, libasio, xxd).
+//
+// @@ Enforce continous versioning with pre-commit hook -- maybe add a note?
+//
+// @@ Add example of propagating config.libfoo.debug to macro on build options?
+//
+// @@ Note on library metadata where talk about configuration. Also about
+//    autoconf.
+
 "
 \h0#preface|Preface|
 
@@ -1056,7 +1067,7 @@ The \c{tests/} subdirectory is the standard \c{build2} tests subproject (see
 \l{b#intro-operations-test Testing} for details). While you can suppress its
 generation with the \c{no-tests} \c{bdep-new} sub-option, we recommend that
 you keep it and use it as a starting point for porting upstream tests or, if
-upstream doesn't provide any, for a basic \"smoke test\" (@@ ref HOWTO).
+upstream doesn't provide any, for a basic \"smoke test\".
 
 \N|You can easily add/remove/rename this \c{tests/} subproject. The only place
 where it is mentioned explicitly and where you will need to make changes is
@@ -1257,11 +1268,7 @@ plan is as follows:
 
 \li|Replace the smoke test with upstream tests.|
 
-\li|Tweak root \c{buildfile} and \c{manifest}.|
-
-\li|Test the result using the CI service. @@ Actually doing it as ready.|
-
-|
+\li|Tweak root \c{buildfile} and \c{manifest}.||
 
 The first three steps are the subject of this section with the following
 sections covering the rest of the plan.
@@ -2978,7 +2985,8 @@ and \c{legal{\}} prerequisites, respectively.
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
 system. In the \c{build2} package the \c{PACKAGE-README.md} file serves this
-purpose (see @@ ref to where we edit it).|
+purpose (see \l{#core-root-package-readme Adjust \c{PACKAGE-README.md}}
+for details).|
 
 
 \h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
@@ -3130,8 +3138,6 @@ $ bdep ci
 The next file we need to look over is the package's \c{manifest}. Here is what
 it typically looks like, using our \c{libfoo} as an example:
 
-@@ TODO: regenerate with final version.
-
 \
 : 1
 name: libfoo
@@ -3141,12 +3147,14 @@ project: foo
 summary: C++ library implementing secure Foo protocol
 license: MIT ; MIT License.
 description-file: README.md
-url: https://example.org/foo
-email: boris@codesynthesis.com
-#build-error-email: boris@codesynthesis.com
+package-description-file: PACKAGE-README.md
+changes-file: NEWS
+url: https://example.org/upstream
+email: upstream@example.org
+package-url: https://github.com/build2-packaging/foo
+package-email: packaging@build2.org ; Mailing list.
 depends: * build2 >= 0.16.0
 depends: * bpkg >= 0.16.0
-#depends: libhello ^1.0.0
 \
 
 You can find the description of these and other package \c{manifest} values in
@@ -3154,15 +3162,22 @@ the \l{bpkg#manifest-package Package Manifest} section of the \l{bpkg The
 \c{build2} Package Manager} manual.
 
 In the above listing the values that we likely need to adjust are \c{summary}
-and \c{license} (@@ see sections below), unless correctly auto-detected by
-\c{bpkg-new} on the \l{#core-package-create Create final package} step, as
-well as \c{url}, \c{email}, @@ TODO: update with final list (\c{package-*},
-etc), also make links. While you may be tempted to also adjust the \c{version}
-value, don't since this will be done automatically by \l{bdep-release(1)}
-later.
+and \c{license}, unless correctly auto-detected by \c{bpkg-new} on the
+\l{#core-package-create Create final package} step. See
+\l{#core-root-manifest-summary Adjust \c{manifest}: \c{summary}} and
+\l{#core-root-manifest-license Adjust \c{manifest}: \c{license}}
+for guidelines on changing these values.
 
-@@ Should we give quick recommendations for url, email, etc and also an
-   example for libfoo?
+We will also need to change \c{url} and \c{email} with the upstream project's
+homepage URL and e-mail, respectively. If upstream doesn't have a dedicated
+website for the project, then use its repository URL on GitHub or equivalent.
+For e-mail you would normally use a mailing list address. If upstream doesn't
+use e-mail, then you can drop this value from the \c{manifest}. The
+\c{package-url} and \c{package-email} values normally do not need to be
+changed.
+
+Note also that while you may be tempted to adjust the \c{version} value, don't
+since this will be done automatically by \l{bdep-release(1)} later.
 
 You may also want to add the following value in certain cases:
 
@@ -3170,12 +3185,12 @@ You may also want to add the following value in certain cases:
 
 \li|\l{bpkg#manifest-package-changes \cb{changes-file}}
 
-If you have added a news of change log file to the root \c{buildfile} (see
-\l{#core-root-buildfile Adjust root buildfile}), then it also makes sense
-to list it in the \c{manifest}. For example:
+If you have added any extra news of changelog files to the root \c{buildfile}
+(see \l{#core-root-buildfile Adjust root buildfile}), then it may also make
+sense to list them in the \c{manifest}. For example:
 
 \
-changes-file: NEWS
+changes-file: ChangeLog.txt
 \
 
 |
@@ -3202,16 +3217,6 @@ src-url: https://github.com/.../foo
 \
 
 ||
-
-
-\h2#core-root-manifest-license|Adjust \c{manifest}: \c{license}|
-
-For \c{license}, use the \l{https://spdx.org/licenses/ SPDX license ID} if at
-all possible. If multiple licenses are involved, use the SPDX License
-expression. See the
-\l{https://build2.org/bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license
-\c{license} manifest value} documentation for details, including the list of
-the SPDX IDs for the commonly used licenses.
 
 
 \h2#core-root-manifest-summary|Adjust \c{manifest}: \c{summary}|
@@ -3267,6 +3272,14 @@ summary: Event notification C library tests
 summary: Geometry processing C++ library, core module examples
 \
 
+\h2#core-root-manifest-license|Adjust \c{manifest}: \c{license}|
+
+For \c{license}, use the \l{https://spdx.org/licenses/ SPDX license ID} if at
+all possible. If multiple licenses are involved, use the SPDX License
+expression. See the
+\l{https://build2.org/bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license
+\c{license} manifest value} documentation for details, including the list of
+the SPDX IDs for the commonly used licenses.
 
 \h2#core-root-manifest-commit|Adjust \c{manifest}: commit and test|
 
@@ -3500,13 +3513,14 @@ package is as follows:
 \li|After a release (the \l{#core-release-publish-release Release final
 version} step above), for example, version \c{2.1.0}, the package enters a
 \"revision phase\" where we can release revisions (\c{2.1.0+1}, \c{2.1.0+2},
-etc) to address any issues in the package. See @@ for details.|
+etc) to address any issues in the package. See
+\l{#core-version-management-new-revision New revision} for details.|
 
 \li|When a new upstream version is released, for example version \c{2.2.0},
 and we wish to upgrade our package to this version, we switch to its
 pre-release snapshot version (\c{2.2.0-a.0.z}) the same as we did on the
 \l{#core-package-adjust-version Adjust package version} step initially. See
-@@ for details.|
+\l{#core-version-management-new-version New version} for details.|
 
 \li|Once we are done upgrading to the new upstream version, we release the
 final version just like on the \l{#core-release-publish-release Release final
@@ -3516,7 +3530,8 @@ Note also that in the above example, once we have switched to \c{2.2.0-a.0.z},
 we cannot go back and release another revision or patch version for \c{2.1.0}
 on the current branch. Instead, we will need to create a separate branch for
 the \c{2.1.Z} release series and make a revision or patch version there. See
-@@ for details.
+\l{#core-version-management-old-series New version/revision in old release
+series} for details.
 
 
 \h2#core-version-management-new-revision|New revision|
@@ -3610,13 +3625,13 @@ the upstream source code without any changes to the set of source files,
 upstream build system, etc. In such cases, upgrading a package is a simple
 matter of creating a new work branch, pointing the \c{upstream} \c{git}
 submodule to the new release, running tests, and releasing and publishing a
-new package version. @@ make list with links. @@ Open the version.
+new package version.
 
 On the other extreme you may have a new major upstream release which is
 essentially a from-scratch rewrite with new source code layout, different
 upstream build system, etc. In such cases it may be easier to likewise start
 from scratch. Specifically, create a new work branch, point the \c{upstream}
-\c{git} submodule to the new release @@ link, delete the existing package, and
+\c{git} submodule to the new release, delete the existing package, and
 continue from \l{#core-package Create package and generate \c{buildfile}
 templates}.
 
@@ -3851,38 +3866,31 @@ released \c{2.1.0}. In this case it makes sense to call the branch \c{2} since
 it corresponds to the \c{2.Y.Z} release series. If you already have the
 \c{2.1} branch, then it makes sense to rename it to \c{2}.|
 
-========
-
-@@ Enforce continous versioning with pre-commit hook -- maybe add a note?
-
-@@ Add example of propagating config.libfoo.debug to macro on build options?
-
-@@ Note on library metadata where talk about configuration. Also about
-   autoconf.
-
-@@ Use of the version module and non-semver versions? Links to HOWTO entries!
-
-@@ The 'Don't write buildfiles by hand entry' is now mostly duplicate/redundant.
-
-@@ Update pinned repositories (libevent, libasio, xxd).
-
-======================================================================
-
 
 \h1#dont-do|What Not to Do|
 
 @@ Reorder.
 
-\h#dont-fix-upstream|Don't try to fix upstream issues in the package|
+\h#dont-fix-upstream|Try not to fix upstream issues in the \c{build2} package|
 
-@@ TODO
+Any deviations from upstream makes the \c{build2} package more difficult to
+maintain. In particular, if you make a large number of changes to upstream
+source code, releasing a new version will require a lot of work. As a result,
+it is recommended to avoid fixing upstream issues in the \c{build2} package.
+Instead, try to have the issues fixed upstream and wait for them to be
+released as a new version.
 
-- support officially unsupported platforms/compiler
-- suppress warnings
+Sometimes, however, you may have no choice. For example, you may want to add
+support for a platform/compiler that upstream is not willing or capable of
+supporting.
 
-Any deviations from upstream makes it more difficult to maintain. If your
-package makes a large number of changes to upstream, releasing a new version
-will require a lot of work.
+Even if you do fix some issues in the \c{build2} package directly, try to also
+incorporate them upstream so that you don't need to maintain the patches
+forever.
+
+See also \l{#dont-change-upstream Don't change upstream source code layout
+unnecessarily} and \l{#howto-patch-upstream-source How do I patch upstream
+source code}.
 
 
 \h#dont-from-scratch|Don't write \c{buildfiles} from scratch, use \c{bdep-new}|
@@ -3900,46 +3908,10 @@ The \l{bdep-new(1)} command supports a wide variety of
 \l{bdep-new.xhtml#src-layout source layouts}. While it may take a bit of time
 to understand the customization points necessary to achieve the desired layout
 for your first package, this will pay off in spades when you work on
-converting subsequent packages. The recommended sequence of steps is
-as follows:
+converting subsequent packages.
 
-\ol|
-
-\li|Study the upstream source layout. We want to stay as close to upstream as
-possible since this has the best chance of producing an issues-free result
-(see \l{#dont-change-upstream Don't change upstream source code layout
-unnecessarily} for details).|
-
-\li|Craft and execute the \l{bdep-new(1)} command line necessary to achieve
-the upstream layout.|
-
-\li|Study the auto-generated \c{buildfiles} for things that don't fit and need
-to change. But don't rush to start manually editing the result. First get an
-overview of the required changes and then check if it's possible to achieve
-these changes automatically using one of \l{bdep-new(1)} sub-options.
-
-For example, if you see that the generated project assumes the wrong C++ file
-extensions, these can be changed with \c{--lang|-l} sub-options.|
-
-\li|Once you have squeezed as much as possible out of \l{bdep-new(1)}, it's
-time for manual customizations. These would normally include:
-
-\ul|
-
-\li|Replace generated source code with upstream, normally as symlinks from the
-    \c{upstream/} \c{git} submodule.|
-
-\li|Tweak source subdirectory \c{buildfile} that builds the main target
-    (library, executable).|
-
-\li|Add tests and, if necessary, examples.|
-
-\li|Tweak \c{manifest} (in particular the \c{version}, \c{summary}, and
-    \c{license} values).|
-
-\li|Fill in \c{README.md}.|||
-
-|
+See \l{#core-package-craft-cmd Craft \c{bdep\ new} command line to create
+package} for details.
 
 
 \h#dont-change-upstream|Don't change upstream source code layout unnecessarily|
@@ -3948,29 +3920,6 @@ It's a good idea to stay as close to the upstream's source code layout as
 possible. For background and rationale, see \l{#core-package-struct Decide on
 the package source code layout}.
 
-
-\h#dont-forget-update-manifest|Don't forget to update \c{manifest} values|
-
-After \l{#dont-from-scratch generating the project template with \c{bdep-new}},
-don't forget to update at least the key values in the generated \c{manifest}:
-\l{#dont-forget-update-manifest-version \c{version}},
-\l{#dont-forget-update-manifest-license \c{license}}, and
-\l{#dont-forget-update-manifest-summary \c{summary}}.
-
-
-\h2#dont-forget-update-manifest-version|Don't forget to update \c{manifest} value \c{version}|
-
-For \c{version}, use the upstream version directly if it is semver (or
-semver-like, that is, has three version components). Otherwise, see
-\l{https://github.com/build2/HOWTO/blob/master/entries/handle-projects-which-dont-use-semver.md
-How do I handle projects that don't use semantic versioning?} and
-\l{https://github.com/build2/HOWTO/blob/master/entries/handle-projects-which-dont-use-version.md
-How do I handle projects that don't use versions at all?}
-
-
-\h2#dont-forget-update-manifest-license|Don't forget to update \c{manifest} value \c{license}|
-
-\h2#dont-forget-update-manifest-summary|Don't forget to update \c{manifest} value \c{summary}|
 
 \h#dont-header-only|Don't make library header-only if it can be compiled|
 
@@ -4129,9 +4078,6 @@ libfoo/
 
 \h1#howto|Packaging HOWTO|
 
-@@ howto make smoke test (and fix ref). Actually, we now have a step for
-this.
-
 
 \h#howto-debug-macro|How do I expose extra debug macros of a library|
 
@@ -4221,6 +4167,7 @@ libfoo ^1.2.3
 \h#howto-patch-upstream-source|How do I patch upstream source code|
 
 @@ TODO
+
 
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
 

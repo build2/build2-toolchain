@@ -323,7 +323,7 @@ Change to the root directory of the package repository that you have clonned
 on the previous step and run (continuing with our \c{foo} example):
 
 \
-$ cd foo
+$ cd foo/
 $ bdep new --type empty
 $ tree .
 ./
@@ -428,9 +428,9 @@ to update the \c{upstream} submodule to point to this release commit, run the
 following command:
 
 \
-$ cd upstream
+$ cd upstream/
 $ git checkout vX.Y.Z
-$ cd ..
+$ cd ../
 \
 
 Then add and commit these changes:
@@ -846,7 +846,7 @@ foo/
 Now we create the \c{libfoo} package inside:
 
 \
-$ cd foo
+$ cd foo/
 $ bdep new --package --lang c++ --type lib,split libfoo
 $ tree libfoo/
 libfoo/
@@ -1045,7 +1045,7 @@ would have to de-initalize before you can re-run \c{bdep-new}). Continue
 with the above example, the recommended sequence of commands would be:
 
 \
-$ cd libfoo
+$ cd libfoo/
 $ b update
 $ b test
 $ b install config.install.root=/tmp/install
@@ -1495,7 +1495,7 @@ $ rm foo.hpp
 $ ln -s ../../../upstream/include/foo/*.hpp ./
 $ cd -
 
-$ cd src
+$ cd src/
 $ rm foo.cpp
 $ ln -s ../../upstream/src/*.cpp ./
 $ cd -
@@ -1536,7 +1536,7 @@ example, let's say \c{libfoo}'s upstream source directory contains the
 \c{impl/} subdirectory with additional source files:
 
 \
-$ cd src
+$ cd src/
 $ ln -s ../../upstream/impl ./
 $ cd -
 
@@ -3681,9 +3681,9 @@ For example, if the upstream release tag we are interested in is called
 commit, run the following command:
 
 \
-$ cd upstream
+$ cd upstream/
 $ git checkout v2.2.0
-$ cd ..
+$ cd ../
 
 $ git add .
 $ git status
@@ -3704,7 +3704,7 @@ of changes between the two versions. For example, assuming the latest packaged
 version is tagged \c{v2.1.0} and the new version is tagged \c{v2.2.0}:
 
 \
-$ cd upstream
+$ cd upstream/
 $ gitk v2.1.0..v2.2.0 &
 \
 
@@ -4166,7 +4166,150 @@ libfoo ^1.2.3
 
 \h#howto-patch-upstream-source|How do I patch upstream source code|
 
-@@ TODO
+If you need to change something in the upstream source code, there are several
+options: You can make a copy of the upstream source file and make the
+modifications there. While straightforward, this approach has one major
+drawback: you will have to keep re-applying the changes for every subsequent
+version unless upstream incorporates your changes. The other two options try
+to work around this drawback.
+
+The first alternative option is to modify upstream source code automatically
+during the build, typically using an ad hoc recipe. This approach works best
+when the changes are regular and can be applied mechanically with something
+like the \l{testscript#builtins-sed \c{sed} builtin}.
+
+The second alternative option is to use the C/C++ preprocessor to make the
+necessary changes to the upstream source code during compilation. Unlike the
+first altrnative, this approach doesn't have a prescribed way to apply it in
+every situation and often requires some imagination. Note that it also has the
+tendency to quickly get out of hand, at which point it's wise to keep it
+simple and use the first option (manual modification).
+
+The following sections examine each approach in detail.
+
+
+\h2#howto-patch-upstream-source-manual|Modifying upstream source code manually|
+
+As an illustration of this approach, let's say we need to patch
+\c{src/foo.cpp} in our \c{libfoo} example from the previous sections (see the
+\l{#core-fill-source Fill with upstream source code} step for a refresher).
+The recommended sequence of steps is as follows:
+
+\ol|
+
+\li|Rename the upstream symlink to \c{.orig}:
+
+\
+$ cd libfoo/src/
+$ mv foo.cpp foo.cpp.orig
+\
+
+|
+
+\li|Make a deep copy of \c{.orig}:
+
+\
+$ cp -H foo.cpp.orig foo.cpp
+\
+
+|
+
+\li|Make any necessary modifications in the deep copy:
+
+\
+$ edit foo.cpp
+\
+
+|
+
+\li|Create a patch for the modifications:
+
+\
+$ diff -u foo.cpp.orig foo.cpp >foo.cpp.patch
+\
+
+||
+
+The presence of the \c{.orig} and \c{.patch} files makes it clear that the
+upstream code was modified. They are also useful when re-applying the changes
+to the new version of the upstream source code. The recommended sequence of
+steps in this case is as follows:
+
+\ol|
+
+\li|After the \c{upstream} submodule update (see the
+\l{#core-version-management-new-version-submodule New version: update
+\c{upstream} submodule} step), the \c{.orig} symlink points to the new version
+of the upstream source file.|
+
+\li|Overwrite old modified version with a deep copy of new \c{.orig}:
+
+\
+$ cp -H foo.cpp.orig foo.cpp
+\
+
+|
+
+\li|Apply old modifications to the new deep copy:
+
+\
+$ patch <foo.cpp.patch
+\
+
+If some hunks of the patch could not be applied, manually resolve any
+conflicts.|
+
+\li|If the patch did not apply cleanly, regenerate it:
+
+\
+$ diff -u foo.cpp.orig foo.cpp >foo.cpp.patch
+\
+
+||
+
+@@ Add entry/link from New version steps.
+
+
+\h2#howto-patch-upstream-source-build|Modifying upstream source code during build|
+
+As an illustration of this approach, let's say upstream is using the
+\c{${VAR\}} style variable substitutions in their \c{config.h.cmake} instead
+of the more traditional \c{@VAR@} style:
+
+\
+/* config.h.cmake */
+
+#define FOO_VERSION \"${PROJECT_VERSION}\"
+\
+
+The \c{${VAR\}} style is not supported by the \c{build2}
+\l{https://github.com/build2/libbuild2-autoconf \c{autoconf}} module which
+means we cannot use the upstream \c{config.h.cmake} as is. While we could
+patch this file manually to use \c{@VAR@} instead, this is a pretty mechanical
+change that can be easily made with a simple ad hoc recipe during the build,
+freeing us from manually applying the same changes in subsequent versions. For
+example:
+
+\
+using autoconf
+
+h{config}: in{config.h.in}
+{
+  autoconf.flavor = cmake
+  PROJECT_VERSION = $version
+}
+
+in{config.h.in}: file{config.h.cmake}
+{{
+  sed -e 's/\$\{(.+)\}/@\1@/g' $path($<) >$path($>)
+}}
+\
+
+
+\h2#howto-patch-upstream-source-preproc|Modifying upstream source code with preprocessor|
+
+@@@
+
 
 
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|

@@ -21,6 +21,9 @@
 //
 // @@ Note on library metadata where talk about configuration. Also about
 //    autoconf.
+//
+// @@ Add link from metadata HOWTO to "Modifying upstream source code with
+//    preprocessor".
 
 "
 \h0#preface|Preface|
@@ -703,7 +706,7 @@ public headers are included and where they are installed. The two common
 \i{good} practices is to either include the public headers with a library name
 as a subdirectory, for example, \c{#include\ <foo/util.h>}, or to include the
 library name into each public header name, for example, \c{#include\
-<foo_util.h>} or \c{#include\ <foo.h>} (in the last example the header name is
+<foo-util.h>} or \c{#include\ <foo.h>} (in the last example the header name is
 the library name itself, which is also fairly common). Unfortunately, there is
 also a fairly common \i{bad} practice: having generically named headers (such
 as \c{util.h}) included without the library name as a subdirectory.
@@ -729,13 +732,13 @@ with the above example, a header that is included as \c{<foo/util.h>} would
 normally be installed as \c{/usr/include/foo/util.h}. On the other hand, if
 the library name is part of the header name, then the headers are usually (but
 not always) installed directly into, say, \c{/usr/include/}, for example as
-\c{/usr/include/foo_util.h}.
+\c{/usr/include/foo-util.h}.
 
 \N|While these are the commonly used installation schemes, there are
 deviations. In particular, in both cases upstream may choose to add an
-additional subdirectory when installing (so the above examples we instead end
-up with, say, \c{/usr/include/foo_v1/foo/util.h} and
-\c{/usr/include/foo_v1/sub/foo_util.h}). See
+additional subdirectory when installing (so the above examples will instead
+end up with, say, \c{/usr/include/foo-v1/foo/util.h} and
+\c{/usr/include/foo-v1/sub/foo-util.h}). See
 \l{#howto-extra-header-install-subdir How do I handle extra header
 installation subdirectory} if you encounter such a case.|
 
@@ -1745,7 +1748,7 @@ Normally the only change that you would make to this \c{buildfile} is to
 adjust the installation location of headers (see \l{b#intro-operations-install
 Installing} for background). In particular, if our headers were included
 without the \c{<foo/...>} prefix but instead contained the library name in
-their names (for example, \c{foo_util.hpp}), then the installation setup would
+their names (for example, \c{foo-util.hpp}), then the installation setup would
 instead look like this:
 
 \
@@ -3759,6 +3762,11 @@ Also don't forget about tests, examples, etc., which may also add new or
 remove old source files (typically new tests). See
 \l{#core-test-upstream-convert Convert smoke test to upstream tests}.
 
+If there are any manual modifications to the upstream source code, then you
+will also need to re-apply them to the new version as discussion in
+\l{#howto-patch-upstream-source-manual Modifying upstream source code
+manually}.
+
 
 \h2#core-version-management-new-version-build|New version: changes to build system|
 
@@ -4267,8 +4275,6 @@ $ diff -u foo.cpp.orig foo.cpp >foo.cpp.patch
 
 ||
 
-@@ Add entry/link from New version steps.
-
 
 \h2#howto-patch-upstream-source-build|Modifying upstream source code during build|
 
@@ -4308,8 +4314,60 @@ in{config.h.in}: file{config.h.cmake}
 
 \h2#howto-patch-upstream-source-preproc|Modifying upstream source code with preprocessor|
 
-@@@
+A good illustration of this approach is adding the \c{build2} metadata to an
+executable (see
+\l{https://github.com/build2/HOWTO/blob/master/entries/convey-additional-information-with-exe-lib.md
+How do I convey additional information (metadata) with executables and C/C++
+libraries?} for background). Let's say we have a symlink to upstream's
+\c{main.c} that implements the executable's \c{main()} function and we need to
+add a snipped of code at the beginning of this function that handles the
+\c{--build2-metadata} option. While manually modifying \c{main.c} is not a
+wrong approach, we can try to be clever and do it automatically with a
+preprocessor.
 
+Specifically, we can create another file next to the \c{main.c} symlink,
+calling it, for example, \c{main-build2.c}, with the following content:
+
+\
+/* Handle --build2-metadata in main() (see also buildfile). */
+
+#define main xmain
+#include \"main.c\"
+#undef main
+
+#include <stdio.h>
+#include <string.h>
+
+int main (int argc, const char** argv)
+{
+  if (argc == 2 && strncmp (argv[1], \"--build2-metadata=\", 18) == 0)
+  {
+    printf (\"# build2 buildfile foo\n\");
+    printf (\"export.metadata = 1 foo\n\");
+    printf (\"foo.name = [string] foo\n\");
+    ...
+    return 0;
+  }
+
+  return xmain (argc, argv);
+}
+\
+
+The idea here is to rename the original \c{main()} with the help of the C
+preprocessor and provide our own \c{main()} which, after handling
+\c{--build2-metadata} calls the original. One notable deal-breaker for this
+approach are C++ implementations of \c{main()} that don't have an explicit
+\c{return}. There is also a better chance in C++ for the \c{main} macro to
+replace something unintended.
+
+To complete this we also need to exclude \c{main.c} from compilation in
+our \c{buildfile} (since it is compiled as part of \c{main-build2.c} via
+the preprocessor inclusion). For example:
+
+\
+exe{foo}: {h c}{** -main}
+exe{foo}: c{main}: include = adhoc  # Included in main-build2.c.
+\
 
 
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
@@ -4320,14 +4378,58 @@ libraries cannot coexist, neither in the same build nor when installed. For
 background and details, see \l{intro#proj-struct Canonical Project Structure}.
 
 @@ TODO
+@@ Dual?
 
 
 \h#howto-extra-header-install-subdir|How do I handle extra header installation subdirectory|
 
 This sections explains how to handle an additional header installation
-subdirectory.
+subdirectory. As an illustration of the problem, consider the \c{libfoo}
+example from the previous sections (see the \l{#core-fill-source Fill with
+upstream source code} step for a refresher). In that example the library
+headers are included as \c{<foo/util.hpp>} and installed as, say,
+\c{/usr/include/foo/util.hpp}. In this scheme the installed header inclusion
+works without requiring any extra steps from our side because the compiler
+searches for header in \c{/usr/include} by default.
 
-@@ TODO
+However, some libraries choose to install their headers into a subdirectory
+of, say, \c{/usr/include} but without having this subdirectory as part of the
+inclusion path (like \c{foo/} in \c{<foo/util.hpp>}). The two typical reasons
+for this are support for installing multiple versions of the same library
+side-by-side (for example, \c{/usr/include/foo-v1/foo/util.hpp}) and not using
+the library name as the inclusion directory prefix and then having to hide the
+headers in a subdirectory due to potential clashes with other headers (if
+installed directly into, say, /c{/usr/include}).
+
+In such cases the installed header inclusion does not work out of the box and
+we have to arrange for an additional header search path to be added via
+\c{pkg-config}. Let's use the versioned library case to illustrate this
+technique. The relevant part from the \l{#core-adjust-build-src-header header
+\c{buildfile}} will look like this:
+
+\
+# Install into the foo-vN/foo/ subdirectory of, say, /usr/include/
+# recreating subdirectories.
+#
+{hxx ixx txx}{*}:
+{
+  install         = include/\"foo-v$version.major\"/foo/
+  install.subdirs = true
+}
+\
+
+The part that we need to add, this time to the
+\l{#core-adjust-build-src-source source \c{buildfile}}, looks like this:
+
+\
+# Make sure headers installed into, say, /usr/include/foo-vN/foo/
+# can be included as <foo/*.hpp> by overriding the header search
+# path in the generated pkg-config files.
+#
+lib{foo}: cxx.pkgconfig.include = include/\"foo-v$version.major\"/
+\
+
+\N|The variable will be \c{c.pkgconfig.include} for a C library.|
 
 
 \h#howto-no-extension-header|How do I handle headers without extensions|

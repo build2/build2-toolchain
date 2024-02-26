@@ -4373,12 +4373,149 @@ exe{foo}: c{main}: include = adhoc  # Included in main-build2.c.
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
 
 This sections explains how to deal with libraries that include their public,
-generically-named headers without the library name as directory prefix. Such
-libraries cannot coexist, neither in the same build nor when installed. For
-background and details, see \l{intro#proj-struct Canonical Project Structure}.
+generically-named headers without the library name as a directory prefix. Such
+libraries cannot coexist, neither in the same build nor when installed.
 
-@@ TODO
-@@ Dual?
+Specifically, as an illustration of the problem, consider the \c{libfoo}
+library with a public header named \c{util.h} that is included as \c{<util.h>}
+(instead of, say, \c{<libfoo/util.h>} or \c{<foo/util.h>}). If this library's
+headers are installed directly into, say, /c{/usr/include} , then if two such
+libraries happened to be installed at the same time, then one will overwrite
+the other's header. There are also problems in the non-installed case: if two
+such libraries are used by the same project, then which \c{<util.h>} header
+gets included depends on which library's header search path ends up being
+specified first on the command line (with the \c{-I} option).
+
+These issues are severe enough that libraries with such inclusion issues
+cannot be published to \l{https://cppget.org cppget.org} without them being
+addressed in the \c{build2} package. Thankfully, most library authors these
+days use the library name as an inclusion prefix (or sometimes they have
+headers that are decorated with the library name). However, libraries that do
+not follow these guidelines do exist and this section describes how to change
+their inclusion scheme if you are attempting to package one of them.
+
+\N|One notable consequence of changing the inclusion scheme is that it will no
+longer be possible to use a system-installed version of the package (because
+it presumably still uses the unqualified inclusion scheme). Note, however,
+that distributions like Debian and Fedora have the same co-existence issue as
+we do and are generally strict about potentially header clashes. In
+particular, it is not uncommon to find Debian packages installing library's
+headers into subdirectories of \c{/usr/include} to avoid such clashes. And if
+you find this to be the case for the library you are packaging, then it may
+make sense to use the same prefix as used by the distributions for
+compatibility.
+
+It is also possible that distributions disregard this considerations for some
+libraries. This usually happens for older, well-known libraries that happened
+to be installed this way in the early days and changing things now will be too
+disruptive. In a sense, it is understood that such libraries effectively
+\"own\" the unqualified headers names that they happen to be using. If you
+think you are packaging such a libraries,
+\l{https://build2.org/community.xhtml#help get in touch} to discuss this
+further since it may make sense to also disregard this rule in
+\l{https://cppget.org cppget.org}.|
+
+As a concrete example of the approach, let's continue with \c{libfoo} that has
+\c{util.h} and which upstream expects the users to include as \c{<util.h>}.
+The is what the upstream source code layout may look like:
+
+\
+libfoo/
+├── include/
+│   └── util.h
+└── src/
+    └── ...
+\
+
+Our plan is to change the inclusion scheme in the \c{build2} package from
+\c{<util.h>} to \c{<libfoo/util.h>}. To this effect, we use a slightly
+modified layout for our package:
+
+\
+libfoo/
+├── include/
+│   └── libfoo/
+│       └── util.h  -> ../upstream/include/util.h
+└── src/
+    └── ...          -> ../upstream/src/...
+\
+
+The installation-related section in our \l{#core-adjust-build-src-header
+header \c{buildfile}} will look like this:
+
+\
+# Install into the libfoo/ subdirectory of, say, /usr/include/
+# recreating subdirectories.
+#
+{hxx ixx txx}{*}:
+{
+  install         = include/libfoo/
+  install.subdirs = true
+}
+\
+
+In the \l{#core-adjust-build-src-source source \c{buildfile}} we will most
+likely need to add the \c{include/libfoo} header search path since the
+upstream source files continue to include public headers without the library
+prefix (there should be no harm in that and it's not worth modifying them):
+
+\
+# Build options.
+#
+out_pfx_inc = [dir_path] $out_root/include/
+src_pfx_inc = [dir_path] $src_root/include/
+out_pfx_src = [dir_path] $out_root/src/
+src_pfx_src = [dir_path] $src_root/src/
+
+# Unqualified (without <libfoo/...>) header search paths.
+#
+out_pfx_inc_unq = [dir_path] $out_root/include/libfoo
+src_pfx_inc_unq = [dir_path] $src_root/include/libfoo
+
+cxx.poptions =+ \"-I$out_pfx_src\" \"-I$src_pfx_src\" \\
+                \"-I$out_pfx_inc\" \"-I$src_pfx_inc\" \\
+                \"-I$out_pfx_inc_unq\" \"-I$src_pfx_inc_unq\"
+\
+
+It is also possible that public headers include each other as \c{<util.h>}
+rather than the more common \c{\"util.h\"}. If that's the case, then we need
+to fix that and there are two ways to do that. The first approach is to patch
+the public headers to include each other with the library prefix (that is,
+\c{<libfoo/util.h>}, etc). See \l{#howto-patch-upstream-source How do I patch
+upstream source code} for details.
+
+The second approach is to support including public headers both ways, that is,
+as \c{<libfoo/util.h>} and as \c{<util.h>}. This will not only solve the above
+problem (public headers including each other), but also support any existing
+code that uses this library and most likely includes its headers the old way,
+without the prefix.
+
+There is, however, a major drawback to this approach: while the installation
+of the library can now co-exist with other libraries (because we install its
+public headers into, say, \c{/usr/include/libfoo}), it may still not be usable
+in combination with other libraries from the same build (because we still add
+the unqualified header search path). If you still want to continue with this
+dual inclusion support, the way to achieve it is by exporting the unqualified
+header search path and also adding it to the \c{pkg-config} files (see
+\l{#howto-extra-header-install-subdir How do I handle extra header
+installation subdirectory} for background). For example:
+
+\
+# Export options.
+#
+lib{foo}:
+{
+  cxx.export.poptions = \"-I$out_pfx_inc\" \"-I$src_pfx_inc\" \\
+                        \"-I$out_pfx_inc_unq\" \"-I$src_pfx_inc_unq\"
+  cxx.export.libs = $intf_libs
+}
+
+# Make sure headers installed into, say, /usr/include/libfoo/
+# can also be included without the directory prefix for backwards
+# compatibility.
+#
+lib{foo}: cxx.pkgconfig.include = include/ include/libfoo/
+\
 
 
 \h#howto-extra-header-install-subdir|How do I handle extra header installation subdirectory|

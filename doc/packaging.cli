@@ -13,7 +13,10 @@
 
 // TODO:
 //
-// @@ Update pinned repositories (libevent, libasio, xxd).
+// @@ Update pinned repositories (libevent, libasio, xxd, libzstd).
+//
+// @@ Update build2-packaging front page with link to this guide (add
+//    organization README?)
 //
 // @@ Enforce continous versioning with pre-commit hook -- maybe add a note?
 //
@@ -24,6 +27,17 @@
 //
 // @@ Add link from metadata HOWTO to "Modifying upstream source code with
 //    preprocessor".
+//
+// @@ Default configuration like SQLite -- look in Debian/Fedora (want to
+//    be substitutable with system-installed).
+//
+// @@ Optional dependencies like xxhash.
+//
+// @@ What not to do: bundle catch2.hpp.
+//
+// @@ Mapping to system package manager names/versions.
+//
+// @@ bdep-new: export stub for executables.
 
 "
 \h0#preface|Preface|
@@ -35,16 +49,25 @@ repository. For additional information, including documentation for individual
 \c{build2} toolchain components, man pages, HOWTOs, etc., refer to the project
 \l{https://build2.org/doc.xhtml Documentation} page.
 
-\N|This document is a work in progress and is incomplete.|
-
 
 \h1#intro|Introduction|
 
-The aim of this guide is to ease the convertion of third-party C/C++ projects
+The aim of this guide is to ease the conversion of third-party C/C++ projects
 to the \c{build2} build system and publishing them to the
 \l{https://cppget.org cppget.org} package repository by codifying the best
-practices and techniques. By following the presented guidelines you also make
-it easier for others to review your work and help with ongoing maintenance.
+practices and techniques. By following the presented guidelines you will also
+make it easier for others to review your work and help with ongoing
+maintenance.
+
+\N|A \c{build2}-based project can only consume packages that use the
+\c{build2} build system (with the exception of
+\l{https://build2.org/faq.xhtml#why-syspkg system-installed packages}). In
+other words, there is no support for \"wrapping\" or otherwise adapting
+third-party projects' existing build systems. While replacing the build system
+unquestionably requires more work upfront, the \c{build2} project's experience
+is that the long-term benefits of this effort are well justified (see
+\l{https://build2.org/faq.xhtml#why-package-managers How does \c{build2}
+compare to other package managers?} for details).|
 
 The primary focus of this guide are existing C/C++ projects that use a
 different build system and that are maintained by a third-party, which we will
@@ -76,9 +99,9 @@ steps:
 
 \li|Tweak the generated \c{buildfiles} to match upstream build.|
 
-\li|Test using the \l{https://ci.cppget.org \c{build2} CI service}.|
+\li|Test locally and using the \l{https://ci.cppget.org \c{build2} CI service}.|
 
-\li|Publish the package to \l{https://cppget.org cppget.org}.|
+\li|Release and publish the package to \l{https://cppget.org cppget.org}.|
 
 |
 
@@ -93,30 +116,29 @@ typical look like this:
 
 \li|Tweak \c{buildfiles} to match changes to upstream build, if any.|
 
-\li|Test using the \l{https://ci.cppget.org \c{build2} CI service}.|
+\li|Test locally and using the \l{https://ci.cppget.org \c{build2} CI service}.|
 
-\li|Publish the package to \l{https://cppget.org cppget.org}.|
+\li|Release and publish the package to \l{https://cppget.org cppget.org}.|
 
 |
 
 While packaging a simple library or executable is relatively straightforward,
-the C and C++ languages and their ecosystem is famous for a large amount
-varience in the platforms, compilers, and build systems used. This leads to
-what appears to be an endless list of special considerations that are
-applicable in certain, more complex cases.
+the C and C++ languages and their ecosystems are infamous for a large amount
+variability in the platforms, compilers, source code layouts, and build
+systems used. This leads to what looks like an endless list of special
+considerations that are only applicable in certain, more complex cases.
 
-As result, the presented guidelines are divided into four chapters: The
-\l{#core Core Guidelines} cover steps that are applicable to all or most
-packaging efforts. As mentioned earlier, these steps will assume packaging a
-library but they should be easy to adapt to executables. This chapter is
-followed by \l{#dont-do What Not to Do} which covers the common packaging
-mistakes and omissions. These are unfortunately relatively common because
-experience with other build systems often does not translate directly to
-\c{build2} and some techniques (such as header-only libraries) are
-discouraged. The last two chapters are \l{#howto HOWTO} and \l{#faq FAQ} which
-cover the above-mentioned long list of special considerations that are only
-applicable in certain cases as well as answer frequent packaging-related
-questions, respectively.
+As result, the presented guidelines are divided into four chapters: \l{#core
+Common Guidelines} cover steps that are applicable to most packaging
+efforts. As mentioned earlier, these steps will assume packaging a library but
+they should be easy to adapt to executables. This chapter is followed by
+\l{#dont-do What Not to Do} which covers the common packaging mistakes and
+omissions. These are unfortunately relatively common because experience with
+other build systems often does not translate directly to \c{build2} and some
+techniques (such as header-only libraries) are discouraged. The last two
+chapters are \l{#howto HOWTO} and \l{#faq FAQ}. The former covers the
+above-mentioned long list of special considerations that are only applicable
+in certain cases while the latter answer frequent packaging-related questions.
 
 Besides the presented guidelines you may also find the existing packages found
 in \l{https://github.com/build2-packaging github.com/build2-packaging} a good
@@ -167,11 +189,11 @@ then all the \c{CMakeLists.txt}, \c{*.cmake}, etc., files will constitute its
 build system.||
 
 To avoid confusion, in this guide we will always use the term \i{project} to
-refer to upstream and \i{package} to refer to its \c{build2} conversion,
-even though we would normally call our own \c{build2}-based work a project,
-not a package (see \l{b#intro-proj-struct Project Structure} for details on
-the \c{build2} terminology). Some commonly used \c{build2}-side terms in this
-guide include:
+refer to upstream and \i{package} to refer to its \c{build2} conversion, even
+though we would normally call our own \c{build2}-based work a project, not a
+package (see \l{b#intro-proj-struct Project Structure} for details on the
+\c{build2} terminology in this area). Some commonly used \c{build2}-side terms
+in this guide include:
 
 
 \dl|
@@ -188,7 +210,12 @@ Sometimes it makes sense to split the upstream project into multiple
 the package repository structure must become multi-package.||
 
 
-\h1#core|Core Guidelines|
+\h1#core|Common Guidelines|
+
+This chapter describes the recommended sequence of steps for packaging a
+third-party project for \c{build2} with the end-goal of publishing it to the
+\l{https://cppget.org cppget.org} package repository.
+
 
 \h#core-repo|Setup the package repository|
 
@@ -1040,7 +1067,12 @@ sure public headers are installed into the same location as upstream.
 \N|The \c{bdep-new}-generated library is a simple \"Hello, World!\" example
 that can nevertheless be built, tested, and installed. The idea here is to
 verify it matches upstream using the generated source files before replacing
-them with the upstream source file symlinks.|
+them with the upstream source file symlinks.
+
+If you are using Windows, then you will need to temporarily replace the
+\c{no-symexport} sub-option with \c{auto-symexport} in order to make the
+generated library buildable. But do not forget to drop this sub-option on
+the next step.|
 
 Note that at this stage its easiest to build, test, and install in source
 directly sidestepping the \c{bdep} initialization of the package (which you
@@ -3877,29 +3909,6 @@ it corresponds to the \c{2.Y.Z} release series. If you already have the
 
 \h1#dont-do|What Not to Do|
 
-@@ Reorder.
-
-\h#dont-fix-upstream|Try not to fix upstream issues in the \c{build2} package|
-
-Any deviations from upstream makes the \c{build2} package more difficult to
-maintain. In particular, if you make a large number of changes to upstream
-source code, releasing a new version will require a lot of work. As a result,
-it is recommended to avoid fixing upstream issues in the \c{build2} package.
-Instead, try to have the issues fixed upstream and wait for them to be
-released as a new version.
-
-Sometimes, however, you may have no choice. For example, you may want to add
-support for a platform/compiler that upstream is not willing or capable of
-supporting.
-
-Even if you do fix some issues in the \c{build2} package directly, try to also
-incorporate them upstream so that you don't need to maintain the patches
-forever.
-
-See also \l{#dont-change-upstream Don't change upstream source code layout
-unnecessarily} and \l{#howto-patch-upstream-source How do I patch upstream
-source code}.
-
 
 \h#dont-from-scratch|Don't write \c{buildfiles} from scratch, use \c{bdep-new}|
 
@@ -3922,7 +3931,28 @@ See \l{#core-package-craft-cmd Craft \c{bdep\ new} command line to create
 package} for details.
 
 
-\h#dont-change-upstream|Don't change upstream source code layout unnecessarily|
+\h#dont-fix-upstream|Avoid fixing upstream issues in the \c{build2} package|
+
+Any deviations from upstream makes the \c{build2} package more difficult to
+maintain. In particular, if you make a large number of changes to upstream
+source code, releasing a new version will require a lot of work. As a result,
+it is recommended to avoid fixing upstream issues in the \c{build2} package.
+Instead, try to have the issues fixed upstream and wait for them to be
+released as a new version.
+
+Sometimes, however, you may have no choice. For example, you may want to add
+support for a platform/compiler that upstream is not willing or capable of
+supporting.
+
+Even if you do fix some issues in the \c{build2} package directly, try to also
+incorporate them upstream so that you don't need to maintain the patches
+forever.
+
+See also \l{#dont-change-upstream Avoid changing upstream source code layout}
+and \l{#howto-patch-upstream-source How do I patch upstream source code}.
+
+
+\h#dont-change-upstream|Avoid changing upstream source code layout|
 
 It's a good idea to stay as close to the upstream's source code layout as
 possible. For background and rationale, see \l{#core-package-struct Decide on
@@ -4087,92 +4117,7 @@ libfoo/
 \h1#howto|Packaging HOWTO|
 
 
-\h#howto-debug-macro|How do I expose extra debug macros of a library|
-
-Sometime libraries provide extra debugging facilities that are usually enabled
-or disabled with a macro. For example, \c{libfoo} may provide the
-\c{LIBFOO_DEBUG} macro that enables additional sanity checks, tracing, etc.
-Normally such facilities are disable by default.
-
-While it may seem like a good idea to detect a debug build and enable this
-automatically, it is not: such facilities usually impose substantial overhead
-and the presence of debug information does not mean that performance is not
-important (people routinely make optimized builds with debug information).
-
-As a result, the recommended approach is to expose this as a configuration
-variable that the end-users of the library can use (see \l{b#proj-config
-Project Configuration} for background). Continue with the \c{libfoo} example,
-we can add \c{config.libfoo.debug} to its \c{build/root.build}:
-
-\
-# build/root.build
-
-config [bool] config.libfoo.debug ?= false
-\
-
-And then define the \c{LIBFOO_DEBUG} macro based on that in the \c{buildfile}:
-
-\
-# src/buildfile
-
-if $config.libfoo.debug
-  cxx.poptions += -DLIBFOO_DEBUG
-\
-
-If the macro is also used in the library's interface (for example, in inline
-or template functions), then we will also need to export it:
-
-\
-# src/buildfile
-
-if $config.libfoo.debug
-{
-  cxx.poptions += -DLIBFOO_DEBUG
-  lib{foo}: cxx.export.poptions += -DLIBFOO_DEBUG
-}
-\
-
-\N|If the debug facility in question should be enabled by default even in the
-optimized builds (in which case the macro usually has the \c{NO_DEBUG}
-semantics), the other option is to hook it up to the standard \c{NDEBUG}
-macro, for example, in the library's configuration header file.|
-
-Such \c{.debug} configuration variables should primarily be meant for the
-end-user to selectively enabled extra debugging support in certain libraries
-of their build. However, if your project depends on a number of libraries with
-such extra debuggin support and it generally makes sense to also enable this
-support in dependencies if it is enabled in your project, then you may want to
-propagate your \c{.debug} configuration value to the dependencies (see the
-\l{bpkg#manifest-package-depends \c{depends} package \c{manifest} value} for
-details on dependency configuration). You, however, should still allow the
-user to override this decision on the per-dependency basis.
-
-Continuing with the above example, let's say we have \c{libbar} with
-\c{config.libbar.debug} that depends on \c{libfoo} and that wishes to by
-default enable debugging in \c{libfoo} if it is enabled in \c{libbar}.
-This is how we can correctly arrange for this in \c{libbar}'s \c{manifest}:
-
-\
-depends:
-\\
-libfoo ^1.2.3
-{
-  # We prefer to enable debug in libfoo if enabled in libbar
-  # but accept if it's disabled (for example, by the user).
-  #
-  prefer
-  {
-    if $config.libbar.debug
-      config.libfoo.debug = true
-  }
-
-  accept (true)
-}
-\\
-\
-
-
-\h#howto-patch-upstream-source|How do I patch upstream source code|
+\h#howto-patch-upstream-source|How do I patch upstream source code?|
 
 If you need to change something in the upstream source code, there are several
 options: You can make a copy of the upstream source file and make the
@@ -4370,7 +4315,7 @@ exe{foo}: c{main}: include = adhoc  # Included in main-build2.c.
 \
 
 
-\h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice|
+\h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice?|
 
 This sections explains how to deal with libraries that include their public,
 generically-named headers without the library name as a directory prefix. Such
@@ -4518,7 +4463,7 @@ lib{foo}: cxx.pkgconfig.include = include/ include/libfoo/
 \
 
 
-\h#howto-extra-header-install-subdir|How do I handle extra header installation subdirectory|
+\h#howto-extra-header-install-subdir|How do I handle extra header installation subdirectory?|
 
 This sections explains how to handle an additional header installation
 subdirectory. As an illustration of the problem, consider the \c{libfoo}
@@ -4569,7 +4514,7 @@ lib{foo}: cxx.pkgconfig.include = include/\"foo-v$version.major\"/
 \N|The variable will be \c{c.pkgconfig.include} for a C library.|
 
 
-\h#howto-no-extension-header|How do I handle headers without extensions|
+\h#howto-no-extension-header|How do I handle headers without extensions?|
 
 If all the headers in a project have no extension, then you can simply
 specify the empty \c{extension} value for the \c{hxx{\}} target type
@@ -4615,6 +4560,91 @@ lib{hello}: {hxx cxx}{*} hxx{hello.}
 Notice the trailing dot in \c{hxx{hello.\}} \- this is the explicit \"no
 extension\" specification. See \l{b#targets Targets and Target Types}
 for details.
+
+
+\h#howto-debug-macro|How do I expose extra debug macros of a library?|
+
+Sometime libraries provide extra debugging facilities that are usually enabled
+or disabled with a macro. For example, \c{libfoo} may provide the
+\c{LIBFOO_DEBUG} macro that enables additional sanity checks, tracing, etc.
+Normally such facilities are disable by default.
+
+While it may seem like a good idea to detect a debug build and enable this
+automatically, it is not: such facilities usually impose substantial overhead
+and the presence of debug information does not mean that performance is not
+important (people routinely make optimized builds with debug information).
+
+As a result, the recommended approach is to expose this as a configuration
+variable that the end-users of the library can use (see \l{b#proj-config
+Project Configuration} for background). Continue with the \c{libfoo} example,
+we can add \c{config.libfoo.debug} to its \c{build/root.build}:
+
+\
+# build/root.build
+
+config [bool] config.libfoo.debug ?= false
+\
+
+And then define the \c{LIBFOO_DEBUG} macro based on that in the \c{buildfile}:
+
+\
+# src/buildfile
+
+if $config.libfoo.debug
+  cxx.poptions += -DLIBFOO_DEBUG
+\
+
+If the macro is also used in the library's interface (for example, in inline
+or template functions), then we will also need to export it:
+
+\
+# src/buildfile
+
+if $config.libfoo.debug
+{
+  cxx.poptions += -DLIBFOO_DEBUG
+  lib{foo}: cxx.export.poptions += -DLIBFOO_DEBUG
+}
+\
+
+\N|If the debug facility in question should be enabled by default even in the
+optimized builds (in which case the macro usually has the \c{NO_DEBUG}
+semantics), the other option is to hook it up to the standard \c{NDEBUG}
+macro, for example, in the library's configuration header file.|
+
+Such \c{.debug} configuration variables should primarily be meant for the
+end-user to selectively enabled extra debugging support in certain libraries
+of their build. However, if your project depends on a number of libraries with
+such extra debuggin support and it generally makes sense to also enable this
+support in dependencies if it is enabled in your project, then you may want to
+propagate your \c{.debug} configuration value to the dependencies (see the
+\l{bpkg#manifest-package-depends \c{depends} package \c{manifest} value} for
+details on dependency configuration). You, however, should still allow the
+user to override this decision on the per-dependency basis.
+
+Continuing with the above example, let's say we have \c{libbar} with
+\c{config.libbar.debug} that depends on \c{libfoo} and that wishes to by
+default enable debugging in \c{libfoo} if it is enabled in \c{libbar}.
+This is how we can correctly arrange for this in \c{libbar}'s \c{manifest}:
+
+\
+depends:
+\\
+libfoo ^1.2.3
+{
+  # We prefer to enable debug in libfoo if enabled in libbar
+  # but accept if it's disabled (for example, by the user).
+  #
+  prefer
+  {
+    if $config.libbar.debug
+      config.libfoo.debug = true
+  }
+
+  accept (true)
+}
+\\
+\
 
 
 \h1#faq|Packaging FAQ|

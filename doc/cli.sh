@@ -67,9 +67,9 @@ function gen () # <name>
   ps2pdf14 -sPAPERSIZE=letter -dOptimize=true -dEmbedAllFonts=true build2-toolchain-$n-letter.ps build2-toolchain-$n-letter.pdf
 }
 
-#gen intro1
-gen intro
 gen packaging
+gen intro
+#gen intro1
 
 # Auto-heading doesn't work since it is broken into multiple doc strings.
 #

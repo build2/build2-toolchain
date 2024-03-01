@@ -1011,6 +1011,15 @@ situation is not very common in the header prefix, it can be encountered in the
 source prefix of more complex projects, where upstream wishes to organize the
 source files into components.||
 
+\N|If upstream uses a mixture of C and C++, then it's recommended to set this
+up using the \c{--lang} sub-option of \c{bdep-new}. For example:
+
+\
+$ bdep new --lang c++,c ...
+\
+
+|
+
 Continuing with our \c{libfoo} example, assuming upstream provides own symbol
 exporting, the final \c{bdep-new} command line would be:
 
@@ -1381,31 +1390,33 @@ $ git status
 \h2#core-fill-depend|Add dependencies|
 
 If the upstream project has any dependencies, now is a good time to specify
-them so that when we attempt to build upstream source code, they are already
-present.
+them so that when we attempt to build the upstream source code, they are
+already present.
 
-Identifiying whether the upstream project has dependencies is not always easy.
+Identifying whether the upstream project has dependencies is not always easy.
 The natural first places to check are the documentation and the existing build
 system. Sometimes projects also bundle their dependencies with the project
-source code (also called vendoring). So it makes sense to look around the
+source code (sometimes called vendoring). So it makes sense to look around the
 upstream repository for anything that looks like bundled dependencies.
-Normally we would need to \"unbundle\" such dependencies when converting
-to \c{build2} by instead specifying a dependency on an external package.
+Normally we would need to \"unbundle\" such dependencies when converting to
+\c{build2} by instead specifying a dependency on an external package.
 
 \N|While there are several reasons we insist on unbundling of dependencies,
 the main one is that bundling can cause multiple, potentially conflicting
 copied of the same dependency to exist in the build. This can cause subtle
-build failures that are hard to understand and to track down.|
+build failures that are hard to understand and track down.|
 
 One particularly common case to check for is bundling of the testing
-framework, such as Catch2, by C++ projects. If you have identified that the
-upstream tests depend on a testing framework (whether bundled or not), see
+framework, such as \l{https://cppget.org/catch2 \c{catch2}}, by C++
+projects. If you have identified that the upstream tests depend on a testing
+framework (whether bundled or not), see
 \l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
-How do I handle tests that have extra dependencies?}
+How do I handle tests that have extra dependencies?} for the recommended
+way to deal with that.
 
 If you have concluded that the upstream project doesn't have any dependencies,
 then you can remove \c{repositories.manifest} from the package repository root
-(uness you have already done so), commit this change, and skip the rest of
+(unless you have already done so), commit this change, and skip the rest of
 this section.
 
 And if you are still reading, then we assume you have a list of dependencies
@@ -1415,7 +1426,7 @@ fallback to the latest available version, as will be described in a moment.
 
 With the list of dependencies in hand, the next step is to determine whether
 they are already available as \c{build2} packages. For that, head over to
-\l{https://cppget.org cppget.org} and seach for each dependency.
+\l{https://cppget.org cppget.org} and search for each dependency.
 
 If you are unable to find a package for a dependency, then it means it hasn't
 been packaged for \c{build2} yet. Check the places mentioned in the
@@ -1444,11 +1455,11 @@ location: https://pkg.cppget.org/1/stable
 Next, replace \c{stable} at the end of the \c{location} value with the least
 stable section from your list. For example, if your list contains \c{stable},
 \c{testing}, and \c{beta}, then you need \c{beta} (the sections form a
-hierarchy so that \c{beta} includes \c{testing} which in turn inclues
+hierarchy and so \c{beta} includes \c{testing} which in turn includes
 \c{stable}).
 
 \N|If you wish, you can also uncomment the \c{trust} value and replace \c{...}
-with the \l{https://cppget.org/?about repostitory fingerprint}. This way you
+with the \l{https://cppget.org/?about repository fingerprint}. This way you
 won't be prompted to confirm the repository authenticity on first fetch. See
 \l{intro#guide-add-remove-deps Adding and Removing Dependencies} for details.|
 
@@ -1456,7 +1467,7 @@ Once this is done, edit \c{manifest} in package root and add the \c{depends}
 value for each dependency. See \l{intro#guide-add-remove-deps Adding and
 Removing Dependencies} for background. In particular, here you will use the
 minimum required version (or the latest available) to form a version
-contraint. Which constaint operator to use will depend on the dependency's
+constraint. Which constraint operator to use will depend on the dependency's
 versioning policies. If the dependency uses semver, then a \c{^}-based
 constraint is a sensible default.
 
@@ -1470,7 +1481,7 @@ depends: libasio ^1.28.0
 depends: libsqlite3 ^3.39.4
 \
 
-With all the dependencies specified, now let's synchronize the state of the
+With all the dependencies specified, let's now synchronize the state of the
 build configurations with our changes by running \l{bdep-sync(1)} from the
 package repository root:
 
@@ -1478,18 +1489,20 @@ package repository root:
 $ bdep sync -a
 \
 
+This command should first fetch the metadata for the repository we specified
+in \c{repositories.manifest} and then fetch, unpack and configure each
+dependency that we specified in \c{manifest}.
+
 \N|If you have any build-time dependencies (see
 \l{intro#guide-build-time-linked Build-Time Dependencies and Linked
 Configurations} for background), then you will get a warning about the
 corresponding \c{config.import.*} variable being unused and therefore
 dropped. This is because we haven't yet added the corresponding \c{import}
-directives to our \c{buildfiles}. For now you can ignore this warning and we
-will fix it later, when we adjust the generated \c{buildfiles}.|
+directives to our \c{buildfiles}. For now you can ignore this warning, which
+we will fix later, when we adjust the generated \c{buildfiles}.|
 
-This command should first fetch the metadata for the repository we specified
-in \c{repositories.manifest} and then fetch, unpack and configure each
-dependency that we specified in \c{manifest}. We can examine the resulting
-state, including the version of each dependency, with \l{bdep-status(1)}:
+We can examine the resulting state, including the version of each dependency,
+with \l{bdep-status(1)}:
 
 \
 $ bdep status -ai
@@ -1508,7 +1521,7 @@ $ git commit -m \"Add dependencies\"
 \h2#core-fill-source|Fill with upstream source code|
 
 Now we are ready to begin replacing the \c{bdep-new}-generated files with
-upstream source code symlinks and we start with library's header and source
+upstream source code symlinks. We start with library's header and source
 files. Continuing with our \c{libfoo} example, this is what we currently have
 (notice that \c{LICENSE}, \c{README.md}, and \c{NEWS} are already symlinks to
 upstream):
@@ -1550,6 +1563,7 @@ $ cd -
 
 $ cd src/
 $ rm foo.cpp
+$ ln -s ../../upstream/src/*.hpp ./
 $ ln -s ../../upstream/src/*.cpp ./
 $ cd -
 
@@ -1564,6 +1578,7 @@ libfoo/
 │       └── util.hpp -> ../../../upstream/include/foo/util.hpp
 ├── src/
 │   ├── buildfile
+│   ├── impl.hpp -> ../../upstream/src/impl.hpp
 │   ├── core.cpp -> ../../upstream/src/core.cpp
 │   └── util.cpp -> ../../upstream/src/util.cpp
 ├── tests/
@@ -1604,6 +1619,7 @@ libfoo/
 │   │   ├── bar.cpp
 │   │   └── baz.cpp
 │   ├── buildfile
+│   ├── impl.hpp -> ../../upstream/src/impl.hpp
 │   ├── core.cpp -> ../../upstream/src/core.cpp
 │   └── util.cpp -> ../../upstream/src/util.cpp
 ├── tests/
@@ -1612,17 +1628,17 @@ libfoo/
 \
 
 Wouldn't it be nice if we could symlink the entire top-level subdirectories
-(\c{include/foo/} and \c{src/}) in our case instead of symlinking individual
+(\c{include/foo/} and \c{src/} in our case) instead of symlinking individual
 files? As discussed in \l{#core-package-craft-cmd Craft \c{bdep new} command
 line to create package}, we can but we will need to change the package layout.
 Specifically, we will need to move the \c{buildfiles} out of the source
 subdirectories with the help of the \c{buildfile-in-prefix} sub-option of
-\c{bdep-new}. In the above case, we will need to invent a source subdirectory
-in \c{src/}. Whether this is a worthwhile change largely depends on how many
-files you have to symlink individually. If it's just a handful, then it's
-probably not worth the complication, especially if you have to invent source
-subdirectories. On the other hand, if you are looking at symlinking hundreds
-of files, changing the layout makes perfect sense.
+\c{bdep-new}. In the above case, we will also need to invent a source
+subdirectory in \c{src/}. Whether this is a worthwhile change largely depends
+on how many files you have to symlink individually. If it's just a handful,
+then it's probably not worth the complication, especially if you have to
+invent source subdirectories. On the other hand, if you are looking at
+symlinking hundreds of files, changing the layout makes perfect sense.
 
 \N|One minor drawback of symlinking entire directories is that you cannot
 easily patch individual upstream files (see \l{#howto-patch-upstream-source
@@ -1630,11 +1646,11 @@ How do I patch upstream source code?}).
 
 You will also need to explicitly list such directories as symlinks in
 \c{.gitattributes} if you want your package to be usable from the \c{git}
-repository on Windows. See
+repository directly on Windows. See
 \l{https://build2.org/article/symlinks.xhtml#windows Symlinks and Windows} for
 details.|
 
-We won't be able to test this change yet because to make things build will
+We won't be able to test this change yet because to make things build we will
 most likely also need to tweak the generated \c{buildfiles}, which is the
 subject of the next section. However, it still makes sense to commit our
 changes to make rollbacks easier:
@@ -1657,13 +1673,25 @@ the project-wide build system files in \c{build/} and the source subdirectory
 
 \h2#core-adjust-build-wide|Adjust project-wide build system files in \c{build/}|
 
-We start with reviwing and adjusting the files in the \c{build/} subdirectory
-of our package, where you will find three files: \c{bootstrap.build},
-\c{root.build}, and \c{export.build}. To recap, the first two contain the
-project-wide build system setup (see \l{b#intro-proj-struct Project Structure}
-for details) while the last is an export stub that facilitates the importation
-of targets from our package (see \l{b#intro-import Target Importation} for
-details).
+We start with reviewing and adjusting the files in the \c{build/} subdirectory
+of our package, where you will find three files:
+
+\
+$ cd foo/ # Change to the package repository root.
+$ tree libfoo/
+libfoo/
+├── build/
+│   ├── bootstrap.build
+│   ├── root.build
+│   └── export.build
+└── ...
+\
+
+
+To recap, the first two contain the project-wide build system setup (see
+\l{b#intro-proj-struct Project Structure} for details) while the last is an
+export stub that facilitates the importation of targets from our package (see
+\l{b#intro-import Target Importation} for details).
 
 Normally you don't need to change anything in \c{bootstrap.build} \- all it
 does is specify the build system project name and load a standard set of core
@@ -1682,7 +1710,7 @@ need to tweak it are not uncommon and include:
     Objective-C Compilation} and \l{b#cxx-objcxx Objective-C++ Compilation})
     or Assembler (see \l{b#c-as-cpp Assembler with C Preprocessor
     Compilation}), then \c{root.build} would be the natural place to load the
-    correponding modules.
+    corresponding modules.
 
     \N|If your package uses a mixture of C and C++, then it's recommended to
     set this up using the \c{--lang} sub-option of \c{bdep-new} rather
@@ -1694,13 +1722,12 @@ need to tweak it are not uncommon and include:
 
     ||
 
-\li|Specifying package configuration variable.
+\li|Specifying package configuration variables.
 
     If upstream provides the ability to configure their code, for example to
     enable optional features, then you may want to translate this to
-    \c{build2} configuration variables, which must be specified in
-    \c{root.build} (see \l{b#proj-config Project Configuration} for background
-    and details).
+    \c{build2} configuration variables, which are specified in \c{root.build}
+    (see \l{b#proj-config Project Configuration} for background and details).
 
     Note that you don't need to add all the configuration variables right
     away. Instead, you could first handle the \"core\" functionality which
@@ -1710,11 +1737,11 @@ need to tweak it are not uncommon and include:
     \N|One type of configuration that you should normally not expose when
     packaging for \c{build2} is support for both header-only and compiled
     modes. See \l{b#dont-header-only Don't make library header-only if it
-    can be compiled}.|||
+    can be compiled} for details.|||
 
 Also, in C++ projects, if you don't have any inline or template files, then
-you can drop the assignment of the file extension for the \c{ixx} and \c{txx}
-target types, respectively.
+you can drop the assignment of the file extension for the \c{ixx{\}} and
+\c{txx{\}} target types, respectively.
 
 If you have added any configuration variables and would like to use
 non-default values for some of them in your build, then you will need to
@@ -1740,17 +1767,17 @@ $ git commit -m \"Adjust project-wide build system files\"
 
 \h2#core-adjust-build-src|Adjust source subdirectory \c{buildfiles}|
 
-The next step we need to perform before we can build our library is to adjust
-its \c{buildfiles}. These \c{buildfiles} are found in the source subdirectory
-or, if we used the \c{buildfile-in-prefix} sub-option, in the prefix
-directory. There will be two \c{buildfiles} if we use the split layout
-(\c{split} sub-option) or a single \c{buildfile} in the combined layout. The
-single \c{buildfile} in the combined layout contains essentially the same
-definitions as the split \c{buildfiles} but combined into one and with some
-minor simplifications that this allows. So here we will assume the split
-layout and will continue with our \c{libfoo} from the previous sections. To
-recap, here is the layout we've got with the \c{buildfiles} of interest found
-in \c{include/foo/} and in \c{src/}:
+The last step we need to perform before we can try to build our library is to
+adjust its \c{buildfiles}. These \c{buildfiles} are found in the source
+subdirectory or, if we used the \c{buildfile-in-prefix} \c{bdep-new}
+sub-option, in the prefix directory. There will be two \c{buildfiles} if we
+use the split layout (\c{split} sub-option) or a single \c{buildfile} in the
+combined layout. The single \c{buildfile} in the combined layout contains
+essentially the same definitions as the split \c{buildfiles} but combined into
+one and with some minor simplifications that this allows. Here we will assume
+the split layout and continue with our \c{libfoo} from the previous
+sections. To recap, here is the layout we've got with the \c{buildfiles} of
+interest found in \c{include/foo/} and in \c{src/}:
 
 \
 libfoo/
@@ -1763,6 +1790,7 @@ libfoo/
 │       └── util.hpp -> ../../../upstream/include/foo/util.hpp
 ├── src/
 │   ├── buildfile
+│   ├── impl.hpp -> ../../upstream/src/impl.hpp
 │   ├── core.cpp -> ../../upstream/src/core.cpp
 │   └── util.cpp -> ../../upstream/src/util.cpp
 ├── tests/
@@ -1775,9 +1803,9 @@ libfoo/
 
 The \c{buildfile} in \c{include/foo/} is pretty simple:
 
-\N|The \c{buildfile} in your package may look slightly different depending on
-the exact \c{bdep-new} sub-options used. However, all the relevant definitions
-discussed below should still be easily recognizable.|
+\N|The \c{buildfile} in your package may look slightly differently depending
+on the exact \c{bdep-new} sub-options used. However, all the relevant
+definitions discussed below should still be easily recognizable.|
 
 \
 pub_hdrs = {hxx ixx txx}{**}
@@ -1811,8 +1839,8 @@ instead look like this:
 }
 \
 
-If the library doesn't have any headers in subdirectories, you can drop
-the \c{install.subdirs} variable:
+If the library doesn't have any headers in nested subdirectories (for example,
+\c{<foo/util/string.hpp>}), you can drop the \c{install.subdirs} variable:
 
 \
 # Install into the foo/ subdirectory of, say, /usr/include/.
@@ -1831,15 +1859,15 @@ installation subdirectory?}
 
 Next is the \c{buildfile} in \c{src/}:
 
-\N|Again, the \c{buildfile} in your package may look slightly different
+\N|Again, the \c{buildfile} in your package may look slightly differently
 depending on the exact \c{bdep-new} sub-options used. However, all the
 relevant definitions discussed below should still be easily recognizable.
 
 For a binless (header-only) library, this \c{buildfile} will contain only a
 small subset of the definitions shown below. See
 \l{https://github.com/build2/HOWTO/blob/master/entries/make-header-only-library.md
-How do I make a header-only C/C++ library?} for additional considerations
-when packaging header-only libraries.|
+How do I make a header-only C/C++ library?} for additional considerations when
+packaging header-only libraries.|
 
 \
 intf_libs = # Interface dependencies.
@@ -1927,7 +1955,7 @@ lib{foo}:
 }
 \
 
-\N|If you do have auto-genetated headers, then in the split layout you can
+\N|If you do have auto-generated headers, then in the split layout you can
 remove \c{out_pfx_inc} if you only have private auto-generated headers and
 \c{out_pfx_src} if you only have public.|
 
@@ -1964,7 +1992,7 @@ lib{foo}:
 }
 \
 
-If you only have private auto-genertated headers, then only remove the
+If you only have private auto-generated headers, then only remove the
 expansion from \c{cxx.export.poptions}.|
 
 If you don't have any dependencies, then remove all the assignments and
@@ -2028,14 +2056,14 @@ $ bdep sync -a --disfigure config.libfoo.debug=true
 For each library that your package depends on (and which you have added
 to \c{manifest} on the \l{#core-fill-depend Add dependencies} step),
 you need to first determine whether it's an interface of implementation
-dependency and then import it either into \c{intf_libs} or \c{impl_libs}
+dependency and then import it either into the \c{intf_libs} or \c{impl_libs}
 variable, respectively.
 
 See \l{b#intro-lib Library Exportation and Versioning} for background on the
-interface vs implementation distinction. But as a quick rule of thumb, if your
-library includes a header from the dependency library in one of its public
-headers, then it's an interface dependency. Otherwise, it's an implementation
-dependency.
+interface vs implementation distinction. But as a quick rule of thumb, if the
+library you are packaging includes a header from the dependency library in one
+of its public headers, then it's an interface dependency. Otherwise, it's an
+implementation dependency.
 
 Continuing with our \c{libfoo} example, as we have established in
 \l{#core-fill-depend Add dependencies}, it depends on \c{libasio}, \c{libz},
@@ -2052,7 +2080,7 @@ import impl_libs += libz%lib{z}
 import impl_libs += libsqlite3%lib{sqlite3}
 \
 
-And you can tidy this a bit further if you would like:
+You can tidy this a bit further if you would like:
 
 \
 import intf_libs = libasio%lib{asio}
@@ -2073,7 +2101,7 @@ How do I link a system library} for details.
 
 \h2#core-adjust-build-src-source-pub|Adjust source \c{buildfile}: public headers|
 
-With the unnecessary parts of the \c{buildfile} cleaned up and dependenies
+With the unnecessary parts of the \c{buildfile} cleaned up and dependencies
 handled, let's discuss the common changes to the remaining definitions, going
 from top to bottom. We start with the public headers block:
 
@@ -2092,10 +2120,11 @@ lib{foo}: $pub/{$pub_hdrs}
 This block gets hold of the list of public headers and makes them
 prerequisites of the library. Normally you shouldn't need to make any changes
 here. If you need to exclude some headers, it should be done in the
-\c{buildfile} in the \c{inlcude/} directory.
+header \c{buildfile} in the \c{include/} directory.
 
 \N|In the combined layout the single \c{buildfile} does not have such code.
-Instead, all headers are covered by the wildcard pattern in following block.|
+Instead, all the headers are covered by the wildcard pattern in following
+block.|
 
 
 \h2#core-adjust-build-src-source-src|Adjust source \c{buildfile}: sources, private headers|

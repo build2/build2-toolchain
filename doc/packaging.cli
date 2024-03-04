@@ -738,6 +738,14 @@ Things that can help here include:
 \li|Look into the Debian package contents to see if there are any differences
     with regards to the installation locations.||
 
+\N|If while studying the upstream build system you notice other requirements,
+for example, the need to compile source files other than C/C++ (such as
+Objective-C/C++, assembler, etc) or the need to generate files from \c{.in}
+templates (or their \c{.cmake}/\c{.meson} equivalents), and are wondering how
+they would be handled in the \c{build2} build, see the
+\l{#core-adjust-build-src-source-ext Adjust source \c{buildfile}: extra
+requirements} step for a collection of pointers.|
+
 For libraries, the first key pieces of information we need to find is how the
 public headers are included and where they are installed. The two common
 \i{good} practices is to either include the public headers with a library name
@@ -2143,9 +2151,9 @@ the subdirectories, recursively (see \l{b#name-patterns Name Patterns} for
 background on wildcard patterns).
 
 If your C++ package doesn't have any inline or template files, then you can
-remove the \c{ixx} and \c{txx} target types, respectively (which is parallel
-to the change made in \c{root.build}; see \l{#core-adjust-build-wide Adjust
-project-wide build system files in \c{build/}}). For example:
+remove the \c{ixx} and \c{txx} target types, respectively (which would be
+parallel to the change made in \c{root.build}; see \l{#core-adjust-build-wide
+Adjust project-wide build system files in \c{build/}}). For example:
 
 \
 # Private headers and sources as well as dependencies.
@@ -2167,7 +2175,7 @@ lib{foo}: {hxx cxx}{** -**-test} $impl_libs $intf_libs
 
 Let's also assume our \c{libfoo} contains \c{impl-win32.cpp} and
 \c{impl-posix.cpp} which provide alternative implementations of the same
-functionality for Windows and POSIX and should only be included as
+functionality for Windows and POSIX and therefore should only be included as
 prerequisites on the respective platforms. Here is how we can handle that:
 
 \
@@ -2182,7 +2190,7 @@ lib{foo}: $impl_libs $intf_libs
 There are two nuances in the above example worth highlighting. Firstly, we
 have to exclude the files from the wildcard pattern before we can
 conditionally include them. Secondly, we have to always link libraries
-last. In particual, the following is a shorter but an incorrect version of the
+last. In particular, the following is a shorter but an incorrect version of the
 above:
 
 \
@@ -2245,9 +2253,10 @@ now we will ignore the commented out lines that add \c{-DFOO_STATIC*} and
 \c{-DFOO_SHARED*} macros \- they are for symbol exporting and we will discuss
 this topic separately.
 
-If the library you are packaging only uses portable APIs, then chances are you
-won't need to change anything here. On the other hand, if it does anything
-platform-specific, then you will most likely need to add some options here.
+If the library you are packaging only relied on platform-independent APIs,
+then chances are you won't need to change anything here. On the other hand, if
+it does anything platform-specific, then you will most likely need to add some
+options here.
 
 As discussed in the \l{b#intro-dirs-scopes Output Directories and Scopes}
 section of the build system introduction, there is a number of variables that
@@ -2263,34 +2272,34 @@ shows all of them with their rough \c{make} equivalents in the third column:
 *.libs       system libraries  LIBS/LDLIBS
 \
 
-The recommended approach here is to study the upstream build system definition
-and copy custom compile/link options to the appropriate \c{build2} variables.
-Note, however, that doing it thoughtlessly/faithfully by copying all the
-options may not always be a good idea. See
+The recommended approach here is to study the upstream build system and copy
+custom compile/link options to the appropriate \c{build2} variables. Note,
+however, that doing it thoughtlessly/faithfully by copying all the options may
+not always be a good idea. See
 \l{https://github.com/build2/HOWTO/blob/master/entries/compile-options-in-buildfile.md
 Which C/C++ compile/link options are OK to specify in a project's buildfile?}
 for the guidelines.
 
 Also, oftentimes, such custom options must only be specified for certain
 target platforms or when using a certain compiler. While \c{build2} provides a
-large amount of information to identiy the build configuration as well as more
+large amount of information to identify the build configuration as well as more
 advanced \c{buildfile} language mechanism (such as \l{b#intro-switch Pattern
-Matching (\c{switch})} to make sense of it, this is a large topic for which we
-refer you to \l{b The \c{build2} Build System} manual. Additionally,
+Matching}) to make sense of it, this is a large topic for which we refer you
+to \l{b The \c{build2} Build System} manual. Additionally,
 \l{https://github.com/build2-packaging github.com/build2-packaging} now
 contains a large number of packages that you can study and search for
 examples.
 
-Let's also consider a representative example based on our \c{libfoo} to get a
-sense of what this normally looks like as well as to highlight a few nuances.
-Let's assume our \c{libfoo} requires either the \c{FOO_POSIX} or \c{FOO_WIN32}
+Let's consider a representative example based on our \c{libfoo} to get a sense
+of what this normally looks like as well as to highlight a few nuances. We
+will assume our \c{libfoo} requires either the \c{FOO_POSIX} or \c{FOO_WIN32}
 macro to be defined during the build in order to identify the target
-platform. Additionaly, extra features can be enabled by defining
-\c{FOO_EXTRAS} both during the build and for consumption (so this macro must
-also be exported). Next, this library requires the \c{-fno-strict-aliasing}
-compile option for the GCC-class compilers (GCC, Clang, etc). Finally, we need
-to link \c{pthread} on POSIX and \c{ws2_32.lib} on Windows. This is how we
-would work all this into the above fragment:
+platform. Additionally, extra features can be enabled by defining
+\c{FOO_EXTRAS}, which should be done both during the build and for consumption
+(so this macro must also be exported). Next, this library requires the
+\c{-fno-strict-aliasing} compile option for the GCC-class compilers (GCC,
+Clang, etc). Finally, we need to link \c{pthread} on POSIX and \c{ws2_32.lib}
+on Windows. This is how we would work all this into the above fragment:
 
 \
 # Build options.
@@ -2378,26 +2387,27 @@ the library or executable targets.|
 Let's now turn to a special sub-topic of the build and export options that
 relates to the shared library symbol exporting. To recap, a shared library on
 Windows must explicitly specify the symbols (functions and global data) that
-it wishes to make accessible to its users. This can be achieved in three
-different way: The library can explicitly mark in its source code the names
-whose symbols should be exported. Alternatively, the library can profide a
-\c{.def} file to the linker that lists the symbols to be exported. Finally,
-the library can request automatic exporting of all symbols, which is the
-default semantics on non-Windows platforms. Note that the last two approaches
-only work for exporting functions, not data, unless extra steps are taken by
-the library users. Let's discuss each of these approaches in the reverse
+it wishes to make accessible by its consumers (executables and other shared
+libraries). This can be achieved in three different way: The library can
+explicitly mark in its source code the names whose symbols should be
+exported. Alternatively, the library can provide a \c{.def} file to the linker
+that lists the symbols to be exported. Finally, the library can request
+automatic exporting of all symbols, which is the default semantics on
+non-Windows platforms. Note that the last two approaches only work for
+exporting functions, not data, unless special extra steps are taken by the
+library consumers. Let's discuss each of these approaches in the reverse
 order, that is, starting with the automatic symbol exporting.
 
 The automatic symbol exporting is implemented in \c{build2} by generating a
 \c{.def} file that exports all the relevant symbols. It requires a few
 additional definitions in our \c{buildfile} as described in
-\l{b#cc-auto-symexport Automatic DLL Symbol Exporting}. You can automacially
+\l{b#cc-auto-symexport Automatic DLL Symbol Exporting}. You can automatically
 generate the necessary setup with the \c{auto-symexport} \c{bdep-new}
 sub-option.
 
 Using a custom \c{.def} file to export symbols is fairly straightforward:
-simply list it as a prerequsite of the library and it will be automatically
-passed to the linker. For example:
+simply list it as a prerequisite of the library and it will be automatically
+passed to the linker when necessary. For example:
 
 \
 # Private headers and sources as well as dependencies.
@@ -2405,18 +2415,31 @@ passed to the linker. For example:
 lib{foo}: {hxx cxx}{**} $impl_libs $intf_libs def{foo}
 \
 
+\N|Some third-party projects automatically generate their \c{.def} file. In
+this case you can try to re-create the same generation in the \c{buildfile}
+using an ad hoc recipe (or the \l{b#module-in \c{in}} or
+\l{https://github.com/build2/libbuild2-autoconf \c{autoconf}} build system
+modules). If that doesn't look possible (for example, if the generation logic
+is complex and is implemented in something like Perl or Python), then you can
+try your luck with automatic symbol exporting. Failed that, the only remaining
+option is to use a pre-generated \c{.def} file in the \c{build2} build.|
+
 The last approach is to explicitly specify in the source code which symbols
 must be exported by marking the corresponding declarations with
 \c{__declspec(dllexport)} during the library build and
 \c{__declspec(dllimport)} during the library use. This is commonly achieved
 with a macro, customarily called \c{*_EXPORT} or \c{*_API}, which is defined
 to one of the above specifiers based on whether static or shared library is
-being build or being consumed, which, in turn, is also normally signalled with
-a few more macros, such as \c{*_BUILD_DLL} and \c{*_USE_STATIC}.
+being built or is being consumed, which, in turn, is also normally signaled
+with a few more macros, such as \c{*_BUILD_DLL} and \c{*_USE_STATIC}.
 
-In \c{build2} you can explicitly signal any of the four situations by
-uncommending and adjusting the following four lines in the build and export
-options blocks:
+\N|Because this approach requires extensive changes to the source code, you
+will normally only use it in your \c{build2} build if it is already used in
+the upstream build.|
+
+In \c{build2} you can explicitly signal any of the four situations
+(shared/static, built/consumed) by uncommenting and adjusting the following
+four lines in the build and export options blocks:
 
 \
 # Build options.
@@ -2508,7 +2531,8 @@ Autoconf-style platform probing (\c{HAVE_*} options).|
     system module}
 
 Use to process \c{config.h.in} (or their CMake/Meson variants) that require
-Autoconf-style platform probing (\c{HAVE_*} options).|
+Autoconf-style platform probing (\c{HAVE_*} options) or CMake/Meson-specific
+substitution syntax (\c{#cmakedefine}, etc).|
 
 \li|\l{b#c-objc Objective-C Compilation} and
     \l{b#cxx-objcxx Objective-C++ Compilation}
@@ -2544,8 +2568,8 @@ the library and, if it has any unit tests in the source subdirectory, even run
 some tests.
 
 \N|Is the library is header only, there won't be anything to build unless
-there unit tests. Still you may want to continue with this exercise to detect
-any syntactic mistakes in the \c{buildfiles}, etc.|
+there are unit tests. Still you may want to continue with this exercise to
+detect any syntactic mistakes in the \c{buildfiles}, etc.|
 
 To build only a specific subdirectory of our package we use the build system
 directly (continuing with our \c{libfoo} example):
@@ -2556,7 +2580,7 @@ $ b update
 \
 
 If there are any issues, try to fix them and then build again. Once the
-library builds and if you have unit tests, you can try to run them:
+library builds and if it has unit tests, you can try to run them:
 
 \
 $ b test
@@ -2647,7 +2671,7 @@ library is not header-only, make sure that the smoke test calls at least one
 non-inline/template function to test symbol exporting.
 
 \N|Make sure that your test includes the library's public headers the same way
-as would be used by the library users.|
+as would be used by the library consumers.|
 
 Continuing with our \c{libfoo} example, this is what its smoke test might look
 like:

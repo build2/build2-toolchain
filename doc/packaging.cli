@@ -33,11 +33,11 @@
 //
 // @@ Optional dependencies like xxhash.
 //
-// @@ What not to do: bundle catch2.hpp.
-//
 // @@ Mapping to system package manager names/versions.
 //
 // @@ bdep-new: export stub for executables.
+//
+// @@ Are upstream tests well behaved? -- add never exit/take unreasonable time
 
 "
 \h0#preface|Preface|
@@ -1407,7 +1407,8 @@ system. Sometimes projects also bundle their dependencies with the project
 source code (sometimes called vendoring). So it makes sense to look around the
 upstream repository for anything that looks like bundled dependencies.
 Normally we would need to \"unbundle\" such dependencies when converting to
-\c{build2} by instead specifying a dependency on an external package.
+\c{build2} by instead specifying a dependency on an external package (see
+\l{#dont-bundle Don't bundle dependencies} for background).
 
 \N|While there are several reasons we insist on unbundling of dependencies,
 the main one is that bundling can cause multiple, potentially conflicting
@@ -2599,13 +2600,13 @@ $ git commit -m \"Adjust source subdirectory buildfiles\"
 
 \h#core-test-smoke|Make smoke test|
 
-With the library build sorted, we need tests to make sure it is actually
-functional. As \l{#core-fill discussed earlier}, it is recommended to start
-with a simple smoke test, make sure that works, and then replace it with
-upstream tests. However, if upstream tests look simple enough, you can skip
-the smoke test. For example, if upstream has all its tests in a single source
-file and its build doesn't look too complicated, then you can just use that
-source file in place of the smoke test.
+With the library build sorted, we need tests to make sure the result is
+actually functional. As \l{#core-fill discussed earlier}, it is recommended to
+start with a simple \"smoke test\", make sure that works, and then replace it
+with upstream tests. However, if upstream tests look simple enough, you can
+skip the smoke test. For example, if upstream has all its tests in a single
+source file and the way it is built doesn't look too complicated, then you can
+just use that source file in place of the smoke test.
 
 \N|If upstream has no tests, then the smoke test will have to stay. A library
 can only be published if it has at least one test.
@@ -2636,29 +2637,29 @@ The \c{tests/} subdirectory is a build system subproject, meaning that it can
 be built independently, for example, to test the installed version of the
 library (see \l{b#intro-operations-test Testing} for background). In
 particular, this means it has the \c{build/} subdirectory with project-wide
-build system files the same as our library. Then there is the \c{basics/}
-subdirectory which contains the generated test and which is what we will be
-turning into a smoke test. The subproject root \c{buildfile} rarely needs
-changing.
+build system files, the same as the library. The \c{basics/} subdirectory
+contains the generated test, which is what we will be turning into a smoke
+test. The subproject root \c{buildfile} rarely needs changing.
 
 
 \h2#core-test-smoke-build-wide|Adjust project-wide build system files in \c{tests/build/}|
 
 Review and adjust the generated \c{bootstrap.build} and \c{root.build} (there
-will be no \c{export.build}) similar to \l{#core-adjust-build-wide Adjust
-project-wide build system files in \c{build/}}.
+will be no \c{export.build}) similar to the \l{#core-adjust-build-wide Adjust
+project-wide build system files in \c{build/}} step.
 
-Here the only change you would normally make is in \c{root.build} to drop the
-assignment of extensions for target types that are not used in tests.
+Here the only change you would normally make is in \c{root.build} and which is
+to drop the assignment of extensions for target types that are not used in
+tests.
 
 
 \h2#core-test-smoke-adjust|Convert generated test to library smoke test|
 
 The \c{basics/} subdirectory contains the \c{driver.cpp} source file that
 implements the test and \c{buildfile} that builds it. You can rename both the
-test directory (\c{basics/}) and the source file \c{driver.cpp}, for example,
-if you are going with the upstream tests directly. You can also add more tests
-by simply copying \c{basics/}.
+test subdirectory (\c{basics/}) and the source file \c{driver.cpp}, for
+example, if you are going with the upstream tests directly. You can also add
+more tests by simply copying \c{basics/}.
 
 The purpose of a smoke test is to make sure the library's public headers can
 be included (including in the installed case, no pun intended), it can be
@@ -2666,12 +2667,12 @@ linked, and its basic functionality works.
 
 To achieve this, we modify \c{driver.cpp} to include the library's main
 headers and call a few functions. For example, if the library has the
-init/deinit type of functions, those are good candidates to call. If the
-library is not header-only, make sure that the smoke test calls at least one
-non-inline/template function to test symbol exporting.
+initialize/deinitialize type of functions, those are good candidates to
+call. If the library is not header-only, make sure that the smoke test calls
+at least one non-inline/template function to test symbol exporting.
 
 \N|Make sure that your test includes the library's public headers the same way
-as would be used by the library consumers.|
+as would be done by the library consumers.|
 
 Continuing with our \c{libfoo} example, this is what its smoke test might look
 like:
@@ -2723,8 +2724,9 @@ library build. We will start with doing some local testing to catch basic
 mistakes and then do the full CI to detect any platform/compiler-specific
 issues.
 
-First let's run the test in the default build configuration by invoking
-the build system directly:
+First let's run the test in the default build configuration by invoking the
+build system directly (see \l{intro#guide Getting Started Guide} for
+background on default configurations):
 
 \
 $ cd libfoo/tests/ # Change to the tests/ subproject.
@@ -2734,9 +2736,9 @@ $ b test
 If there are any issues (compile/link errors, test failures), try to address
 them and re-run the test.
 
-Once the default configuration builds and passes the tests, you can do the
-same for all the build configurations, in case you have \l{#core-fill-init
-initialized} your library in several:
+Once the library builds in the default configuration and the result passes the
+tests, you can do the same for all the build configurations, in case you have
+\l{#core-fill-init initialized} your library in several:
 
 \
 $ bdep test -a
@@ -2744,19 +2746,20 @@ $ bdep test -a
 
 \h2#core-test-smoke-locally-install|Test locally: installation|
 
-Once this works, let's test the installed version of the library. In
-particular, this makes sure that the public headers are installed in a way
-that is compatible with how they are included by our test (and would be
-included by the users of our library). To test this we first install
-the library into some temporary directory:
+Once the development build works, let's also test the installed version of the
+library. In particular, this makes sure that the public headers are installed
+in a way that is compatible with how they are included by our test (and would
+be included by the library consumers). To test this we first install the
+library into a temporary directory:
 
 \
 $ cd libfoo/ # Change to the package root.
 $ b install config.install.root=/tmp/install
 \
 
-Next we build just the \c{tests/} subproject arranging for it to find
-the installed library:
+Next we build just the \c{tests/} subproject out of source and arranging for
+it to find the installed library (see \l{b#intro-dirs-scopes Output
+Directories and Scopes} for background on the out of source build syntax):
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -2771,13 +2774,13 @@ $ b test: tests/@/tmp/libfoo-tests-out/ \
 > b install config.install.root=c:\tmp\install
 
 > b test: tests\@c:\tmp\libfoo-tests-out\^
-  config.cc.loptions=/LIBPATH:c:\tmp/\install\lib
+  config.cc.loptions=/LIBPATH:c:\tmp\install\lib
 \
 
 |
 
-\N|It is a good idea to look over the installed files and make sure there is
-nothing unexpected, for example, missing or extraneous files.|
+It is a good idea to look over the installed files manually and make sure
+there is nothing unexpected, for example, missing or extraneous files.
 
 Once done testing the installed case, let's clean things up:
 
@@ -2792,8 +2795,9 @@ distribution (see \l{b#intro-operations-dist Distributing} for
 background). This, in particular, is how your package will be turned into the
 source archive for publishing to \l{https://cppget.org cppget.org}. Here we
 are primarily looking for missing files. As a bonus, this will also allow us
-to test the in source build. First we distribute our package to some temporary
-directory:
+to test the in source build. First we distribute our package to a temporary
+directory (again using the default configuration and the build system
+directly):
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -2816,11 +2820,12 @@ then the above \c{configure} operation will most likely fail because such
 dependencies cannot be found (it may succeed if they are available as
 system-installed). The error message will suggest specifying the location of
 each dependency with \c{config.import.*} variable. You can fix this by setting
-each such \c{config.import.*} to the location of the build configuration
-\l{#core-fill-init created by \c{bdep}} which should contain all the necessary
-dependecies. Simply re-run the \c{configure} operation until you have
-discovered and specified all the necessary \c{config.import.*} variables,
-for example:
+each such \c{config.import.*} to the location of the default build
+configuration (created on the \l{#core-fill-init Initialize package in build
+configurations} step) which should contain all the necessary
+dependencies. Simply re-run the \c{configure} operation until you have
+discovered and specified all the necessary \c{config.import.*} variables, for
+example:
 
 \
 $ b configure config.cxx=g++ \
@@ -2831,8 +2836,8 @@ $ b configure config.cxx=g++ \
 
 |
 
-\N|It is a good idea to look over the distributed files and make sure there is
-nothing missing or extraneous.|
+It is a good idea to look over the distributed files manually and make sure
+there is nothing missing or extraneous.
 
 Once done testing the distribution, let's clean things up:
 
@@ -2893,7 +2898,7 @@ upstream tests.
 
 \h2#core-test-upstream-understand|Understand how upstream tests work|
 
-While there are some commonalities in how C/C++ libraries are normally built,
+While there are some commonalities in how C/C++ libraries are typically built,
 when it comes to tests there is unfortunately little common ground in how they
 are arranged, built, and executed. As a result, the first step in dealing with
 upstream tests is to study the existing build system and try to understand how
@@ -2910,18 +2915,18 @@ only use the library's public API while unit tests need access to the
 implementation details.
 
 Normally (but not always), unit tests will reside next to the library source
-code since they need access to more than just the library binary (individual
-object files, utility libraries, etc). While integration tests are normally
-(but again not always) placed into a seperate subdirectory, usually called
-\c{tests} or \c{test}.
+code since they need access to more than just the public headers and the
+library binary (private headers, individual object files, utility libraries,
+etc). While integration tests are normally (but again not always) placed into
+a separate subdirectory, usually called \c{tests} or \c{test}.
 
 If the library has unit tests, then refer to \l{b#intro-unit-test Implementing
-Unit Testing} for background on how to hanle them in \c{build2}.
+Unit Testing} for background on how to handle them in \c{build2}.
 
-If the library has integration tests, then use them to to replace (or
-complement) the smoke test.
+If the library has integration tests, then use them to replace (or complement)
+the smoke test.
 
-If the library has unit tests but no integration tests, then it's recommended
+If the library has unit tests but no integration tests, then it is recommended
 to keep the smoke test since that's the only way the library will be tested
 via its public API.|
 
@@ -2943,7 +2948,8 @@ How do I handle tests that have extra dependencies?} for details.
 \N|Sometimes you will find that upstream bundles the source code of the
 testing framework with their tests. This is especially common with
 \c{catch2}. If that's the case, it is strongly recommended that you
-\"unbundle\" it by making it a proper external dependency.||
+\"unbundle\" it by making it a proper external dependency. See \l{#dont-bundle
+Don't bundle dependencies} for background.||
 
 
 \li|\b{Are upstream tests in a single or multiple executables?}
@@ -3002,8 +3008,8 @@ import libs = libfoo%lib{foo}
 ./: exe{test2}: cxx{test2} $libs
 \
 
-If you have a large number of such test executables, then a \c{for}-loop might
-be a more scalable option:
+If you have a large number of such test executables, then a \l{b#intro-for
+\c{for}-loop} might be a more scalable option:
 
 \
 import libs = libfoo%lib{foo}
@@ -3040,25 +3046,25 @@ $ bdep ci
 \
 
 
-\h#core-examples-banchmarks|Add upstream examples, benchmarks, if any|
+\h#core-examples-benchmarks|Add upstream examples, benchmarks, if any|
 
 If the upstream project provides examples and/or benchmarks and you wish to
 add them to the \c{build2} build (which is not strictly necessary for the
 \c{build2} package to be usable), then now is a good time to do that.
 
-As was mentioned in \l{#core-package-review Review and test auto-genetated
+As was mentioned in \l{#core-package-review Review and test auto-generated
 \c{buildfile} templates}, the recommended approach is to copy the \c{tests/}
 subproject (potentially from the commit history before the smoke test was
 replaced with the upstream tests) and use that as a starting point for
-examples and/or benchmarks. Just do not forgeting to add the corresponding
-entry in the root \c{buildfile}.
+examples and/or benchmarks. Do not forget to add the corresponding entry in
+the root \c{buildfile}.
 
 Once that is done, follow the same steps as in \l{#core-test-upstream Replace
 smoke test with upstream tests} to add upstream examples/benchmarks and test
 the result.
 
 
-\h#core-root|Adjust root \c{buildfile}, \c{manifest}, and \c{PACKAGE-README.md}|
+\h#core-root|Adjust root files (\c{buildfile}, \c{manifest}, etc)|
 
 The last few files that we need to review and potentially adjust are
 the root \c{buildfile}, package \c{manifest}, and \c{PACKAGE-README.md}.
@@ -4091,6 +4097,31 @@ compiling all of them in the compiled mode takes a substantial amount of time.
 components user-configurable.)|
 
 |
+
+
+\h#dont-bundle|Don't bundle dependencies|
+
+Sometimes third-party projects bundle their dependencies with their source
+code (also called vendoring). For example, a C++ library may bundle a testing
+framework. This is especially common with \l{https://cppget.org/catch2
+\c{catch2}} where one often sees a comical situation with only a few kilobytes
+of library source code and over 600Kb of \c{catch2.hpp}.
+
+The extra size, while wasteful, if not the main issue, however. The bigger
+problem is that if a bug is fixed in the bundled dependency, then to propagate
+the fix we will need to release a new version (or revision) of each package
+that bundles it. Needless to say this is not scalable.
+
+While this doesn't apply to testing frameworks, an even bigger issue with
+bundling of dependencies in generate is that two libraries that bundle the
+same dependency (potentially of different versions) may not be able to coexist
+in the same build.
+
+As a result, it is strongly recommended that you unbundle any dependencies
+that the upstream may have bundled. In case of testing frameworks, see
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for the recommended way
+to deal with such cases.
 
 
 \h#dont-main-target-root-buildfile|Don't build your main targets in the root \c{buldfile}|

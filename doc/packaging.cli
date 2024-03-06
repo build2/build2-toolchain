@@ -3548,6 +3548,11 @@ via pull requests. However, if you loose interest in maintaining a package or
 otherwise become unresponsive, we may allow a new maintainer may take over
 this role.
 
+\N|In extraordinary circumstances the \c{build2-packaging} administrators may
+make direct changes to the package, for example, to release a new revision in
+order to address a critical issues. They will still try to coordinate the
+changes with the maintainer but may not always be able to wait for a response
+in time-sensitive cases.|
 
 \h2#core-release-publish-release|Release final version|
 

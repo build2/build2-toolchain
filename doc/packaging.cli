@@ -3072,12 +3072,13 @@ the root \c{buildfile}, package \c{manifest}, and \c{PACKAGE-README.md}.
 
 \h2#core-root-buildfile|Adjust root \c{buildfile}|
 
-The main function of the root \c{buildfile} is to pull all the subdirectories
-that need building plus list targets that are usually found in the root
-directory of a project, typically \c{README.md}, \c{LICENSE}, etc. This is
-what the generated root \c{buildfile} looks like for our \c{libfoo} project
-assuming we have symlinked \c{README.md}, \c{LICENSE}, and \c{NEWS} from
-upstream on the \l{#core-package-create Create final package} step:
+The main function of the root \c{buildfile} is to pull in all the
+subdirectories that need building plus list targets that are usually found in
+the root directory of a project, typically \c{README.md}, \c{LICENSE},
+etc. This is what the generated root \c{buildfile} looks like for our
+\c{libfoo} project assuming we have symlinked \c{README.md}, \c{LICENSE}, and
+\c{NEWS} from upstream on the \l{#core-package-create Create final package}
+step:
 
 \
 ./: {*/ -build/}                          \
@@ -3090,15 +3091,15 @@ tests/: install = false
 \
 
 If the upstream project provides any other documentation (detailed change
-logs, contributing guidelines, etc) or legal files (list of authorts, code of
+logs, contributing guidelines, etc) or legal files (list of authors, code of
 conduct, etc), then you may want to symlink and list them as the \c{doc{\}}
 and \c{legal{\}} prerequisites, respectively.
 
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
-system. In the \c{build2} package the \c{PACKAGE-README.md} file serves this
-purpose (see \l{#core-root-package-readme Adjust \c{PACKAGE-README.md}}
-for details).|
+system. In the \c{build2} package of a third-party project the
+\c{PACKAGE-README.md} file serves this purpose (see
+\l{#core-root-package-readme Adjust \c{PACKAGE-README.md}} for details).|
 
 
 \h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
@@ -3109,21 +3110,21 @@ most common such case will be extra documentation (besides the root
 \c{README}), typically in a subdirectory called \c{doc/}, \c{docs/}, or
 \c{documentation/}.
 
-The typical procedure for handling such subdirectories will be to symlink the
+The standard procedure for handling such subdirectories will be to symlink the
 relevant files (or the entire subdirectory) and then list the files as
 prerequisites. For this last step, there are two options: we can list the
-files directly in the root \c{buildfile} or we can create a seperate
+files directly in the root \c{buildfile} or we can create a separate
 \c{buildfile} in the subdirectory.
 
-Let's examine both approaches using our \c{libfoo} as an example. Assume that
-upstream \c{libfoo} contains the \c{docs/} subdirectory with additional
-\c{*.md} files that document its API. It would make sense to include them into
-the \c{build2} package.
+Let's examine each approach using our \c{libfoo} as an example. We will
+assume that the upstream project contains the \c{docs/} subdirectory with
+additional \c{*.md} files that document the library's API. It would make sense
+to include them into the \c{build2} package.
 
 Listing the subdirectory files directly in the root \c{buildfile} works best
-for simple case, where you have a bunch of static files that don't require any
-customizations, such as to their installation location. In this case we can
-symlink the entire \c{docs/} subdirectory:
+for simple cases, where you have a bunch of static files that don't require
+any special provisions, such as customizations to their installation
+locations. In this case we can symlink the entire \c{docs/} subdirectory:
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -3142,22 +3143,22 @@ in particular, makes sure they are installed into the appropriate location):
     legal{LICENSE} manifest
 \
 
-The alternative approach (create a seperate \c{buildfile}) is a good choice if
-things are more complicated then that. Let's say we need to adjust the
+The alternative approach (create a separate \c{buildfile}) is a good choice if
+things are more complicated than that. Let's say we need to adjust the
 installation location of the files in \c{docs/} because there is another
-\c{README.md} that would conflict with the root one when installed into the
-same location. This time we cannot symlink the top-level \c{docs/}
+\c{README.md} inside and that would conflict with the root one when installed
+into the same location. This time we cannot symlink the top-level \c{docs/}
 subdirectory (because we need to place a \c{buildfile} there). The two options
 here is to either symlink the individual files or introduce another
 subdirectory level inside \c{docs/} (which is the same approach as discussed
 in \l{#dont-main-target-root-buildfile Don't build your main targets in the
-root \c{buldfile}}). Let's illustrate both sub-cases.
+root \c{buildfile}}). Let's illustrate both sub-cases.
 
 Symlinking individual files works best when you don't expect the set of files
 to change often. For example, if \c{docs/} contains a man page and its HTML
 rendering, then it's unlikely this set will change. On the other hand, if
 \c{docs/} contains a manual split into an \c{.md} file per chapter, then there
-is good chance this set of files will fluctuate between releases.
+is a good chance this set of files will fluctuate between releases.
 
 Continuing with our \c{libfoo} example, this is how we symlink the individual
 \c{*.md} files in \c{docs/}:
@@ -3212,6 +3213,36 @@ doc{*}:
 }
 \
 
+\N|A yet another option would be to open a scope for the \c{docs/}
+subdirectory directly in the root \c{buildfile} (see \l{b#intro-dirs-scopes
+Output Directories and Scopes} for background). For example:
+
+\
+$ cd libfoo/ # Change to the package root.
+$ ln -s ../upstream/docs ./
+\
+
+And then add the following to the root \c{buildfile}:
+
+\
+docs/
+{
+  ./: doc{*.md}
+
+  # Install the documentation in docs/ into the manual/ subdirectory
+  # of, say, /usr/share/doc/libfoo/ since we cannot install both its
+  # and root README.md into the same location.
+  #
+  doc{*.md}: install = doc/manual/
+}
+\
+
+However, this approach should be used sparingly since it can quickly make the
+root \c{buildfile} hard to comprehend. Note also that it cannot be used for
+main targets since an export stub requires a \c{buildfile} to load (see
+\l{#dont-main-target-root-buildfile Don't build your main targets in the
+root \c{buildfile}} for details).|
+
 
 \h2#core-root-buildfile-commit|Adjust root \c{buildfile}: commit and test|
 
@@ -3225,12 +3256,12 @@ $ b test
 $ bdep test -a
 \
 
-If you had to add any extra files to the root \c{buildfile} or add
-\c{buildfile} in extra subdirectories, then it also makes sense to test
+If you had to add any extra files to the root \c{buildfile} (or add
+\c{buildfiles} in extra subdirectories), then it also makes sense to test the
 installation (\l{#core-test-smoke-locally-install Test locally: installation})
-and preparation of the source distribution (\l{#core-test-smoke-locally-dist
-Test locally: distribution}) and make sure the extra files end up in the right
-places.
+and the preparation of the source distribution
+(\l{#core-test-smoke-locally-dist Test locally: distribution}) to make sure
+the extra files end up in the right places.
 
 Then commit our changes and CI:
 
@@ -3248,7 +3279,7 @@ $ bdep ci
 \h2#core-root-manifest|Adjust \c{manifest}|
 
 The next file we need to look over is the package's \c{manifest}. Here is what
-it typically looks like, using our \c{libfoo} as an example:
+it will look like, using our \c{libfoo} as an example:
 
 \
 : 1
@@ -3270,26 +3301,30 @@ depends: * bpkg >= 0.16.0
 \
 
 You can find the description of these and other package \c{manifest} values in
-the \l{bpkg#manifest-package Package Manifest} section of the \l{bpkg The
-\c{build2} Package Manager} manual.
+\l{bpkg#manifest-package Package Manifest} (the manifest format is described
+in \l{bpkg#manifest-format Manifest Format}).
 
 In the above listing the values that we likely need to adjust are \c{summary}
-and \c{license}, unless correctly auto-detected by \c{bpkg-new} on the
+and \c{license}, unless correctly auto-detected by \c{bdep-new} on the
 \l{#core-package-create Create final package} step. See
 \l{#core-root-manifest-summary Adjust \c{manifest}: \c{summary}} and
-\l{#core-root-manifest-license Adjust \c{manifest}: \c{license}}
+\l{#core-root-manifest-license Adjust \c{manifest}: \c{license}} below
 for guidelines on changing these values.
 
 We will also need to change \c{url} and \c{email} with the upstream project's
 homepage URL and e-mail, respectively. If upstream doesn't have a dedicated
 website for the project, then use its repository URL on GitHub or equivalent.
 For e-mail you would normally use a mailing list address. If upstream doesn't
-use e-mail, then you can drop this value from the \c{manifest}. The
-\c{package-url} and \c{package-email} values normally do not need to be
-changed.
+have any e-mail contacts, then you can drop this value from the
+\c{manifest}. The \c{package-url} and \c{package-email} values normally do not
+need to be changed.
 
-Note also that while you may be tempted to adjust the \c{version} value, don't
-since this will be done automatically by \l{bdep-release(1)} later.
+\N|\l{https://lists.build2.org packaging@build2.org} is a mailing list for
+discussions related to the packaging efforts of third-party projects.|
+
+Note also that while you may be tempted to adjust the \c{version} value,
+resist this temptation since this will be done automatically by
+\l{bdep-release(1)} later.
 
 You may also want to add the following value in certain cases:
 
@@ -3334,8 +3369,9 @@ src-url: https://github.com/.../foo
 \h2#core-root-manifest-summary|Adjust \c{manifest}: \c{summary}|
 
 For \c{summary} use a brief description of the functionality provided by the
-package. Less than 70 characters is a good target to aim for. Don't capitalize
-subsequent words unless proper nouns and omit the trailing dot. For example:
+library or executable. Less than 70 characters is a good target to aim
+for. Don't capitalize subsequent words unless proper nouns and omit the
+trailing dot. For example:
 
 \
 summary: Vim xxd hexdump utility
@@ -3344,7 +3380,7 @@ summary: Vim xxd hexdump utility
 Omit weasel words such as \"modern\", \"simple\", \"fast\", \"small\", etc.,
 since they don't convey anything specific. Omit \"header-only\" or
 \"single-header\" for C/C++ libraries since, at least in the context of
-\c{build2}, it does not imply any advantage.
+\c{build2}, it does not imply any benefit.
 
 If upstream does not offer a sensible summary, the following template is
 recommended for libraries:
@@ -3361,11 +3397,12 @@ summary: Event notification C library
 summary: Validating XML parsing and serialization C++ library
 \
 
-If the project consists of multiple packages it may be tempting to name each
+If the project consists of multiple packages, it may be tempting to name each
 package in terms of the overall project name, for example:
 
 \
-summary: libigl's core module
+name: libigl-core
+summary: libigl core module
 \
 
 This doesn't give the user any clue about what functionality is provided
@@ -3395,9 +3432,8 @@ the SPDX IDs for the commonly used licenses.
 
 \h2#core-root-manifest-commit|Adjust \c{manifest}: commit and test|
 
-Once all the adjustments to the \c{manifest} are made, it makes sense to
-test it locally (this time from the root of the package), commit our changes,
-and test with CI:
+Once all the adjustments to the \c{manifest} are made, it makes sense to test
+it locally, commit our changes, and test with CI:
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -3423,9 +3459,9 @@ The last file we need to adjust is \c{PACKAGE-README.md} which describes how
 to use the package from a \c{build2}-based project. The template generated by
 \c{bdep-new} establishes the recommended structure and includes a number of
 placeholders enclosed in \c{< >}, such as \c{<UPSTREAM-NAME>} and
-\c{<SUMMARY-OF-FUNCTIONALITY>}, that need to be replaced with package-specific
-content. While all the placeholders should be self-explanatory, below are
-a couple of guidelines.
+\c{<SUMMARY-OF-FUNCTIONALITY>}, that need to be replaced with the
+package-specific content. While all the placeholders should be
+self-explanatory, below are a couple of guidelines.
 
 For \c{<SUMMARY-OF-FUNCTIONALITY>} it's best to copy a paragraph or two from
 the upstream documentation, usually from \c{README.md} or the project's web
@@ -3449,7 +3485,7 @@ For inspiration, see
 
 \N|If upstream does not provide a \c{README} file, then it makes sense to
 rename \c{PACKAGE-README.md} to just \c{README.md} in the \c{build2} package,
-as was done in \c{xxd} mentioned above.|
+as was done in the \c{xxd} package mentioned above.|
 
 Once \c{PACKAGE-README.md} is ready, commit and push the changes. You may also
 want to view the result on GitHub to make sure everything is rendered
@@ -3466,11 +3502,11 @@ $ git push
 
 \h#core-release-publish|Release and publish|
 
-Once all the adjustments are in and everything is tested, we can finally
-release the final version of the package as well as publish it to
-\l{https://cppget.org cppget.org}. Both of these steps are automated with the
-corresponding \c{bdep} commands. But before performing these steps we need to
-transfer the package repository to \l{https://github.com/build2-packaging
+Once all the adjustments are in and everything is tested, we can release the
+final version of the package and then publish it to \l{https://cppget.org
+cppget.org}. Both of these steps are automated with the corresponding \c{bdep}
+commands. But before performing these steps we need to transfer the package
+repository to \l{https://github.com/build2-packaging
 github.com/build2-packaging}.
 
 
@@ -3488,14 +3524,15 @@ package from your personal workspace and then transfer the repository, the
 ownership information will have to be adjusted manually, which we would
 prefer to avoid.|
 
-First you will need to become a member of this organization. This will give
-you permissions to create new repositories, which is required to perform a
-tranfer (you will also have full read/write access to the repository once
-transferred). To get an invite, \l{https://build2.org/community.xhtml#help get
-in touch} not forgetting to mention your GitHub user name.
+The first step is to become a member of this organization (unless you already
+are). This will give you permissions to create new repositories, which is
+required to perform a transfer (you will also have full read/write access to
+the repository once transferred). To get an invite,
+\l{https://build2.org/community.xhtml#help get in touch} not forgetting to
+mention your GitHub user name.
 
 Then, if your repository has any prefixes, such as \c{build2-}, or suffixes
-such as \c{-package}, then the first step is to rename it to follow the
+such as \c{-package}, then the next step is to rename it to follow the
 \l{#core-repo-name Use upstream repository name as package repository name}
 guideline. Go to the repository's Settings on GitHub where you should see the
 Rename button.
@@ -3503,6 +3540,13 @@ Rename button.
 Finally, to perform the transfer, go to the repository's Settings, Danger Zone
 section, where you should see the Transfer button. Select \c{build2-packaging}
 as the organization to transfer to, and complete the transfer.
+
+Once transferred, you will be considered the maintainer of this package going
+forward. If other members of the \c{build2-packaging} organization wish to
+participate in the package maintenance, the correct etiquette is to do this
+via pull requests. However, if you loose interest in maintaining a package or
+otherwise become unresponsive, we may allow a new maintainer may take over
+this role.
 
 
 \h2#core-release-publish-release|Release final version|

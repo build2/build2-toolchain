@@ -3550,7 +3550,7 @@ this role.
 
 \N|In extraordinary circumstances the \c{build2-packaging} administrators may
 make direct changes to the package, for example, to release a new revision in
-order to address a critical issues. They will still try to coordinate the
+order to address a critical issue. They will still try to coordinate the
 changes with the maintainer but may not always be able to wait for a response
 in time-sensitive cases.|
 
@@ -3559,10 +3559,10 @@ in time-sensitive cases.|
 As you may recall, our package currently has a pre-release snapshot version of
 the upstream version (see \l{#core-package-adjust-version Adjust package
 version}). Once all the changes are in, we can change to the final upstream
-version, in a sense signalling that this package version is ready.
+version, in a sense signaling that this package version is ready.
 
-\N|If you are working in a branch, then now is the time to merge it into
-\c{master}.|
+\N|If you are working in a branch, then now is also the time to merge it into
+\c{master} (or equivalent).|
 
 The recommended way to do this is with the \l{bdep-release(1)} command (see
 \l{intro#guide-versioning-releasing Versioning and Release Management} for
@@ -3580,8 +3580,8 @@ $ cd foo/ # Change to the package repository root.
 $ bdep release --no-open --show-push
 \
 
-Then review the commit made by \c{bdep-release} and push the changes by
-copying the command that it printed:
+Then review the commit made by \c{bdep-release} and, if everything looks good,
+push the changes by copying the command that it printed:
 
 \
 $ git diff HEAD~1
@@ -3607,7 +3607,7 @@ $ cd foo/ # Change to the package repository root.
 $ bdep publish
 \
 
-The \c{bdep-publish} command prepares the source distributin of your package,
+The \c{bdep-publish} command prepares the source distribution of your package,
 uploads the resulting archive to the package repository, and prints a link to
 the package submission in the queue. Open this link in the browser and check
 that there are no surprises in build results (they should match the earlier CI
@@ -3618,28 +3618,31 @@ compared to our earlier CI submissions, the way the packages are built on CI
 and in the package repository are not exactly the same. Specifically, CI
 builds them from \c{git} while the package repository \- from the submitted
 package archives. If there are differences, it's almost always due to issues
-in the source distribution preparation \l{#core-test-smoke-locally-dist Test
-locally: distribution}.|
+in the source distribution preparation (see \l{#core-test-smoke-locally-dist
+Test locally: distribution}).|
 
 If everything looks good, then you are done: the package submission will be
 reviewed and, if there are no problems, moved to \l{https://cppget.org
 cppget.org}. If there are problems, then an issue will be created in the
 package repository with the review feedback. In this case you will need to
 \l{#core-version-management-new-revision release and publish a version
-revision} to address these problems. But in both cases you should first read
-through \l{#core-version-management Package version management} to understand
-the recommended \"version lifecycle\" of a third-party package.
+revision} to address any problems. However, in both cases, you should first
+read through the following \l{#core-version-management Package version
+management} section to understand the recommended \"version lifecycle\" of a
+third-party package.
 
 Also, if there is an issue for this package in
 \l{https://github.com/build2-packaging/WISHLIST
 github.com/build2-packaging/WISHLIST}, then you would want to add a comment
-and close it once the package has been published.
+and close it once the package has been moved to \l{https://cppget.org
+cppget.org}.
 
 
 \h#core-version-management|Package version management|
 
-Once we have pushed the release commit, in order to preserve continous
-versioning, no further changes should be made to the package without also
+Once we have pushed the release commit, in order to preserve continuous
+versioning (see \l{#core-package-adjust-version Adjust package version} for
+background), no further changes should be made to the package without also
 changing its version.
 
 \N|More precisely, you can make and commit changes without changing the
@@ -3650,21 +3653,22 @@ package remains unchanged.|
 
 While in our own projects we can change the versions as we see fit, with
 third-party projects the versions are dictated by the upstream and as a result
-we are limited to what we can use to fix issues in the package itself. It may
-be tempting (and maybe even conceptually correct) to release a patch version
-for our own fixes, however, we will be in trouble if later upstream releases
-the same patch version but with a different set of changes (plus the users of
-our package may wonder where did this version come from). As a result, we
-should only change the major, minor, or patch components of the package
-version in response to the corresponding upstream releases. For fixes to the
-package itself we should instead use version revisions.
+we are limited to what we can use to fix issues in our packaging work
+itself. It may be tempting (and perhaps even conceptually correct) to release
+a patch version for our own fixes, however, we will be in trouble if later
+upstream releases the same patch version but with a different set of changes
+(plus the users of our package may wonder where did this version come
+from). As a result, we should only change the major, minor, or patch
+components of the package version in response to the corresponding upstream
+releases. For fixes to the packaging work itself we should instead use version
+revisions.
 
 \N|Because a revision replaces the existing version, we should try to limit
-revision changes to bug fixes and preferably only to the package
+revision changes to bug fixes and preferably only in the package
 \"infrastructure\" (\c{buildfiles}, \c{manifest}, etc). Fixes to upstream
-source code should be limited to critical bugs, preferably be backported from
-upstream. To put it another way, changes in a revision should have an even
-more limited scope than a patch release.|
+source code should be limited to critical bugs and be preferably backported
+from upstream. To put it another way, changes in a revision should have an
+even more limited scope than a patch release.|
 
 Based on this, the recommended \"version lifecycle\" for a third-party
 package is as follows:
@@ -3674,25 +3678,28 @@ package is as follows:
 \li|After a release (the \l{#core-release-publish-release Release final
 version} step above), for example, version \c{2.1.0}, the package enters a
 \"revision phase\" where we can release revisions (\c{2.1.0+1}, \c{2.1.0+2},
-etc) to address any issues in the package. See
-\l{#core-version-management-new-revision New revision} for details.|
+etc) to address any issues in the packaging work. See
+\l{#core-version-management-new-revision New revision} for the detailed
+procedure.|
 
 \li|When a new upstream version is released, for example version \c{2.2.0},
 and we wish to upgrade our package to this version, we switch to its
-pre-release snapshot version (\c{2.2.0-a.0.z}) the same as we did on the
+pre-release snapshot version (\c{2.2.0-a.0.z}) the same way as we did on the
 \l{#core-package-adjust-version Adjust package version} step initially. See
-\l{#core-version-management-new-version New version} for details.|
+\l{#core-version-management-new-version New version} for the detailed
+procedure.|
 
 \li|Once we are done upgrading to the new upstream version, we release the
 final version just like on the \l{#core-release-publish-release Release final
-version} step initially.||
+version} step initially. At this point the package enters another revision
+phase.||
 
 Note also that in the above example, once we have switched to \c{2.2.0-a.0.z},
 we cannot go back and release another revision or patch version for \c{2.1.0}
 on the current branch. Instead, we will need to create a separate branch for
 the \c{2.1.Z} release series and make a revision or patch version there. See
 \l{#core-version-management-old-series New version/revision in old release
-series} for details.
+series} for the detailed procedure.
 
 
 \h2#core-version-management-new-revision|New revision|
@@ -3709,9 +3716,10 @@ accumulated issues} for background.|
 
 In the revision phase of the package version lifecycle (i.e., when the version
 does not end with \c{-a.0.z}), every commit must be accompanies by the
-revision increment to maintain continous verisions. As a result, each revision
-release commit also contains the changes in this revision. Below is a typical
-workflow for releasing and publishing the revision:
+revision increment to maintain continuous versioning. As a result, each
+revision release commit necessarily also contains the changes in this
+revision. Below is a typical workflow for releasing and publishing the
+revision:
 
 \
 $ # make changes
@@ -3726,7 +3734,7 @@ $ bdep publish
 
 Customarily, the revision commit message has the \c{\"Release version
 X.Y.Z+R\"} summary as generated by \c{bdep-release} followed by the
-description of changes organized in a list of there are several. For example:
+description of changes, organized in a list if there are several. For example:
 
 \
 Release version 2.1.0+1
@@ -3776,7 +3784,8 @@ $ bdep publish
 \h2#core-version-management-new-version|New version|
 
 As discussed in \l{#core-version-management Package version management}, we
-release new versions in reponse to the corresponding upstream releases.
+release new versions strictly in response to the corresponding upstream
+releases.
 
 The amount or work required to upgrade a package to a new upstream version
 depends on the extend of changes in the new version.
@@ -3785,8 +3794,8 @@ On one extreme you may have a patch release which fixes a couple of bugs in
 the upstream source code without any changes to the set of source files,
 upstream build system, etc. In such cases, upgrading a package is a simple
 matter of creating a new work branch, pointing the \c{upstream} \c{git}
-submodule to the new release, running tests, and releasing and publishing a
-new package version.
+submodule to the new release, running tests, and then merging, releasing, and
+publishing a new package version.
 
 On the other extreme you may have a new major upstream release which is
 essentially a from-scratch rewrite with new source code layout, different
@@ -3803,18 +3812,22 @@ in the upstream build system, etc.
 
 The following sections provide a checklist-like sequence of steps that can be
 used to review upstream changes with links to the relevant earlier sections in
-case undjustments are required.
+case adjustments are required.
 
 
 \h2#core-version-management-new-version-branch|New version: create new work branch|
 
 When upgrading a package to a new upstream version it's recommended to do this
-in a new work branch which, upon completion, is merged into \c{master}. For
-example, if the new upstream version is \c{2.2.0}:
+in a new work branch which, upon completion, is merged into \c{master} (or
+equivalent). For example, if the new upstream version is \c{2.2.0}:
 
 \
 $ git checkout -b wip-2.2.0
 \
+
+\N|If you are not the maintainer of the package and would like to help with
+preparing the new version, then, when everything is ready, use this branch
+to create a pull request instead of merging it directly.|
 
 
 \h2#core-version-management-new-version-open|New version: open new version|
@@ -3839,7 +3852,7 @@ new version.
 
 For example, if the upstream release tag we are interested in is called
 \c{v2.2.0}, to update the \c{upstream} submodule to point to this release
-commit, run the following command:
+commit, run the following commands:
 
 \
 $ cd upstream/
@@ -3881,7 +3894,7 @@ particular (discussed in the following sections):
 
 \li|New dependencies being added or old removed.|
 
-\li|New source files beging added or old removed (including in tests, etc).|
+\li|New source files being added or old removed (including in tests, etc).|
 
 \li|Changes to the upstream build system.|
 
@@ -3891,18 +3904,18 @@ particular (discussed in the following sections):
 \h2#core-version-management-new-version-layout|New version: layout changes|
 
 As mentioned earlier, for drastic layout changes it may make sense to start
-from scratch and re-generate the package with the \c{bdep-new} command
-(\l{#core-package-struct Decide on the package source code layout} starting
-point). On the other hand, if the changes are minor, then you can try to
-adjust things manually. An in-between strategy is to generate the new layout
-using \c{bdep-new} on the side and then retrofit the relevant changes in
-\c{buildfiles} to the existing package. In a sense, this approach uses
+from scratch and re-generate the package with the \c{bdep-new} command (use
+\l{#core-package-struct Decide on the package source code layout} as a
+starting point). On the other hand, if the changes are minor, then you can try
+to adjust things manually. An in-between strategy is to generate the new
+layout using \c{bdep-new} on the side and then retrofit the relevant changes
+in \c{buildfiles} to the existing package. In a sense, this approach uses
 \c{bdep-new} as a guide to figure out how to implement the new layout.
 
 
-\h2#core-version-management-new-version-dependecies|New version: new/old dependencies|
+\h2#core-version-management-new-version-dependencies|New version: new/old dependencies|
 
-If upsream added new or removed old dependecies, then you will need to
+If upstream added new or removed old dependencies, then you will need to
 replicate these changes in your package as on the \l{#core-fill-depend Add
 dependencies} and \l{#core-adjust-build-src-source-dep Adjust source
 \c{buildfile}: dependencies} initial packaging steps.
@@ -3910,9 +3923,9 @@ dependencies} and \l{#core-adjust-build-src-source-dep Adjust source
 
 \h2#core-version-management-new-version-sources|New version: new/old source files|
 
-If upsream added new or removed old source files, then you will need to
-replicate these changes in your package as on the \c{#core-fill-source Fill
-with upstream source code} and possibly \c{#core-adjust-build-src-header
+If upstream added new or removed old source files, then you will need to
+replicate these changes in your package as on the \l{#core-fill-source Fill
+with upstream source code} and possibly \l{#core-adjust-build-src-header
 Adjust header \c{buildfile}} and \l{#core-adjust-build-src-source-src Adjust
 source \c{buildfile}: sources, private headers} initial packaging steps.
 
@@ -3923,12 +3936,12 @@ remove old source files (typically new tests). See
 If there are any manual modifications to the upstream source code, then you
 will also need to re-apply them to the new version as discussion in
 \l{#howto-patch-upstream-source-manual Modifying upstream source code
-manually?}
+manually}.
 
 
 \h2#core-version-management-new-version-build|New version: changes to build system|
 
-If upsream changed anything in the build system, then you may need to
+If upstream changed anything in the build system, then you may need to
 replicate these changes in your package's \c{buildfiles}. The relevant initial
 packaging steps are: \l{#core-adjust-build-wide Adjust project-wide build system files in
 \c{build/}} and \l{#core-adjust-build-src-source-opt Adjust source
@@ -3941,7 +3954,7 @@ project-wide build system files in \c{tests/build/}} and
 
 \h2#core-version-management-new-version-other|New version: other new/old files/subdirectories|
 
-If upsream added or removed any other files or subdirectories that are
+If upstream added or removed any other files or subdirectories that are
 relevant to our package (such as documentation), then adjust the package
 similar to the \l{#core-root-buildfile Adjust root \c{buildfile}} and
 \l{#core-root-buildfile-doc Adjust root \c{buildfile}: other subdirectories}
@@ -3962,17 +3975,17 @@ always be able to fix it immediately (for example, by
 \l{#core-version-management-new-revision releasing a revision}). This could be
 because the change is too extensive/risky for a revision or simply not
 critical enough to warrant a release. In such cases it's recommended to file
-an issue in the package's repository with the view to fix it when the next
+an issue in the package repository with the view to fix it when the next
 opportunity arises. Releasing a new upstream version is one such opportunity
 and it makes sense to review any accumulated package issues and see if any
-of them can be addressed.
+of them could be addressed.
 
 
 \h2#core-version-management-new-version-test|New version: test locally and with CI|
 
 Once all the adjustments are in, test the package both locally and with CI
-similart to how we did after completing the smoke test during the initial
-packaging:
+similar to how we did it during the initial packaging after completing the
+smoke test:
 
 \l{#core-test-smoke-locally Test locally}\n
 \l{#core-test-smoke-locally-install Test locally: installation}\n
@@ -3983,7 +3996,7 @@ packaging:
 \h2#core-version-management-new-version-release|New version: merge, release, and publish|
 
 When the new version of the package is ready to be released, merge the
-work branch to \c{master}:
+work branch to \c{master} (or equivalent):
 
 \
 $ git checkout master
@@ -3997,10 +4010,10 @@ Then release and publish using the same steps as after the initial packaging:
 \h2#core-version-management-old-series|New version/revision in old release series|
 
 As discussed in \l{#core-version-management Package version management}, if we
-have already switched to the next upstream version in the \c{master} branch,
-we cannot go back and release a new version or a revision for an older release
-series on the same branch. Instead, we need to create a seperate, long-lived
-branch for this work.
+have already switched to the next upstream version in the \c{master} (or
+equivalent) branch, we cannot go back and release a new version or revision
+for an older release series on the same branch. Instead, we need to create a
+separate, long-lived branch for this work.
 
 As an example, let's say we need to release another revision or a patch
 version for an already released \c{2.1.0} while our \c{master} branch has
@@ -4035,6 +4048,7 @@ it corresponds to the \c{2.Y.Z} release series. If you already have the
 
 \h1#dont-do|What Not to Do|
 
+@@
 
 \h#dont-from-scratch|Don't write \c{buildfiles} from scratch, use \c{bdep-new}|
 

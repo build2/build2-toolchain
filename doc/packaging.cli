@@ -38,6 +38,9 @@
 // @@ bdep-new: export stub for executables.
 //
 // @@ Are upstream tests well behaved? -- add never exit/take unreasonable time
+//
+// @@ Note: showing UNIX command lines but should be straightforward to adjust
+//    for Windows.
 
 "
 \h0#preface|Preface|
@@ -1129,6 +1132,7 @@ above example, the recommended sequence of commands would be:
 $ cd libfoo/
 $ b update
 $ b test
+$ rm -rf /tmp/install
 $ b install config.install.root=/tmp/install
 $ b clean
 \
@@ -1894,12 +1898,13 @@ separated physically, in the combined layout you may need to achieve the same
 result (that is, avoid installing private headers) at the build system
 level. If the library provides only a handful of public headers and this set
 is unlikely to change often, then listing them explicitly is the most
-straightforward approach. For example:
+straightforward approach. For example (the \c{@./} qualifier tells \c{build2}
+they are in the source directory):
 
 \
 # Only install public headers into, say, /usr/include/.
 #
-h{foo foo_version}: install = include/
+h{foo}@./ h{foo_version}@./: install = include/
 h{*}: install = false
 \
 
@@ -2636,7 +2641,7 @@ we cannot build and test the entire package before adjusting the generated
 the library and, if it has any unit tests in the source subdirectory, even run
 some tests.
 
-\N|Is the library is header only, there won't be anything to build unless
+\N|If the library is header only, there won't be anything to build unless
 there are unit tests. Still you may want to continue with this exercise to
 detect any syntactic mistakes in the \c{buildfiles}, etc.|
 
@@ -2653,6 +2658,14 @@ library builds and if it has unit tests, you can try to run them:
 
 \
 $ b test
+\
+
+It also makes sense to test the installation and see if anything is off (such
+as private headers being installed):
+
+\
+$ rm -rf /tmp/install
+$ b install config.install.root=/tmp/install
 \
 
 Once the library builds, it makes sense to commit our changes for easier
@@ -2822,6 +2835,7 @@ library into a temporary directory:
 
 \
 $ cd libfoo/ # Change to the package root.
+$ rm -rf /tmp/install
 $ b install config.install.root=/tmp/install
 \
 
@@ -2925,14 +2939,19 @@ $ cd foo/ # Change to the package repository root.
 $ git add .
 $ git status
 $ git commit -m \"Add smoke test\"
-$ git push
+$ git push -u
 
 $ bdep ci
 \
 
 The result of the \l{bdep-ci(1)} command is a link where you can see the
-status of the builds. If any fail, view the logs to determine the cause, try
-to fix it, commit your fix, and CI again.
+status of the builds.
+
+\N|Make sure to wait until there are no more unbuilt configurations (that is,
+the number of entries with the \c{<unbuilt>} result is \c{0}).|
+
+If any builds fail, view the logs to determine the cause, try to fix it,
+commit your fix, and CI again.
 
 \N|It is possible that upstream does not support some platforms or compilers.
 For example, it's common for smaller projects not to bother with supporting
@@ -2949,7 +2968,7 @@ want to exclude these platforms/compilers from the CI builds using the
 
 The other common cause of a failed build is a newer version of a compiler or
 platform that breaks upstream. In this case there are three options: Ideally
-you would want to fix this upstream and have a new version released. Failed
+you would want to fix this in upstream and have a new version released. Failed
 that, you may want to patch the upstream code to fix the issues, especially if
 this is one of the major platforms and/or primary compilers (see
 \l{#howto-patch-upstream-source How do I patch upstream source code?} for
@@ -3159,9 +3178,9 @@ tests/: install = false
 \
 
 If the upstream project provides any other documentation (detailed change
-logs, contributing guidelines, etc) or legal files (list of authors, code of
-conduct, etc), then you may want to symlink and list them as the \c{doc{\}}
-and \c{legal{\}} prerequisites, respectively.
+logs, contributing guidelines, etc) or legal files (alternative licenses, list
+of authors, code of conduct, etc), then you may want to symlink and list them
+as the \c{doc{\}} and \c{legal{\}} prerequisites, respectively.
 
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
@@ -3183,6 +3202,12 @@ relevant files (or the entire subdirectory) and then list the files as
 prerequisites. For this last step, there are two options: we can list the
 files directly in the root \c{buildfile} or we can create a separate
 \c{buildfile} in the subdirectory.
+
+\N|If symlinking entire subdirectories, don't forget to also list them in
+\c{.gitattributes} if you want your package to be usable from the \c{git}
+repository directly on Windows. See
+\l{https://build2.org/article/symlinks.xhtml#windows Symlinks and Windows} for
+details.|
 
 Let's examine each approach using our \c{libfoo} as an example. We will
 assume that the upstream project contains the \c{docs/} subdirectory with
@@ -3378,6 +3403,10 @@ and \c{license}, unless correctly auto-detected by \c{bdep-new} on the
 \l{#core-root-manifest-summary Adjust \c{manifest}: \c{summary}} and
 \l{#core-root-manifest-license Adjust \c{manifest}: \c{license}} below
 for guidelines on changing these values.
+
+\N|It is not uncommon for projects to be licensed under multiple licenses.
+Note, however, that \c{bdep-new} will only detect one license and you will
+need to specify any additional licenses manually.|
 
 We will also need to change \c{url} and \c{email} with the upstream project's
 homepage URL and e-mail, respectively. If upstream doesn't have a dedicated

@@ -2948,7 +2948,8 @@ The result of the \l{bdep-ci(1)} command is a link where you can see the
 status of the builds.
 
 \N|Make sure to wait until there are no more unbuilt configurations (that is,
-the number of entries with the \c{<unbuilt>} result is \c{0}).|
+the number of entries with the \c{<unbuilt>} or \c{building} result is
+\c{0}).|
 
 If any builds fail, view the logs to determine the cause, try to fix it,
 commit your fix, and CI again.

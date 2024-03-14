@@ -2990,8 +2990,17 @@ While there are some commonalities in how C/C++ libraries are typically built,
 when it comes to tests there is unfortunately little common ground in how they
 are arranged, built, and executed. As a result, the first step in dealing with
 upstream tests is to study the existing build system and try to understand how
-they work. To get you started, below are some of the questions you would
-likely need answered before you can proceed:
+they work.
+
+\N|If upstream tests prove incomprehensible (which is unfortunately not
+uncommon) and the only options you see are to go with just the smoke test or
+to give up, then go with just the smoke test. In this case it's a good idea to
+create an issue in the package repository mentioning that upstream tests are
+still a TODO.|
+
+To get you started with analyzing the upstream tests, below are some of the
+questions you would likely need answered before you can proceed with the
+conversion:
 
 \ul|
 
@@ -3057,6 +3066,16 @@ subdirectory. In the latter case (each executable in a separate subdirectory)
 you can make copies of the smoke test subdirectory.|
 
 
+\li|\b{Do upstream tests use an internal utility library?}
+
+If there are multiple test executables and they need to share some common
+functionality, then it's not unusual for upstream to place such functionality
+into a static library and then link it to each test executable. In \c{build2}
+such an internal library is best represented with a utility library (see
+\l{b#intro-unit-test Implementing Unit Testing} for details). See the
+following section for an example.|
+
+
 \li|\b{Are upstream tests well behaved?}
 
 Unfortunately it's not uncommon for upstream tests not to behave well, such as
@@ -3104,6 +3123,18 @@ import libs = libfoo%lib{foo}
 
 for src: cxx{test*}
   ./: exe{$name($src)}: $src $libs
+\
+
+If the upstream tests have some common functionality that is used by all the
+test executables, then it is best placed into a utility library. For example:
+
+\
+import libs = libfoo%lib{foo}
+
+./: exe{test1}: cxx{test1} libue{common}
+./: exe{test2}: cxx{test2} libue{common}
+
+libue{common}: {hxx cxx}{common} $libs
 \
 
 

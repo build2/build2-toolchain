@@ -1057,6 +1057,19 @@ $ bdep new --package \
   libfoo
 \
 
+When packaging an executable, things are usually quite a bit simpler: there is
+no version header, symbol exporting, and the layout is normally combined
+(since there are no public headers). Typically the only potentially tricky
+decision you will need to make is whether to use \i{prefix} or \i{source
+subdirectory}. Most likely it will be \i{prefix} since most executable
+projects will use the \c{\"\"} style inclusion for own headers. For example:
+
+\
+$ bdep new --package \
+  --lang c++         \
+  --type exe,no-subdir,prefix=foo \
+  foo
+\
 
 \h2#core-package-review|Review and test auto-generated \c{buildfile} templates|
 
@@ -1396,6 +1409,15 @@ $ cd foo/ # Change to the package repository root.
 $ bdep init -C ../foo-gcc @gcc cc config.cxx=g++
 \
 
+\N|If you are initializing subsequent packages in the already created
+configuration, then the command line will be just:
+
+\
+$ bdep init @gcc
+\
+
+|
+
 Let's build and test the \c{bdep-new}-generated package to make sure
 everything is in order:
 
@@ -1455,6 +1477,22 @@ framework (whether bundled or not), see
 \l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
 How do I handle tests that have extra dependencies?} for the recommended
 way to deal with that.
+
+\N|One special type of dependency which is easy to overlook is between
+packages in the same package repository. For example, if we were packaging
+both \c{libfoo} as well as the \c{foo} executable that depends on it, then the
+\c{foo} package has a dependency on \c{libfoo} and it must be specified. In
+this case we don't need to add anything to \c{repositories.manifest} and in
+the \c{depends} entry (see below) in \c{foo}'s \c{manifest} we will normally
+use the special \c{==\ $} version constraint, meaning \c{libfoo} should have
+the same version as \c{foo} (see the \l{bpkg#manifest-package-depends
+\c{depends} package \c{manifest} value} for details). For example:
+
+\
+depends: libfoo == $
+\
+
+|
 
 If you have concluded that the upstream project doesn't have any dependencies,
 then you can remove \c{repositories.manifest} from the package repository root
@@ -1839,6 +1877,10 @@ libfoo/
 │   └── ...
 └── ...
 \
+
+\N|If instead of a library you are packaging an executable, you can skip
+directly to \l{#core-adjust-build-src-source-exe Adjust source \c{buildfile}:
+executables}.|
 
 
 \h2#core-adjust-build-src-header|Adjust header \c{buildfile}|
@@ -2584,15 +2626,121 @@ build. See \l{b#intro-lib Library Exportation and Versioning} for background
 and details.
 
 
+\h2#core-adjust-build-src-source-exe|Adjust source \c{buildfile}: executables|
+
+If instead of a library you are packaging an executable, then, as mentioned
+earlier, it will most likely be a combined layout with a single \c{buildfile}.
+This \c{buildfile} will also be much simpler compared to the library's. For
+example, give the following \c{bdep-new} command:
+
+\
+$ bdep new --package --lang c++ --type exe,no-subdir,prefix=foo foo
+\
+
+The resulting source \c{buildfile} will look like this:
+
+\
+libs =
+#import libs += libhello%lib{hello}
+
+exe{foo}: {hxx ixx txx cxx}{**} $libs testscript
+
+out_pfx = [dir_path] $out_root/foo/
+src_pfx = [dir_path] $src_root/foo/
+
+cxx.poptions =+ \"-I$out_pfx\" \"-I$src_pfx\"
+\
+
+If the executable doesn't have any inline/template/header files, then you can
+remove the \c{ixx}/\c{txx}/\c{hxx} target types, respectively (which would be
+parallel to the change made in \c{root.build}; see \l{#core-adjust-build-wide
+Adjust project-wide build system files in \c{build/}}). For example:
+
+\
+exe{foo}: {hxx cxx}{**} $libs testscript
+\
+
+If the source code includes its own headers with the \c{\"\"} style inclusion
+(or doesn't have any headers), then we can also get rid of \c{out_pfx} and
+\c{src_pfx}. For example:
+
+\
+libs =
+#import libs += libhello%lib{hello}
+
+exe{foo}: {hxx ixx txx cxx}{**} $libs testscript
+\
+
+\N|Unfortunately it's not uncommon for projects that provide both a library
+and an executable, for the executable source code to include public and/or
+private library headers with the relative \c{\"\"} style inclusion. For
+example:
+
+\
+#include \"../../libfoo/include/foo/util.hpp\"
+#include \"../../libfoo/src/impl.hpp\"
+\
+
+This approach won't work in \c{build2} since the two packages may end up in
+different directories or the library could even be installed. There are two
+techniques that can be used to work around this issue (other than patching the
+upstream source code).
+
+For public headers we can provide, in the appropriate places within the
+executable package, \"thunk headers\" with the same names as public headers
+that simply include the corresponding public header from the library using the
+\c{<>} style inclusion.
+
+For private headers we can provide, again in the appropriate places within the
+executable package, our own symlinks for a subset of private headers. Note
+that this will only work if the use of private headers within the executable
+does not depend on any symbols that are not exported by the library (failed
+that, the executable will have to always link to the static variant of the
+library).
+
+For a real example of both of these techniques, see the
+\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
+repository.|
+
+Dealing with dependencies in executables is similar to libraries except that
+here we don't have the interface/implementation distinction; see the
+\l{#core-adjust-build-src-source-dep Adjust source \c{buildfile}:
+dependencies} step. For example:
+
+\
+import libs = libfoo%lib{foo}
+
+exe{foo}: {hxx ixx txx cxx}{**} $libs testscript
+\
+
+Likewise, dealing with build options in executables is similar to libraries
+except that here we have no export options; see the
+\l{#core-adjust-build-src-source-opt Adjust source \c{buildfile}: build and
+export options} step.
+
+If the executable can plausibly be used in a build, then it's recommended to
+add \c{build2} metadata as describe in
+\l{https://github.com/build2/HOWTO/blob/master/entries/convey-additional-information-with-exe-lib.md
+How do I convey additional information (metadata) with executables and C/C++
+libraries?} See also \l{#howto-patch-upstream-source-preproc Modifying
+upstream source code with C/C++ preprocessor} on how to do it without
+physically modifying upstream source code. \N{See the
+\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
+repository for a real example of doing this.}
+
+\N|We will discuss the \c{testscript} prerequisite in @@ ref.|
+
+
 \h2#core-adjust-build-src-source-ext|Adjust source \c{buildfile}: extra requirements|
 
 The changes discussed so far should be sufficient to handle a typical library
-that is written in C and/or C++ and is able to handle platform differences
-with the preprocessor and compile/link options. However, sooner or later you
-will run into a more complex library that may use additional languages,
-require more elaborate platform detection, or use additional functionality,
-such as support for source code generators. The below list provides pointers
-to resources that cover the more commonly encountered additional requirements.
+or executable that is written in C and/or C++ and is able to handle platform
+differences with the preprocessor and compile/link options. However, sooner or
+later you will run into a more complex library that may use additional
+languages, require more elaborate platform detection, or use additional
+functionality, such as support for source code generators. The below list
+provides pointers to resources that cover the more commonly encountered
+additional requirements.
 
 \ul|
 

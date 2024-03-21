@@ -2728,7 +2728,8 @@ physically modifying upstream source code. \N{See the
 \l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
 repository for a real example of doing this.}
 
-\N|We will discuss the \c{testscript} prerequisite in @@ ref.|
+\N|We will discuss the \c{testscript} prerequisite on the
+\l{#core-test-smoke-exe Make smoke test: executables} step below.|
 
 
 \h2#core-adjust-build-src-source-ext|Adjust source \c{buildfile}: extra requirements|
@@ -2846,6 +2847,9 @@ separate package. See
 How do I handle tests that have extra dependencies?} for background and
 details.|
 
+\N|If instead of a library you are packaging an executable, you can skip
+directly to \l{#core-test-smoke-exe Make smoke test: executables}.|
+
 To recap, the \c{bdep-new}-generated \c{tests/} subdirectory looks like this
 (continuing with our \c{libfoo} example):
 
@@ -2944,6 +2948,53 @@ import libs = libfoo%lib{foo}
 
 exe{driver}: {hxx cxx}{**} $libs
 \
+
+
+\h2#core-test-smoke-exe|Make smoke test: executables|
+
+If instead of a library we are packaging an executable, then instead of the
+\c{tests/} subproject we get the \c{testscript} file in the source
+subdirectory (see \l{#core-adjust-build-src-source-exe Adjust source
+\c{buildfile}: executables} for a refresher). This file can be used to write
+one or more tests that exercise our executable (see \l{b#intro-operations-test
+Testing} for background).
+
+How exactly to test any given executable depends on its functionality. For
+instance, for a compression utility we could write a roundtrip test that first
+compresses some input, then decompresses it, and finally compares the result
+to the original. For example (taken from the
+\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
+repository):
+
+\
+: roundtrip
+:
+echo 'test content' | $* -zc | $* -dc >'test content'
+\
+
+On the other hand, for an executable that is a source code generator, proper
+testing would involve a separate tests package that has a build-time
+dependency on the executable and that exercises the generated code (see
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for background and
+details). \N{See the \l{https://github.com/build2-packaging/thrift/tree/0.17
+\c{thrift}} package repository for an example of this setup.}
+
+If the executable provides a way to query its version, one test that you
+should always be able to write, and which can serve as a last resort smoke
+test, is the version check. For example:
+
+\
+: version
+:
+$* --version >>~\"/EOO/\"
+/.*$(version.major)\.$(version.minor)\.$(version.patch).*/
+EOO
+\
+
+See also
+\l{https://github.com/build2/HOWTO/blob/master/entries/sanitize-test-execution.md
+How do I sanitize the execution of my tests?}
 
 
 \h2#core-test-smoke-locally|Test locally|
@@ -3145,6 +3196,21 @@ uncommon) and the only options you see are to go with just the smoke test or
 to give up, then go with just the smoke test. In this case it's a good idea to
 create an issue in the package repository mentioning that upstream tests are
 still a TODO.|
+
+\N|If instead of a library you are packaging an executable, then whether the
+below steps will apply depends on the functionality of the executable.
+
+In particular, testing source code generators would normally involve
+exercising the generated code, in which case the following will largely apply,
+though in this case the tests would need to be placed into a separate tests
+package that has a build-time dependency on the executable (see
+\l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
+How do I handle tests that have extra dependencies?} for background and
+details). In fact, if a source code generator is accompanied by a runtime
+library, then the tests will normally exercise them together (though a runtime
+library might also have its own tests). See the
+\l{https://github.com/build2-packaging/thrift/tree/0.17 \c{thrift}} package
+repository for an example of this setup.|
 
 To get you started with analyzing the upstream tests, below are some of the
 questions you would likely need answered before you can proceed with the
@@ -3361,6 +3427,16 @@ If the upstream project provides any other documentation (detailed change
 logs, contributing guidelines, etc) or legal files (alternative licenses, list
 of authors, code of conduct, etc), then you may want to symlink and list them
 as the \c{doc{\}} and \c{legal{\}} prerequisites, respectively.
+
+\N|If you are packaging an executable and it provides a man page, then it can
+also be listed in the root \c{buildfile}. For example, if the man page file is
+called \c{foo.1}:
+
+\
+./: ... man1{foo}
+\
+
+|
 
 \N|One file you don't need listing is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build

@@ -31,6 +31,9 @@
 //
 // @@ Are upstream tests well behaved? -- add never exit/take unreasonable time
 //
+// !! on step -> in step
+// !! failed that -> failing that
+//
 
 "
 \h0#preface|Preface|
@@ -62,7 +65,7 @@ is that the long-term benefits of this effort are well justified (see
 \l{https://build2.org/faq.xhtml#why-package-managers How does \c{build2}
 compare to other package managers?} for details).|
 
-The primary focus of this guide are existing C/C++ projects that use a
+The primary focus of this guide is existing C/C++ projects that use a
 different build system and that are maintained by a third-party, which we will
 refer to as \i{upstream}. Unless upstream is willing to incorporate support
 for \c{build2} directly into their repository, such projects are normally
@@ -117,7 +120,7 @@ typical look like this:
 
 While packaging a simple library or executable is relatively straightforward,
 the C and C++ languages and their ecosystems are infamous for a large amount
-variability in the platforms, compilers, source code layouts, and build
+of variability in the platforms, compilers, source code layouts, and build
 systems used. This leads to what looks like an endless list of special
 considerations that are only applicable in certain, more complex cases.
 
@@ -133,10 +136,10 @@ chapters are \l{#howto HOWTO} and \l{#faq FAQ}. The former covers the
 above-mentioned long list of special considerations that are only applicable
 in certain cases while the latter answer frequent packaging-related questions.
 
-Besides the presented guidelines you may also find the existing packages found
-in \l{https://github.com/build2-packaging github.com/build2-packaging} a good
-source of example material. The repositories pinned to the front page are the
-recommended starting point.
+Besides the presented guidelines, you may also find the existing packages
+found in \l{https://github.com/build2-packaging github.com/build2-packaging} a
+good source of example material. The repositories pinned to the front page are
+the recommended starting point.
 
 This guide assumes familiarity with the \c{build2} toolchain. At the minimum
 you should have read through \l{intro The \c{build2} Toolchain Introduction}
@@ -274,7 +277,7 @@ github.com/build2-packaging} organization.
 \l{https://cppget.org cppget.org} to be under the
 \l{https://github.com/build2-packaging github.com/build2-packaging}
 organization in order to ensure some continuity in case the original
-maintainer looses interest, etc. You will still be the owner of the repository
+maintainer loses interest, etc. You will still be the owner of the repository
 and by hosting your packaging efforts under this organization (as opposed to,
 say, your personal workspace) you make it easier for others to discover your
 work and to contribute to the package maintenance.
@@ -352,7 +355,7 @@ $ git clone git@github.com:<personal>/foo.git
 \h2#core-repo-init|Initialize package repository with \c{bdep new}|
 
 Change to the root directory of the package repository that you have cloned
-on the previous step and run (continuing with our \c{foo} example):
+in the previous step and run (continuing with our \c{foo} example):
 
 \
 $ cd foo/ # Change to the package repository root.
@@ -413,7 +416,7 @@ provides a single package because it gives us the flexibility of adding new
 packages at a later stage without having to perform a major restructuring of
 our repository.
 
-Note also that upstream providing multiple package is not the only reason we
+Note also that upstream providing multiple packages is not the only reason we
 may end up having multiple \c{build2} packages. Another common reason is
 factoring tests into a separate package due to a dependency on a testing
 framework
@@ -462,7 +465,7 @@ Naturally, never use a URL that requires authentication, for example, SSH
 
 Besides the repository URL, you also need the commit of the upstream release
 which you will be packaging. It is common practice to tag releases so the
-upstream tags would be the first place to check. Failed that, you can always
+upstream tags would be the first place to check. Failing that, you can always
 use the commit id.
 
 Assuming the upstream release tag you are interested in is called \c{vX.Y.Z},
@@ -560,9 +563,9 @@ This brings the question of what to do about third-party libraries: should we
 add the \c{lib} prefix to the package name if it's not already there?
 Unfortunately, there is no clear cut answer and whichever decision you make,
 there will be drawbacks. Specifically, if you add the \c{lib} prefix, the main
-drawback is that the package name now deviates from upstream name and if the
-project maintainer ever decides to add \c{build2} support the upstream
-repository, there could be substantial friction. On the other handle, if you
+drawback is that the package name now deviates from the upstream name and if
+the project maintainer ever decides to add \c{build2} support to the upstream
+repository, there could be substantial friction. On the other hand, if you
 don't add the \c{lib} prefix, then you will always run the risk of a future
 clash with an executable name. And, as was illustrated with the \c{zstd}
 example, a late addition of an executable won't necessarily cause any issues
@@ -618,11 +621,11 @@ qtbase 6     QtCore          qt6-base-dev Qt6             libQt6Core
 
 If an upstream project is just a single library, then the project name is
 normally the same as the library name (but there are exceptions, like
-\c{libsigcplusplus} in the above table). However, when looking at upstream
+\c{libsigcplusplus} in the above table). However, when looking at the upstream
 repository that contains multiple components (libraries and/or executables,
 like \c{qtcore} in the above example), it may not be immediately obvious what
 the upstream's library names are. In such cases, the corresponding Debian
-packages can really help clarify the situation. Failed that, look into the
+packages can really help clarify the situation. Failing that, look into the
 existing build system. In particular, if it generates the \c{pkg-config} file,
 then the name of this file is usually the upstream library name.
 
@@ -683,10 +686,10 @@ and call the library package \c{libfoo}.
 \h2#core-package-struct|Decide on the package source code layout|
 
 Another aspect we need to decide on is the source code layout inside the
-package. Here we want to stay as close to upstream layout as possible unless
-there are valid reasons to deviate. Staying close has the best chance of
-giving us a build without any compile errors since the header inclusion in the
-project can be sensitive to this layout. This also makes it easier for
+package. Here we want to stay as close to the upstream layout as possible
+unless there are valid reasons to deviate. Staying close has the best chance
+of giving us a build without any compile errors since the header inclusion in
+the project can be sensitive to this layout. This also makes it easier for
 upstream to adopt the \c{build2} build.
 
 Sometimes, however, there are good reasons for deviating from upstream,
@@ -737,7 +740,7 @@ This and the following two sections discuss each of these steps in more detail
 and also look at some examples.
 
 The first step above is to study the upstream project in order to understand
-where the various parts are (headers, sources, etc.) and how they are built.
+where the various parts are (headers, sources, etc) and how they are built.
 Things that can help here include:
 
 \ul|
@@ -780,8 +783,8 @@ sound like a natural place, oftentimes they include own headers with the
 \c{\"\"} style inclusion, either because the headers are in the same directory
 or because the library build arranges for them to be found this way with
 additional header search paths. As a result, a better place to look could be
-library's examples and/or tests. Some libraries also describe which headers
-they provide and how to include them in their documentation.
+the library's examples and/or tests. Some libraries also describe which
+headers they provide and how to include them in their documentation.
 
 The way public headers are included normally determines where they are
 installed. If they are included with a subdirectory, then they are normally
@@ -803,7 +806,7 @@ installation subdirectory?} if you encounter such a case.|
 The inclusion scheme would normally also be recreated in the upstream source
 code layout. In particular, if upstream includes public headers with a
 subdirectory prefix, then this subdirectory would normally also be present in
-the upstream layout so that such a header can be included form the upstream
+the upstream layout so that such a header can be included from the upstream
 codebase directly. As an example, let's say we determined that public headers
 of \c{libfoo} are included with the \c{foo/} subdirectory, such as
 \c{<foo/util.hpp>}. One of the typical upstream layouts for such a library
@@ -823,7 +826,7 @@ upstream/
 Notice how the \c{util.hpp} header is in the \c{foo/} subdirectory rather
 than in \c{include/} directly.
 
-The second key pieces of information we need to find is whether and, if so,
+The second key piece of information we need to find is whether and, if so,
 how the public headers and sources are split. For instance, in the above
 example, we can see that public headers go into \c{include/} while sources and
 private headers go into \c{src/}. But they could also be combined in the same
@@ -861,7 +864,7 @@ With the understanding of these key properties of upstream layout you should
 be in a good position to start crafting the \l{bdep-new(1)} command line that
 recreates it.
 
-\N|The \c{bdep-new} documentation uses a slightly more general terminology
+\N|The \c{bdep-new} documentation uses slightly more general terminology
 compared to what we used in the previous section in order to also be
 applicable to projects that use modules instead of headers.
 
@@ -953,7 +956,7 @@ project include:
 
 \li|\n\cb{no-version}
 
-Omit the auto-generated version header. Usually upstream will provided its own
+Omit the auto-generated version header. Usually upstream will provide its own
 equivalent of this functionality.
 
 \N|Note that even if upstream doesn't provide any version information, it's
@@ -1045,8 +1048,8 @@ $ bdep new --lang c++,c ...
 
 |
 
-Continuing with our \c{libfoo} example, assuming upstream provides own symbol
-exporting, the final \c{bdep-new} command line would be:
+Continuing with our \c{libfoo} example, assuming upstream provides its own
+symbol exporting, the final \c{bdep-new} command line would be:
 
 \
 $ bdep new --package \
@@ -1131,11 +1134,11 @@ them with the upstream source file symlinks.
 
 If you are using Windows, then you will need to temporarily replace the
 \c{no-symexport} sub-option with \c{auto-symexport} in order to make the
-generated library buildable. But do not forget to drop this sub-option on
+generated library buildable. But do not forget to drop this sub-option in
 the next step.|
 
-Note that at this stage it's easiest to build, test, and install in source
-directly skipping the \c{bdep} initialization of the package (which we would
+Note that at this stage it's easiest to build, test, and install in the source
+directory, skipping the \c{bdep} initialization of the package (which we would
 have to de-initialize before we can re-run \c{bdep-new}). Continue with the
 above example, the recommended sequence of commands would be:
 
@@ -1219,7 +1222,7 @@ information in \c{manifest} as well as generated \c{PACKAGE-README.md}.
 \N|If the file names or formats used by upstream don't match those recognized
 by \c{bdep-new}, then for now simply omit the corresponding files from the
 package directory and add them later manually. Similarly, if an attempt to
-extra the information is unsuccessful, we will have a chance to adjust it in
+extract the information is unsuccessful, we will have a chance to adjust it in
 \c{manifest} later.
 
 Specifically, for \c{README}, \c{bdep-new} recognizes \c{README.md},
@@ -1229,7 +1232,7 @@ from \c{README.md}.
 For license files, \c{bdep-new} recognizes \c{LICENSE}, \c{LICENSE.txt}
 \c{LICENSE.md}, \c{COPYING}, and \c{UNLICENSE}.
 
-For changes files, \c{bdep-new} recognizes \c{NEWS}, \c{CHANGES}, and
+For changes-related files, \c{bdep-new} recognizes \c{NEWS}, \c{CHANGES}, and
 \c{CHANGELOG} in various cases as well as with the \c{.md}, \c{.txt}
 extensions.|
 
@@ -1326,9 +1329,9 @@ is ready to publish, change to the final upstream version with the help of
 pre-release snapshot.
 
 \N|In continuous versioning \c{\i{X}.\i{Y}.\i{Z}-a.0.z} means a snapshot after
-the (non-existent) 0th alpha pre-release of the \c{\i{X}.\i{Y}.\i{Z}} version.
-See \l{intro#guide-versioning-releasing Versioning and Release Management}
-for a more detailed explanation and examples.|
+the (non-existent) \c{0}th alpha pre-release of the \c{\i{X}.\i{Y}.\i{Z}}
+version. See \l{intro#guide-versioning-releasing Versioning and Release
+Management} for a more detailed explanation and examples.|
 
 Let's see how this works for our \c{libfoo} example. Say, the upstream version
 that we are packaging is \c{2.1.0}. This means we start with \c{2.1.0-a.0.z}.
@@ -1465,7 +1468,7 @@ Normally we would need to \"unbundle\" such dependencies when converting to
 
 \N|While there are several reasons we insist on unbundling of dependencies,
 the main one is that bundling can cause multiple, potentially conflicting
-copied of the same dependency to exist in the build. This can cause subtle
+copies of the same dependency to exist in the build. This can cause subtle
 build failures that are hard to understand and track down.|
 
 One particularly common case to check for is bundling of the testing
@@ -1538,8 +1541,9 @@ hierarchy and so \c{beta} includes \c{testing} which in turn includes
 
 \N|If you wish, you can also uncomment the \c{trust} value and replace \c{...}
 with the \l{https://cppget.org/?about repository fingerprint}. This way you
-won't be prompted to confirm the repository authenticity on first fetch. See
-\l{intro#guide-add-remove-deps Adding and Removing Dependencies} for details.|
+won't be prompted to confirm the repository authenticity on the first
+fetch. See \l{intro#guide-add-remove-deps Adding and Removing Dependencies}
+for details.|
 
 Once this is done, edit \c{manifest} in package root and add the \c{depends}
 value for each dependency. See \l{intro#guide-add-remove-deps Adding and
@@ -2547,8 +2551,9 @@ using an ad hoc recipe (or the \l{b#module-in \c{in}} or
 \l{https://github.com/build2/libbuild2-autoconf \c{autoconf}} build system
 modules). If that doesn't look possible (for example, if the generation logic
 is complex and is implemented in something like Perl or Python), then you can
-try your luck with automatic symbol exporting. Failed that, the only remaining
-option is to use a pre-generated \c{.def} file in the \c{build2} build.|
+try your luck with automatic symbol exporting. Failing that, the only
+remaining option is to use a pre-generated \c{.def} file in the \c{build2}
+build.|
 
 The last approach is to explicitly specify in the source code which symbols
 must be exported by marking the corresponding declarations with

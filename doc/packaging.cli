@@ -22,27 +22,15 @@
 //
 // @@ Add example of propagating config.libfoo.debug to macro on build options?
 //
-// @@ Note on library metadata where talk about configuration. Also about
-//    autoconf.
-//
 // @@ Add link from metadata HOWTO to "Modifying upstream source code with
 //    preprocessor".
 //
-// @@ Default configuration like SQLite -- look in Debian/Fedora (want to
-//    be substitutable with system-installed).
-//
-// @@ Optional dependencies like xxhash.
-//
 // @@ Mapping to system package manager names/versions.
 //
-// @@ bdep-new: export stub for executables.
+// !! bdep-new: export stub for executables.
 //
 // @@ Are upstream tests well behaved? -- add never exit/take unreasonable time
 //
-// @@ Note: showing UNIX command lines but should be straightforward to adjust
-//    for Windows.
-//
-// @@ Add zstd as PACKAGE-README.md examples.
 
 "
 \h0#preface|Preface|
@@ -154,6 +142,11 @@ This guide assumes familiarity with the \c{build2} toolchain. At the minimum
 you should have read through \l{intro The \c{build2} Toolchain Introduction}
 and the \l{b#intro Introduction} chapter in the build system manual. Ideally,
 you should also have some experience using \c{build2} in your own projects.
+
+In this guide we will only show the UNIX version of the commands. In most
+cases making a Windows version is a simple matter of adjusting paths and, if
+used, line continuations. And where this is not the case a note will be
+provided showing the equivalent Windows command.
 
 
 \h#intro-term|Terminology|
@@ -2382,12 +2375,24 @@ not always be a good idea. See
 Which C/C++ compile/link options are OK to specify in a project's buildfile?}
 for the guidelines.
 
-Also, oftentimes, such custom options must only be specified for certain
-target platforms or when using a certain compiler. While \c{build2} provides a
-large amount of information to identify the build configuration as well as more
-advanced \c{buildfile} language mechanism (such as \l{b#intro-switch Pattern
-Matching}) to make sense of it, this is a large topic for which we refer you
-to \l{b The \c{build2} Build System} manual. Additionally,
+\N|If you are packaging a library that includes a large number of optional
+features, it may be unclear which of them would make sense to enable by
+default. The notorious example of this situation is
+\l{https://github.com/build2-packaging/sqlite \c{libsqlite3}} which provides
+hundreds of preprocessor macros to enable or tune various aspects of its
+functionality.
+
+The recommended approach in cases like this is to study the configuration of
+such a library in distributions like Debian and Fedora and use the same
+defaults. In particular, this will allow us to substitute the \c{build2}
+package with the system-installed version.|
+
+Oftentimes, custom options must only be specified for certain target platforms
+or when using a certain compiler. While \c{build2} provides a large amount of
+information to identify the build configuration as well as more advanced
+\c{buildfile} language mechanism (such as \l{b#intro-switch Pattern Matching})
+to make sense of it, this is a large topic for which we refer you to \l{b The
+\c{build2} Build System} manual. Additionally,
 \l{https://github.com/build2-packaging github.com/build2-packaging} now
 contains a large number of packages that you can study and search for
 examples.
@@ -2704,8 +2709,7 @@ that, the executable will have to always link to the static variant of the
 library).
 
 For a real example of both of these techniques, see the
-\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
-repository.|
+\l{https://github.com/build2-packaging/zstd \c{zstd}} package repository.|
 
 Dealing with dependencies in executables is similar to libraries except that
 here we don't have the interface/implementation distinction; see the
@@ -2730,8 +2734,8 @@ How do I convey additional information (metadata) with executables and C/C++
 libraries?} See also \l{#howto-patch-upstream-source-preproc Modifying
 upstream source code with C/C++ preprocessor} on how to do it without
 physically modifying upstream source code. \N{See the
-\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
-repository for a real example of doing this.}
+\l{https://github.com/build2-packaging/zstd \c{zstd}} package repository for a
+real example of doing this.}
 
 \N|We will discuss the \c{testscript} prerequisite on the
 \l{#core-test-smoke-exe Make smoke test: executables} step below.|
@@ -2968,8 +2972,7 @@ How exactly to test any given executable depends on its functionality. For
 instance, for a compression utility we could write a roundtrip test that first
 compresses some input, then decompresses it, and finally compares the result
 to the original. For example (taken from the
-\l{https://github.com/build2-packaging/zstd/tree/v1.5.5 \c{zstd}} package
-repository):
+\l{https://github.com/build2-packaging/zstd \c{zstd}} package repository):
 
 \
 : roundtrip
@@ -3816,7 +3819,7 @@ $ bdep ci
 The last package file we need to adjust is \c{PACKAGE-README.md} which
 describes how to use the package from a \c{build2}-based project. The template
 generated by \c{bdep-new} establishes the recommended structure and includes a
-number of placeholders enclosed in \c{< >}, such as \c{<UPSTREAM-NAME>} and
+number of placeholders enclosed in \c{<\ >}, such as \c{<UPSTREAM-NAME>} and
 \c{<SUMMARY-OF-FUNCTIONALITY>}, that need to be replaced with the
 package-specific content. While all the placeholders should be
 self-explanatory, below are a couple of guidelines.
@@ -3825,15 +3828,11 @@ For \c{<SUMMARY-OF-FUNCTIONALITY>} it's best to copy a paragraph or two from
 the upstream documentation, usually from \c{README.md} or the project's web
 page.
 
-\N|If \c{bdep new} was able to extract the summary from upstream \c{README},
-then the summary in the heading (first line) will contain that information.
-Otherwise, you would want to adjust it, similar to \c{manifest} above. Using
-the \c{summary} value form the \c{manifest}, perhaps slightly shortened,
-is a good idea.|
-
-If there is a single package, then \c{<SUMMARY>} in the heading can be the
-same as in \c{PACKAGE-README.md}. If there are multiple packages, then use
-an overall summary of the upstream project.
+\N|If the \c{bdep new} command was able to extract the summary from upstream
+\c{README}, then the summary in the heading (first line) will contain that
+information. Otherwise, you would need to adjust it manually, similar to
+\c{manifest} above. In this case use the \c{summary} value form the
+\c{manifest}, perhaps slightly shortened.|
 
 If the package contains a single importable target, as is typical with
 libraries, then it makes sense to drop the \"Importable targets\" section
@@ -3844,12 +3843,19 @@ Similarly, if the package has no configuration variables, then it makes sense
 to drop the \"Configuration variables\" section.
 
 For inspiration, see
+
+\l{https://github.com/build2-packaging/zstd/blob/master/libzstd/PACKAGE-README.md
+\c{PACKAGE-README.md}} in \l{https://github.com/build2-packaging/zstd
+\c{zstd}} and
 \l{https://github.com/build2-packaging/libevent/blob/main/PACKAGE-README.md
 \c{PACKAGE-README.md}} in \l{https://github.com/build2-packaging/libevent
-\c{libevent}} (library) and
+\c{libevent}} (libraries) as well as
+\l{https://github.com/build2-packaging/zstd/blob/master/zstd/PACKAGE-README.md
+\c{PACKAGE-README.md}} in \l{https://github.com/build2-packaging/zstd
+\c{zstd}} and
 \l{https://github.com/build2-packaging/xxd/blob/master/xxd/README.md
 \c{README.md}} in \l{https://github.com/build2-packaging/xxd \c{xxd}}
-(executable).
+(executables).
 
 \N|If upstream does not provide a \c{README} file, then it makes sense to
 rename \c{PACKAGE-README.md} to just \c{README.md} in the \c{build2} package,
@@ -3868,7 +3874,7 @@ $ git push
 \
 
 
-\h#core-proj-readme|Adjust package repository \c{README.md}|
+\h#core-repo-readme|Adjust package repository \c{README.md}|
 
 With all the package files taken care of, the last file we need to adjust is
 \c{README.md} in the root of our package repository (it was created on the
@@ -3883,14 +3889,13 @@ to continue with updating this \c{README.md}.|
 
 The primary purpose of the package repository \c{README.md} is to provide
 setup instructions as well as any other relevant information for the
-devlopment of the packages as opposed to their consumption. However, it's also
-a good idea to privide a brief summary of what this package repostiory is
-about and to point users interested in consumption to the
-\c{PACKAGE-README.md} files.
+development of the packages as opposed to their consumption. However, it's also
+a good idea to give a brief summary of what this repository is about and to
+point users interested in consumption to the \c{PACKAGE-README.md} files.
 
-The template generated by \c{bdep-new} establishes the recommended structure
-that achieves these objectives. It includes a number of placeholders enclosed
-in \c{< >}, such as \c{<UPSTREAM-URL>} and \c{<SUMMARY-OF-FUNCTIONALITY>},
+The template generated by \c{bdep new} establishes the recommended structure
+to achieve these objectives. It includes a number of placeholders enclosed
+in \c{<\ >}, such as \c{<UPSTREAM-URL>} and \c{<SUMMARY-OF-FUNCTIONALITY>},
 that need to be replaced with the repository-specific content. While all the
 placeholders should be self-explanatory, below are a couple of guidelines.
 
@@ -3900,11 +3905,12 @@ an overall summary of the upstream project.
 
 For \c{<SUMMARY-OF-FUNCTIONALITY>} it's best to copy a paragraph or two from
 the upstream documentation, usually from \c{README.md} or the project's web
-page.
+page. Again, for a single package, this can be copied directly from
+\c{PACKAGE-README.md}.
 
 If there are multiple packages in the repository, then it's recommended to
 replace a single link to \c{PACKAGE-README.md} with a list of links (this
-also gives an idea which packages are available). For example:
+also shows the available packages). For example:
 
 \
 ... If you want to use `foo` in your `build2`-based project, then
@@ -3917,12 +3923,13 @@ instead see the accompanying `PACKAGE-README.md` files:
 The remainder of the generated \c{README.md} file are the standard \c{bdep}
 initialization instructions. Adjust them if your package repository requires
 anything special (for example, a host configuration). This is also the place
-to mention anything unusual, such as that upstream does not use semver.
+to mention anything unusual, such as that upstream does not use semver (and
+thus only a subset of \c{bdep} functionality is usable).
 
 For inspiration, see
-\l{https://github.com/build2-packaging/zstd/blob/v1.5.5/README.md
-\c{README.md}} in the \l{https://github.com/build2-packaging/zstd/tree/v1.5.5
-\c{zstd}} package repository.
+\l{https://github.com/build2-packaging/zstd/blob/master/README.md
+\c{README.md}} in the \l{https://github.com/build2-packaging/zstd \c{zstd}}
+package repository.
 
 Once the repository \c{README.md} is ready, commit and push the changes. You
 may also want to view the result on GitHub to make sure everything is rendered
@@ -4403,6 +4410,14 @@ initial packaging steps.
 It makes sense to review the package \c{manifest} (\l{#core-root-manifest
 Adjust \c{manifest}}) and \c{PACKAGE-README.md} (\l{#core-root-package-readme
 Adjust \c{PACKAGE-README.md}}) for any updates.
+
+
+\h2#core-version-management-new-version-repo|New version: review repository \c{README.md}|
+
+If any new packages were added in this version or if there are any changes to
+the development workflow, then it makes sense to review and if necessary
+update package repository \c{README.md} (\l{#core-repo-readme Adjust package
+repository \c{README.md}}).
 
 
 \h2#core-version-management-new-version-issues|New version: review/fix accumulated issues|

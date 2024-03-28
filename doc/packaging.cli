@@ -27,12 +27,7 @@
 //
 // @@ Mapping to system package manager names/versions.
 //
-// !! bdep-new: export stub for executables.
-//
 // @@ Are upstream tests well behaved? -- add never exit/take unreasonable time
-//
-// !! on step -> in step
-// !! failed that -> failing that
 //
 
 "
@@ -1068,9 +1063,22 @@ projects will use the \c{\"\"} style inclusion for own headers. For example:
 \
 $ bdep new --package \
   --lang c++         \
-  --type exe,no-subdir,prefix=foo \
+  --type exe,no-subdir,prefix=foo,export-stub \
   foo
 \
+
+\N|The \c{export-stub} sub-option causes the generation of
+\c{build/export.build}, an export stub that facilitates the importation of
+targets from our package (see \l{b#intro-import Target Importation} for
+details). The generation of this file for a library is the default since it
+will normally be used by other projects and thus imported. An executable,
+however, will only need an export stub if it can plausibly be used during the
+build (see \l{intro#guide-build-time-linked Build-Time Dependencies and Linked
+Configurations} for background). Source code generators are an obvious example
+of such executables. A less obvious example would be compression utilities
+such as \c{gzip} or \c{zstd}. If you are unsure, it's best to provide an
+export stub.|
+
 
 \h2#core-package-review|Review and test auto-generated \c{buildfile} templates|
 
@@ -1337,7 +1345,7 @@ Let's see how this works for our \c{libfoo} example. Say, the upstream version
 that we are packaging is \c{2.1.0}. This means we start with \c{2.1.0-a.0.z}.
 
 \N|Naturally, the upstream version that we are using should correspond to the
-commit of the \c{upstream} submodule we have added on the
+commit of the \c{upstream} submodule we have added in the
 \l{#core-repo-submodule Add upstream repository as \c{git} submodule} step.|
 
 Next we edit the \c{manifest} file in the \c{libfoo} package and change the
@@ -1603,7 +1611,7 @@ $ git commit -m \"Add dependencies\"
 \h2#core-fill-source|Fill with upstream source code|
 
 Now we are ready to begin replacing the \c{bdep-new}-generated files with
-upstream source code symlinks. We start with library's header and source
+upstream source code symlinks. We start with the library's header and source
 files. Continuing with our \c{libfoo} example, this is what we currently have
 (notice that \c{LICENSE}, \c{README.md}, and \c{NEWS} are already symlinks to
 upstream):
@@ -1632,8 +1640,8 @@ libfoo/
 └── PACKAGE-README.md
 \
 
-Now we replace generated \c{include/foo/foo.hpp} with library's real headers
-and \c{src/foo.cpp} with its real source files:
+Now we replace generated \c{include/foo/foo.hpp} with the library's real
+headers and \c{src/foo.cpp} with its real source files:
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -1676,11 +1684,11 @@ make sure nothing is missing. Specifically, look out for:
 
 \li|Header/sources with other extensions, for example, C, Objective-C, etc.|
 
-\li|Other files that may be need, for example, \c{.def}, \c{config.h.in}, etc.|
+\li|Other files that may be needed, for example, \c{.def}, \c{config.h.in}, etc.|
 
 \li|Subdirectories that contain more header/source files.||
 
-If upstream contains subdirectories with addition header/source files, then
+If upstream contains subdirectories with additional header/source files, then
 you can symlink entire subdirectories instead of doing it file by file. For
 example, let's say \c{libfoo}'s upstream source directory contains the
 \c{impl/} subdirectory with additional source files:
@@ -1712,10 +1720,10 @@ libfoo/
 Wouldn't it be nice if we could symlink the entire top-level subdirectories
 (\c{include/foo/} and \c{src/} in our case) instead of symlinking individual
 files? As discussed in \l{#core-package-craft-cmd Craft \c{bdep new} command
-line to create package}, we can but we will need to change the package layout.
-Specifically, we will need to move the \c{buildfiles} out of the source
-subdirectories with the help of the \c{buildfile-in-prefix} sub-option of
-\c{bdep-new}. In the above case, we will also need to invent a source
+line to create package}, we can, but we will need to change the package
+layout. Specifically, we will need to move the \c{buildfiles} out of the
+source subdirectories with the help of the \c{buildfile-in-prefix} sub-option
+of \c{bdep-new}. In the above case, we will also need to invent a source
 subdirectory in \c{src/}. Whether this is a worthwhile change largely depends
 on how many files you have to symlink individually. If it's just a handful,
 then it's probably not worth the complication, especially if you have to
@@ -1777,8 +1785,8 @@ export stub that facilitates the importation of targets from our package (see
 
 Normally you don't need to change anything in \c{bootstrap.build} \- all it
 does is specify the build system project name and load a standard set of core
-build system modules. Likewise, \c{export.build} is good as generated unless
-you need to do something special, like exporting targets from different
+build system modules. Likewise, \c{export.build} is ok as generated unless you
+need to do something special, like exporting targets from different
 subdirectories of your package.
 
 While \c{root.build} is also often good as is, situations where you may
@@ -1786,7 +1794,7 @@ need to tweak it are not uncommon and include:
 
 \ul|
 
-\li|Loading additional build system module.
+\li|Loading an additional build system module.
 
     For example, if your package makes use of Objective-C/C++ (see \l{b#c-objc
     Objective-C Compilation} and \l{b#cxx-objcxx Objective-C++ Compilation})
@@ -1827,7 +1835,7 @@ you can drop the assignment of the file extension for the \c{ixx{\}} and
 
 If you have added any configuration variables and would like to use
 non-default values for some of them in your build, then you will need to
-reconfigure the package. For example, let' say we have added the
+reconfigure the package. For example, let's say we have added the
 \c{config.libfoo.debug} variable to our \c{libfoo} package which enables
 additional debugging facilities in the library. This is how we can reconfigure
 all our builds to enable this functionality:
@@ -1889,9 +1897,9 @@ executables}.|
 
 The \c{buildfile} in \c{include/foo/} is pretty simple:
 
-\N|The \c{buildfile} in your package may look slightly differently depending
-on the exact \c{bdep-new} sub-options used. However, all the relevant
-definitions discussed below should still be easily recognizable.|
+\N|The \c{buildfile} in your package may look slightly different, depending on
+the exact \c{bdep-new} sub-options used. However, all the relevant definitions
+discussed below should still be easily recognizable.|
 
 \
 pub_hdrs = {hxx ixx txx}{**}
@@ -1908,7 +1916,7 @@ pub_hdrs = {hxx ixx txx}{**}
 }
 \
 
-Normally the only change that you would make to this \c{buildfile} is to
+Normally, the only change that you would make to this \c{buildfile} is to
 adjust the installation location of headers (see \l{b#intro-operations-install
 Installing} for background). In particular, if our headers were included
 without the \c{<foo/...>} prefix but instead contained the library name in
@@ -1962,7 +1970,7 @@ installation subdirectory?}
 
 Next is the \c{buildfile} in \c{src/}:
 
-\N|Again, the \c{buildfile} in your package may look slightly differently
+\N|Again, the \c{buildfile} in your package may look slightly different,
 depending on the exact \c{bdep-new} sub-options used. However, all the
 relevant definitions discussed below should still be easily recognizable.
 
@@ -2060,7 +2068,7 @@ lib{foo}:
 
 \N|If you do have auto-generated headers, then in the split layout you can
 remove \c{out_pfx_inc} if you only have private auto-generated headers and
-\c{out_pfx_src} if you only have public.|
+\c{out_pfx_src} if you only have public ones.|
 
 \N|In the combined layout the single \c{buildfile} does not set the
 \c{*_pfx_*} variables. Instead it uses the \c{src_root} and \c{out_root}
@@ -2157,7 +2165,7 @@ $ bdep sync -a --disfigure config.libfoo.debug=true
 |
 
 For each library that your package depends on (and which you have added
-to \c{manifest} on the \l{#core-fill-depend Add dependencies} step),
+to \c{manifest} in the \l{#core-fill-depend Add dependencies} step),
 you need to first determine whether it's an interface of implementation
 dependency and then import it either into the \c{intf_libs} or \c{impl_libs}
 variable, respectively.
@@ -2226,7 +2234,7 @@ here. If you need to exclude some headers, it should be done in the
 header \c{buildfile} in the \c{include/} directory.
 
 \N|In the combined layout the single \c{buildfile} does not have such code.
-Instead, all the headers are covered by the wildcard pattern in following
+Instead, all the headers are covered by the wildcard pattern in the following
 block.|
 
 
@@ -2345,7 +2353,7 @@ lib{foo}:
 #libs{foo}: cxx.export.poptions += -DFOO_SHARED
 \
 
-The build options are in effect when the library itself is being build and the
+The build options are in effect when the library itself is being built and the
 exported options are propagated to the library consumers (see \l{b#intro-lib
 Library Exportation and Versioning} for background on exported options). For
 now we will ignore the commented out lines that add \c{-DFOO_STATIC*} and
@@ -2394,9 +2402,9 @@ package with the system-installed version.|
 Oftentimes, custom options must only be specified for certain target platforms
 or when using a certain compiler. While \c{build2} provides a large amount of
 information to identify the build configuration as well as more advanced
-\c{buildfile} language mechanism (such as \l{b#intro-switch Pattern Matching})
-to make sense of it, this is a large topic for which we refer you to \l{b The
-\c{build2} Build System} manual. Additionally,
+\c{buildfile} language mechanisms (such as \l{b#intro-switch Pattern
+Matching}) to make sense of it, this is a large topic for which we refer you
+to \l{b The \c{build2} Build System} manual. Additionally,
 \l{https://github.com/build2-packaging github.com/build2-packaging} now
 contains a large number of packages that you can study and search for
 examples.
@@ -2418,7 +2426,7 @@ Note that outright replacing the preprocessor macros with metadata can be done
 if this information is only used by the library consumers. In other words, if
 the library's public headers rely on the presence of such macros, then we have
 no choice but to export them, potentially also providing the metadata so that
-this information is easily accessible form \c{buildfiles}.|
+this information is easily accessible from \c{buildfiles}.|
 
 Let's consider a representative example based on our \c{libfoo} to get a sense
 of what this normally looks like as well as to highlight a few nuances. We
@@ -2484,7 +2492,7 @@ contain some values specified by the user with their \c{config.*.*}
 counterparts. On the other hand, the \c{*.export.*} variables are assigned.
 
 Secondly, the order in which we append to the variables is important for the
-value to accumulate correctly. You want to fist append all the scope-level
+value to accumulate correctly. You want to first append all the scope-level
 values, then target type/pattern-specific, and finally any target-specific;
 that is, from more general to more specific (see \l{b#intro-lang Buildfile
 Language} for background). To illustrate this point, let's say in our
@@ -2518,11 +2526,11 @@ Let's now turn to a special sub-topic of the build and export options that
 relates to the shared library symbol exporting. To recap, a shared library on
 Windows must explicitly specify the symbols (functions and global data) that
 it wishes to make accessible by its consumers (executables and other shared
-libraries). This can be achieved in three different way: The library can
+libraries). This can be achieved in three different ways: The library can
 explicitly mark in its source code the names whose symbols should be
 exported. Alternatively, the library can provide a \c{.def} file to the linker
 that lists the symbols to be exported. Finally, the library can request
-automatic exporting of all symbols, which is the default semantics on
+the automatic exporting of all symbols, which is the default semantics on
 non-Windows platforms. Note that the last two approaches only work for
 exporting functions, not data, unless special extra steps are taken by the
 library consumers. Let's discuss each of these approaches in the reverse
@@ -2634,8 +2642,8 @@ versioning where the package's major and minor version components are embedded
 into the shared library binary name (and \c{soname}) under the assumption
 that only patch versions are ABI-compatible.
 
-The two situation where you would want to change this are when the above
-assumption does not hold and/or when the upstream provides platform-specific
+The two situations where you would want to change this are when the above
+assumption does not hold and/or when upstream provides platform-specific
 shared library versions which you would like to re-create in your \c{build2}
 build. See \l{b#intro-lib Library Exportation and Versioning} for background
 and details.
@@ -2649,7 +2657,10 @@ This \c{buildfile} will also be much simpler compared to the library's. For
 example, give the following \c{bdep-new} command:
 
 \
-$ bdep new --package --lang c++ --type exe,no-subdir,prefix=foo foo
+$ bdep new --package \
+  --lang c++         \
+  --type exe,no-subdir,prefix=foo,export-stub \
+  foo
 \
 
 The resulting source \c{buildfile} will look like this:
@@ -2686,7 +2697,7 @@ libs =
 exe{foo}: {hxx ixx txx cxx}{**} $libs testscript
 \
 
-\N|Unfortunately it's not uncommon for projects that provide both a library
+\N|Unfortunately, it's not uncommon for projects that provide both a library
 and an executable, for the executable source code to include public and/or
 private library headers with the relative \c{\"\"} style inclusion. For
 example:
@@ -2709,7 +2720,7 @@ that simply include the corresponding public header from the library using the
 For private headers we can provide, again in the appropriate places within the
 executable package, our own symlinks for a subset of private headers. Note
 that this will only work if the use of private headers within the executable
-does not depend on any symbols that are not exported by the library (failed
+does not depend on any symbols that are not exported by the library (failing
 that, the executable will have to always link to the static variant of the
 library).
 
@@ -2742,7 +2753,7 @@ physically modifying upstream source code. \N{See the
 \l{https://github.com/build2-packaging/zstd \c{zstd}} package repository for a
 real example of doing this.}
 
-\N|We will discuss the \c{testscript} prerequisite on the
+\N|We will discuss the \c{testscript} prerequisite in the
 \l{#core-test-smoke-exe Make smoke test: executables} step below.|
 
 
@@ -2805,10 +2816,10 @@ the library and, if it has any unit tests in the source subdirectory, even run
 some tests.
 
 \N|If the library is header only, there won't be anything to build unless
-there are unit tests. Still you may want to continue with this exercise to
+there are unit tests. Still, you may want to continue with this exercise to
 detect any syntactic mistakes in the \c{buildfiles}, etc.|
 
-To build only a specific subdirectory of our package we use the build system
+To build only a specific subdirectory of our package, we use the build system
 directly (continuing with our \c{libfoo} example):
 
 \
@@ -3113,9 +3124,9 @@ $ b test
 then the above \c{configure} operation will most likely fail because such
 dependencies cannot be found (it may succeed if they are available as
 system-installed). The error message will suggest specifying the location of
-each dependency with \c{config.import.*} variable. You can fix this by setting
-each such \c{config.import.*} to the location of the default build
-configuration (created on the \l{#core-fill-init Initialize package in build
+each dependency with the \c{config.import.*} variable. You can fix this by
+setting each such \c{config.import.*} to the location of the default build
+configuration (created in the \l{#core-fill-init Initialize package in build
 configurations} step) which should contain all the necessary
 dependencies. Simply re-run the \c{configure} operation until you have
 discovered and specified all the necessary \c{config.import.*} variables, for
@@ -3181,9 +3192,9 @@ want to exclude these platforms/compilers from the CI builds using the
 
 The other common cause of a failed build is a newer version of a compiler or
 platform that breaks upstream. In this case there are three options: Ideally
-you would want to fix this in upstream and have a new version released. Failed
-that, you may want to patch the upstream code to fix the issues, especially if
-this is one of the major platforms and/or primary compilers (see
+you would want to fix this in upstream and have a new version released.
+Failing that, you may want to patch the upstream code to fix the issues,
+especially if this is one of the major platforms and/or primary compilers (see
 \l{#howto-patch-upstream-source How do I patch upstream source code?} for
 details). Finally, you can just leave the build failing with the expectation
 that it will be fixed in the next upstream version. Note that in this case you
@@ -3284,7 +3295,7 @@ In this case it is natural to replace the contents of the smoke test with the
 upstream source code, potentially renaming the test subdirectory (\c{basics/})
 to better match upstream naming.
 
-If upstream has multiple test executables, then they could all be in single
+If upstream has multiple test executables, then they could all be in a single
 test subdirectory (potentially reusing some common bits) or spread over
 multiple subdirectories. In both cases it's a good idea to follow the upstream
 structure unless you have good reasons to deviate. In the former case (all
@@ -3305,10 +3316,10 @@ following section for an example.|
 
 \li|\b{Are upstream tests well behaved?}
 
-Unfortunately it's not uncommon for upstream tests not to behave well, such as
-write diagnostics to \c{stdout} instead of \c{stderr}, create temporary files
-without cleaning them up, or assume presence of input files in the current
-working directory. For details on how to deal with such situations see
+Unfortunately, it's not uncommon for upstream tests not to behave well, such
+as to write diagnostics to \c{stdout} instead of \c{stderr}, create temporary
+files without cleaning them up, or assume presence of input files in the
+current working directory. For details on how to deal with such situations see
 \l{https://github.com/build2/HOWTO/blob/master/entries/sanitize-test-execution.md
 How do I sanitize the execution of my tests?}||
 
@@ -3423,7 +3434,7 @@ subdirectories that need building plus list targets that are usually found in
 the root directory of a project, typically \c{README.md}, \c{LICENSE},
 etc. This is what the generated root \c{buildfile} looks like for our
 \c{libfoo} project assuming we have symlinked \c{README.md}, \c{LICENSE}, and
-\c{NEWS} from upstream on the \l{#core-package-create Create final package}
+\c{NEWS} from upstream in the \l{#core-package-create Create final package}
 step:
 
 \
@@ -3451,7 +3462,7 @@ called \c{foo.1}:
 
 |
 
-\N|One file you don't need listing is \c{INSTALL} (or equivalent) which
+\N|One file you don't need to list is \c{INSTALL} (or equivalent) which
 normally contains the installation instructions for the upstream build
 system. In the \c{build2} package of a third-party project the
 \c{PACKAGE-README.md} file serves this purpose (see
@@ -3461,8 +3472,8 @@ system. In the \c{build2} package of a third-party project the
 \h2#core-root-buildfile-doc|Adjust root \c{buildfile}: other subdirectories|
 
 If the upstream project has other subdirectories that makes sense to include
-into the \c{build2} package, then now is good time to take care of that.  The
-most common such case will be extra documentation (besides the root
+into the \c{build2} package, then now is a good time to take care of that.
+The most common such case will be extra documentation (besides the root
 \c{README}), typically in a subdirectory called \c{doc/}, \c{docs/}, or
 \c{documentation/}.
 
@@ -3493,7 +3504,7 @@ $ cd libfoo/ # Change to the package root.
 $ ln -s ../upstream/docs ./
 \
 
-The adjustment to the root \c{buildfile} are pretty straightforward: we
+The adjustments to the root \c{buildfile} are pretty straightforward: we
 exclude the \c{docs/} subdirectory (since it has no \c{buildfile}) and list
 the \c{*.md} files as prerequisites using the \c{doc{\}} target type (which,
 in particular, makes sure they are installed into the appropriate location):
@@ -3511,7 +3522,7 @@ installation location of the files in \c{docs/} because there is another
 \c{README.md} inside and that would conflict with the root one when installed
 into the same location. This time we cannot symlink the top-level \c{docs/}
 subdirectory (because we need to place a \c{buildfile} there). The two options
-here is to either symlink the individual files or introduce another
+here are to either symlink the individual files or introduce another
 subdirectory level inside \c{docs/} (which is the same approach as discussed
 in \l{#dont-main-target-root-buildfile Don't build your main targets in the
 root \c{buildfile}}). Let's illustrate both sub-cases.
@@ -3575,9 +3586,9 @@ doc{*}:
 }
 \
 
-\N|A yet another option would be to open a scope for the \c{docs/}
-subdirectory directly in the root \c{buildfile} (see \l{b#intro-dirs-scopes
-Output Directories and Scopes} for background). For example:
+\N|Yet another option would be to open a scope for the \c{docs/} subdirectory
+directly in the root \c{buildfile} (see \l{b#intro-dirs-scopes Output
+Directories and Scopes} for background). For example:
 
 \
 $ cd libfoo/ # Change to the package root.
@@ -3667,7 +3678,7 @@ You can find the description of these and other package \c{manifest} values in
 in \l{bpkg#manifest-format Manifest Format}).
 
 In the above listing the values that we likely need to adjust are \c{summary}
-and \c{license}, unless correctly auto-detected by \c{bdep-new} on the
+and \c{license}, unless correctly auto-detected by \c{bdep-new} in the
 \l{#core-package-create Create final package} step. See
 \l{#core-root-manifest-summary Adjust \c{manifest}: \c{summary}} and
 \l{#core-root-manifest-license Adjust \c{manifest}: \c{license}} below
@@ -3882,7 +3893,7 @@ $ git push
 \h#core-repo-readme|Adjust package repository \c{README.md}|
 
 With all the package files taken care of, the last file we need to adjust is
-\c{README.md} in the root of our package repository (it was created on the
+\c{README.md} in the root of our package repository (it was created in the
 \l{#core-repo-init Initialize package repository with \c{bdep new}} step).
 
 \N|If you need to add additional packages and are doing this one package at a
@@ -3993,8 +4004,8 @@ as the organization to transfer to, and complete the transfer.
 Once transferred, you will be considered the maintainer of this package going
 forward. If other members of the \c{build2-packaging} organization wish to
 participate in the package maintenance, the correct etiquette is to do this
-via pull requests. However, if you loose interest in maintaining a package or
-otherwise become unresponsive, we may allow a new maintainer may take over
+via pull requests. However, if you lose interest in maintaining a package or
+otherwise become unresponsive, we may allow a new maintainer to take over
 this role.
 
 \N|In extraordinary circumstances the \c{build2-packaging} administrators may
@@ -4021,8 +4032,8 @@ background). Besides replacing the \c{version} value in the package
 the \c{git} command to do so). This command also by default \"opens\" the next
 development version, which is something that we normally want for our own
 projects but not when we package a third-party one (since we cannot predict
-which version the upstream will release next). So we disable this
-functionality. For example:
+which version upstream will release next). So we disable this functionality.
+For example:
 
 \
 $ cd foo/ # Change to the package repository root.
@@ -4059,8 +4070,9 @@ $ bdep publish
 The \c{bdep-publish} command prepares the source distribution of your package,
 uploads the resulting archive to the package repository, and prints a link to
 the package submission in the queue. Open this link in the browser and check
-that there are no surprises in build results (they should match the earlier CI
-results) or in the displayed package information (\c{PACKAGE-README.md}, etc).
+that there are no surprises in the build results (they should match the
+earlier CI results) or in the displayed package information
+(\c{PACKAGE-README.md}, etc).
 
 \N|While there should normally be no discrepancies in the build results
 compared to our earlier CI submissions, the way the packages are built on CI
@@ -4101,7 +4113,7 @@ package. Updating such a file without changing the version is ok since the
 package remains unchanged.|
 
 While in our own projects we can change the versions as we see fit, with
-third-party projects the versions are dictated by the upstream and as a result
+third-party projects the versions are dictated by upstream and as a result
 we are limited to what we can use to fix issues in our packaging work
 itself. It may be tempting (and perhaps even conceptually correct) to release
 a patch version for our own fixes, however, we will be in trouble if later
@@ -4133,13 +4145,13 @@ procedure.|
 
 \li|When a new upstream version is released, for example version \c{2.2.0},
 and we wish to upgrade our package to this version, we switch to its
-pre-release snapshot version (\c{2.2.0-a.0.z}) the same way as we did on the
+pre-release snapshot version (\c{2.2.0-a.0.z}) the same way as we did in the
 \l{#core-package-adjust-version Adjust package version} step initially. See
 \l{#core-version-management-new-version New version} for the detailed
 procedure.|
 
 \li|Once we are done upgrading to the new upstream version, we release the
-final version just like on the \l{#core-release-publish-release Release final
+final version just like in the \l{#core-release-publish-release Release final
 version} step initially. At this point the package enters another revision
 phase.||
 
@@ -4164,7 +4176,7 @@ accumulated issues that didn't warrant a revision on their own. See
 accumulated issues} for background.|
 
 In the revision phase of the package version lifecycle (i.e., when the version
-does not end with \c{-a.0.z}), every commit must be accompanies by the
+does not end with \c{-a.0.z}), every commit must be accompanied by the
 revision increment to maintain continuous versioning. As a result, each
 revision release commit necessarily also contains the changes in this
 revision. Below is a typical workflow for releasing and publishing the
@@ -4365,7 +4377,7 @@ in \c{buildfiles} to the existing package. In a sense, this approach uses
 \h2#core-version-management-new-version-dependencies|New version: new/old dependencies|
 
 If upstream added new or removed old dependencies, then you will need to
-replicate these changes in your package as on the \l{#core-fill-depend Add
+replicate these changes in your package as in the \l{#core-fill-depend Add
 dependencies} and \l{#core-adjust-build-src-source-dep Adjust source
 \c{buildfile}: dependencies} initial packaging steps.
 
@@ -4373,7 +4385,7 @@ dependencies} and \l{#core-adjust-build-src-source-dep Adjust source
 \h2#core-version-management-new-version-sources|New version: new/old source files|
 
 If upstream added new or removed old source files, then you will need to
-replicate these changes in your package as on the \l{#core-fill-source Fill
+replicate these changes in your package as in the \l{#core-fill-source Fill
 with upstream source code} and possibly \l{#core-adjust-build-src-header
 Adjust header \c{buildfile}} and \l{#core-adjust-build-src-source-src Adjust
 source \c{buildfile}: sources, private headers} initial packaging steps.
@@ -4383,7 +4395,7 @@ remove old source files (typically new tests). See
 \l{#core-test-upstream-convert Convert smoke test to upstream tests}.
 
 If there are any manual modifications to the upstream source code, then you
-will also need to re-apply them to the new version as discussion in
+will also need to re-apply them to the new version as discussed in
 \l{#howto-patch-upstream-source-manual Modifying upstream source code
 manually}.
 
@@ -4534,16 +4546,16 @@ package} for details.
 \h#dont-fix-upstream|Avoid fixing upstream issues in the \c{build2} package|
 
 Any deviations from upstream makes the \c{build2} package more difficult to
-maintain. In particular, if you make a large number of changes to upstream
+maintain. In particular, if you make a large number of changes to the upstream
 source code, releasing a new version will require a lot of work. As a result,
 it is recommended to avoid fixing upstream issues in the \c{build2} package.
 Instead, try to have the issues fixed upstream and wait for them to be
 released as a new version.
 
-Sometimes, however, you may have no choice. For example, the upstream is
-inactive or has no plans to release a new version with your fixes any time
-soon. Or you may want to add support for a platform/compiler that upstream is
-not willing or capable of supporting.
+Sometimes, however, you may have no choice. For example, upstream is inactive
+or has no plans to release a new version with your fixes any time soon. Or you
+may want to add support for a platform/compiler that upstream is not willing
+or capable of supporting.
 
 Note that even if you do fix some issues in the \c{build2} package directly,
 try hard to also incorporate them upstream so that you don't need to maintain
@@ -4593,7 +4605,7 @@ library consumers, for example, inclusion of different headers.|
 
 |
 
-If a compiled mode cannot be always used, then it may be tempting to support
+If a compiled mode cannot always be used, then it may be tempting to support
 both modes by making the mode user-configurable. Unless there are strong
 reasons to, you should resist this temptation and, if the compiled mode is not
 universally usable, then use the header-only mode everywhere.
@@ -4604,7 +4616,7 @@ maintain. If you really want to have the compiled mode, then the right way to
 achieve it is to work with upstream to fix any issues that prevent its use
 in \c{build2}.
 
-There are, however, valid reasons why supporting both mode may be needed, the
+There are, however, valid reasons why supporting both modes may be needed, the
 most common of which are:
 
 \ul|
@@ -4631,7 +4643,7 @@ framework. This is especially common with \l{https://cppget.org/catch2
 \c{catch2}} where one often encounters a comical situation with only a few
 kilobytes of library source code and over 600KB of \c{catch2.hpp}.
 
-The extra size, while wasteful, if not the main issue, however. The bigger
+The extra size, while wasteful, is not the main issue, however. The bigger
 problem is that if a bug is fixed in the bundled dependency, then to propagate
 the fix we will need to release a new version (or revision) of each package
 that bundles it. Needless to say this is not scalable.
@@ -4643,7 +4655,7 @@ the same build with the symptoms ranging from compile errors to subtle runtime
 issues that are hard to diagnose.
 
 As a result, it is strongly recommended that you unbundle any dependencies
-that the upstream may have bundled. In case of testing frameworks, see
+that upstream may have bundled. In case of testing frameworks, see
 \l{https://github.com/build2/HOWTO/blob/master/entries/handle-tests-with-extra-dependencies.md
 How do I handle tests that have extra dependencies?} for the recommended way
 to deal with such cases.
@@ -4664,7 +4676,7 @@ inside). However, this is not recommended except for the simplest of projects.
 
 Firstly, this quickly gets messy since you have to combine managing
 \c{README}, \c{LICENSE}, etc., and subdirectories with your main target
-builds. More importantly, this also means that when you main target is
+builds. More importantly, this also means that when your main target is
 imported (and thus the \c{buildfile} that defines this target must be loaded),
 your entire project will be loaded, including any \c{tests/} and \c{examples/}
 subprojects, and that is wasteful.
@@ -4773,10 +4785,11 @@ drawback: you will have to keep re-applying the changes for every subsequent
 version unless and until upstream incorporates your changes. The other two
 options try to work around this drawback.
 
-The first alternative option is to modify upstream source code automatically
-during the build, typically using an ad hoc recipe. This approach works best
-when the changes are regular and can be applied mechanically with something
-like the \l{testscript#builtins-sed \c{sed} builtin}.
+The first alternative option is to modify the upstream source code
+automatically during the build, typically using an ad hoc recipe. This
+approach works best when the changes are regular and can be applied
+mechanically with something like the \l{testscript#builtins-sed \c{sed}
+builtin}.
 
 The second alternative option is to use the C/C++ preprocessor to make the
 necessary changes to the upstream source code during compilation. Unlike the
@@ -4859,7 +4872,7 @@ $ patch <foo.cpp.patch
 If some hunks of the patch could not be applied, manually resolve any
 conflicts.|
 
-\li|If on the previous step the patch did not apply cleanly, regenerate it:
+\li|If in the previous step the patch did not apply cleanly, regenerate it:
 
 \
 $ diff -u foo.cpp.orig foo.cpp >foo.cpp.patch
@@ -4948,13 +4961,13 @@ int main (int argc, const char** argv)
 The idea here is to rename the original \c{main()} with the help of the C
 preprocessor and provide our own \c{main()} which, after handling
 \c{--build2-metadata} calls the original. One notable deal-breaker for this
-approach are C++ implementations of \c{main()} that don't have the explicit
-\c{return}. There is also a better chance in C++ for the \c{main} macro to
-replace something unintended.
+approach would be a C++ implementation of \c{main()} that doesn't have the
+explicit \c{return}. There is also a better chance in C++ for the \c{main}
+macro to replace something unintended.
 
-To complete this we also need to exclude \c{main.c} from compilation in
-our \c{buildfile} (since it is compiled as part of \c{main-build2.c} via
-the preprocessor inclusion). For example:
+To complete this we also need to modify our \c{buildfile} to exclude
+\c{main.c} from compilation (since it is compiled as part of \c{main-build2.c}
+via the preprocessor inclusion). For example:
 
 \
 exe{foo}: {h c}{** -main}
@@ -4964,7 +4977,7 @@ exe{foo}: c{main}: include = adhoc  # Included in main-build2.c.
 
 \h#howto-bad-inclusion-practice|How do I deal with bad header inclusion practice?|
 
-This sections explains how to deal with libraries that include their public,
+This section explains how to deal with libraries that include their public,
 generically-named headers without the library name as a subdirectory
 prefix. Such libraries cannot coexist, neither in the same build nor when
 installed.
@@ -4992,18 +5005,18 @@ longer be possible to use a system-installed version of the package (because
 it presumably still uses the unqualified inclusion scheme). Note, however,
 that distributions like Debian and Fedora have the same co-existence issue as
 we do and are generally strict about potential header clashes. In
-particular, it is not uncommon to find Debian packages installing library's
+particular, it is not uncommon to find Debian packages installing library
 headers into subdirectories of \c{/usr/include} to avoid such clashes. And if
 you find this to be the case for the library you are packaging, then it may
 make sense to use the same prefix as used by the main distributions for
 compatibility.
 
-It is also possible that distributions disregard this considerations for some
+It is also possible that distributions disregard these considerations for some
 libraries. This usually happens for older, well-known libraries that happened
 to be installed this way in the early days and changing things now will be too
 disruptive. In a sense, it is understood that such libraries effectively
-\"own\" the unqualified headers names that they happen to be using. If you
-think you are packaging such a libraries,
+\"own\" the unqualified header names that they happen to be using. If you
+think you are packaging such a library,
 \l{https://build2.org/community.xhtml#help get in touch} to discuss this
 further since it may make sense to also disregard this rule in
 \l{https://cppget.org cppget.org}.|
@@ -5116,7 +5129,7 @@ lib{foo}: cxx.pkgconfig.include = include/ include/libfoo/
 
 \h#howto-extra-header-install-subdir|How do I handle extra header installation subdirectory?|
 
-This sections explains how to handle an additional header installation
+This section explains how to handle an additional header installation
 subdirectory. As an illustration of the problem, consider the \c{libfoo}
 example from the previous sections (see the \l{#core-fill-source Fill with
 upstream source code} step for a refresher). In that example the library
@@ -5167,7 +5180,7 @@ lib{foo}: cxx.pkgconfig.include = include/\"foo-v$version.major\"/
 \N|The variable will be \c{c.pkgconfig.include} for a C library.|
 
 
-\h#howto-no-extension-header|How do I handle headers without extensions?|
+\h#howto-no-extension-header|How do I handle headers without an extension?|
 
 If all the headers in a project have no extension, then you can simply
 specify the empty \c{extension} value for the \c{hxx{\}} target type
@@ -5217,13 +5230,13 @@ for details.
 
 \h#howto-debug-macro|How do I expose extra debug macros of a library?|
 
-Sometime libraries provide extra debugging facilities that are usually enabled
-or disabled with a macro. For example, \c{libfoo} may provide the
+Sometimes libraries provide extra debugging facilities that are usually
+enabled or disabled with a macro. For example, \c{libfoo} may provide the
 \c{LIBFOO_DEBUG} macro that enables additional sanity checks, tracing, etc.
-Normally such facilities are disable by default.
+Normally, such facilities are disabled by default.
 
 While it may seem like a good idea to detect a debug build and enable this
-automatically, it is not: such facilities usually impose substantial overhead
+automatically, it is not: such facilities usually impose substantial overheads
 and the presence of debug information does not mean that performance is not
 important (people routinely make optimized builds with debug information).
 
@@ -5268,7 +5281,7 @@ semantics), the other option is to hook it up to the standard \c{NDEBUG}
 macro, for example, in the library's configuration header file.|
 
 Note that such \c{.debug} configuration variables should primarily be meant
-for the user to selectively enabled extra debugging support in certain
+for the user to selectively enable extra debugging support in certain
 libraries of their build. However, if your project depends on a number of
 libraries with such extra debugging support and it generally makes sense to
 also enable this support in dependencies if it is enabled in your project,
@@ -5279,9 +5292,9 @@ should still allow the user to override this decision on the per-dependency
 basis.
 
 Continuing with the above example, let's say we have \c{libbar} with
-\c{config.libbar.debug} that depends on \c{libfoo} and that wishes to by
-default enable debugging in \c{libfoo} if it is enabled in \c{libbar}.
-This is how we can correctly arrange for this in \c{libbar}'s \c{manifest}:
+\c{config.libbar.debug} that depends on \c{libfoo} and wishes by default to
+enable debugging in \c{libfoo} if it is enabled in \c{libbar}. This is how we
+can correctly arrange for this in \c{libbar}'s \c{manifest}:
 
 \
 depends:

@@ -2166,7 +2166,7 @@ $ bdep sync -a --disfigure config.libfoo.debug=true
 
 For each library that your package depends on (and which you have added
 to \c{manifest} in the \l{#core-fill-depend Add dependencies} step),
-you need to first determine whether it's an interface of implementation
+you need to first determine whether it's an interface or implementation
 dependency and then import it either into the \c{intf_libs} or \c{impl_libs}
 variable, respectively.
 
@@ -2515,7 +2515,7 @@ else
   {obja objs}{util}: cxx.poptions += -DFOO_POSIX
 \
 
-\N|Not that target-specific \c{*.poptions} and \c{*.coptions} must be
+\N|Note that target-specific \c{*.poptions} and \c{*.coptions} must be
 specified on the object file targets while \c{*.loptions} and \c{*.libs} \- on
 the library or executable targets.|
 

@@ -13,8 +13,6 @@
 
 // TODO:
 //
-// @@ Update pinned repositories (libevent, libasio, xxd, libzstd).
-//
 // @@ Update build2-packaging front page with link to this guide (add
 //    organization README?)
 //
@@ -5319,7 +5317,9 @@ libfoo ^1.2.3
 
 \h1#faq|Packaging FAQ|
 
-\h#faq-alpha-stable|Why is my package in \c{alpha} rather than \c{stable}?|
+\h#faq-publish|Publishing FAQ|
+
+\h2#faq-publish-alpha|Why is my package in \c{alpha} rather than \c{stable}?|
 
 If your package uses a semver version (or semver-like, that is, has three
 version components) and the first component is zero (for example, \c{0.1.0}),
@@ -5341,7 +5341,7 @@ first component upstream does not imply alpha quality. Getting an explicit
 statement to this effect from upstream is recommended.
 
 
-\h#faq-publish-stage|Where to publish if package requires staged toolchain?|
+\h2#faq-publish-stage|Where to publish if package requires staged toolchain?|
 
 If your package requires the \l{https://build2.org/community.xhtml#stage staged
 toolchain}, for example, because it needs a feature or bugfix that is not yet
@@ -5389,5 +5389,58 @@ $ bdep publish --repository=https://stage.build2.org ...
 
 ||
 
+\h2#faq-publish-owner|Why \"project owner authentication failed\" while publishing?|
+
+If you are getting the following error while attempting to publish a new
+version of a package:
+
+\
+$ bdep publish
+...
+error: project owner authentication failed
+\
+
+Then this means the remote \c{git} repository you are using does not match the
+one from which you (or someone else) has published the initial version of the
+package.
+
+In \c{build2} we use the ownership of the package \c{git} repository as a
+proxy for the ownership of the package name on \l{https://cppget.org
+cppget.org}. Specifically, when you publish the package for the first time,
+we record the \c{git} URL for its package repository. And any further versions
+of this package can only be submitted by someone who has write access to this
+repository. See \l{bdep-publish(1)} for details.
+
+Based on this background, the first step you need to take when getting the
+above owner authentication error is to understand its cause. For that, first
+use the \c{git-config} command to see the URL you are using locally:
+
+\
+$ git config --get remote.origin.url
+\
+
+Then look in the \l{https://github.com/cppget/ \c{git} repositories} that back
+\l{https://cppget.org cppget.org} and \l{https://queue.cppget.org
+queue.cppget.org} and find the URL that is recorded in the \c{owners/}
+subdirectory in the corresponding \c{package-owner.manifest} file.
+
+Note that your local URL will normally be SSH while the recorded URL will
+always be HTTPS. Provided that the host names match, the part to look in for
+differences is the path component. One common cause of a mismatch is the
+missing \c{.git} extension. For example (local first, recorded second):
+
+\
+git@github.com:build2-packaging/zstd
+https://github.com/build2-packaging/zstd.git
+\
+
+In this case adding the missing extension to the local URL should fix the
+error.
+
+If, however, the discrepancy is expected, for example, because you have
+renamed the package repository or moved it to a new location, the ownership
+information will need to be updated manually. In this case feel free to submit
+a pull request with the necessary changes or
+\l{https://build2.org/community.xhtml#help get in touch}.
 
 "

@@ -3078,6 +3078,7 @@ $ b test: tests/@/tmp/libfoo-tests-out/ \
 \
 > b install config.install.root=c:\tmp\install
 
+> set \"PATH=c:\tmp\install\bin;%PATH%\"
 > b test: tests\@c:\tmp\libfoo-tests-out\^
   config.cc.loptions=/LIBPATH:c:\tmp\install\lib
 \

@@ -1110,7 +1110,7 @@ libfoo/
 Once the overall layout looks right, the next step is to take a closer look at
 the generated \c{buildfiles} to make sure that overall they match the upstream
 build. Of particular interest are the header and source directory
-\c{buildfiles} (\c{libfoo/include/foo/buildifle} and \c{libfoo/src/buildifle}
+\c{buildfiles} (\c{libfoo/include/foo/buildfile} and \c{libfoo/src/buildfile}
 in the above listing) which define how the library is built and installed.
 
 Here we are focusing on the macro-level differences that are easier to change

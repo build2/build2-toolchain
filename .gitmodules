@@ -16,10 +16,6 @@
 [submodule "doc/style"]
 	path = doc/style
 	url = ../style.git
-[submodule "submodules/sqlite"]
-	path = submodules/sqlite
-	url = https://git.build2.org/packaging/sqlite/sqlite.git
-	update = none
 [submodule "submodules/libbuild2-kconfig"]
 	path = submodules/libbuild2-kconfig
 	url = https://github.com/build2/libbuild2-kconfig.git

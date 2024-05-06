@@ -21,8 +21,7 @@ build2_repo="https://stage.build2.org/1"
 #
 # NOTE: see also subprojects in bootstrap.build if changing anything here.
 #
-d = libbutl/ build2/ libsqlite3/ libodb/ libodb-sqlite/ \
-libbpkg/ bpkg/ bdep/ doc/ libbuild2-*/
+d = libbutl/ build2/ libsqlite3/ libbpkg/ bpkg/ bdep/ doc/ libbuild2-*/
 
 if ($build.meta_operation == 'dist')
   d += tests/*/

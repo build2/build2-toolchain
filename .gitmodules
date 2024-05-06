@@ -16,14 +16,6 @@
 [submodule "doc/style"]
 	path = doc/style
 	url = ../style.git
-[submodule "libodb"]
-	path = libodb
-	url = https://scm.codesynthesis.com/odb/libodb.git
-	update = none
-[submodule "libodb-sqlite"]
-	path = libodb-sqlite
-	url = https://scm.codesynthesis.com/odb/libodb-sqlite.git
-	update = none
 [submodule "submodules/sqlite"]
 	path = submodules/sqlite
 	url = https://git.build2.org/packaging/sqlite/sqlite.git

@@ -93,10 +93,10 @@ while test $# -ne 0; do
       diag "  --make <arg>          Bootstrap using GNU make instead of script."
       diag "  --verbose <level>     Diagnostics verbosity level between 0 and 6."
       diag
-      diag "By default the script will install into /usr/local with private"
-      diag "library subdirectories and using sudo(1). To enable private"
-      diag "subdirectories and/or use sudo for a custom installation location,"
-      diag "you need to specify --private and/or --sudo explicitly, for example:"
+      diag "By default the script will install into /usr/local using sudo(1). To"
+      diag "enable private library subdirectories and/or use sudo for a custom"
+      diag "installation location, you need to specify --private and/or --sudo"
+      diag "explicitly, for example:"
       diag
       diag "$0 --install-dir /opt/build2 --sudo sudo g++"
       diag
@@ -436,7 +436,6 @@ done
 #
 if test -z "$idir"; then
   idir=/usr/local
-  private=config.install.private=build2
 
   # Only use default sudo for the default installation directory and only if
   # it wasn't specified by the user.

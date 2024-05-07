@@ -177,28 +177,6 @@ $ build2/build2/b-boot configure      \
 $ build2/build2/b-boot install: build2/ bpkg/
 \
 
-\N|The above command will build all the dependencies of \c{build2} and
-\c{bpkg} from sources bundled with \c{build2-toolchain}. If instead you would
-like to use system-installed versions for some of them, then you can specify
-empty \c{config.import.*} values to disable the use of the bundled versions.
-For example, to use the system-installed SQLite:
-
-\
-$ build2/build2/b-boot configure \
-  ...                            \
-  config.import.libsqlite3=
-\
-
-If performing an installation with the \c{build.sh} script, then to use the
-system-installed dependencies pass the \c{--system} option, specifying such
-dependencies as a comma-separated list. For example:
-
-\
-$ ./build.sh --system libsqlite3,libpkg-config g++
-\
-
-|
-
 The strange-looking \c{config.install.data_root=root/stage} means install
 data files (as opposed to executable files) into the \c{stage/} subdirectory
 of wherever \c{config.install.root} points to (so in our case it will be
@@ -244,18 +222,17 @@ a local installation and skip the rest of the steps.
 
 To perform a local installation you will need to change the \c{configure} and
 \c{install} command lines above along these lines (see also notes on the
-following step about only building shared libraries, private installation
-subdirectory, toolchain executables prefix/suffix, etc):
+following step about only building shared libraries, toolchain executables
+prefix/suffix, etc):
 
 \
-$ build2/build2/b-boot configure         \
-  config.config.hermetic=true            \
-  config.cxx=g++                         \
-  config.cc.coptions=-O3                 \
-  config.bin.lib=shared                  \
-  config.bin.rpath=/usr/local/lib/build2 \
-  config.install.root=/usr/local         \
-  config.install.private=build2          \
+$ build2/build2/b-boot configure  \
+  config.config.hermetic=true     \
+  config.cxx=g++                  \
+  config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
+  config.bin.rpath=/usr/local/lib \
+  config.install.root=/usr/local  \
   config.install.sudo=sudo
 
 $ build2/build2/b-boot install: build2/ bpkg/ bdep/
@@ -297,29 +274,19 @@ $ cd ..  # Back to build2-build/
 $ mkdir build2-toolchain-X.Y
 $ cd build2-toolchain-X.Y
 
-$ bpkg-stage create                      \
-  cc                                     \
-  config.config.hermetic=true            \
-  config.cxx=g++                         \
-  config.cc.coptions=-O3                 \
-  config.bin.lib=shared                  \
-  config.bin.rpath=/usr/local/lib/build2 \
-  config.install.root=/usr/local         \
-  config.install.private=build2          \
+$ bpkg-stage create               \
+  cc                              \
+  config.config.hermetic=true     \
+  config.cxx=g++                  \
+  config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
+  config.bin.rpath=/usr/local/lib \
+  config.install.root=/usr/local  \
   config.install.sudo=sudo
 \
 
 \N|The above configuration will only build shared libraries. If you would like
 to build both shared and static, remove \c{config.bin.lib=shared}.|
-
-\N|The above configuration will install shared libraries that \c{build2}
-depends on into a private subdirectory. This is primarily useful when
-installing into a shared location, such as \c{/usr/local/}. By hiding the
-libraries in the private subdirectory we make sure that they will not
-interfere with anything that is already installed into such a shared location
-and that any further such installations won't interfere with \c{build2}. If,
-however, you are installing into a private location, such as \c{/opt/build2/},
-then you can remove \c{config.install.private=build2}.|
 
 \N|To add a custom prefix/suffix to the toolchain executables names, add
 \c{config.bin.exe.prefix=...} and/or \c{config.bin.exe.suffix=...}.|
@@ -339,19 +306,6 @@ $ bpkg-stage fetch
 $ bpkg-stage build --for install build2 bpkg bdep
 $ bpkg-stage install --all
 \
-
-\N|The above command will build all the dependencies of \c{build2}, \c{bpkg},
-and \c{bdep} from source packages. If instead you would like to use
-system-installed versions for some of them, then you can list them with the
-\c{sys} scheme to make \c{bpkg-stage} treat them as available from the system
-rather than building them from source. For example, to use the
-system-installed SQLite:
-
-\
-$ bpkg-stage build --for install build2 bpkg bdep ?sys:libsqlite3
-\
-
-|
 
 \N|By default \c{bpkg} will build the latest available version of each
 package. You can, however, specify the desired versions explicitly, for

@@ -59,6 +59,7 @@ pt = '^version: (.+)$'
 # - build2.org/www/ (module docs symlinks for both public and stage, etc)
 # - make sure the module has `builds: all` in its manifest
 # - make sure just `b noop: libbuild2-<mod>-tests/` works and loads the module
+#   (not that noop does not do implicit directory buildfile loading)
 # - make sure the module is listed in the mod array in etc/bootstrap
 #
 ver          = $process.run_regex($bp 'info:' $src_root/,                    "$pt", '\1')

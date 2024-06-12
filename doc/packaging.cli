@@ -4316,6 +4316,7 @@ commit, run the following commands:
 
 \
 $ cd upstream/
+$ git fetch
 $ git checkout v2.2.0
 $ cd ../
 

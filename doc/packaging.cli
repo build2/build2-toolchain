@@ -526,7 +526,7 @@ name differs from upstream, then there is likely a good reason for that and
 it is worth trying to understand what it is.
 
 \N|Tip: when trying to find the corresponding Debian package, search for the
-executable file name in the package contents if you cannot fine the package by
+executable file name in the package contents if you cannot find the package by
 its upstream name. Also consider searching in the \c{unstable} distribution in
 addition to \c{stable} for newer packages.|
 
@@ -635,7 +635,7 @@ however, that we often deviate from Debian's splits, especially when it comes
 to libraries. Such differences are usually due to Debian focusing on binary
 packages while in \c{build2} we are focusing on source packages.
 
-To give a few example, \c{libevent} shown in the above table provides several
+To give a few examples, \c{libevent} shown in the above table provides several
 libraries (\c{libevent-core}, \c{libevent-extra}, etc) and in Debian it is
 actually split into several binary packages along these lines. In \c{build2},
 however, there is a single source package that provides all these libraries
@@ -1160,7 +1160,7 @@ $ b clean
 \N|One relatively common case where the installation location may not match
 upstream are libraries that include their headers without the subdirectory
 prefix (for example, \c{<foo_util.h>} instead of \c{<foo/util.h>}). In such
-cases, in the \c{bdep-new} command, you want to use \i{prefix} rather that
+cases, in the \c{bdep-new} command, you may want to use \i{prefix} rather than
 \i{source subdirectory} (with the latter being the default). For example:
 
 \
@@ -1824,7 +1824,7 @@ need to tweak it are not uncommon and include:
 
     \N|One type of configuration that you should normally not expose when
     packaging for \c{build2} is support for both header-only and compiled
-    modes. See \l{b#dont-header-only Don't make library header-only if it
+    modes. See \l{#dont-header-only Don't make library header-only if it
     can be compiled} for details.|||
 
 Also, in C++ projects, if you don't have any inline or template files, then
@@ -2105,7 +2105,7 @@ If you only have private auto-generated headers, then only remove the
 expansion from \c{cxx.export.poptions}.|
 
 If you don't have any dependencies, then remove all the assignments and
-expansions of the \c{intf_libs} and \c{intf_libs} variables. That is,
+expansions of the \c{intf_libs} and \c{impl_libs} variables. That is,
 the following lines in the original \c{buildfile}:
 
 \
@@ -2198,7 +2198,7 @@ import impl_libs += libsqlite3%lib{sqlite3}
 \
 
 \N|If you don't have any implementation or interface dependencies, you can
-remove the assignment and all the expansion of the corresponding \c{*_libs}
+remove the assignment and all the expansions of the corresponding \c{*_libs}
 variable.|
 
 Note also that system libraries like \c{-lm}, \c{-ldl} on UNIX or
@@ -3702,7 +3702,7 @@ Note also that while you may be tempted to adjust the \c{version} value,
 resist this temptation since this will be done automatically by
 \l{bdep-release(1)} later.
 
-You may also want to add the following value in certain cases:
+You may also want to add the following values in certain cases:
 
 \dl|
 

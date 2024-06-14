@@ -2436,40 +2436,14 @@ along these lines:
 \
 /usr/local/
 ├── bin/
-│   └── hello
-├── include/
-│   ├── libformat/
-│   │   ├── export.hxx
-│   │   ├── format.hxx
-│   │   └── version.hxx
-│   ├── libhello/
-│   │   ├── export.hxx
-│   │   ├── hello.hxx
-│   │   └── version.hxx
-│   └── libprint/
-│       ├── export.hxx
-│       ├── print.hxx
-│       └── version.hxx
+│   └── hello
 ├── lib/
-│   ├── libformat-1.0.so
-│   ├── libformat.so -> libformat-1.0.so
-│   ├── libhello-1.1.so
-│   ├── libhello.so -> libhello-1.1.so
-│   ├── libprint-1.0.so
-│   ├── libprint.so -> libprint-1.0.so
-│   └── pkgconfig/
-│       ├── libformat.pc
-│       ├── libhello.pc
-│       └── libprint.pc
+│   ├── libformat-1.0.so
+│   ├── libhello-1.1.so
+│   └── libprint-1.0.so
 └── share/
     └── doc/
-        ├── libformat/
-        │   ├── manifest
-        │   └── README.md
-        ├── libhello/
-        │   ├── manifest
-        │   └── README.md
-        └── libprint/
+        └── hello/
             ├── manifest
             └── README.md
 \
@@ -2502,6 +2476,25 @@ uninstall libprint-1.0.0/libprint/libs{print} <- /usr/local/lib/
 uninstall libformat-1.0.0/libformat/libs{format} <- /usr/local/lib/
 ...
 \
+
+\N|From the above listing we can gather that only the shared library binaries
+were installed. In particular, neither static library binaries nor headers and
+other development-related files (such as non-versioned shared library
+symlinks, \c{pkg-config} \c{.pc} files, etc) were installed.
+
+The reason for this behavior is that by default the \l{bpkg-pkg-install(1)}
+command only instructs the build system to install packages that were
+specified on the command line (\c{hello} in out case) while the build system
+in turn installs from dependency packages only what's necessary for the
+packages it was instructed to install. In our case, installing the \c{hello}
+also requires installing the shared library binaries that it uses but none of
+the development-related files (we don't need library headers in order to run
+an executable).
+
+However, this default behavior of \l{bpkg-pkg-install(1)} (and
+\l{bpkg-pkg-uninstall(1)}) can be changed with the \c{--recursive} option,
+which instructs \c{bpkg} to additionally fully install/uninstall dependency
+packages.|
 
 Rather than installing the package locally we could instead generate a
 \i{binary distribution package} for it using the \l{bpkg-pkg-bindist(1)}

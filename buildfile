@@ -13,8 +13,8 @@ assert ($build.meta_operation == 'dist'      || \
 # Package repository URL (or path).
 #
 #build2_repo="https://stage.build2.org/1"
-build2_repo="https://pkg.cppget.org/1/queue/alpha"
-#build2_repo="https://pkg.cppget.org/1/alpha"
+#build2_repo="https://pkg.cppget.org/1/queue/alpha"
+build2_repo="https://pkg.cppget.org/1/alpha"
 
 # @@ Note that the project directories order is important (prerequisites go
 #    first).

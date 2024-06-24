@@ -5316,6 +5316,34 @@ libfoo ^1.2.3
 \
 
 
+\h#howto-test-timeout|How do I deal with tests that don't terminate?|
+
+If upstream tests don't terminate in a reasonable time (or at all), then your
+CI jobs will be failing with timeouts.
+
+\N|Naturally, we cannot afford tests to run indefinitely or unreasonably long
+on our CI infrastructure and, as a result, we impose a timeout on tests
+execution. Currently it is 25 minutes.|
+
+If you find yourself in this situation, the first step is to examine such
+tests for a mechanism, typically a command line option, that allows you to set
+a limit on test execution, such as a time limit, number of test iterations,
+etc.
+
+If there is an option, then we can pass it with \c{test.options} (see
+\l{b#intro-operations-test Testing} for background):
+
+\
+exe{driver}: test.options = --iterations 100
+\
+
+If, however, there is no mechanism for limiting upstream test execution, then
+the last resort is to set a test execution timeout that is treated as success.
+For details on how to achieve this see
+\l{https://github.com/build2/HOWTO/blob/master/entries/sanitize-test-execution.md
+How do I sanitize the execution of my tests?}
+
+
 \h1#faq|Packaging FAQ|
 
 \h#faq-publish|Publishing FAQ|

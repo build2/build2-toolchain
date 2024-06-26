@@ -5344,6 +5344,36 @@ For details on how to achieve this see
 How do I sanitize the execution of my tests?}
 
 
+\h#howto-out-of-ram|How do I deal with compiler/linker running out of RAM?|
+
+If a third-party project contains very large/complex translation units or is
+linking a large number of object files, then the compiler or linker may run
+out of memory, especially if compilation/linking is performed in parallel with
+other compilation/linking jobs. For compilation, this is normally triggered
+when compiling with optimization enabled. For example, on Linux with GCC this
+could manifest in an error like this:
+
+\
+Out of memory: Killed process 1857 (cc1plus) ... pgtables:13572kB ...
+\
+
+The recommended way to deal with such issues is to serialize the compilation
+or linking of the targets in question. Specifically, both the C/C++ compile
+and link rules recognize the \c{cc.serialize} boolean variable which instructs
+them to compile/link serially (as opposed to in parallel) with regards to any
+other recipe. For example:
+
+\
+obj{memory-hog}: cc.serialize = true
+exe{very-large}: cc.serialize = true
+\
+
+To identify which source files require a large amount of RAM, build serially
+(\c{-s}) with optimization enabled while watching the amount of RAM used by
+the compiler. Similarly, for linking binaries, watch the amount of RAM
+used by the linker.
+
+
 \h1#faq|Packaging FAQ|
 
 \h#faq-publish|Publishing FAQ|

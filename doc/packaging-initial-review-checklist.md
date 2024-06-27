@@ -1,3 +1,5 @@
+**NOTE**: this review is in progress and a comment with the outcome will be added once it's complete.
+
 **NOTE**: the items in this checklist should only be checked off by the person doing the review. The author of the package may indicate the completion of any outstanding items in comments.
 
 - [ ] Repository in the [build2-packaging organization][build2-packaging] if third-party package.
@@ -44,37 +46,37 @@
 - [ ] Release is tagged and pushed to `git` repository.
 
 [build2-packaging]: https://github.com/build2-packaging/
-[upstream-layout]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-change-upstream
+[upstream-layout]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-change-upstream
 [debian-pkgs]: https://packages.debian.org/
-[rep-name]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-name
-[pkg-name]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-package-name
-[upstream-submodule]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-submodule
-[upstream-symlink]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-fill-source
-[upstream-layout]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-change-upstream
-[dont-bundle-deps]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-bundle
+[rep-name]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-name
+[pkg-name]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-package-name
+[upstream-submodule]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-submodule
+[upstream-symlink]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-fill-source
+[upstream-layout]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-change-upstream
+[dont-bundle-deps]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-bundle
 
 [queue]: https://queue.cppget.org
 
-[not-to-do]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-do
+[not-to-do]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-do
 
-[manifest-license]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-manifest-license
-[manifest-summary]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-manifest-summary
-[manifest-depends]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-fill-depend
-[manifest-depends-import]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-source-dep
+[manifest-license]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-manifest-license
+[manifest-summary]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-manifest-summary
+[manifest-depends]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-fill-depend
+[manifest-depends-import]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-source-dep
 
-[build-wide]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-wide
+[build-wide]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-wide
 
-[use-bdep-new]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-from-scratch
+[use-bdep-new]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-from-scratch
 [compile-options]: https://github.com/build2/HOWTO/blob/master/entries/compile-options-in-buildfile.md
-[header-only]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-header-only
-[bad-header-inclusion]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#howto-bad-inclusion-practice
-[hdr-build]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-header
-[src-build]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-source
+[header-only]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-header-only
+[bad-header-inclusion]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#howto-bad-inclusion-practice
+[hdr-build]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-header
+[src-build]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-adjust-build-src-source
 
-[root-build]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-buildfile
-[root-main-targets]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-main-target-root-buildfile
+[root-build]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-buildfile
+[root-main-targets]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#dont-main-target-root-buildfile
 
-[test-smoke]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-test-smoke-adjust
+[test-smoke]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-test-smoke-adjust
 
-[pkg-readme]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-package-readme
-[rep-readme]: https://build2.org/stage/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-readme
+[pkg-readme]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-root-package-readme
+[rep-readme]: https://build2.org/build2-toolchain/doc/build2-toolchain-packaging.xhtml#core-repo-readme

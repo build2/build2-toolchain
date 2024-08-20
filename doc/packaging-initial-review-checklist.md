@@ -4,12 +4,10 @@
 
 - [ ] Repository in the [build2-packaging organization][build2-packaging] if third-party package.
 - [ ] Repository/project/package names consistent with upstream, [Debian][debian-pkgs] (see [repository name][rep-name], [package name][pkg-name]).
-- [ ] If library without `lib` prefix, no clashes with executable named (see [package name][pkg-name]).
+- [ ] If library without `lib` prefix, no clashes with executable names (see [package name][pkg-name]).
 - [ ] Uses git submodule and symlinks for upstream, submodule at correct release commit (see [upstream submodule][upstream-submodule], [upstream symlinks][upstream-symlink]).
 - [ ] Follows upstream layout (within reason) (see [package layout][upstream-layout]).
 - [ ] [Does not bundle dependencies][dont-bundle-deps].
-
-- [ ] Successful builds on [queue.cppget.org][queue].
 - [ ] Package archive sizes are not excessive and don't contain unnecessary files.
 
 - [ ] `manifest`: `name`/`project`/`version` values make sense.

@@ -57,6 +57,7 @@ function gen () # <name>
 --link-regex '%b(#.+)?%../../build2/doc/build2-build-system-manual.xhtml$1%' \
 --link-regex '%bpkg(#.+)?%../../bpkg/doc/build2-package-manager-manual.xhtml$1%' \
 --link-regex '%bbot(#.+)?%../../bbot/doc/build2-build-bot-manual.xhtml$1%' \
+--link-regex '%brep(#.+)?%../../brep/doc/build2-repository-interface-manual.xhtml$1%' \
 --link-regex '%testscript(#.+)?%../../build2/doc/build2-testscript-manual.xhtml$1%' \
 --output-prefix build2-toolchain- "${@}" $n.cli
 

@@ -341,18 +341,33 @@ synchronizing:
 The \c{--config-create|-C} option instructs \c{init} to create a new
 configuration in the specified directory (\c{../hello-gcc} in our case). To
 make referring to configurations easier, we can give it a name, which is what
-we do with \c{@gcc}. The next argument (\c{cc}, stands for \i{C-common}) is
-the build system module we would like to configure. It implements compilation
-and linking rules for the C and C++ languages. Finally, \c{config.cxx=g++} is
-(one of) this module's configuration variables that specifies the C++ compiler
-we would like to use (the corresponding C compiler will be determined
-automatically). Let's for now also ignore that \c{synchronizing:...} bit along
-with strange-looking \c{19700101000000} in the version \- it will become clear
-what's going on here in a moment.
+we do with \c{@gcc}.
 
 \N|Note to Windows users: a command line argument with leading \c{@} has
 a special meaning in PowerShell. To work around this, you can use the
 alternative \c{-@gcc} syntax or the \c{-n\ gcc} option.|
+
+The next argument (\c{cc}, stands for \i{C-common}) is the build system module
+we would like to configure. It implements compilation and linking rules for
+the C and C++ languages. Finally, \c{config.cxx=g++} is (one of) this module's
+configuration variables that specifies the C++ compiler we would like to use
+(the corresponding C compiler will be determined automatically). Let's for now
+also ignore that \c{synchronizing:...} bit along with strange-looking
+\c{19700101000000} in the version \- it will become clear what's going on here
+in a moment.
+
+\N|If you would like to generate a JSON compilation database for this project
+so that, for example, you can edit its source files from your IDE, then change
+the above \c{init} command to read:
+
+\
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ -- \
+  config.cc.compiledb=hello@./compile_commands.json
+\
+
+Once you build this project for the first time (see below), you will find the
+\c{compile_commands.json} file in its root directory. See \l{b#cc-compiledb
+Compilation Database} for details on this functionality.|
 
 Now the same for Clang:
 

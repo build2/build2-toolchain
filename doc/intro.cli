@@ -362,7 +362,7 @@ the above \c{init} command to read:
 
 \
 $ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ -- \
-  config.cc.compiledb=hello@./compile_commands.json
+  config.cc.compiledb=./
 \
 
 Once you build this project for the first time (see below), you will find the

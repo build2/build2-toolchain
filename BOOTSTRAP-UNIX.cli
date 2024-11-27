@@ -106,6 +106,9 @@ toolchain source by unpacking it afresh from the archive.|
 
 The rest of this section outlines the manual bootstrap process.
 
+\N|You should either run \c{build.sh} or the manual commands below, but not
+both.|
+
 \dl|
 
 \li|\b{1. Bootstrap, Phase 1}\n

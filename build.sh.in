@@ -592,13 +592,13 @@ if test -z "$make"; then
 else
   run $make -f ./bootstrap.gmake "CXX=$cxx" CXXFLAGS=-w
 fi
-run build2/b-boot --version
+run b/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run build2/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static $bootstrap_system_config build2/exe{b}
-mv build2/b build2/b-boot
-run build2/b-boot --version
+run b/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static $bootstrap_system_config b/exe{b}
+mv b/b b/b-boot
+run b/b-boot --version
 
 run cd ..
 
@@ -606,7 +606,7 @@ run cd ..
 #
 if test "$local" = true; then
 
-  run build2/build2/b-boot $verbose configure \
+  run build2/b/b-boot $verbose configure \
 config.config.hermetic=true \
 config.cxx="$cxx" \
 config.cc.coptions="${compile_ops# }" \
@@ -631,7 +631,7 @@ $system_config
     projects="$projects bdep/"
   fi
 
-  run build2/build2/b-boot $verbose $jobs install: $projects
+  run build2/b/b-boot $verbose $jobs install: $projects
 
   run command -v "$b"
   run "$b" --version
@@ -671,7 +671,7 @@ fi
 
 # Build and stage the build system and the package manager.
 #
-run build2/build2/b-boot $verbose configure \
+run build2/b/b-boot $verbose configure \
 config.cxx="$cxx" \
 config.bin.lib=shared \
 config.bin.suffix="$stage_suffix" \
@@ -680,7 +680,7 @@ config.install.root="$idir" \
 config.install.data_root=root/stage \
 config.install.sudo="$conf_sudo"
 
-run build2/build2/b-boot $verbose $jobs install: build2/ bpkg/
+run build2/b/b-boot $verbose $jobs install: build2/ bpkg/
 
 run command -v "$b_stage"
 run "$b_stage" --version

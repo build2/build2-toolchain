@@ -61,7 +61,7 @@ file for details.
 > cd build2
 > .\bootstrap-msvc.bat cl /w /MP8
 
-> build2\b-boot --version
+> b\b-boot --version
 \
 
 |
@@ -72,10 +72,10 @@ Then, we rebuild the build system with the result of Phase 1 linking libraries
 statically.
 
 \
-> build2\b-boot config.cxx=cl config.bin.lib=static build2\exe{b}
-> move /y build2\b.exe build2\b-boot.exe
+> b\b-boot config.cxx=cl config.bin.lib=static b\exe{b}
+> move /y b\b.exe b\b-boot.exe
 
-> build2\b-boot --version
+> b\b-boot --version
 \
 
 |
@@ -88,14 +88,14 @@ libraries and then staged:
 \
 > cd ..  # Back to build2-toolchain-X.Y.Z\
 
-> build2\build2\b-boot configure      ^
+> build2\b\b-boot configure           ^
   config.cxx=cl                       ^
   config.bin.lib=shared               ^
   config.bin.suffix=-stage            ^
   config.install.root=C:\build2       ^
   config.install.data_root=root\stage
 
-> build2\build2\b-boot install: build2\ bpkg\
+> build2\b\b-boot install: build2\ bpkg\
 \
 
 The strange-looking \c{config.install.data_root=root\\stage} means install
@@ -132,14 +132,14 @@ following step about only building shared libraries, toolchain executables
 prefix/suffix, etc):
 
 \
-> build2\build2\b-boot configure ^
+> build2\b\b-boot configure      ^
   config.config.hermetic=true    ^
   config.cxx=cl                  ^
   config.cc.coptions=/O2         ^
   config.bin.lib=shared          ^
   config.install.root=C:\build2
 
-> build2\build2\b-boot install: build2\ bpkg\ bdep\
+> build2\b\b-boot install: build2\ bpkg\ bdep\
 \
 
 You will also need to build and install the standard build system modules:

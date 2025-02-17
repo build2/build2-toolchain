@@ -71,7 +71,7 @@ compile options; run \c{bootstrap-clang.bat /?} and see the
 > cd build2
 > .\bootstrap-clang.bat clang++ -m64 -w
 
-> build2\b-boot --version
+> b\b-boot --version
 \
 
 Alternatively, we can use the \c{bootstrap.gmake} GNU makefile to bootstrap
@@ -81,7 +81,7 @@ in parallel:
 > cd build2
 > mingw32-make -f bootstrap.gmake -j 8 CXX=clang++ \"CXXFLAGS=-m64 -w\"
 
-> build2\b-boot --version
+> b\b-boot --version
 \
 
 |
@@ -92,14 +92,14 @@ Then, we rebuild the build system with the result of Phase 1 linking libraries
 statically.
 
 \
-> build2\b-boot             ^
+> b\b-boot                  ^
   \"config.cxx=clang++ -m64\" ^
   config.bin.lib=static     ^
-  build2\exe{b}
+  b\exe{b}
 
-> move /y build2\b.exe build2\b-boot.exe
+> move /y b\b.exe b\b-boot.exe
 
-> build2\b-boot --version
+> b\b-boot --version
 \
 
 |
@@ -112,14 +112,14 @@ libraries and then staged:
 \
 > cd ..  # Back to build2-toolchain-X.Y.Z\
 
-> build2\build2\b-boot configure      ^
+> build2\b\b-boot configure           ^
   \"config.cxx=clang++ -m64\"           ^
   config.bin.lib=shared               ^
   config.bin.suffix=-stage            ^
   config.install.root=C:\build2       ^
   config.install.data_root=root\stage
 
-> build2\build2\b-boot install: build2\ bpkg\
+> build2\b\b-boot install: build2\ bpkg\
 \
 
 The strange-looking \c{config.install.data_root=root\\stage} means install
@@ -156,14 +156,14 @@ following step about only building shared libraries, toolchain executables
 prefix/suffix, etc):
 
 \
-> build2\build2\b-boot configure ^
+> build2\b\b-boot configure      ^
   config.config.hermetic=true    ^
   \"config.cxx=clang++ -m64\"      ^
   config.cc.coptions=-O2         ^
   config.bin.lib=shared          ^
   config.install.root=C:\build2
 
-> build2\build2\b-boot install: build2\ bpkg\ bdep\
+> build2\b\b-boot install: build2\ bpkg\ bdep\
 \
 
 You will also need to build and install the standard build system modules:

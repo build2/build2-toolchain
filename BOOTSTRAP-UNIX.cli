@@ -123,7 +123,7 @@ file for details.
 $ cd build2
 $ ./bootstrap.sh g++ -w
 
-$ build2/b-boot --version
+$ b/b-boot --version
 \
 
 Alternatively, we can use the \c{bootstrap.gmake} GNU makefile to bootstrap
@@ -133,7 +133,7 @@ in parallel:
 $ cd build2
 $ make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w
 
-$ build2/b-boot --version
+$ b/b-boot --version
 \
 
 |
@@ -144,10 +144,10 @@ Then, we rebuild the build system with the result of Phase 1 linking
 libraries statically.
 
 \
-$ build2/b-boot config.cxx=g++ config.bin.lib=static build2/exe{b}
-$ mv build2/b build2/b-boot
+$ b/b-boot config.cxx=g++ config.bin.lib=static b/exe{b}
+$ mv b/b b/b-boot
 
-$ build2/b-boot --version
+$ b/b-boot --version
 \
 
 |
@@ -168,7 +168,7 @@ to reconfigure without it.
 \
 $ cd ..  # Back to build2-toolchain-X.Y.Z/
 
-$ build2/build2/b-boot configure      \
+$ build2/b/b-boot configure           \
   config.cxx=g++                      \
   config.bin.lib=shared               \
   config.bin.suffix=-stage            \
@@ -177,7 +177,7 @@ $ build2/build2/b-boot configure      \
   config.install.data_root=root/stage \
   config.install.sudo=sudo
 
-$ build2/build2/b-boot install: build2/ bpkg/
+$ build2/b/b-boot install: build2/ bpkg/
 \
 
 The strange-looking \c{config.install.data_root=root/stage} means install
@@ -229,7 +229,7 @@ following step about only building shared libraries, toolchain executables
 prefix/suffix, etc):
 
 \
-$ build2/build2/b-boot configure  \
+$ build2/b/b-boot configure       \
   config.config.hermetic=true     \
   config.cxx=g++                  \
   config.cc.coptions=-O3          \
@@ -238,7 +238,7 @@ $ build2/build2/b-boot configure  \
   config.install.root=/usr/local  \
   config.install.sudo=sudo
 
-$ build2/build2/b-boot install: build2/ bpkg/ bdep/
+$ build2/b/b-boot install: build2/ bpkg/ bdep/
 \
 
 You will also need to build and install the standard build system modules:

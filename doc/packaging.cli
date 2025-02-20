@@ -276,8 +276,12 @@ say, your personal workspace) you make it easier for others to discover your
 work and to contribute to the package maintenance.
 
 Note that this requirement does not apply to your own projects (that is, where
-you are the upstream) and where the \c{build2} support is normally part of the
-upstream repository.
+you are the upstream) and where the \c{build2} support is part of the upstream
+repository. Such projects can live anywhere one can host a \c{git}
+repository. Furthermore, if upstream adds support for \c{build2} in a package
+currently hosted under \l{https://github.com/build2-packaging
+github.com/build2-packaging}, then all future versions should normally be
+published directly from the upstream repository.
 
 Finally, a note on the use of \c{git} and GitHub: if for some reason you are
 unable to use either, \l{https://build2.org/community.xhtml#help get in touch}

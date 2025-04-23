@@ -99,7 +99,6 @@ for s: exe{build.sh} file{build-msvc.bat build-clang.bat build-mingw.bat}
 
     if ("$ab" != '')
       cver = "$cver-$ab.$pr"
-    end
 
     sed -e 's%@BUILD2_REPO@%'$build2_repo'%'      $p >$t
     sed -e 's/@CONFIG_VER@/'$cver'/'               -i $t

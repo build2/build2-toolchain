@@ -1,6 +1,10 @@
 # file      : build/root.build
 # license   : MIT; see accompanying LICENSE file
 
+config [bool] config.build2_toolchain.bindist ?= false
+
+bindist = $config.build2_toolchain.bindist
+
 # Load common modules that are used by subproject so that they use common
 # configuration.
 #

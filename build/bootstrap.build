@@ -8,9 +8,12 @@ amalgamation = # Disable amalgamation.
 # Note: list them (mostly) explicitly without using wildcards to handle stray
 # subdirectories in the root (debian/, installation location, etc).
 #
-subprojects += libbutl/ build2/ libbpkg/ bpkg/ bdep/
-subprojects += libbuild2-*/
-subprojects += tests/*/
+if! ($config.build2_toolchain.bindist == true)
+{
+  subprojects += libbutl/ build2/ libbpkg/ bpkg/ bdep/
+  subprojects += libbuild2-*/
+  subprojects += tests/*/
+}
 
 using version
 using config

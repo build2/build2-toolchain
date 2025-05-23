@@ -1,7 +1,47 @@
 : 1
-
-# Note: not a real package, just for the version module.
-#
+name: build2-toolchain
 version: 0.18.0-a.0.z
+project: build2
+summary: build2 toolchain amalgamation
+license: MIT
+topics: build system, build toolchain
+description-file: README
+url: https://build2.org
+doc-url: https://build2.org/doc.xhtml
+src-url: https://git.build2.org/cgit/build2-toolchain/tree/
+email: users@build2.org
+build-warning-email: builds@build2.org
 depends: * build2 >= 0.18.0-
 depends: * bpkg >= 0.18.0-
+
+depends: build2
+depends: bpkg
+depends: bdep
+depends: libbuild2-autoconf
+depends: libbuild2-kconfig
+
+builds: none ; Only used to build binary distribution packages.
+
+# Binary distribution packages. Overall notes:
+#
+# - Bundle all the toolchain packages with --recursive=full.
+#
+
+bindist-fedora-builds: bindist
+bindist-fedora-build-include: linux_fedora*-**
+bindist-fedora-build-include: linux_rhel*-**
+bindist-fedora-build-exclude: **
+bindist-fedora-build-config:
+\
++bpkg.bindist.fedora:
++bbot.bindist.upload:
+-bpkg.test:
+-b.test-installed.test:
+
+bpkg.bindist.fedora:--recursive=full
+
+config.build2_toolchain.bindist=true
+
+{ config.import.build2=$out_root/$amalgamation }+ ?libbuild2-autoconf
+{ config.import.build2=$out_root/$amalgamation }+ ?libbuild2-kconfig
+\

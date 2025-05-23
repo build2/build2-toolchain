@@ -1,0 +1,294 @@
+The following instructions are for bootstrapping build2 on UNIX-like operating
+systems (GNU/Linux, FreeBSD, etc). For Mac OS X first see Bootstrapping on Mac
+OS X (BOOTSTRAP-MACOSX file). These instructions should also be used for UNIX
+emulation layers on Windows (for example, WSL, MSYS, or Cygwin) where you
+already have a UNIX shell with standard utilities.
+
+1. Create Build Directory
+
+    You will want to keep this directory around in order to upgrade to new
+    toolchain versions in the future. In this guide we use ~/build2-build/ as
+    the build directory and /usr/local/ as the installation directory but you
+    can use other paths.
+
+    $ cd
+    $ mkdir build2-build
+    $ cd build2-build
+
+2. Download, Verify, and Unpack
+
+    Download build2-toolchain-X.Y.Z.tar.xz (or its .tar.gz variant if you don't
+    have xz(1)) as well as its .sha256 checksum from Download
+    (https://build2.org/download.xhtml) page.
+
+    Place everything into ~/build2-build/ (build directory) and verify the
+    archive checksum matches:
+
+    # Linux, WSL, MSYS, Cygwin:
+    #
+    $ sha256sum -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+    # Mac OS X:
+    #
+    $ shasum -a 256 -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+    # FreeBSD (compare visually):
+    #
+    $ cat build2-toolchain-X.Y.Z.tar.xz.sha256
+    $ sha256 -r build2-toolchain-X.Y.Z.tar.xz
+
+    Unpack the archive and change to its directory:
+
+    > tar -xf build2-toolchain-X.Y.Z.tar.xz
+    > cd build2-toolchain-X.Y.Z
+
+Next you can either perform the rest of the steps manually or, if after
+reviewing the steps, you are happy with using the defaults, run the build.sh
+shell script. It performs (and echoes) the same set of steps as outlined below
+but only allows you to customize the compiler, installation directory, and a
+few other things (run build.sh -h for usage).
+
+For example, this command will use g++ and install the toolchain into
+/usr/local/.
+
+$ ./build.sh g++
+
+While this will use Clang and install into /opt/build2:
+
+$ ./build.sh --install-dir /opt/build2 --sudo sudo clang++
+
+If you would like to speed the process up by compiling in parallel, then you
+can instruct build.sh to bootstrap using GNU make (can be called gmake instead
+of make on some platforms), for example:
+
+$ ./build.sh --make make --make -j8 g++
+
+| Note that at about half way through (bpkg fetch at step 4 below) the script
+| will stop and prompt you to verify the authenticity of the repository
+| certificate. To run the script unattended you can specify the certificate
+| fingerprint with the --trust option (see build.sh -h for details).
+
+The end result of the bootstrap process (performed either with the script or
+manually) is the installed toolchain as well as the bpkg configuration in
+build2-toolchain-X.Y/ that can be used to upgrade (UPGRADE file) to newer
+versions. It can also be used to uninstall the toolchain:
+
+$ cd build2-toolchain-X.Y
+$ bpkg uninstall --all
+
+| Note that in both cases (manual or scripted bootstrap), if something goes
+| wrong and you need to restart the process, you must start with a clean
+| toolchain source by unpacking it afresh from the archive.
+
+The rest of this section outlines the manual bootstrap process.
+
+| You should either run build.sh or the manual commands below, but not both.
+
+1. Bootstrap, Phase 1
+
+    First, we build a minimal build system with the provided bootstrap.sh
+    script. Normally, the only argument you will pass to this script is the C++
+    compiler to use but there is also a way to specify compile options and a
+    few other things; run bootstrap.sh -h and see the build2/INSTALL file for
+    details.
+
+    $ cd build2
+    $ ./bootstrap.sh g++ -w
+
+    $ b/b-boot --version
+
+    Alternatively, we can use the bootstrap.gmake GNU makefile to bootstrap in
+    parallel:
+
+    $ cd build2
+    $ make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w
+
+    $ b/b-boot --version
+
+2. Bootstrap, Phase 2
+
+    Then, we rebuild the build system with the result of Phase 1 linking
+    libraries statically.
+
+    $ b/b-boot config.cxx=g++ config.bin.lib=static b/exe{b}
+    $ mv b/b b/b-boot
+
+    $ b/b-boot --version
+
+3. Stage
+
+    At this step the build system and package manager are built with shared
+    libraries and then staged. Here you may want to adjust a few things, such
+    as the installation directory or the sudo program (remove the
+    config.install.sudo line if you don't need one).
+
+    You may also need to remove the config.bin.rpath line if your target
+    doesn't support rpath. Specifically, if building on Windows (with MSYS or
+    Cygwin), remove both .rpath and .sudo. But if unsure, leave .rpath in -- if
+    your target doesn't support it, you will get an error and will need to
+    reconfigure without it.
+
+    $ cd ..  # Back to build2-toolchain-X.Y.Z/
+
+    $ build2/b/b-boot configure           \
+      config.cxx=g++                      \
+      config.bin.lib=shared               \
+      config.bin.suffix=-stage            \
+      config.bin.rpath=/usr/local/lib     \
+      config.install.root=/usr/local      \
+      config.install.data_root=root/stage \
+      config.install.sudo=sudo
+
+    $ build2/b/b-boot install: build2/ bpkg/
+
+    The strange-looking config.install.data_root=root/stage means install data
+    files (as opposed to executable files) into the stage/ subdirectory of
+    wherever config.install.root points to (so in our case it will be
+    /usr/local/stage/). Note that this subdirectory is temporary and will be
+    removed in a few steps. But if you don't like the default location, feel
+    free to change it (for example, to /tmp/stage).
+
+    Depending on the installation directory, the installed build2 binaries may
+    not be automatically found. On most platforms /usr/local/bin/ is in the
+    PATH environment variable by default and you should be able to run:
+
+    $ which b-stage
+    /usr/local/bin/b-stage
+
+    $ which bpkg-stage
+    /usr/local/bin/bpkg-stage
+
+    $ b-stage --version
+    $ bpkg-stage --version
+
+    If, however, you installed, say, into /opt/build2, then you will need to
+    add its bin/ subdirectory to PATH (re-run the above commands to verify):
+
+    $ export PATH="/opt/build2/bin:$PATH"
+
+    Strictly speaking this is not absolutely necessary and you can adjust the
+    rest of the commands to use absolute paths. This, however, does not make
+    for very readable examples so below we assume the installation's bin/
+    subdirectory is in PATH.
+
+    At the next step we will use bpkg to build and install the entire
+    toolchain. If for some reason you prefer not to build from packages (for
+    example, because the machine is offline), then you can convert this step
+    into a local installation and skip the rest of the steps.
+
+    | To perform a local installation with the build.sh script, pass the
+    | --local option.
+
+    To perform a local installation you will need to change the configure and
+    install command lines above along these lines (see also notes on the
+    following step about only building shared libraries, toolchain executables
+    prefix/suffix, etc):
+
+    $ build2/b/b-boot configure       \
+      config.config.hermetic=true     \
+      config.cxx=g++                  \
+      config.cc.coptions=-O3          \
+      config.bin.lib=shared           \
+      config.bin.rpath=/usr/local/lib \
+      config.install.root=/usr/local  \
+      config.install.sudo=sudo
+
+    $ build2/b/b-boot install: build2/ bpkg/ bdep/
+
+    You will also need to build and install the standard build system modules:
+
+    $ b install: '!config.install.scope=project' libbuild2-*/
+
+    | To verify the build system modules installation you can load them with
+    | the following command:
+    |
+    | $ b noop: tests/libbuild2-*/
+
+    To uninstall such a local installation, run:
+
+    $ b uninstall: build2/ bpkg/ bdep/ libbuild2-*/
+
+4. Install
+
+    Next, we use the staged tools to build and install the entire toolchain
+    from the package repository with the bpkg package manager. First, we create
+    the bpkg configuration. The configuration values are pretty similar to the
+    previous step and you may want/need to make similar adjustments.
+
+    $ cd ..  # Back to build2-build/
+    $ mkdir build2-toolchain-X.Y
+    $ cd build2-toolchain-X.Y
+
+    $ bpkg-stage create               \
+      cc                              \
+      config.config.hermetic=true     \
+      config.cxx=g++                  \
+      config.cc.coptions=-O3          \
+      config.bin.lib=shared           \
+      config.bin.rpath=/usr/local/lib \
+      config.install.root=/usr/local  \
+      config.install.sudo=sudo
+
+    | The above configuration will only build shared libraries. If you would
+    | like to build both shared and static, remove config.bin.lib=shared.
+
+    | To add a custom prefix/suffix to the toolchain executables names, add
+    | config.bin.exe.prefix=... and/or config.bin.exe.suffix=....
+
+    | The config.config.hermetic=true configuration variable in the above
+    | command makes sure the embedded ~host and ~build2 configurations include
+    | the current environment. This is especially important for ~build2 which
+    | is used to dynamically build and load ad hoc recipes and build system
+    | modules and must therefore match the environment that was used to build
+    | the build system itself.
+
+    Next, we add the package repository, build, and install:
+
+    $ bpkg-stage add https://pkg.cppget.org/1/alpha
+    $ bpkg-stage fetch
+    $ bpkg-stage build --for install build2 bpkg bdep
+    $ bpkg-stage install --all
+
+    | By default bpkg will build the latest available version of each package.
+    | You can, however, specify the desired versions explicitly, for example:
+    |
+    | $ bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z
+
+    To verify the result, run:
+
+    $ which b
+    /usr/local/bin/b
+
+    $ which bpkg
+    /usr/local/bin/bpkg
+
+    $ which bdep
+    /usr/local/bin/bdep
+
+    $ b --version
+    $ bpkg --version
+    $ bdep --version
+
+    Finally, we build and install the standard build system modules:
+
+    $ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+    $ bpkg install '!config.install.scope=project' \
+      --all-pattern=libbuild2-*
+
+    | To get a list of the standard pre-installed build system modules in a
+    | specific version of the toolchain, run:
+    |
+    | $ cd ../build2-toolchain-X.Y.Z
+    | $ ls -d libbuild2-*
+
+    | To verify the build system modules installation you can load them with
+    | the following command:
+    |
+    | $ b noop: ../build2-toolchain-X.Y.Z/tests/libbuild2-*/
+
+5. Clean
+
+    The last thing we need to do is uninstall the staged tools:
+
+    $ cd ../build2-toolchain-X.Y.Z  # Back to bootstrap.
+    $ b uninstall: build2/ bpkg/

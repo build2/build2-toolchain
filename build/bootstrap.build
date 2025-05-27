@@ -3,14 +3,37 @@
 
 project = build2-toolchain
 
-amalgamation = # Disable amalgamation.
+# Disable amalgamation, except for the bindist mode.
+#
+amalgamation = ($defined(config.build2_toolchain.bindist) && \
+                $config.build2_toolchain.bindist ? [null] : )
 
 # Note: list them (mostly) explicitly without using wildcards to handle stray
 # subdirectories in the root (debian/, installation location, etc).
 #
-subprojects += libbutl/ build2/ libbpkg/ bpkg/ bdep/
-subprojects += libbuild2-*/
-subprojects += tests/*/
+subprojects =
+
+# Enable tests-bindist subproject only in the bindist mode or during
+# distribution.
+#
+if (($defined(config.build2_toolchain.bindist) && \
+     $config.build2_toolchain.bindist) || \
+    $build.meta_operation == 'dist')
+{
+  subprojects += tests-bindist/
+}
+
+# Disable the bundled subprojects in the bindist mode, since they are not used
+# for generating the binary distribution packages but may potentially cause
+# problems (while being bootstrapped, configured, etc).
+#
+if! ($defined(config.build2_toolchain.bindist) && \
+     $config.build2_toolchain.bindist)
+{
+  subprojects += libbutl/ build2/ libbpkg/ bpkg/ bdep/
+  subprojects += libbuild2-*/
+  subprojects += tests/*/
+}
 
 using version
 using config

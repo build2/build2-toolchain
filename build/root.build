@@ -1,6 +1,17 @@
 # file      : build/root.build
 # license   : MIT; see accompanying LICENSE file
 
+# If true, then this package is being built to generate a binary distribution
+# package, normally by bbot (see bindist-* build configurations in manifest
+# for details).
+#
+# Note: when building a binary package, this variable must be always specified
+# and as a global override since it is queried in bootstrap.build.
+#
+config [bool] config.build2_toolchain.bindist ?= false
+
+bindist = $config.build2_toolchain.bindist
+
 # Load common modules that are used by subproject so that they use common
 # configuration.
 #
@@ -17,3 +28,6 @@ if! $cli.configured
   define cli: file
   cli{*}: extension = cli
 }
+
+assert ($build.mode != 'skeleton' || $bindist) \
+  "build2-toolchain is not meant to be built as a package"

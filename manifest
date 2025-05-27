@@ -1,7 +1,140 @@
 : 1
-
-# Note: not a real package, just for the version module.
-#
+name: build2-toolchain
 version: 0.18.0-a.0.z
+project: build2
+summary: build2 toolchain amalgamation
+license: MIT
+topics: build system, build toolchain
+description-file: README
+url: https://build2.org
+doc-url: https://build2.org/doc.xhtml
+src-url: https://git.build2.org/cgit/build2-toolchain/tree/
+email: users@build2.org
+build-warning-email: builds@build2.org
 depends: * build2 >= 0.18.0-
 depends: * bpkg >= 0.18.0-
+
+# Only used while building the toolchain package to generate a binary
+# distribution package (see below). Make them conditional to fail fast
+# when someone tries to build this as a package in a non-bindist mode.
+#
+depends: build2             ? ($bindist)
+depends: bpkg               ? ($bindist)
+depends: bdep               ? ($bindist)
+depends: libbuild2-autoconf ? ($bindist)
+depends: libbuild2-kconfig  ? ($bindist)
+
+builds: none ; Only build to generate binary distribution packages.
+
+# Binary distribution packages. Overall notes:
+#
+# - Bundle all the toolchain packages, pulled as dependencies, with
+#   --recursive=full.
+#
+# - Test the installed binary package but not the built source package, which
+#   is noop.
+#
+# - Use global override for config.build2_toolchain.bindist to make sure that
+#   the variable can, in particular, be used in bootstrap.build.
+#
+# - Explicitly import targets from the configured build2 package, rather than
+#   from the running build2, while configuring the build system modules.
+#
+
+# For now disable generating the debug info package since it is too big
+# (~130M) and causes issues on our CI.
+#
+bindist-debian-builds: bindist
+bindist-debian-build-include: linux_debian*-**
+bindist-debian-build-include: linux_ubuntu*-**
+bindist-debian-build-exclude: **
+bindist-debian-build-config:
+\
++bpkg.bindist.debian:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.debian:--recursive=full
+bpkg.bindist.debian:--debian-no-debug
+
+bpkg.create:config.bin.lib=shared
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# For now disable generating the debug info package since it is too big (~75M)
+# and causes issues on our CI.
+#
+bindist-fedora-builds: bindist
+bindist-fedora-build-include: linux_fedora*-**
+bindist-fedora-build-include: linux_rhel*-**
+bindist-fedora-build-exclude: **
+bindist-fedora-build-config:
+\
++bpkg.bindist.fedora:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.fedora:--recursive=full
+bpkg.bindist.fedora:--fedora-no-debug
+
+bpkg.create:config.bin.lib=shared
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+bindist-windows-builds: bindist
+bindist-windows-build-include: windows*-msvc**
+bindist-windows-build-exclude: **
+bindist-windows-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=full
+
+# Relocatable by default (see target configuration for details).
+#
+#bpkg.bindist.archive:config.install.relocatable=true
+
+bpkg.create:config.bin.lib=shared
+b.create:config.cc.coptions="/W2 /O2"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# Generic linux package (built using oldest Debian we support).
+#
+bindist-linux-builds: bindist
+bindist-linux-build-include: linux_debian_11-gcc_10.2-bindist
+bindist-linux-build-exclude: **
+bindist-linux-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=full
+bpkg.bindist.archive:--archive-no-os
+bpkg.bindist.archive:--archive-lang-impl=cc=
+bpkg.bindist.archive:--archive-build-meta=+linux-gcc10
+bpkg.bindist.archive:config.install.relocatable=true
+
+bpkg.create:config.bin.lib=shared
+b.create:config.cc.coptions="-Wall -O3"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\

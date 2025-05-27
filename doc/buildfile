@@ -9,3 +9,5 @@ css{*}: extension = css
     file{install.cli intro.cli doc-* *.html2ps}
 
 ./: file{cli.sh}
+
+doc{build2-toolchain-install*}: install = (!$bindist)

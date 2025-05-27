@@ -1,0 +1,35 @@
+# file      : tests-bindist/toolchain.testscript
+# license   : MIT; see accompanying LICENSE file
+
+: basics
+:
+: Smoke test the toolchain, installed into the system.
+:
+{
+  # Disable nesting checks in the created projects.
+  #
+  bdep new --no-checks hello 2>! &hello/***
+
+  cat <<EOI >=hello/hello/config.h.in
+    #undef BYTE_ORDER
+    EOI
+
+  sed -e 's%^(exe\{hello\}.+)$%./: \1%' -i hello/hello/buildfile
+
+  cat <<EOI >+hello/hello/buildfile
+    using autoconf
+    ./: h{config}: in{config}
+    EOI
+
+  bdep init -C @cfg -d hello/ cc 2>! &hello-cfg/***
+
+  b hello/ 2>>~%EOE%
+    %(mkdir|autoconf|c\+\+|ld|ln) .+%{5}
+    EOE
+
+  cat hello-cfg/hello/hello/config.h >>~%EOO%
+    %.*
+    %#\s*define\s+BYTE_ORDER\s+.+%
+    %.*
+    EOO
+}

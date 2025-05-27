@@ -1,30 +1,42 @@
 # file      : buildfile
 # license   : MIT; see accompanying LICENSE file
 
-# NOTE: This buildfile is only meant to be used to prepare the distribution.
-#       If you need to build the toolchain manually, follow the local
-#       installation instructions in the BOOTSTRAP-* file corresponding to
-#       your platform/compiler.
+# NOTE: This buildfile is only meant to be used to prepare the source
+#       distribution or to build the binary distribution packages. If
+#       you need to build the toolchain manually, follow the local
+#       installation instructions in the BOOTSTRAP-* file corresponding
+#       to your platform/compiler.
 #
-assert ($build.meta_operation == 'dist'      || \
+assert ($bindist                             || \
+        $build.meta_operation == 'dist'      || \
         $build.meta_operation == 'configure' || \
         $build.meta_operation == 'disfigure') 'only dist and configure supported'
 
 # Package repository URL (or path).
 #
+# NOTE: make the same change in repositories.manifest
+#
 build2_repo="https://stage.build2.org/1"
 #build2_repo="https://pkg.cppget.org/1/queue/alpha"
 #build2_repo="https://pkg.cppget.org/1/alpha"
 
+# Only specify the bundled subprojects as prerequisites when they are declared
+# as such. Note that their buildfiles may not be parsable otherwise, since may
+# rely on variables defined in root.build, etc.
+#
 # @@ Note that the project directories order is important (prerequisites go
 #    first).
 #
 # NOTE: see also subprojects in bootstrap.build if changing anything here.
 #
-d = libbutl/ build2/ libbpkg/ bpkg/ bdep/ doc/ libbuild2-*/
+d =
+if! $bindist
+{
+  d = libbutl/ build2/ libbpkg/ bpkg/ bdep/ libbuild2-*/
 
-if ($build.meta_operation == 'dist')
-  d += tests/*/
+  if ($build.meta_operation == 'dist')
+    d += tests/*/
+}
 
 i =                     \
 INSTALL                 \
@@ -36,38 +48,46 @@ BOOTSTRAP-WINDOWS-MSVC  \
 BOOTSTRAP-WINDOWS-CLANG \
 BOOTSTRAP-WINDOWS-MINGW
 
-./: $d                          \
-    doc{$i README tests/README} \
-    legal{LICENSE AUTHORS}      \
-    cli{$i}                     \
-    manifest
+./: doc/ doc{README} legal{LICENSE AUTHORS} manifest
 
-# Obtain the toolchain and standard build system modules versions.
-#
-bp = $recall($build.path)
-pt = '^version: (.+)$'
+./: $d doc{$i tests/README} cli{$i}: include = (!$bindist)
+./: tests-bindist/:                  include =   $bindist
 
-# When adding a new standard build system module, these are the places where
-# you will need to make changes (igrep for the name of one of the existing
-# modules to locate all the places):
+# bbot worker hook script (see bindist-windows build configuration for
+# details).
 #
-# - this buildfile
-# - build/bootstrap.build (submodules; should be handled automatically)
-# - build scripts: build.sh.in and build-*.bat.in
-# - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (multiple places)
-# - install scripts: prepare, build2-install.sh, and build2-install-*.bat
-# - build2.org/www/ (module docs symlinks for both public and stage, etc)
-# - make sure the module has `builds: all` in its manifest
-# - make sure just `b noop: libbuild2-<mod>-tests/` works and loads the module
-#   (not that noop does not do implicit directory buildfile loading)
-# - make sure the module is listed in the mod array in etc/bootstrap
-#
-ver          = $process.run_regex($bp 'info:' $src_root/,                    "$pt", '\1')
-build2_ver   = $process.run_regex($bp 'info:' $src_root/build2/,             "$pt", '\1')
-bpkg_ver     = $process.run_regex($bp 'info:' $src_root/bpkg/,               "$pt", '\1')
-bdep_ver     = $process.run_regex($bp 'info:' $src_root/bdep/,               "$pt", '\1')
-autoconf_ver = $process.run_regex($bp 'info:' $src_root/libbuild2-autoconf/, "$pt", '\1')
-kconfig_ver  = $process.run_regex($bp 'info:' $src_root/libbuild2-kconfig/,  "$pt", '\1')
+./: build/file{bindist-archive-post.bx}
+
+if! $bindist
+{
+  # Obtain the toolchain and standard build system modules versions.
+  #
+  bp = $recall($build.path)
+  pt = '^version: (.+)$'
+
+  # When adding a new standard build system module, these are the places where
+  # you will need to make changes (igrep for the name of one of the existing
+  # modules to locate all the places):
+  #
+  # - this buildfile
+  # - manifest (in bindist configurations)
+  # - build/bootstrap.build (submodules; should be handled automatically)
+  # - build scripts: build.sh.in and build-*.bat.in
+  # - documentation: BOOTSTRAP-*.cli and UPGRADE.cli (multiple places)
+  # - install scripts: prepare, build2-install.sh, and build2-install-*.bat
+  # - build2.org/www/ (module docs symlinks for both public and stage, etc)
+  # - make sure the module has `builds: all` in its manifest
+  # - make sure just `b noop: libbuild2-<mod>-tests/` works and loads the module
+  #   (not that noop does not do implicit directory buildfile loading)
+  # - make sure the module is listed in the mod array in etc/bootstrap
+  #
+  ver          = $process.run_regex($bp 'info:' $src_root/,                    "$pt", '\1')
+  build2_ver   = $process.run_regex($bp 'info:' $src_root/build2/,             "$pt", '\1')
+  bpkg_ver     = $process.run_regex($bp 'info:' $src_root/bpkg/,               "$pt", '\1')
+  bdep_ver     = $process.run_regex($bp 'info:' $src_root/bdep/,               "$pt", '\1')
+  autoconf_ver = $process.run_regex($bp 'info:' $src_root/libbuild2-autoconf/, "$pt", '\1')
+  kconfig_ver  = $process.run_regex($bp 'info:' $src_root/libbuild2-kconfig/,  "$pt", '\1')
+}
 
 # Generate install scripts from templates and include them into the
 # distribution.
@@ -76,7 +96,9 @@ kconfig_ver  = $process.run_regex($bp 'info:' $src_root/libbuild2-kconfig/,  "$p
 #
 for s: exe{build.sh} file{build-msvc.bat build-clang.bat build-mingw.bat}
 {
-  ./: $s: file{$name($s).$extension($s).in}
+  ./: $s: include = (!$bindist)
+
+  $s: file{$name($s).$extension($s).in}
   {
     dist = true
   }
@@ -114,3 +136,5 @@ for s: exe{build.sh} file{build-msvc.bat build-clang.bat build-mingw.bat}
 #
 doc{INSTALL}@./:  install = false
 doc{BOOTSTRAP-*}: install = false
+doc{UPGRADE}@./:  install = (!$bindist)
+tests-bindist/:   install = false

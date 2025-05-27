@@ -1,0 +1,173 @@
+# file      : build/bindist-archive-post.bx
+# license   : MIT; see accompanying LICENSE file
+
+# Overlay the build2 toolchain Windows distribution archive with the contents
+# of the base utilities and, optionally, MinGW GCC (see manifest for details).
+#
+# Usage: $0 [--bundle-mingw] <toolchain-archive>
+#
+# Note that we expect to be operating in a clean temporary directory.
+
+info = [cmdline] echo 1>&2
+
+# Parse the arguments.
+#
+bundle_mingw = false
+toolchain_path = [null]
+
+for i: $integer_sequence(1, $size($*))
+{
+  a = ($*[$i])
+
+  if ($a == --bundle-mingw)
+    bundle_mingw = true
+  elifn $toolchain_path
+    toolchain_path = [path] $a
+  else
+    exit "unexpected argument '$a'"
+}
+
+ife $toolchain_path
+  exit "build2 toolchain archive path is not specified"
+
+# Extract the top directory name from the build2 toolchain archive path.
+#
+# Note that we expect the archive path to contain the directory prefix since
+# it cannot be located in the current directory (see above).
+#
+toolchain_name = [dir_path] $regex.match(                                           \
+  $toolchain_path,                                                                  \
+  '.+[/\\](build2-toolchain-[^/\\]+-x86_64-windows[^/\\]+)\.(?:zip|tar\.[^./\\]+)', \
+  return_subs)
+
+ifn $toolchain_name
+  exit "unable to extract top directory name from build2 toolchain archive path '$toolchain_path'"
+
+# Discover the URL of the base utilities archive (assumed to be named as
+# build2-baseutils-X.Y.Z-x86_64-windows.zip). While at it, retrieve the
+# archive checksum.
+#
+base_url = ($shell.version.stage           \
+            ? 'https://stage.build2.org/0' \
+            : 'https://download.build2.org')
+
+u = "$base_url/toolchain.sha256"
+
+$info "fetching $u"
+
+curl -sS $u | set dist_info [string]
+
+sed -n -e 's/^([^ ]+) \*([^ ]+build2-baseutils-[^ ]+)$/\1 \2/p' <<<$dist_info | \
+  set -w bi [strings]
+
+ife $bi
+  exit "unable to obtain base utilities distribution info from $u"
+
+baseutil_checksum = ($bi[0])
+baseutil_url = "$base_url/($bi[1])"
+
+# Download the base utilities distribution archive.
+#
+baseutil_file = [path] $regex.match($baseutil_url, '.+/([^/]+)', return_subs)
+
+ifn $baseutil_file
+  exit "unable to extract archive file name from '$baseutil_url'"
+
+$info "fetching $baseutil_url"
+
+curl -sSf -o $baseutil_file $baseutil_url
+
+# Verify the checksum of the downloaded base utilities distribution archive.
+#
+sha256sum -b --sum-only $baseutil_file | set checksum [string]
+
+if ($checksum != $baseutil_checksum)
+  exit "$baseutil_file checksum $checksum does not match expected $baseutil_checksum"
+
+# Overlay the original build2 toolchain archive with the downloaded base
+# utilities distribution archive.
+#
+$info "overlaying $toolchain_path with $baseutil_file"
+
+bsdtar -xf $toolchain_path
+bsdtar -xf $baseutil_file -C $toolchain_name --strip-components=1
+rm $baseutil_file
+
+# If requested, overlay the build2 toolchain archive with the MinGW GCC
+# distribution archive.
+#
+if $bundle_mingw
+{
+  # Retrieve the URL of the MinGW GCC distribution archive (assumed to be
+  # named as build2-mingw-X.Y.Z-x86_64-windows.tar.xz). While at it, retrieve
+  # the archive checksum.
+  #
+  sed -n -e 's/^([^ ]+) \*([^ ]+build2-mingw-[^ ]+)$/\1 \2/p' <<<$dist_info | \
+    set -w mi [strings]
+
+  ife $mi
+    exit "unable to obtain MinGW GCC distribution info from $u"
+
+  mingw_checksum = ($mi[0])
+  mingw_url = "$base_url/($mi[1])"
+
+  # Download the GCC distribution archive.
+  #
+  mingw_file = [path] $regex.match($mingw_url, '.+/([^/]+)', return_subs)
+
+  ifn $mingw_file
+    exit "unable to extract archive file name from '$mingw_url'"
+
+  $info "fetching $mingw_url"
+
+  curl -sSf -o $mingw_file $mingw_url
+
+  # Verify the checksum of the downloaded GCC distribution archive.
+  #
+  sha256sum -b --sum-only $mingw_file | set checksum [string]
+
+  if ($checksum != $mingw_checksum)
+    exit "$mingw_file checksum $checksum does not match expected $mingw_checksum"
+
+  # Overlay the build2 toolchain archive with the downloaded GCC distribution
+  # archive.
+  #
+  $info "overlaying $toolchain_path with $mingw_file"
+
+  bsdtar -xf $mingw_file -C $toolchain_name --strip-components=1
+  rm $mingw_file
+
+  # While at it, verify that the version of the system g++ (used to build
+  # build2 toolchain) matches the version of the being bundled g++.
+  #
+  # Note: compare only the (first) `g++...` lines of `g++ --version` outputs.
+  #
+  g++ --version                    | \
+    sed -n -e 's/^(g\+\+.+)$/\1/p' | \
+    set -n system_gcc_ver [string]
+
+  ife $system_gcc_ver
+    exit "unable to extract version of system g++"
+
+  $toolchain_name/bin/g++ --version | \
+    sed -n -e 's/^(g\+\+.+)$/\1/p'  | \
+    set -n bundled_gcc_ver [string]
+
+  ife $bundled_gcc_ver
+    exit "unable to extract version of bundled g++"
+
+  if ($system_gcc_ver != $bundled_gcc_ver)
+    exit "version of system g++ '$system_gcc_ver' does not match version of bundled g++ '$bundled_gcc_ver'"
+}
+
+# Make some tweaks to the contents of the resulting archive.
+#
+mv $toolchain_name/README $toolchain_name/README-BASEUTILS
+cp $toolchain_name/share/doc/build2-toolchain/build2-toolchain/README $toolchain_name/
+
+# Note that on Windows bsdtar doesn't like trailing slashes, so let's use
+# $toolchain_name's string representation.
+#
+rm $toolchain_path
+bsdtar -a --options=compression-level=9 -cf $toolchain_path $string($toolchain_name)
+rm -r $toolchain_name

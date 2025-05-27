@@ -1,7 +1,224 @@
-: 1
-
-# Note: not a real package, just for the version module.
+# Note: this package is only meant to be used for building binary distribution
+#       packages
 #
+: 1
+name: build2-toolchain
 version: 0.18.0-a.0.z
+project: build2
+summary: build2 toolchain amalgamation
+license: MIT
+topics: build system, build toolchain
+description-file: README
+url: https://build2.org
+doc-url: https://build2.org/doc.xhtml
+src-url: https://git.build2.org/cgit/build2-toolchain/tree/
+email: users@build2.org
+build-warning-email: builds@build2.org
 depends: * build2 >= 0.18.0-
 depends: * bpkg >= 0.18.0-
+
+# Only used while building the toolchain package to generate a binary
+# distribution package (see below). Make them conditional to fail fast
+# when someone tries to build this as a package in a non-bindist mode.
+#
+depends: build2             ? ($bindist)
+depends: bpkg               ? ($bindist)
+depends: bdep               ? ($bindist)
+depends: libbuild2-autoconf ? ($bindist)
+depends: libbuild2-kconfig  ? ($bindist)
+
+builds: none ; Only build to generate binary distribution packages.
+
+# Binary distribution packages. Overall notes:
+#
+# - Bundle the direct toolchain dependencies (build2, etc) with
+#   --recursive=full and the indirect ones (libbutl, etc) with
+#   --recursive=auto.
+#
+# - Test the installed binary package but not the built source package, which
+#   is noop.
+#
+# - Use global override for config.build2_toolchain.bindist to make sure that
+#   the variable can, in particular, be used in bootstrap.build.
+#
+# - Explicitly import targets from the configured build2 package, rather than
+#   from the running build2, while configuring the build system modules.
+#
+
+# Debian and alike.
+#
+# For now disable generating the debug info package since it is too big
+# (~130M) and causes issues on our CI.
+#
+bindist-debian-builds: bindist
+bindist-debian-build-include: linux_debian*-**
+bindist-debian-build-include: linux_ubuntu*-**
+bindist-debian-build-exclude: **
+bindist-debian-build-config:
+\
++bpkg.bindist.debian:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.debian:--recursive=auto
+bpkg.bindist.debian:--recursive=?build2=full
+bpkg.bindist.debian:--recursive=?bpkg=full
+bpkg.bindist.debian:--recursive=?bdep=full
+bpkg.bindist.debian:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.debian:--recursive=?libbuild2-kconfig=full
+
+bpkg.bindist.debian:--debian-no-debug
+
+bpkg.create:config.bin.lib=shared
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# Fedora and alike.
+#
+# For now disable generating the debug info package since it is too big (~75M)
+# and causes issues on our CI.
+#
+bindist-fedora-builds: bindist
+bindist-fedora-build-include: linux_fedora*-**
+bindist-fedora-build-include: linux_rhel*-**
+bindist-fedora-build-exclude: **
+bindist-fedora-build-config:
+\
++bpkg.bindist.fedora:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.fedora:--recursive=auto
+bpkg.bindist.fedora:--recursive=?build2=full
+bpkg.bindist.fedora:--recursive=?bpkg=full
+bpkg.bindist.fedora:--recursive=?bdep=full
+bpkg.bindist.fedora:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.fedora:--recursive=?libbuild2-kconfig=full
+
+bpkg.bindist.fedora:--fedora-no-debug
+
+bpkg.create:config.bin.lib=shared
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# Windows with MSVC.
+#
+bindist-windows-msvc-builds: bindist
+bindist-windows-msvc-build-include: windows*-msvc**
+bindist-windows-msvc-build-exclude: **
+bindist-windows-msvc-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=auto
+bpkg.bindist.archive:--recursive=?build2=full
+bpkg.bindist.archive:--recursive=?bpkg=full
+bpkg.bindist.archive:--recursive=?bdep=full
+bpkg.bindist.archive:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
+
+# Relocatable by default (see target configuration for details).
+#
+#bpkg.bindist.archive:config.install.relocatable=true
+
+# Supplement the generated archive with the base utilities (diff, install,
+# tar, etc) by overlaying it with the contents of the
+# build2-baseutils-X.Y.Z-x86_64-windows.zip.
+#
++bpkg.bindist.archive.post:build/bindist-archive-post.bx
+
+bpkg.create:config.bin.lib=shared
+b.create:config.cc.coptions="/W2 /O2"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# Windows with MinGW GCC.
+#
+bindist-windows-mingw-builds: bindist
+bindist-windows-mingw-build-include: windows*-gcc**
+bindist-windows-mingw-build-exclude: **
+bindist-windows-mingw-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=auto
+bpkg.bindist.archive:--recursive=?build2=full
+bpkg.bindist.archive:--recursive=?bpkg=full
+bpkg.bindist.archive:--recursive=?bdep=full
+bpkg.bindist.archive:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
+
+# Relocatable by default (see target configuration for details).
+#
+#bpkg.bindist.archive:config.install.relocatable=true
+
+# Supplement the generated archive with the base utilities (diff, install,
+# tar, etc) and the GCC compiler and run-time libraries by overlaying it with
+# the contents of the build2-baseutils-X.Y.Z-x86_64-windows.zip and
+# build2-mingw-X.Y.Z-x86_64-windows.tar.xz archives, respectively.
+#
++bpkg.bindist.archive.post:build/bindist-archive-post.bx
+bpkg.bindist.archive.post:--bundle-mingw
+
+bpkg.create:config.bin.lib=shared
+b.create:config.cc.coptions="-Wall -O3"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
+# Generic linux package (built using oldest Debian we support).
+#
+bindist-linux-builds: bindist : &oldest
+bindist-linux-build-include: linux_debian*-**
+bindist-linux-build-exclude: **
+bindist-linux-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=auto
+bpkg.bindist.archive:--recursive=?build2=full
+bpkg.bindist.archive:--recursive=?bpkg=full
+bpkg.bindist.archive:--recursive=?bdep=full
+bpkg.bindist.archive:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
+
+# Override the default archive layout, removing the /usr/local/ subdirectory,
+# so that bin/, lib/, etc subdirectories were located right under the root
+# archive directory. Note that this is consistent with the Windows archives
+# default layout.
+#
+bpkg.bindist.archive:--archive-install-root=/
+bpkg.bindist.archive:config.bin.rpath=/lib
+bbot.sys-install.tar.extract:--directory=/usr/local
+
+bpkg.bindist.archive:config.install.relocatable=true
+
+bpkg.create:config.bin.lib=shared
+b.create:config.cc.coptions="-Wall -O3"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\

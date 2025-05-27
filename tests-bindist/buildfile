@@ -1,0 +1,4 @@
+# file      : tests-bindist/buildfile
+# license   : MIT; see accompanying LICENSE file
+
+./: testscript{*}

@@ -55,6 +55,7 @@ bpkg_install=true
 bdep_install=true
 modules="$standard_modules"
 system=
+keep_system_path=
 private=
 idir=
 exe_prefix=
@@ -81,6 +82,7 @@ while test $# -ne 0; do
       diag "  --modules <list>      Install only specified standard build system modules."
       diag "  --install-dir <dir>   Alternative installation directory."
       diag "  --system <list>       Use system-installed versions of specified dependencies."
+      diag "  --keep-system-path    Don't add installation directory to PATH."
       diag "  --exe-prefix <pfx>    Toolchain executables name prefix."
       diag "  --exe-suffix <sfx>    Toolchain executables name suffix."
       diag "  --stage-suffix <sfx>  Staged executables name suffix ('-stage' by default)."
@@ -167,6 +169,10 @@ while test $# -ne 0; do
     --system)
       shift
       system="$1"
+      shift
+      ;;
+    --keep-system-path)
+      keep_system_path=true
       shift
       ;;
     --private)
@@ -508,8 +514,18 @@ fi
 
 # Add $idir/bin to PATH in case it is not already there.
 #
-PATH="$idir/bin:$PATH"
-export PATH
+# Note that this modified PATH will end up in the ~host/~build2 configurations
+# which means the resulting PATH will most likely differ from the system's,
+# which in turn means we will have to keep changing PATH for every process
+# started for a hermetic ~host/~build2 build. Thus the --keep-system-path
+# option which allows us to avoid that in certain controlled cases (such as
+# building a distribution package with the installation location already known
+# to be in PATH).
+#
+if test -z "$keep_system_path"; then
+  PATH="$idir/bin:$PATH"
+  export PATH
+fi
 
 sys="$(build2/config.guess | sed -n 's/^[^-]*-[^-]*-\(.*\)$/\1/p')"
 

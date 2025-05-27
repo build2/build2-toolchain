@@ -1,0 +1,4220 @@
+%!PS
+%%Title: The build2 Toolchain Introduction
+%%Creator: html2ps version 1.0 beta7
+%%EndComments
+save
+2000 dict begin
+/d {bind def} bind def
+/D {def} d
+/t true D
+/f false D
+/FL [/Times-Roman
+/Times-Italic
+/Times-Bold
+/Times-BoldItalic
+/Courier
+/Courier-Oblique
+/Courier-Bold
+/Courier-BoldOblique
+/Helvetica
+/Helvetica-Oblique
+/Helvetica-Bold
+/Helvetica-BoldOblique] D
+/WF t D
+/WI 0 D
+/F 1 D
+/IW 454 F div D
+/IL 672 F div D
+/PS 842 D
+/EF [0 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 2 2] D
+/EZ [12 9 19 17 15 13 12 11 12 12 12 12 12 12 12 12 12 12 12 12 12 12 8 8] D
+/Ey [0 0 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] D
+/EG [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1] D
+/Tm [1 1 0.8 0.8 0.8 0.8 0.8 0.8 0 0 0 0 0 0 0.5 1 1 1 1 0 0 1.3 0 0] D
+/Bm [1 1 0.5 0.5 0.5 0.5 0.5 0.5 0 0 0 0 0 0 0.5 1 1 1 1 0 0 1 0 0] D
+/Lm [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 2 0 0 2 0 0 0] D
+/Rm [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0] D
+/EU [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 0 0] D
+/NO f D
+/YY [[{()}{ h }][{ h }{()}][{()}{()}]] D
+/ZZ [[{ (Revision ) ME 0 get join(, May 2025)join }{ Pn }][{ Pn }{ (Revision ) ME 0 get join(, May 2025)join }][{ Ti }{ Ti }]] D
+/Ts EZ 0 get D
+/TU f D
+/Xp t D
+/AU f D
+/SN 0 D
+/Cf t D
+/Tp t D
+/Fe f D
+/TI 2 Ts mul D
+/Fm 14 D
+/xL 71 D
+/xR 71 D
+/yL 757 D
+/yR 757 D
+/Wl 454 F div D
+/Wr 454 F div D
+/hL 672 F div D
+/hR 672 F div D
+/FE {newpath Fm neg Fm M CP BB IW Fm add Fm L IW Fm add IL Fm add neg L CP BB
+ Fm neg IL Fm add neg L closepath} D
+/LA {PM 0 eq{/IW Wl D /IL hL D}{/IW Wr D /IL hR D}ie /W IW D /LL W D /LS W D
+ TU PM 0 eq and{IW 56 F div add SA{Sf div}if 0 translate}
+ {PM 0 eq{xL yL}{xR yR}ie translate F SA{Sf mul}if dup scale
+ CS CF FS Cf{CA CL get VC}if /Bb f D}ie 0 0 M
+ TF not Tc or {Cf{gsave SA{1 Sf div dup scale}if Cb VC FE fill grestore}if}if}D
+/Pi 0 Ts mul D
+/SG [0.8 1 1] D
+/Ab 15 D
+/J 0 D
+/Tc t D
+/NH 6 D
+/Nf f D
+/Pa f D
+/LH 1.2 D
+/XR f D
+/Xr {/pN E D ( [p ) WB pN WB (] )WB} D
+/Db [16#FF 16#FF 16#FF] D
+/Dt [16#00 16#00 16#00] D
+/eA f D
+/Fi f D
+/bT f D
+/Lc t D
+/Dl [16#00 16#00 16#00] D
+/LX f D
+/Br 0.25 D
+/IA ([IMAGE]) D
+/DS {/PF f D()WB NL NP()pop RC ZF} D
+/Gb f D
+/Mb t D
+/Hc [16#00 16#00 16#00] D
+/Bl 3 D
+/MI -15.6 D
+/DX (DRAFT) D
+/Di 0 D
+/Tt 113.385826771654 D
+/Th { (
+) 2 Al()BR (
+  ) 0 1 -1 H()4 FZ (The ) SM (build2) ES ( ) ME 1 get join ES()EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+) Ea()BR (
+  ) 0 P (Copyright © ) ME 2 get join(.)join BR (  Permission is granted to copy, distribute and/or modify this document under
+  the terms of the MIT License.) EP (
+
+  ) 0 P (Revision ) SM() ME 0 get join ES (, May 2025) BR (  This revision of the document describes the ) SM (build2) ES ( ) ME 3 get join(
+  )join SM() ME 0 get join(.x)join ES ( series.) EP()} D
+/tH {()0 1 -1 H (Table of Contents) EH()} D
+/FD 2 D
+/Dy 2 D
+/cD [16#F0 16#F0 16#F0] D
+/FW 0.6 D
+/FU [16#00 16#00 16#00] D
+/ET {/RM f D /A0 3 D /PN SN D /OU t D /Ou t D /W IW D /LL W D D1
+ Ms not TP and{Ip}if /TF f D} D
+
+%-- End of variable part --
+/MySymbol 10 dict dup begin
+ /FontType 3 D /FontMatrix [.001 0 0 .001 0 0 ] D /FontBBox [25 -10 600 600] D
+ /Encoding 256 array D 0 1 255{Encoding exch /.notdef put}for
+ Encoding (e) 0 get /euro put
+ /Metrics 2 dict D Metrics begin
+  /.notdef 0 D
+  /euro 651 D
+ end
+ /BBox 2 dict D BBox begin
+  /.notdef [0 0 0 0] D
+  /euro [25 -10 600 600] D
+ end
+ /CharacterDefs 2 dict D CharacterDefs begin
+  /.notdef {} D
+  /euro{newpath 114 600 moveto 631 600 lineto 464 200 lineto 573 200 lineto
+   573 0 lineto -94 0 lineto 31 300 lineto -10 300 lineto closepath clip
+   50 setlinewidth newpath 656 300 moveto 381 300 275 0 360 arc stroke
+   -19 350 moveto 600 0 rlineto -19 250 moveto 600 0 rlineto stroke}d
+ end
+ /BuildChar{0 begin
+  /char E D /fontdict E D /charname fontdict /Encoding get char get D
+  fontdict begin
+   Metrics charname get 0 BBox charname get aload pop setcachedevice
+   CharacterDefs charname get exec
+  end
+ end}D
+ /BuildChar load 0 3 dict put /UniqueID 1 D
+end
+definefont pop
+
+/Cd {aload length 2 idiv dup dict begin {D} repeat currentdict end} D
+/EX {EC cvx exec} D
+/DU {} d
+/BB {pop pop}d
+/ie {ifelse} d
+/E {exch} d
+/M {moveto} d
+/R {rmoveto} d
+/L {lineto} d
+/RL {rlineto} d
+/CP {currentpoint} d
+/SW {stringwidth} d
+/GI {getinterval} d
+/PI {putinterval} d
+/Sg {setgray} d
+/LW {setlinewidth} d
+/S {dup () ne OU and{0 Co R AT 3 eq LB and HF not and A1 0 ne A2 0 ne or and
+ {A2 0 32 A1 0 6 -1 roll awidthshow}{show}ie 0 Co neg R}{pop}ie
+ OU PH 3 eq or{/Ms t D}if} D
+/U {OU{gsave CP currentfont /FontInfo get /UnderlinePosition get
+ 0 E currentfont /FontMatrix get dtransform E pop add newpath M dup SW pop
+ CJ 0 RL stroke grestore}if} D
+/B {OU Br 0 gt and{CP Ts neg Ts .33 mul R gsave 0 Sg
+ CP newpath Ts Br mul 0 360 arc closepath UI 2 mod 0 eq{stroke}{fill}ie
+ grestore M CP E Ts Br 1 add mul sub E BB /Ms t D}if}D
+/NP {Ms TP not or PA and OU and{TP{OR}if f1{mF k2 /mF E D /YC 0 D}if
+ TP TU not PM 0 eq or and{showpage}if DU Ip TE not{LA}if 0.6 LW
+ /CI 0 D /TP t D /Hs f D /hl 6 D /Hv 6 D /HI hi D /Ms f D}if Bs XO BO M} D
+/Np {LE sub CP E pop gt PL 0 eq and{NP}if}D
+/Ip {/PN PN 1 add D /Pn RM{1}{4}ie PN Ns D /PM PN SN sub 2 mod D} D
+/GP {E dup 3 -1 roll get PN 1 add 2 mod get dup type /integertype eq
+ {get 0 get}{E pop}ie}d
+/Fc {dup 2 GP exec SW pop /S1 E D dup 1 GP exec SW pop /S2 E D 0 GP exec SW
+ pop /S3 E D S1 0 gt{S2 2 mul S1 add S3 2 mul S1 add 2 copy lt{E}if pop}{0}ie
+ S2 S3 add 2 copy lt{E}if pop IW .9 mul div dup 1 gt{1 E div}{pop 1}ie}D
+/OR {Df{Sd}if tp not{gsave SA{1 Sf div dup scale}if Fe{Cf{FU VC}if FW LW
+ 1 setlinejoin FE stroke}if /YO {60 F div dup 40 gt{pop 40}if}D /cs CS D
+ /cf CF D /CF 0 D /pf PF D /PF f D /Fn FN D /At AT D /AT 0 D /FN EF Hf 1 add
+ get D Fz Fs FS ZZ Fc Fz mul Fs FS EU Hf 1 add get dup type /arraytype eq
+ Cf and{VC}{pop 0 Sg}ie IW IL neg YO sub M ZZ 1 GP exec dup SW pop neg 0 R Sh
+ 0 IL neg YO sub M ZZ 0 GP exec Sh ZZ 2 GP exec dup SW pop IW E sub 2 div
+ IL neg YO sub M Sh Fz Fs FS NO{/AW IW Pn SW pop sub D AW 2 div IL neg YO sub
+ S1 0 gt S2 AW .45 mul gt or S3 AW .45 mul gt or{Fz 2 mul sub}if M Pn Sh}if
+ EU Hf get dup type /arraytype eq Cf and{VC}{pop 0 Sg}ie YY Fc /FN EF Hf get D
+ Hz mul HS FS IW YO M YY 1 GP exec dup SW pop neg 0 R Sh 0 YO M YY 0 GP exec Sh
+ YY 2 GP exec dup SW pop IW E sub 2 div YO M Sh /FN Fn D /AT At D t Pb XO SZ
+ SL get neg R /PF pf D grestore /CF 0 D cs cf FS}if}D
+/Sh {dup () ne{CP Hz 4 div sub BB show CP CS add BB}{pop}ie}D
+/Pb {/OU E D /Ou OU D /PB t D 0 0 M Ba{/Sa save D /BP t D /Fl t D RC /PL 0 D
+ /PH 0 D /W IW D /LE IL .7 mul D /EO 0 D SI ZF /YA 0 D /BO 0 D /C1 () D
+ BA 0 Ts neg R Bb{Xl Yl Xh Yh}if Bb CP Sa restore M
+ {/Yh E D /Xh E D /Yl E D /Xl E D}if /Fl t D}if
+ BL /OU t D /HM f D /Ou t D /PB f D} D
+/Bs {/BP Ba not D}D
+/reencodeISO {
+ dup dup findfont dup length dict begin{1 index /FID ne{D}{pop pop}ie}forall
+ /Encoding ISOLatin1Encoding D currentdict end definefont} D
+/ISOLatin1Encoding [
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quoteright
+/parenleft/parenright/asterisk/plus/comma/hyphen/period/slash
+/zero/one/two/three/four/five/six/seven/eight/nine/colon/semicolon
+/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N
+/O/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright
+/asciicircum/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m
+/n/o/p/q/r/s/t/u/v/w/x/y/z/braceleft/bar/braceright/asciitilde
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/space/exclamdown/cent/sterling/currency/yen/brokenbar
+/section/dieresis/copyright/ordfeminine/guillemotleft/logicalnot
+/hyphen/registered/macron/degree/plusminus/twosuperior/threesuperior
+/acute/mu/paragraph/periodcentered/cedilla/onesuperior/ordmasculine
+/guillemotright/onequarter/onehalf/threequarters/questiondown
+/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute
+/Thorn/germandbls/agrave/aacute/acircumflex/atilde/adieresis
+/aring/ae/ccedilla/egrave/eacute/ecircumflex/edieresis/igrave
+/iacute/icircumflex/idieresis/eth/ntilde/ograve/oacute/ocircumflex
+/otilde/odieresis/divide/oslash/ugrave/uacute/ucircumflex/udieresis
+/yacute/thorn/ydieresis
+] D
+[128/backslash 129/parenleft 130/parenright 141/circumflex 142/tilde
+143/perthousand 144/dagger 145/daggerdbl 146/Ydieresis 147/scaron 148/Scaron
+149/oe 150/OE 151/guilsinglleft 152/guilsinglright 153/quotesinglbase
+154/quotedblbase 155/quotedblleft 156/quotedblright 157/endash 158/emdash
+159/trademark]
+aload length 2 idiv 1 1 3 -1 roll{pop ISOLatin1Encoding 3 1 roll put}for
+/colorimage where{pop}{
+ /colorimage {
+  pop pop /Pr E D {/Cv Pr D /Gr Cv length 3 idiv string D 0 1 Gr length 1 sub
+   {Gr E dup /i E 3 mul D Cv i get 0.299 mul Cv i 1 add get 0.587 mul add
+    Cv i 2 add get 0.114 mul add cvi put}for Gr} image} D
+}ie
+/pdfmark where{pop}{userdict /pdfmark /cleartomark load put}ie
+WF{FL{reencodeISO D}forall}{4 1 FL length 1 sub{FL E get reencodeISO D}for}ie
+/Symbol dup dup findfont dup length dict begin
+ {1 index /FID ne{D}{pop pop}ie}forall /Encoding [Encoding aload pop]
+ dup 128 /therefore put D currentdict end definefont D
+
+/SF {/CS E D SZ SL CS put FO SL FN put /YI CS LH neg mul D dup ST cvs ( ) join
+ CS ST cvs join C1 E join ( NF ) join /C1 E D CS NF /Wf WF FN 0 gt or D
+ /BW Wf{( ) SW pop}{0}ie D}D
+/NF {/cS E D /cF E D cF 0 ge{FL cF get}{cF -1 eq{/Symbol}{/MySymbol}ie}ie
+ findfont cS scalefont setfont} D
+/FS {CF or /CF E D FR SL CF put CF CF 0 ge{FN 4 mul add}if E SF} D
+/PC {SH /BP f D fin not GL not and{NL}if /HM t D /LL LS D} D
+/BS {/TX E D Wf{/fin f D /CW 0 D /LK 0 D /SC 0 D
+ /RT TX D {RT ( ) search{/NW E D pop /RT E D /WH NW SW pop D CW WH add LL gt
+ {TX SC LK SC sub 1 sub NN GI GL{SH cF cS OC
+ 2 copy cS ne E cF ne or{NF}{pop pop}ie}{PC /CW WH BW add D}ie
+ /SC LK D}
+ {GL{JC}if
+ /CW CW WH add BW add D /HM t D}ie /GL f D /Ph f D
+ /LK LK NW length 1 add add D}{pop exit}ie}loop
+ /fin t D TX SC LK SC sub GI SH RT () ne{GL not{CC}if}if
+ /LC TX length D /WH RT SW pop D CW WH add Hy{HC SW pop add}if LL gt
+ {RT GL{SH cF cS OC 2 copy cS ne E cF ne or{NF}{pop pop}ie
+ Hy{/Ph t D}if /LL LS D}{NL /LL LS D SH}ie}
+ {RT PC Hy{CC}if /Ph Ph Hy or D}ie RT () ne{/GL t D /HM t D}if}
+ {TX SW pop LL le{TX SH}{/NW () D 0 2 TX length 1 sub
+ {/CW E D TX 0 CW GI dup SW pop LL gt{pop NW SH /HM t D NL/LL W XO sub MR sub D
+ /CW CW 2 sub NN D /TX TX CW TX length CW sub GI D TX BS exit}
+ {/NW E D}ie}for}ie}ie /HM t D}D
+/CC {C0 length 0 gt{JC}if /C0 [C1 L1 YA YB Mf NS NB TB AF Bw] D
+ /C1 () D /L0 L1 D /YA 0 D /YB 0 D /Mf 0 D /NS 0 D /NB 0 D}D
+/JC {C0 aload length 0 gt{pop pop pop NB add /NB E D NS add /NS E D
+ dup Mf gt{/Mf E D}{pop}ie dup YB gt{/YB E D}{pop}ie
+ dup YA gt{/YA E D}{pop}ie pop C1 join /C1 E D /C0 [] D}if}D
+/OC {C0 length 0 gt{C1 L1 L0 sub YA YB Mf NS NB TB AF Bw GL C0 aload pop
+ /Bw E D /AF E D /TB E D /NB E D /NS E D /Mf E D /YB E D /YA E D /C0 [] D
+ /L1 E D /C1 E D Ph{HC SH}if NL /GL E D /Bw E D /AF E D /TB E D /NB E D /NS E D
+ /Mf E D /YB E D /YA E D /L1 E D /LL W L1 sub XO sub MR sub WH sub D /CW 0 D
+ C1 E join /C1 E D}if}D
+/BT {/LB t D dup length string copy RS dup dup () ne E ( ) ne and
+ {/CI 0 D /LS LL D /LL W L1 sub XO sub MR sub D BS}
+ {dup ( ) eq{/GL f D}if dup () eq L1 0 eq or{pop}{SH /BP f D /Ph f D}ie}ie
+ /LB f D} D
+/BL {CP E pop XO E M} D
+/NL {JC /GL f D /SK W XO sub MR sub L1 sub TB{Bw add}if D
+ /YA LF{Mf HM Fl not and PF or{LH mul}if}{0 /LF t D}ie YA 2 copy lt{E}if pop D
+ C1 () ne{/FB YB Mf SA{Sf mul}if 4 div 2 copy lt{E}if pop D}if Fl{/Ya YA D}if
+ CP E pop YA sub YB sub LE neg lt Fl not and PB not and{NP}if NT TL BL
+ OU PF not and PB or{/RE L1 TB{Bw sub}if
+ W XO sub MR sub div YA YB add LE BO add div 2 copy lt{E}if pop D
+ RE 1 gt{BL 1 RE div dup scale}if}if
+ AT 2 le{SK AT mul 2 div YA neg R}if
+ AT 3 eq{0 YA neg R TB{/NB NB 1 sub D /NS NS 1 sub D}if /NB NB 1 sub NN D
+ /A3 NS 6 mul NB add D NS NB add 0 eq
+  {/A1 0 D /A2 0 D}
+  {NS 0 eq{/A1 SK NB div dup J gt{pop 0}if D /A2 0 D}{J A3 mul SK lt
+   {/A1 J D /A2 SK J NB mul sub NS div dup Ab gt{/A1 0 D pop 0}if D}
+   {/A1 SK A3 div D /A2 A1 6 mul D}ie}ie}ie /A1 A1 NN D /A2 A2 NN D}if
+ AT 4 eq{0 YA neg R PH 2 le{PD 0 lt{/PD L1 D}if PD M1 gt{/M1 PD D}if
+ L1 PD sub M2 gt{/M2 L1 PD sub D}if}{DV ID 1 sub get 0 ge{Lo 0 R}if}ie}if
+ F0 cF ne Cs cS ne or{F0 Cs NF}if
+ /ms Ms D /Ms f D CP FB sub
+ C1 cvx exec XO EO sub L1 add TB{BW sub}if dup LM gt{/LM E D}{pop}ie
+ PH 0 eq PH 4 eq or Ms and{HF not{/PO t D /AH t D}if
+ BB CP YA add E AT 3 eq LB and{A1 sub}if TB{BW sub}if E BB}
+ {pop pop}ie Ms HM PH 3 eq and or{/BP f D /Fl f D}if
+ /Lo 0 D /L1 0 D /F0 cF D /Cs cS D BP not{0 YB NN neg R}if
+ OU f1 and mF not and{k2 /f1 f D}if
+ OU PF not and PB or{RE 1 gt{RE dup scale}if}if /Ms ms Ms or D
+ /C1 AF{(Cp )}{()}ie D /YA 0 D /YB 0 D BL
+ AT 4 eq LB not and PH 3 ge and
+ {ID DV length lt{DV ID get dup 0 ge{DO E sub /Lo E D /L1 Lo D}{pop}ie
+ /ID ID 1 add D}if}if /T t D CD{/LN LN 1 add D PD}if
+ /PD -1 D /NS 0 D /NB 0 D /TB f D /Ph f D /Mf 0 D /HM f D} D
+/RS {/TM E D /CN 0 D TM{10 eq{TM CN ( ) PI}if /CN CN 1 add D}forall
+ /CN 0 D /BK HM EN and{0}{1}ie D TM
+ {dup 32 ne{TM CN 3 2 roll put /CN CN 1 add D /BK 0 D}
+ {pop BK 0 eq{TM CN 32 put /CN CN 1 add D}if /BK 1 D}ie}forall
+ TM 0 CN GI dup dup () ne E ( ) ne and
+ {dup CN 1 sub get 32 eq{/EN f D}{/EN t D}ie}if} D
+/join {2 copy length E length add string dup 4 2 roll 2 index 0 3 index
+ PI E length E PI}d
+/WR {(\n) search{dup () ne BP not or
+ {Li 4 le CP E pop YI Li mul add LE add 0 lt and PL 0 eq and{NP}if
+ SH NL pop /Li Li 1 sub D WR}{pop pop WR}ie}{SH}ie /CI 0 D /BP f D} D
+/SH {dup dup () ne E ( ) ne and PF or CS Mf gt and{/Mf CS D}if
+ T not Wf and{( ) E join /T t D}if dup BP{/MF CS D}if
+ AT 3 eq{2 copy length dup 0 gt{/NB E NB add D
+ {( ) search{/NS NS 1 add D pop pop}{pop exit}ie}loop}{pop pop}ie}if
+ CD PD 0 lt and{dup DC search{SW pop /PD E L1 add D pop pop}{pop}ie}if
+ 0 Np dup SW pop L1 add /L1 E D dup () ne
+ {C1 (\() join E join (\)) join AU AF and UF or Wf and{( U ) join}if
+ sF{( s ) join}if ( S ) join
+ /C1 E D dup length 1 sub get 32 eq /TB E D /Bw BW D}{pop pop}ie} D
+/BG {AI LG BC add add 0 eq} D
+/ON {OU{Ty AR AI NN get dup 1 add Ln Ns Ty 2 mod 0 eq{(.  )}{(\)  )}ie join
+ dup SW pop neg 0 R CP E 0 lt{0 E M}{pop}ie CP BB show /Ms t D}if} D
+/Ln {AR AI 3 -1 roll put}D
+/SP {dup CI lt BP not and{dup CI sub 0 E R /CI E D}{pop}ie} D
+/BN {PF{WR /HM f D}{BT NL}ie} D
+/NN {dup 0 lt{pop 0}if} D
+/h {(h) HI ST cvs join cvx exec dup 1 get E Nf{0 get E join}{pop}ie} D
+/H {/fn FN D /Hi E 1 add D 1 sub /HL E D /H2 HL 2 add D /GS EZ H2 get D
+ E Tm H2 get GS mul BE dup 0 gt{1 sub}{pop EG H2 get dup 0 lt{pop AT}if}ie NA
+ WW Np /SL SL 1 add D /FN EF H2 get D GS Ey H2 get FS
+ EU H2 get Sc Hs not HL Hl lt and Hs HL hl lt and or Hi 0 eq or
+ {/HI Hi D /Hs t D /hl HL D /Hv HL D}if HL Hl lt{/hi Hi D}if
+ Nf HI 0 gt and{(h) Hi ST cvs join cvx exec 0 get WB}if
+ /HF t D /AH f D /PO f D} D
+/EH {Bm H2 get GS mul BE OA /SL SL 1 sub NN D /CF 0 D /FN fn D
+ SZ SL get FR SL get FS /HF f D /GS Ts D ()Ec} D
+/P {E PF{WR}{PO{EP}{BN}ie Ts 4 mul Np AE not{Tm 0 get Ts mul neg SP}if
+ dup 0 ge AH and{Pi Pd}if}ie 1 sub dup 0 lt{pop AV AL get}if /AT E D /PO t D} D
+/EP {PF{WR}{BN Ts 4 mul Np}ie AE not{Bm 0 get Ts mul neg SP}if
+ /AT AV AL get D /PO f D} D
+/BE {E PO{EP}{BN}ie Ts 4 mul Np neg SP} D
+/HR {/Aw W EO sub D /RW E dup 0 gt{Aw mul}{neg}ie dup Aw gt{pop Aw}if D /RZ E D
+ E BN Ts neg SP 1 sub 2 div Aw RW sub mul EO add CP E pop M PF{0 Ps neg R}if
+ 0 Np OU{gsave RZ LW Cf{Hc VC}{0 Sg}ie CP BB RW 0 RL CP BB stroke grestore}if
+ /CI 0 D /BP f D PF not{Ts neg SP}if /Ms t D} D
+/AD {I NL EG 14 get dup 0 lt{pop AT}if NA /AE t D Tm 14 get Ts mul neg SP
+ Cf{EU 14 get dup -1 eq{pop CA CL get}if Sc}if} D
+/DA {BN ()ES OA /AE f D ()Ec Bm 14 get Ts mul neg SP} D
+/PR {/MW E D /Li E D Tm 1 get Ps mul BE 0 NA /FN Fp D /PF t D SI /SL SL 1 add D
+ /CF 0 D Ps CS mul Ts div MW WC mul CS mul Ts div dup LL gt PL 0 eq and
+ {LL div div}{pop}ie Ey 1 get FS CP E pop LE add YI neg div cvi dup Li lt
+ AH and{4 lt YI Li mul 5 mul LE add 0 gt or PL 0 eq and{NP}if}{pop}ie
+ EU 1 get Sc /GS Ps D}D
+/RP {WR NL () /PF f D SI /FN 0 D ES Bm 1 get Ps mul neg SP OA /GS Ts D} D
+/SI {/XO Lm 15 get BC NN mul Lm 16 get AI UI sub NN mul add
+ Lm 17 get UI NN mul add Lm 20 get LG NN mul add Ts mul
+ PF{Lm 1 get Ps mul add}if EO add D
+ /MR Rm 15 get BC NN mul Rm 16 get AI UI sub NN mul add
+ Rm 17 get UI NN mul add Rm 20 get LG NN mul add Ts mul
+ PF{Rm 1 get Ps mul add}if D /LL W XO sub MR sub D} D
+/DT {/cC E D BN /LG LG 1 sub D SI /LG LG 1 add D WW 2 div Np BL} D
+/DD {WB Cc 0 eq cC 0 eq and L1 0 eq or Lm 20 get Ts mul L1 sub TB{BW add}if
+ Ts 2 div lt or NL /LF E D SI BL /cC 0 D} D
+/DL {Dc LG Cc put /Cc E D BG{Tm 18 get Ts mul BE}{BN}ie /LG LG 1 add D BL} D
+/LD {BN LG 0 gt{/LG LG 1 sub D}if /Cc Dc LG get D SI
+ BG{()Bm 18 get Ts mul BE}if BL} D
+/UL {BG{Tm 17 get Ts mul BE}{BN}ie NR AI NN 0 put /UI UI 1 add D
+ /AI AI 1 add D SI BL} D
+/LU {BN /UI UI 1 sub D /AI AI 1 sub D SI BG{()Bm 17 get Ts mul BE}if BL} D
+/OL {E BG{Tm 16 get Ts mul BE}{BN}ie TR AI NN Ty put /Ty E D NR AI NN 1 put
+ /AI AI 1 add D SI BL 1 Ln} D
+/LO {BN /AI AI 1 sub D /Ty TR AI get D SI BG{()Bm 16 get Ts mul BE}if BL} D
+/LI {E BN -1 SP /BP f D /CI 0 D 0 Np NR AI 1 sub NN get 1 eq
+ {dup dup 0 gt E 4 le and{/Ty E D}{pop}ie
+ /L1 L1 Ty AR AI NN get Ns SW pop XO sub dup 0 lt{pop 0}if add D ( ON )}
+ {pop ( B )}ie C1 E join /C1 E D CS Mf gt{/Mf CS D}if BL} D
+/BQ {Tm 15 get Ts mul BE /BC BC 1 add D SI BL} D
+/QB {Bm 15 get Ts mul BE /BC BC 1 sub D SI BL} D
+/Al {E EP 1 sub dup 0 lt{pop AV AL get}if NA} D
+/Ea {EP OA} D
+/WB {PF{WR}{BT}ie} D
+/F1 {WB /FN 0 D CS 0 FS} D
+/F2 {WB /FN WI D CS 0 FS} D
+/HY {/Hy t D WB /Hy f D} D
+/YH {WB} D
+/A {/LT E D LT 1 eq{/RN E D}if /Lh E D WB /C1 C1 ( Cp ) join D
+ Lc AF not and{Cl Sc}if /AF t D} D
+/EA {Lc AF and{Ec}{WB}ie TL Pa AF and Lh 0 ne and
+ {( \() Lh join (\)) join /AF f D WB}if /AF f D} D
+/TL {C1 ( Tl ) apa /C1 E D} d
+/apa {AF OU and Lh 0 ne LT 1 eq or and{LT 1 eq{RN ( /) E ST cvs join}
+ {(\() Lh join (\)) join}ie E join join}{pop}ie} d
+/Cp {/Xc CP /Yc E D D} D
+/SS {Cf{dup 0 ge{EU E get dup -1 eq{pop CA CL get}if}{pop CA CL get}ie Sc}
+ {pop}ie SZ SL get /SL SL 1 add D} D
+/I {WB 8 SS 1 FS} D
+/EM {WB 8 SS /CF CF 1 xor D 0 FS} D
+/BD {WB 9 SS 2 FS} D
+/TT {WB 10 SS /FN Fp D 0 FS} D
+/KB {WB 11 SS /FN Fp D 2 FS} D
+/CT {WB 12 SS 1 FS} D
+/SM {WB 13 SS /FN Fp D 0 FS} D
+/Q {/QL QL 1 add D QO QL 2 mod get La get join WB} D
+/EQ {QC QL 2 mod get La get join WB /QL QL 1 sub D} D
+/RO {WB -1 SS /CF 0 D 0 FS} D
+/SY {WB -1 SS -1 FS} D
+/MY {WB -1 SS -2 FS} D
+/ES {WB /SL SL 1 sub NN D /CF 0 D /FN FO SL get D SZ SL get FR SL get FS ()Ec}D
+/FZ {3 sub 1.2 E exp GS mul E WB TL /C1 C1 ( Cp ) join D /SL SL 1 add D 0 FS} D
+/Ef {WB TL ()ES /C1 C1 ( Cp ) join D} D
+/BZ {dup /Bf E D FZ}D
+/Sc {dup -1 ne Cf and{/CL CL 1 add D dup 0 eq{pop [0 0 0]}if
+ dup CA E CL E put VS ( VC ) join C1 E join /C1 E D}{pop}ie} D
+/Ec {WB Cf{/CL CL 1 sub NN D CA CL get VS ( VC ) join C1 E join /C1 E D}if} D
+/VS {dup type /arraytype eq{([) E {ST cvs join ( ) join}forall (]) join}if} D
+/VC {{255 div}forall setrgbcolor} D
+/Sl {dup type /integertype ne{Ds}if /La E D WB}d
+/UN {WB /UF t D} D
+/NU {WB /UF f D} D
+/SE {WB /sF t D} D
+/XE {WB /sF f D} D
+/sM {/C1 C1 ( k1 ) join D}d
+/eM {/C1 C1 ( k2 ) join D}d
+/k1 {/YC CP E pop Ts add D /mF t D /f1 t D}d
+/k2 {gsave 3 LW -9 CP E pop Ts 0.2 mul sub M -9 YC L stroke grestore /mF f D}d
+/Ac {/AC E D WB}d
+/Ca {eA{( \()join AC join(\) )join}if WB}d
+/s {OU{gsave 0 CS .25 mul R dup SW pop CJ 0 RL stroke grestore}if}D
+/CJ {AT 3 eq LB and{E dup dup length 1 sub A1 mul E
+ {( ) search{pop pop E A2 add E}{pop exit}ie}loop 3 -1 roll add
+ W CP pop sub 2 copy gt{E}if pop}if}D
+/So {/Co E D} D
+/SO {C1 Yo ST cvs join ( So ) join /C1 E D (j) SW pop 2 div Pd} D
+/Se {E WB CS E div Pd}D
+/Pd {dup type /stringtype eq{SW pop}if dup /L1 E L1 add D
+ ST cvs ( 0 R ) join C1 E join /C1 E D} D
+/Sp {0.35 CO} D
+/Sb {-0.2 CO} D
+/CO {OV Io Yo put /Yo E CS mul Yo add D /Io Io 1 add D -1.5 Io mul 3 add FZ SO
+ CS Yo add dup YA gt{/YA E D}{pop}ie
+ Yo neg dup YB gt{/YB E D}{pop}ie} D
+/Es {ES /Io Io 1 sub NN D /Yo OV Io get D SO} D
+/SB {/N2 0 D 0 1 NI{/N E D{IX N2 get 0 lt{/N2 N2 1 add D}{exit}ie}loop
+ /K WS N get FC N get mul D /NY AY N2 get D /BV NY array D
+ 0 1 NY 1 sub{/TM K string D currentfile TM readhexstring pop pop BV E TM put}
+ for BM N BV put /N2 N2 1 add D}for} D
+/IC [{/MA E D /MB 0 D}{2 div /MA E D /MB MA D}{/MB E CS sub D /MA CS D}
+ {pop /MA YS AB mul D /MB 1 AB sub YS mul D}{pop /MA 0 D /MB 0 D}] D
+/IP {BV N get /N N 1 add D} D
+/II {/K E D IX K get 0 lt{/EC E D}if /TY E D
+ TY 4 eq{/Y E D /X E D}if TY 3 eq{/AB E D}if
+ /XW AX K get D /YW AY K get D /IS SG IT K get get D /XS XW IS mul D
+ /YS YW IS mul D YS IC TY get exec /MA MA Fl not{3 add}if D} D
+/IM {II /ty TY D /xs XS D /ys YS D /ya YA D /yb YB D /ma MA D /mb MB D /k K D
+ /ec EC D /BP f D /CI 0 D WB TL L1 xs add dup XO add MR add W gt
+ {pop /ma ma Fl{3 add}if D NL /YA ma D /YB mb D /YS ys D /L1 xs D}
+ {/L1 E D ma YA gt{/YA ma D}if mb YB gt{/YB mb D}if}ie /TB f D
+ OU{CP E pop YS sub LE neg lt Fl not and PB not and{NP /YA ma D /YB mb D}if
+ /BP f D ty ST cvs ( ) join IX k get 0 lt{(\() join ec join (\) ) join}if
+ k ST cvs join ty 3 eq{AB ST cvs ( ) join E join}if
+ ty 4 eq{X ST cvs ( ) join Y ST cvs join ( ) join E join}if C1 E join
+ ( DI ) join FP 2 eq FP 1 eq AF and or{( FM ) join}if
+ ( Il Cp ) apa /C1 E D /EN f D}if /HM t D /T f D} D
+/DI {II /Xc CP /Yc E D D /YN YW neg D /HM t D /CI 0 D /K2 IX K get D gsave
+ TY 4 eq{OX X IS mul add OY FY add YS sub Y IS mul sub}
+ {/FY YS D CP MB sub 2 copy /OY E D /OX E D}ie
+ translate K2 0 ge{/DP AZ K2 get D /BV BM K2 get D XS YS scale /N 0 D XW YW DP
+ [XW 0 0 YN 0 YW] {IP} FC K2 get 1 eq{image}{f 3 colorimage}ie}
+ {EX}ie grestore XS 0 R /Ms t D} D
+/FM {gsave 0 Sg CP MB sub translate XS neg 0 M 0 YS RL XS 0 RL 0 YS neg RL
+ XS neg 0 RL stroke grestore} D
+/NA {/AT E D /AL AL 1 add D AV AL AT put} D
+/OA {AL 0 gt{/AL AL 1 sub D /AT AV AL get D}if} D
+/D1 {/BR {CP E pop E BN Mb{CP E pop eq{0 YI R}if}{pop}ie} D
+ /Sn {OU{C1 E ST cvs join ( Ld ) join /C1 E D}{pop}ie} D} D
+/D1 {/BR {BN} D /Sn {OU {C1 E ST cvs join ( Ld ) join /C1 E D} {pop} ie} D} D
+/TC {/TF t D /ML 0 D HN{SW pop dup ML gt{/ML E D}{pop}ie}forall NP /RM RM not D
+ RC /OU Tc D Ep /PN 0 D Ms not TP and{Ip}if /W IW ML sub Ts sub D
+ /A0 0 D TH{/BR {( ) join BT} D /Sn {pop} D /Au () D}if} D
+/TN {0 eq{E EA PF HF or not XR and{HN E get Xr}{pop}ie}
+ {OU{Tn 0 ge{() BN}if /Tn E D}{pop}ie WB}ie} D
+/NT {OU LB not and Tn 0 ge and{PL 0 eq{Ms not{CS CF FS}if CP dup
+ /y E YA sub D W 9 sub CS -1.8 mul XO L1 add 2 add{y M (.) show}for
+ HN Tn get dup SW pop IW E sub y M show CP BB M}if /Tn -1 D}if} D
+/Ld {/DN E D HN DN Pn put [/View [/XYZ -4 Fl{PS}{CP YA add US E pop}ie null]
+ /Dest DN ST cvs cvn /DEST pdfmark} D
+/C {ND 1 eq{1 sub}if TI mul /XO E D NL Nf not{pop()}if 0 3 -1 roll 1 A} D
+/OP {BP not{NP}if PN 2 mod 0 eq{/Ms t D NP}if}D
+/Ep {Xp PN 2 mod 0 eq and OU and{/Pn (-) D showpage /PM 1 D LA}if}D
+/Dg [73 86 88 76 67 68 77] D
+/Rd [0 [1 1 0][2 1 0][3 1 0][2 1 1][1 1 1][2 2 1][3 3 1][4 4 1][2 1 2]] D
+/Ns {/m E D /c E 32 mul D /j m 1000 idiv D /p j 12 add string D
+ c 96 le m 0 gt and{c 32 le {/i 0 D /d 77 D /l 100 D /m m j 1000 mul sub D
+  j -1 1 {pop p i d c add put /i i 1 add D}for
+  4 -2 0 {/j E D /n m l idiv D /m m n l mul sub D /d Dg j get D
+   n 0 gt {/x Rd n get D x 0 get -1 1 {pop p i d c add put /i i 1 add D}for
+   p i x 1 get sub Dg x 2 get j add get c add put}if /l l 10 idiv D
+  }for p 0 i GI}
+  {/i ST length 1 sub D m {1 sub dup 0 ge{dup 26 mod c add 1 add
+   ST i 3 -1 roll put 26 idiv dup 0 eq{pop exit}if}if /i i 1 sub D}loop
+   ST i ST length i sub GI}ie}
+ {m p cvs}ie} D
+/US {matrix currentmatrix matrix defaultmatrix matrix invertmatrix
+ matrix concatmatrix transform} D
+/GB {Gb{US}if}D
+/Tl {/Rn E D Xc CP pop ne{
+ [/Rect [Xc 1 sub Yc cS 0.25 mul sub GB CP E 1 add E cS 0.85 mul add GB]
+  /Subtype /Link /Border [0 0 Cf Lc and LX and AU or{0}{1}ie] Rn type
+  /nametype eq {/Dest Rn}{/Action [/Subtype /URI /URI Rn] Cd}ie
+  /ANN pdfmark}if} D
+/Il {/Rn E D [/Rect [Xc Yc GB Xc XS add Yc YS add GB] /Subtype /Link
+ /Border [0 0 0] Rn type /nametype eq{/Dest Rn}
+ {/Action [/Subtype /URI /URI Rn] Cd}ie /ANN pdfmark} D
+/XP {[{/Z Bz 2 div D Z 0 R Z Z RL Z neg Z RL Z neg Z neg RL Z Z neg RL
+ Fi cH 1 eq and{fill}if} {Bz 0 RL 0 Bz RL Bz neg 0 RL 0 Bz neg RL
+ Fi cH 1 eq and{fill}if} {0 -5 R Bz 0 RL 0 21 RL Bz neg 0 RL 0 -21 RL}]} D
+/MS {/Sm E D WB}D
+/O {BN()0 Sm BX} D
+/BX {/Bt E D Bt 2 lt{/Ch E D CS 0.8 mul}{11 mul}ie W XO sub MR sub
+ 2 copy gt{E}if pop /HZ E D Bt 2 eq{Fi not{pop()}if ( )E join /Ft E D TT
+ /PF t D /MW 1 D /Li 1 D /Fw Ft SW pop D Fw HZ gt{/HZ Fw 8 add D}if
+ HZ ST cvs( )join}{WB Ch ST cvs( )join}ie L1 HZ add XO add MR add W gt{NL}if
+ Bt 2 eq{Ft ES Fw neg HM{CS sub}if Pd}if Bt ST cvs join( Bx )join
+ Bt 2 eq HM and{CS Pd}if C1 E join /C1 E D /L1 L1 HZ add D /T f D
+ ( ) Pd /PF f D Bt 2 lt{YA CS .8 mul lt{/YA CS .8 mul D}if}
+ {YB 5 lt{/YB 5 D}if YA 21 lt{/YA 21 D}if}ie /CI 0 D} D
+/Bx {dup 2 eq{E /Bz E D}{E /cH E D /Bz CS .8 mul D}ie
+ OU {gsave 0 Sg XP E get exec stroke grestore}{pop}ie Bz 0 R /Ms t D}D
+/SD {FD 4 mul Dy add DZ NF newpath 0 0 M DX t charpath pathbbox
+ 3 -1 roll sub /DY E D E dup /X1 E D sub WM mul WX DY mul add WM DG mul E div
+ /DF E D /DR WX DF mul DY mul WM div 2 div D} d
+/Sd {gsave 0 IL Di mul neg translate IL IW atan Di 0 eq{neg}if rotate
+ FD 4 mul Dy add DZ NF DR X1 sub DY 2 div neg M cD VC DX show grestore} d
+/Pt {/tp t D Tp{NP /Pn (TP) D 0 Tt neg R Th BN NP Ep ET RC ZF}if /tp f D} D
+/RC {/AI 0 D /LG 0 D /BC 0 D /UI 0 D /PF f D /Cc 0 D /cC 0 D /Dc 10 array D
+ /NR [0 1 9{pop 0}for] D /La Ds D /AR 10 array D /TR 10 array D /AV 30 array D
+ SI /AL -1 D /AT A0 D AT NA /OV 9 array D /Yo 0 D /Co 0 D /Io 0 D /Hy f D
+ /Ph f D /CL -1 D Ct Sc}D
+/ZF {/FR [0 1 30{pop 0}for] D /SZ [0 1 30{pop 0}for] D /FO [0 1 30{pop 0}for] D
+ /SL 0 D /CF 0 D /FN 0 D 0 Ts SF}D
+/QO [[(\253\240)(\233)(\232)(\273)(\234)(\253)][(\253\240)(`)(\231)(\273)(')(\253)]] D
+/QC [[(\240\273)(\234)(\233)(\253)(\234)(\273)][(\240\273)(')(`)(\253)(')(\273)]] D
+/Hf EF length 2 sub D
+/Hz EZ Hf get D
+/HS Ey Hf get D
+/Fz EZ Hf 1 add get D
+/Fs Ey Hf 1 add get D
+/LE IL D
+/Ps EZ 1 get D
+/Fp EF 1 get D
+/XO 0 D
+/YI 0 D
+/CI 0 D
+/FP 0 D
+/WW Ts 7 mul D
+/Mf 0 D
+/YA 0 D
+/YB 0 D
+/Cs Ts D
+/GS Ts D
+/F0 0 D
+/NS 0 D
+/NB 0 D
+/N 0 D
+/C0 [] D
+/C1 () D
+/Lo 0 D
+/L1 0 D
+/LM 0 D
+/PH 0 D
+/EC 0 D
+/Lh 0 D
+/LT 0 D
+/CH 1 string D
+/ST 16 string D
+/CA 9 array D
+/HC (\255) D
+/HM f D
+/PF f D
+/EN f D
+/TB f D
+/UF f D
+/sF f D
+/AE f D
+/AF f D
+/BP t D
+/CD f D
+/PA t D
+/GL f D
+/T t D
+/HF f D
+/AH f D
+/SA f D
+/PB f D
+/f1 f D
+/mF f D
+/OX 0 D
+/OY 0 D
+/FY 0 D
+/EO 0 D
+/FB 0 D
+/PL 0 D
+/Bw 0 D
+/PD -1 D
+/TP f D
+/tp f D
+/TH t D
+/Ty 4 D
+/Tn -1 D
+/Fl t D
+/LB t D
+/PM 1 D
+/Ms f D
+/Ba f D
+/Bb f D
+/Hl 3 D
+/hl 6 D
+/Hv 6 D
+/Hs f D
+/HI 0 D
+/hi 0 D
+/PO t D
+/TE f D
+/LF t D
+/BO 0 D
+/Sm 1 D
+/Bf 3 D
+/A1 0 D
+/A2 0 D
+/Ds 1 D
+/QL -1 D
+/Cb Db D
+/Ct Dt D
+/Cl Dl D
+[/Creator (html2ps version 1.0 beta7) /Author () /Keywords () /Subject (toolchain)
+ /Title (The build2 Toolchain Introduction) /DOCINFO pdfmark
+/ND 1 D
+/HN [(1) (1) (1) (1) (1) (12) (14) (18) (20) (25) (31) (37) (41) (44) (45) (47)
+(51) (52) (53) (55) (1) (1) (1) (12) (14) (18) (20) (25) (31) (37) (41)
+(44) (45) (47) (51) (52) (53) (55)] D
+/h0 [()(Table of Contents)] D
+/h1 [(1\240\240)(Preface)] D
+/h2 [(2\240\240)(1 Getting Started Guide)] D
+/h3 [(2.1\240\240)(1.1 Hello, World)] D
+/h4 [(2.2\240\240)(1.2 Package Repositories)] D
+/h5 [(2.3\240\240)(1.3 Adding and Removing Dependencies)] D
+/h6 [(2.4\240\240)(1.4 Upgrading and Downgrading Dependencies)] D
+/h7 [(2.5\240\240)(1.5 Build-Time Dependencies and Linked Configurations)] D
+/h8 [(2.6\240\240)(1.6 Versioning and Release Management)] D
+/h9 [(2.7\240\240)(1.7 Developing Multiple Packages and Projects)] D
+/h10 [(2.8\240\240)(1.8 Package Consumption)] D
+/h11 [(2.9\240\240)(1.9 Using System-Installed Dependencies)] D
+/h12 [(2.10\240\240)(1.10 Using Unpackaged Dependencies)] D
+/h13 [(3\240\240)(2 Canonical Project Structure)] D
+/h14 [(3.1\240\240)(2.1 Source Subdirectory)] D
+/h15 [(3.2\240\240)(2.2 Source Naming)] D
+/h16 [(3.3\240\240)(2.3 Source Contents)] D
+/h17 [(3.4\240\240)(2.4 Tests)] D
+/h18 [(3.5\240\240)(2.5 Build Output)] D
+/Hr [20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37]D
+/HV [1 1 2 2 2 2 2 2 2 2 2 2 1 2 2 2 2 2]D
+/Cn [0 10 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0]D
+Hr length 0 gt{[/PageMode /UseOutlines /DOCVIEW pdfmark}if
+/Hn 1 D
+0 1 Hr length 1 sub{
+ /Bn E D [Cn Bn get dup 0 gt{/Count E HV Bn get Bl ge{neg}if}{pop}ie
+ /Dest Hr Bn get dup abs ST cvs cvn E 0 ge{(h)Hn ST cvs join cvx exec
+ dup 1 get E Nf{0 get E join}{pop}ie /Hn Hn 1 add D}{()}ie
+ /Title E dup length 255 gt{0 255 getinterval}if /OUT pdfmark}for
+ZF /FN Fp D Ps 0 FS /WC Wf{( )}{<A1A1>}ie SW pop D
+ET RC ZF
+/Df f D
+/R1 (https://build2.org/doc.xhtml) D
+/R2 (https://build2.org/install.xhtml) D
+/R3 (https://ci.cppget.org/) D
+/R4 (https://ci.cppget.org?build-configs/) D
+/R5 (https://ci.cppget.org?ci/) D
+/R6 (https://cppget.org/) D
+/R7 (https://pkg.cppget.org/) D
+/R8 (https://cppget.org/?builds) D
+/R9 (https://cppget.org/brep) D
+/R10 (https://cppget.org/bbot) D
+/R11 (https://cppget.org/libhello) D
+/R12 (https://cppget.org/?about) D
+/R13 (https://git.build2.org/cgit/hello/libhello/) D
+/R14 (https://cppget.org/xxd) D
+/R15 (https://semver.org/) D
+/R16 (https://queue.cppget.org/) D
+/R17 (https://cppget.org?submit/) D
+/R18 (https://build2.org/article/symlinks.xhtml) D
+/R19 (https://cppget.org/libsqlite3) D
+/Ba f D /BO 0 D Bs
+/UR (-) D
+/Ti (The build2 Toolchain Introduction) D
+/Au () D
+/Df f D
+/ME [(0.18)(Toolchain Introduction)(2014-2025 the build2 authors)(toolchain)] D
+Pt
+/BO 0 D TC /Ba f D Bs /AU f D /UR () D RC ZF
+ tH WB
+ND 1 gt{Ts 3 mul Np 0()0 C()BD(The build2 Toolchain Introduction)ES()0 1 TN()EA()BN}if
+1 NH le{20(1\240\240)1 C(Preface)WB 2 Sn()20 1 TN()EA()BN}if
+1 NH le{21(2\240\240)1 C(1)WB 3 Sn( Getting Started Guide)21 1 TN()EA()BN}if
+2 NH le{22(2.1\240\240)2 C(1.1)WB 4 Sn( Hello, World)22 1 TN()EA()BN}if
+2 NH le{23(2.2\240\240)2 C(1.2)WB 5 Sn( Package Repositories)23 1 TN()EA()BN}if
+2 NH le{24(2.3\240\240)2 C(1.3)WB 6 Sn( Adding and Removing Dependencies)24 1 TN()EA()BN}if
+2 NH le{25(2.4\240\240)2 C(1.4)WB 7 Sn( Upgrading and Downgrading
+  Dependencies)25 1 TN()EA()BN}if
+2 NH le{26(2.5\240\240)2 C(1.5)WB 8 Sn( Build-Time Dependencies and Linked
+  Configurations)26 1 TN()EA()BN}if
+2 NH le{27(2.6\240\240)2 C(1.6)WB 9 Sn( Versioning and Release
+  Management)27 1 TN()EA()BN}if
+2 NH le{28(2.7\240\240)2 C(1.7)WB 10 Sn( Developing Multiple Packages and Projects)28 1 TN()EA()BN}if
+2 NH le{29(2.8\240\240)2 C(1.8)WB 11 Sn( Package Consumption)29 1 TN()EA()BN}if
+2 NH le{30(2.9\240\240)2 C(1.9)WB 12 Sn( Using System-Installed Dependencies)30 1 TN()EA()BN}if
+2 NH le{31(2.10\240\240)2 C(1.10)WB 13 Sn( Using Unpackaged Dependencies)31 1 TN()EA()BN}if
+1 NH le{32(3\240\240)1 C(2)WB 14 Sn( Canonical Project Structure)32 1 TN()EA()BN}if
+2 NH le{33(3.1\240\240)2 C(2.1)WB 15 Sn( Source Subdirectory)33 1 TN()EA()BN}if
+2 NH le{34(3.2\240\240)2 C(2.2)WB 16 Sn( Source Naming)34 1 TN()EA()BN}if
+2 NH le{35(3.3\240\240)2 C(2.3)WB 17 Sn( Source Contents)35 1 TN()EA()BN}if
+2 NH le{36(3.4\240\240)2 C(2.4)WB 18 Sn( Tests)36 1 TN()EA()BN}if
+2 NH le{37(3.5\240\240)2 C(2.5)WB 19 Sn( Build Output)37 1 TN()EA()BN}if
+/OU t D /Cb Db D NP Ep ET 
+/Cb Db D /Ct [16#00 16#00 16#00] D /Cl [16#00 16#00 16#00] D /CL -1 D Ct Sc
+
+/Ba f D /BO 0 D Bs
+/UR (-) D
+/Ti (The build2 Toolchain Introduction) D
+/Au () D
+/Df f D
+/ME [(0.18)(Toolchain Introduction)(2014-2025 the build2 authors)(toolchain)] D
+
+NP RC ZF
+()1 Sl()WB 0 Sn(
+)BR()WB 1 Sn(
+   
+  )0 1 0 H(Preface)WB 20 Sn()WB 2 Sn()EH(
+
+  )0 P(This document is an overall introduction to the )SM(build2)ES(
+  toolchain that shows how the main components, namely the build system, the
+  package dependency manager, and the project dependency manager are used
+  together to handle the entire C/C++ project development lifecycle: creation,
+  development, testing, and delivery. For additional information, including
+  documentation for individual toolchain components, man pages, HOWTOs, etc.,
+  refer to the )SM(build2)ES( project )R1 2 A(Documentation)EA( page.)EP(
+
+  )0 1 1 H(1)WB 21 Sn()WB 3 Sn( Getting Started Guide)EH(
+
+  )0 P(The aim of this guide is to get you started developing C/C++ projects
+  with the )SM(build2)ES( toolchain. All the examples in this section
+  include the relevant command output so if you just want to get a sense of
+  what )SM(build2)ES( is about, then you don't have to install the
+  toolchain and run the commands in order to follow along. Or, alternatively,
+  you can take a short detour to the )R2 2 A(Installation Instructions)EA( and
+  then try the examples for yourself.)EP(
+
+  )0 P(One of the primary goals of the )SM(build2)ES( toolchain is to
+  provide a uniform interface across all the platforms and compilers. While
+  most of the examples in this document assume a UNIX-like operation system,
+  they will look pretty similar if you are on Windows. You just have to use
+  appropriate paths, compilers, and options.)EP(
+
+  )0 P(The question we will try to answer in this section can be summarized
+  as:)EP(
+
+  ) 1 38 PR($ git clone .../hello.git && now-what?)RP(
+
+  )0 P(That is, we clone an existing C/C++ project or would like to create a new
+  one and then start hacking on it. We want to spend as little time and energy
+  as possible on the initial and ongoing infrastructure maintenance: setting
+  up build configurations, managing dependencies, continuous integration and
+  testing, release management, etc. Or, as one C++ user aptly put it, ")I(All
+  I want to do is program.)ES(")EP(
+
+  )0 2 2 H(1.1)WB 22 Sn()WB 4 Sn( Hello, World)EH(
+
+  )0 P(Let's see what programming with )SM(build2)ES( feels like by
+  starting with a customary )I("Hello, World!")ES( program \201here we assume our
+  current working directory is )SM(/tmp)ES(\202:)EP(
+
+  ) 2 51 PR($ bdep new -l c++ -t exe hello
+created new executable project hello in /tmp/hello/)RP(
+
+  )0 P(The )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command creates a )SM(build2)ES( project. In this case it is an
+  executable implemented in C++.)EP(
+
+  )BR(
+  )0 P(To create a library, pass )SM(-t\240lib)ES(. By default
+  )SM(new)ES( also initializes a )SM(git)ES( repository and
+  generates suitable )SM(.gitignore)ES( files \201pass
+  )SM(-s\240none)ES( if you don't want that\202. And for details on naming
+  your projects, see )0 2 A(Package
+  Name)EA(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(Note to Windows users: the )SM(build2-baseutils)ES( package includes
+  core )SM(git)ES( utilities that are sufficient for the
+  )SM(bdep)ES( functionality.)EP(
+  )BR(
+
+  )0 P(Let's take a look inside our new project:)EP(
+
+  ) 13 25 PR($ tree hello
+hello/
+|-- .git/
+|-- .bdep/
+|-- build/
+|-- hello/
+|   |-- hello.cxx
+|   |-- buildfile
+|   \267-- testscript
+|-- buildfile
+|-- manifest
+|-- README.md
+\267-- repositories.manifest)RP(
+
+  )BR(
+  )0 P(See )0 14 1 A(Canonical Project Structure)14 0 TN TL()Ec /AF f D( for a detailed
+  discussion and rationale behind this layout. While it is recommended,
+  especially for new projects, )SM(build2)ES( is flexible enough to
+  support various arrangements used in today's C and C++ projects.
+  Furthermore, the )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command provides a number of customization options and chances are good you
+  will be able to create your preferred layout automatically. See )0 2 A(SOURCE LAYOUT)EA( for more
+  information and examples.)EP(
+  )BR(
+
+  )0 P(Similar to version control tools, we normally run all )SM(build2)ES(
+  tools from the project's source directory or one of its subdirectories,
+  so:)EP(
+
+  ) 1 10 PR($ cd hello)RP(
+
+  )0 P(While the project layout is discussed in more detail in later sections,
+  let's examine a couple of interesting files to get a sense of what's going
+  on. We start with the source file which should look familiar:)EP(
+
+  ) 16 46 PR($ cat hello/hello.cxx
+
+#include <iostream>
+
+int main \201int argc, char* argv[]\202
+{
+  using namespace std;
+
+  if \201argc < 2\202
+  {
+    cerr << "error: missing name" << endl;
+    return 1;
+  }
+
+  cout << "Hello, " << argv[1] << '!' << endl;
+})RP(
+
+  )BR(
+  )0 P(If you prefer the )SM(.?pp)ES( extensions over )SM(.?xx)ES( for
+  your C++ source files, pass )SM(-l\240c++,cpp)ES( to the
+  )SM(new)ES( command. See )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA( for
+  details on this and other customization options.)EP(
+  )BR(
+
+  )0 P(Let's take a look at the accompanying )SM(buildfile)ES(:)EP(
+
+  ) 6 50 PR($ cat hello/buildfile
+
+libs =
+#import libs += libhello%lib{hello}
+
+exe{hello}: {hxx ixx txx cxx}{**} $libs testscript)RP(
+
+  )0 P(As the name suggests, this file describes how to build things. While its
+  content might look a bit cryptic, let's try to infer a couple of points
+  without going into too much detail \201for details see the build system )0 2 A(Introduction)EA(\202.)EP(
+
+  )0 P(That )SM(exe{hello})ES( on the left of )SM(:)ES( is a
+  )I(target)ES( \201executable named )SM(hello)ES(\202 and what we have on the
+  right are )I(prerequisites)ES( \201C++ source files, libraries, etc\202. This
+  )SM(buildfile)ES( uses wildcard patterns \201that )SM(**)ES(\202 to
+  automatically locate all the C++ source files. This means we don't have to
+  edit our )SM(buildfile)ES( every time we add, remove, or rename a
+  source file in our project. There also appears to be some \201commented out\202
+  infrastructure for importing and linking libraries \201that )SM(libs)ES(
+  variable\202. We will see how to use it in a moment.)EP(
+
+  )BR(
+  )0 P(In simple projects that follow the canonical structure we can often
+  completely ignore the presence of the build definition files thus
+  approaching the )I(build system-less)ES( workflow found in languages like
+  Rust and Go.)EP(
+  )BR(
+
+  )0 P(Finally, the )SM(buildfile)ES( also lists )SM(testscript)ES( as
+  a prerequisite of )SM(hello)ES(. This file tests our target. Let's take
+  a look inside:)EP(
+
+  ) 11 27 PR($ cat hello/testscript
+
+: basics
+:
+$* 'World' >'Hello, World!'
+
+: missing-name
+:
+$* 2>>EOE != 0
+error: missing name
+EOE)RP(
+
+  )0 P(Again, we are not going into detail here \201see )0 2 A(Testscript
+  Introduction)EA( for a proper introduction\202, but to give you an idea, here
+  we have two tests: the first \201with id )SM(basics)ES(\202 verifies that our
+  program prints the expected greeting while the second makes sure it handles
+  the missing name error condition. Tests written in Testscript are concise,
+  portable, and executed in parallel.)EP(
+
+  )0 P(Next up is )SM(manifest)ES(:)EP(
+
+  ) 11 30 PR($ cat manifest
+: 1
+name: hello
+version: 0.1.0-a.0.z
+language: c++
+summary: hello C++ executable
+license: other: proprietary
+description-file: README.md
+url: https://example.org/hello
+email: you@example.org
+#depends: libhello ^1.0.0)RP(
+
+  )0 P(The )SM(manifest)ES( file is what makes a build system project a
+  )I(package)ES(. It contains all the metadata that a user of a package might
+  need to know: its name, version, license, dependencies, etc., all in one
+  place.)EP(
+
+  )BR(
+  )0 P(Refer to )0 2 A(Manifest
+  Format)EA( for the general format of )SM(build2)ES( manifest files and
+  to )0 2 A(Package
+  Manifest)EA( for details on the package manifest values.)EP(
+  )BR(
+
+  )0 P(As you can see, )SM(manifest)ES( created by )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  contains some dummy values which you would want to adjust before publishing
+  your package. Specifically, you would want to review )0 2 A()SM(summary)ES()EA(,
+  )0 2 A()SM(license)ES()EA(,
+  )0 2 A()SM(url)ES()EA(,
+  and )0 2 A()SM(email)ES()EA(
+  as well as the )SM(README.md)ES( file referenced by )0 2 A()SM(description-file)ES()EA(.
+  Let's, however, resist the urge to adjust that strange looking
+  )SM(0.1.0-a.0.z)ES( until we discuss package versioning.)EP(
+
+  )BR(
+  )0 P(Next to )SM(manifest)ES( you might have noticed the
+  )SM(repositories.manifest)ES( file \235 we will discuss its function
+  later, when we talk about dependencies and where they come from.)EP(
+  )BR(
+
+  )0 P(Project in hand, let's build it. Unlike other programming languages, C++
+  development usually involves juggling a handful of build configurations:
+  several compilers and/or targets \201)SM(build2)ES( is big on
+  cross-compiling\202, debug/release, different sanitizers and/or static analysis
+  tools, and so on. As a result, )SM(build2)ES( is optimized for
+  multi-configuration usage. However, as we will see shortly, one build
+  configuration can be designated as the default with additional
+  conveniences.)EP(
+
+  )0 P(The )0 2 A()SM()BD(bdep-init\2011\202)ES()ES()EA(
+  command is used to initialize a project in a build configuration. As a
+  shortcut, it can also create a new build configuration in the process, which
+  is just what we need here.)EP(
+
+  )BR(
+  )0 P(To create build configurations separately from initialization and to
+  manage them after that, use the )0 2 A()SM()BD(bdep-config\2011\202)ES()ES()EA(
+  subcommands.)EP(
+  )BR(
+
+  )0 P(Let's start with GCC \201remember we are in the project's root
+  directory\202:)EP(
+
+  ) 5 68 PR($ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+initializing in project /tmp/hello/
+created configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000)RP(
+
+  )0 P(The )SM(--config-create|-C)ES( option instructs )SM(init)ES( to
+  create a new configuration in the specified directory
+  \201)SM(../hello-gcc)ES( in our case\202. To make referring to configurations
+  easier, we can give it a name, which is what we do with
+  )SM(@gcc)ES(.)EP(
+
+  )BR(
+  )0 P(Note to Windows users: a command line argument with leading
+  )SM(@)ES( has a special meaning in PowerShell. To work around this, you
+  can use the alternative )SM(-@gcc)ES( syntax or the
+  )SM(-n\240gcc)ES( option.)EP(
+  )BR(
+
+  )0 P(The next argument \201)SM(cc)ES(, stands for )I(C-common)ES(\202 is the
+  build system module we would like to configure. It implements compilation
+  and linking rules for the C and C++ languages. Finally,
+  )SM(config.cxx=g++)ES( is \201one of\202 this module's configuration
+  variables that specifies the C++ compiler we would like to use \201the
+  corresponding C compiler will be determined automatically\202. Let's for now
+  also ignore that )SM(synchronizing:...)ES( bit along with
+  strange-looking )SM(19700101000000)ES( in the version \235 it will
+  become clear what's going on here in a moment.)EP(
+
+  )BR(
+  )0 P(If you would like to generate a JSON compilation database for this
+  project so that, for example, you can edit its source files from your IDE,
+  then change the above )SM(init)ES( command to read:)EP(
+
+  ) 2 55 PR($ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ -- \200
+  config.cc.compiledb=./)RP(
+
+  )0 P(Once you build this project for the first time \201see below\202, you will find
+  the )SM(compile_commands.json)ES( file in its root directory. See )0 2 A(Compilation
+  Database)EA( for details on this functionality.)EP(
+  )BR(
+
+  )0 P(Now the same for Clang:)EP(
+
+  ) 5 64 PR($ bdep init -C ../hello-clang @clang cc config.cxx=clang++
+initializing in project /tmp/hello/
+created configuration @clang /tmp/hello-clang/ auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000)RP(
+
+  )0 P(If we check the parent directory, we should now see two build
+  configurations next to our project:)EP(
+
+  ) 4 12 PR($ ls ..
+hello/
+hello-gcc/
+hello-clang/)RP(
+
+  )BR(
+  )0 P(If, as in the above examples, our configuration directories are next to
+  the project and their names are in the
+  )SM()I(prj-name)ES()BD(-)ES()I(cfg-name)ES()ES( form, then we can use
+  the shortcut version of the )SM(init)ES( command:)EP(
+
+  ) 1 43 PR($ bdep init -C @clang cc config.cxx=clang++)RP(
+  )BR(
+
+  )0 P(Things will also look pretty similar if you are on Windows instead of a
+  UNIX-like operating system. For example, to initialize our project on
+  Windows with Visual Studio, start a command prompt and then run:)EP(
+
+  ) 8 45 PR(> bdep init -C ..\200hello-debug @debug cc ^
+  "config.cxx=cl /MDd"                  ^
+  "config.cc.coptions=/Od /Zi"          ^
+  config.cc.loptions=/DEBUG:FULL
+
+> bdep init -C ..\200hello-release @release cc ^
+  config.cxx=cl                             ^
+  config.cc.coptions=/O2)RP(
+
+  )BR(
+  )0 P(For Visual Studio, )SM(build2)ES( by default will use the latest
+  available version and build for the )SM(x86_64)ES( target
+  \201)SM(x64)ES( in the Microsoft's terminology\202. You can, however,
+  override these defaults by either running from a suitable Visual Studio
+  development command prompt or by specifying an absolute path to
+  )SM(cl.exe)ES( that you wish to use. For example:)EP(
+
+  ) 3 69 PR(> bdep init -C ..\200hello-debug-32 @debug-32 cc                       ^
+  "config.cxx=...\200VC\200Tools\200MSVC\20014.23.28105\200bin\200Hostx64\200x86\200cl.exe"
+  ...)RP(
+
+  )0 P(In case of the command prompt, you may also want to make your
+  configuration )I(hermetic)ES( \201)0 2 A(Hermetic
+  Build Configurations)EA(\202:)EP(
+
+  ) 1 53 PR(> bdep init -C ... cc ... config.config.hermetic=true)RP(
+
+  )0 P(Hermetically configuring our project in a suitable Visual Studio command
+  prompt makes us free to build it from any other prompt or shell, IDE,
+  etc.)EP(
+  )BR(
+
+  )BR(
+  )0 P(Besides the )SM(coptions)ES( \201compile options\202 and
+  )SM(loptions)ES( \201link options\202, other commonly used )SM(cc)ES(
+  module configuration variables are )SM(poptions)ES( \201preprocess
+  options\202 and )SM(libs)ES( \201extra libraries to link\202. Here is the
+  complete list with their rough )SM(make)ES( equivalents:)EP(
+
+  ) 5 46 PR(*.poptions   preprocess        CPPFLAGS
+*.coptions   compile           CFLAGS/CXXFLAGS
+*.loptions   link              LDFLAGS
+*.aoptions   archive           ARFLAGS
+*.libs       extra libraries   LIBS/LDLIBS)RP(
+
+  )0 P(We can also use their )SM(config.c.*)ES( \201C compilation\202 and
+  )SM(config.cxx.*)ES( \201C++ compilation\202 variants if we only want them
+  applied during the respective language compilation/linking. For example:)EP(
+
+  ) 4 43 PR($ bdep init ... cc                       \200
+  config.cxx=g++                         \200
+  config.cc.poptions=-D_FORTIFY_SOURCE=2 \200
+  config.cxx.poptions=-D_GLIBCXX_ASSERTIONS)RP(
+
+  )0 P(Finally, we can specify the "compiler mode" options as part of the
+  compiler executable in )SM(config.c)ES( and )SM(config.cxx)ES(.
+  Such options cannot be modified by buildfiles and they will appear last on
+  the command lines. For example:)EP(
+
+  ) 3 42 PR($ bdep init ... cc      \200
+  config.c="clang -m32" \200
+  config.cxx="clang++ -m32 -stdlib=libc++")RP(
+
+  )0 P(The compiler mode options are also the correct place to specify
+  )I(system-like)ES( header \201)SM(-I)ES(\202 and library \201)SM(-L)ES(,
+  )SM(/LIBPATH)ES(\202 search paths. Where by system-like we mean common
+  installation directories like )SM(/usr/include)ES( or
+  )SM(/usr/local/lib)ES( which may contain older versions of the
+  libraries we are trying to build and/or use. By specifying these paths as
+  part of the mode options \201as opposed to )SM(config.*.poptions)ES( and
+  )SM(config.*.loptions)ES(\202 we make sure they will be considered last,
+  similar to the compiler's build-in search paths. For example:)EP(
+
+  ) 1 50 PR($ bdep init ... cc config.cxx="g++ -L/opt/install")RP(
+  )BR(
+
+  )0 P(One difference you might have noticed when creating the )SM(gcc)ES(
+  and )SM(clang)ES( configurations above is that the first one was
+  designated as the default. The default configuration is used by
+  )SM(bdep)ES( commands if no configuration is specified explicitly \201see
+  )0 2 A()SM()BD(bdep-projects-configs\2011\202)ES()ES()EA(
+  for details\202. It is also the configuration that is used if we run the build
+  system in the project's source directory. So, normally, you would make your
+  every day development configuration the default. Let's try that:)EP(
+
+  ) 13 71 PR($ bdep status
+hello configured 0.1.0-a.0.19700101000000
+
+$ b
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
+
+$ b test
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+$ hello/hello World
+Hello, World!)RP(
+
+  )BR(
+  )0 P(To see the actual compilation command lines, run )SM(b\240-v)ES(
+  and for even more details, run )SM(b\240-V)ES(. See )0 2 A()SM()BD(b\2011\202)ES()ES()EA( for more
+  information on these and other build system options.)EP(
+  )BR(
+
+  )0 P(In contrast, the Clang configuration has to be requested explicitly:)EP(
+
+  ) 13 62 PR($ bdep status @clang
+hello configured 0.1.0-a.0.19700101000000
+
+$ b ../hello-clang/hello/
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello}
+
+$ b test: ../hello-clang/hello/
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
+
+$ ../hello-clang/hello/hello/hello World
+Hello, World!)RP(
+
+  )0 P(As you can see, using the build system directly on configurations other
+  than the default requires explicitly specifying their paths. It would have
+  been more convenient if we could refer to them by names. The )0 2 A()SM()BD(bdep-update\2011\202)ES()ES()EA(
+  and )0 2 A()SM()BD(bdep-test\2011\202)ES()ES()EA(
+  commands allow us to do exactly that:)EP(
+
+  ) 5 62 PR($ bdep test @clang
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript})RP(
+
+  )0 P(And we can also perform the desired build system operation on several \201or
+  )SM(--all|-a)ES(\202 configurations at once:)EP(
+
+  ) 7 71 PR($ bdep test @gcc @clang
+in configuration @gcc:
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+in configuration @clang:
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript})RP(
+
+  )BR(
+  )0 P(As we will see later, the )0 2 A()SM()BD(bdep-test\2011\202)ES()ES()EA(
+  command also allows us to test immediate \201)SM(--immediate|-i)ES(\202 or
+  all \201)SM(--recursive|-r)ES(\202 dependencies of our project. We call it
+  )I(deep testing)ES(.)EP(
+  )BR(
+
+  )0 P(While we are here, let's also check how hard it would be to
+  cross-compile:)EP(
+
+  ) 9 64 PR($ bdep init -C @mingw cc config.cxx=x86_64-w64-mingw32-g++
+initializing in project /tmp/hello/
+created configuration @mingw /tmp/hello-mingw/ auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000
+
+$ bdep update @mingw
+c++ hello/cxx{hello} -> ../hello-mingw/hello/hello/obje{hello}
+ld ../hello-mingw/hello/hello/exe{hello})RP(
+
+  )0 P(As you can see, cross-compiling in )SM(build2)ES( is nothing
+  special. In our case, on a properly setup GNU/Linux machine \201that
+  automatically uses )SM(wine)ES( as an )SM(.exe)ES( interpreter\202 we
+  can even run tests \201in )SM(build2)ES( this is called
+  )I(cross-testing)ES(\202:)EP(
+
+  ) 6 46 PR($ bdep test @mingw
+test ../hello-mingw/hello/hello/exe{hello} +
+     hello/testscript{testscript}
+
+$ ../hello-mingw/hello/hello/hello.exe Windows
+Hello, Windows!)RP(
+
+  )0 P(Let's review what it takes to initialize a project's infrastructure and
+  perform the first build. For an existing project:)EP(
+
+  ) 4 50 PR($ git clone .../hello.git
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b)RP(
+
+  )0 P(For a new project:)EP(
+
+  ) 4 50 PR($ bdep new -l c++ -t exe hello
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b)RP(
+
+  )0 P(If you prefer, the )SM(new)ES( and )SM(init)ES( steps can be
+  combined into a single command:)EP(
+
+  ) 1 66 PR($ bdep new -l c++ -t exe hello -C hello-gcc @gcc cc config.cxx=g++)RP(
+
+  )0 P(And if you need to deinitialize a project in one or more build
+  configurations, there is the )0 2 A()SM()BD(bdep-deinit\2011\202)ES()ES()EA(
+  command for that:)EP(
+
+  ) 9 37 PR($ bdep deinit @gcc @clang
+deinitializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  drop hello
+
+in configuration @clang:
+synchronizing:
+  drop hello)RP(
+
+  )BR(
+  )0 P(By default )SM(bdep)ES( initializes a project for development by
+  automatically passing )SM(config.<project>.develop=true)ES( unless a
+  custom value is specified. For example:)EP(
+
+  ) 1 65 PR($ bdep init ... @gcc cc config.cxx=g++ config.hello.develop=false)RP(
+
+  )0 P(To change the development mode of an already initialized project, use )0 2 A()SM()BD(bdep-sync\2011\202)ES()ES()EA(:)EP(
+
+  ) 1 43 PR($ bdep sync @gcc config.hello.develop=false)RP(
+
+  )0 P(See )0 2 A(Project
+  Configuration)EA( for background on the development mode.)EP(
+  )BR(
+
+  )0 P(As mentioned earlier, by default )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  initializes a )SM(git)ES( repository for us. Now that we have
+  successfully built and tested our project, it might be a good idea to make a
+  first commit and publish it to a remote repository where others can find it.
+  Using GitHub as an example:)EP(
+
+  ) 4 57 PR($ git add .
+$ git commit -m "Initial implementation"
+$ git remote add origin git@github.com:john-doe/hello.git
+$ git push -u)RP(
+
+  )0 P(We could have also done it the other way around: first created a project
+  on one of the hosting services \201GitHub, GitLab, etc\202 cloned it, and then ran
+  )SM(new)ES( on that. One advantage of this approach is the
+  )SM(new)ES( command's ability to automatically extract the license and
+  description from the existing )SM(LICENSE)ES( and
+  )SM(README.md)ES( files and use that to generate the
+  )SM(manifest)ES( file. This way we only need to specify things once and
+  everything is nice and consistent. Here is an example of this streamlined
+  project creation workflow \201notice also the omitted project name in the
+  )SM(new)ES( command\202:)EP(
+
+  ) 7 63 PR(# Create a project with LICENSE and README.md on one of the Git
+# hosting services \201GitHub, GitLab, etc\202 and then:
+
+$ git clone .../hello.git
+$ cd hello
+
+$ bdep new -l c++ -t exe)RP(
+
+  )0 P(While we have managed to test a couple of platforms \201Linux and Windows\202
+  and compiler versions \201Clang and GCC\202 locally, there are quite a few
+  combinations that we haven't tried \201Mac OS with Apple Clang and Windows with
+  MSVC, to name the major ones\202. We could test them manually, some with the
+  help of virtualization while for others \201such as Mac OS\202 we may need
+  physical hardware. Add a few versions for each compiler and we are looking
+  at a dozen build configurations. Needless to say, testing on all of them
+  manually is a lot of work. Now that we have our project available from a
+  public remote repository, we can instead use the remote testing
+  functionality offered by the )0 2 A()SM()BD(bdep-ci\2011\202)ES()ES()EA(
+  command. For example:)EP(
+
+  ) 10 68 PR($ bdep ci
+submitting:
+  to:      https://ci.cppget.org
+  in:      https://github.com/john-doe/hello.git#master@93e1dbc94baa
+  package: hello
+  version: 0.1.0-a.0.20180907091517.93e1dbc94baa
+continue? [y/n] y
+############################################################# 100.0%
+CI request is queued:
+  https://ci.cppget.org/@d6ee90f4-21a9-47a0-ab5a-7cd2f521d3d8)RP(
+
+  )0 P(Let's see what's going on here. By default )SM(ci)ES( submits a test
+  request to )R3 2 A(ci.cppget.org)EA(, a public CI
+  service run by the )SM(build2)ES( project \201see available )R4 2 A(Build Configurations)EA( and )R5 2 A(Use Policies)EA(\202. In our case it will be
+  testing the current working tree state \201branch and commit\202 of our package
+  which should be available from our remote repository \201on GitHub in this
+  example\202 since that's where the CI service expects to get it from. In
+  response we get a URL where we can see the build and test results, logs,
+  etc.)EP(
+
+  )BR(
+  )0 P(This )I(push)ES( CI model works particularly well with the "feature
+  branch" development workflow. Specifically, you would develop a new feature
+  in a separate branch, publishing and remote-testing it as necessary. When
+  the feature is ready, you would merge any changes from )SM(master)ES(,
+  test the result one more time, and then merge \201fast-forward\202 the feature
+  into master.)EP(
+  )BR(
+
+  )0 P(Now is a good time to get an overview of the )SM(build2)ES(
+  toolchain. After all, we have already used two of its tools
+  \201)SM(bdep)ES( and )SM(b)ES(\202 without a clear understanding of what
+  they actually are.)EP(
+
+  )0 P(Unlike most other programming languages that encapsulate the build
+  system, package dependency manager, and project dependency manager into a
+  single tool \201such as Rust's )SM(cargo)ES( or Go's )SM(go)ES(\202,
+  )SM(build2)ES( is a hierarchy of several tools that you will be using
+  directly and which together with your version control system \201VCS\202 will
+  constitute the core of your project management toolset.)EP(
+
+  )BR(
+  )0 P(While )SM(build2)ES( can work without a VCS, this will result in
+  reduced functionality.)EP(
+  )BR(
+
+  )0 P(At the bottom of the hierarchy is the )SM(build2)ES( build system,
+  which we invoke using the )0 2 A()SM()BD(b\2011\202)ES()ES()EA( driver. Next
+  comes the package dependency manager, )0 2 A()SM()BD(bpkg\2011\202)ES()ES()EA(. It is
+  primarily used for )I(package consumption)ES( and depends on the build
+  system. The top of the hierarchy is the project dependency manager, )0 2 A()SM()BD(bdep\2011\202)ES()ES()EA(. It is used
+  for )I(project development)ES( and relies on )SM(bpkg)ES( for building
+  project packages and their dependencies.)EP(
+
+  )BR(
+  )0 P(The main reason for this separation is modularity and the resulting
+  flexibility: there are situations where we only need the build system \201for
+  example, when building a package for a system package manager where all the
+  dependencies should be satisfied from the system repository\202, or only the
+  build system and package manager \201for example, when a build bot is building
+  a package for testing\202.)EP(
+
+  )0 P(Note also that strictly speaking )SM(build2)ES( is not
+  C/C++-specific; its build model is general enough to handle any DAG-based
+  operations and its package/project dependency management can be used for any
+  compiled language.)EP(
+  )BR(
+
+  )BR(
+  )0 P(As we will see in a moment, )SM(build2)ES( also integrates with your
+  VCS in order to automate project versioning. Note that currently only
+  )SM(git\2011\202)ES( is supported.)EP(
+  )BR(
+
+  )0 P(Now that we understand the tooling, let's also revisit the notion of
+  )I(build configuration)ES( \201those )SM(hello-gcc)ES( and
+  )SM(hello-clang)ES( directories\202. While we often talk of build
+  configurations in the abstract, as a set of common options used to build our
+  code, in )SM(build2)ES( this term also has a very concrete meaning
+  \235 a directory where our projects and their dependencies are built with
+  such a set of common options.)EP(
+
+  )0 P(The concept of a build configuration appears prominently throughout the
+  toolchain: a )SM(bdep)ES( build configuration is actually a
+  )SM(bpkg)ES( build configuration which, in the build system terms, is a
+  special kind of an )I(amalgamation)ES( \235 a project that contains
+  )I(subprojects)ES(. In our case, the subprojects in these amalgamations will
+  be the projects we have initialized with )SM(init)ES( and, as we will
+  see in a moment, packages that they depend on. For example, here is what our
+  )SM(hello-gcc)ES( contains:)EP(
+
+  ) 11 24 PR($ tree hello-gcc
+hello-gcc/
+|-- .bpkg/
+|-- build/
+|   \267-- config.build
+\267-- hello/
+    |-- build/
+    |   \267-- config.build
+    \267-- hello/
+        |-- hello
+        \267-- hello.o)RP(
+
+  )BR(
+  )0 P(Underneath )0 2 A()SM()BD(bdep-init\2011\202)ES()ES()EA(
+  with the )SM(--config-create|-C)ES( option calls )0 2 A()SM()BD(bpkg-cfg-create\2011\202)ES()ES()EA(
+  which, in turn, performs the build system )SM(create)ES( meta-operation
+  \201see )0 2 A()SM()BD(b\2011\202)ES()ES()EA( for
+  details\202.)EP(
+
+  )0 P(The important point here is that the )SM(bdep)ES( build
+  configuration is not a black box that you should never look inside of. On
+  the contrary, it is a well-defined concept of the package manager and the
+  build system and as long as you understand what you are doing, you should
+  feel free to interact with it directly.)EP(
+  )BR(
+
+  )0 P(Let's now move on to the reason why there is )I(dep)ES( in the
+  )SM(bdep)ES( name: dependency management.)EP(
+
+  )0 2 3 H(1.2)WB 23 Sn()WB 5 Sn( Package Repositories)EH(
+
+  )0 P(Say we have realized that writing )I("Hello, World!")ES( programs is a
+  fairly common task and that someone must have written a library to help with
+  that. So let's see if we can find something suitable to use in our
+  project.)EP(
+
+  )0 P(Where should we look? That's a good question. But before we can try to
+  answer it, we need to understand where )SM(build2)ES( can source
+  dependencies. In )SM(build2)ES( packages usually come from )I(package
+  repositories)ES(. Two commonly used repository types are )I(version
+  control)ES( and )I(archive)ES(-based \201see )0 2 A()SM()BD(bpkg-repository-types\2011\202)ES()ES()EA(
+  for details\202.)EP(
+
+  )0 P(As the name suggests, a version control-based repository uses a VCS as
+  its distribution mechanism. Currently, only
+  )SM(git)ES( is supported. Such a repository normally contains
+  multiple versions of a single package or, perhaps, of a few related
+  packages.)EP(
+
+  )0 P(An archive-based repository contains multiple, potentially unrelated
+  packages/versions as archives along with some metadate \201package list,
+  prerequisite/complement repositories, signatures, etc\202 that are all
+  accessible via HTTP\201S\202.)EP(
+
+  )0 P(Version control and archive-based repositories have different trade-offs.
+  Version control-based repositories are great for package developers since
+  with services like GitHub they are trivial to setup. In fact, your project's
+  \201already existing\202 VCS repository will normally be the )SM(build2)ES(
+  package repository \235 you might need to add a few files, but that's
+  about it.)EP(
+
+  )0 P(However, version control-based repositories are not without drawbacks: It
+  will be hard for your users to discover your packages \201try searching for
+  "hello library" on GitHub \235 most of the results are not even in C++
+  let alone packaged for )SM(build2)ES(\202. There is also the issue of
+  continuous availability: users can delete their repositories, services may
+  change their policies or go out of business, and so on. Version
+  control-based repositories also lack repository authentication and package
+  signing. Finally, obtaining the available package list for such repositories
+  can be slow.)EP(
+
+  )0 P(A central, archive-based repository would address all these drawbacks: It
+  would be a single place to search for packages. Published packages will
+  never disappear and can be easily mirrored. Packages are signed and the
+  repository is authenticated \201see )0 2 A()SM()BD(bpkg-repository-signing\2011\202)ES()ES()EA(
+  for details\202. And, last, but not least, archive-based repositories are
+  fast.)EP(
+
+  )0 P()R6 2 A(cppget.org)EA( is the )SM(build2)ES(
+  community's central package repository. While centralized, it is also easy
+  to mirror since its contents are accessible via plain HTTPS \201you can browse
+  )R7 2 A(pkg.cppget.org)EA( to get an idea\202. As an
+  added benefit, packages on )R6 2 A(cppget.org)EA( are
+  continuously )R8 2 A(built and tested)EA( on
+  all the major platform/compiler combinations with the results available as
+  part of the package description.)EP(
+
+  )BR(
+  )0 P(The main drawback of archive-based repositories is the setup cost.
+  Getting a basic repository going is relatively easy \235 all you need is
+  an HTTP\201S\202 server. Adding a repository web interface like that on )R6 2 A(cppget.org)EA( will require running )R9 2 A()SM(brep)ES()EA(. And adding CI will
+  require running a bunch of build bots \201)R10 2 A()SM(bbot)ES()EA(\202. Note also that in
+  )SM(build2)ES( archive-based repositories can be federated with
+  different sections of the repository being hosted/managed potentially
+  independently.)EP(
+  )BR(
+
+  )0 P(To summarize, version control-based repositories are great for package
+  developers while a central, archive-based repository is convenient for
+  package consumers. A reasonable strategy then is for package developers to
+  publish their releases to a central repository. Package consumers can then
+  decide which repository to use based on their needs. For example, one could
+  use )R6 2 A(cppget.org)EA( as a \201fast, reliable, and
+  secure\202 source of stable versions but also add, say, )SM(git)ES(
+  repositories for select packages \201perhaps with the )SM(#HEAD)ES(
+  fragment filter to improve download speed\202 for testing development
+  snapshots. In this model the two repository types complement each other.)EP(
+
+  )BR(
+  )0 P(Publishing of packages to archive-based repositories is discussed in )0 9 1 A(Versioning and Release
+  Management)9 0 TN TL()Ec /AF f D(.)EP(
+  )BR(
+
+  )0 P(Let's see how all this works in practice. Go over to )R6 2 A(cppget.org)EA( and type "hello library" in the
+  search box. At the top of the search result you should see the )R11 2 A()SM(libhello)ES()EA( package and if
+  you follow the link you will see the package description page along with a
+  list of available versions. Pick a version that you like and you will see
+  the package version description page with quite a bit of information,
+  including the list of platform/compiler combinations that this version has
+  been successfully \201or unsuccessfully\202 tested with. If you like what you see,
+  copy the )SM(repository)ES( value \235 this is the repository
+  location where this package version can be sourced from.)EP(
+
+  )BR(
+  )0 P(The )R6 2 A(cppget.org)EA( repository is split into
+  several sections: )SM(stable)ES(, )SM(testing)ES(,
+  )SM(beta)ES(, )SM(alpha)ES( and )SM(legacy)ES(, with each
+  section having its own repository location \201see the repository's )R12 2 A(about)EA( page for details on each
+  section's policies\202. Note also that )SM(testing)ES( is complemented by
+  )SM(stable)ES(, )SM(beta)ES( by )SM(testing)ES(, and so on,
+  so you only need to choose the lowest stability level and you will
+  automatically "see" packages from the more stable sections.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The )R6 2 A(cppget.org)EA( )SM(stable)ES(
+  sections will always contain the )SM(libhello)ES( library version
+  )SM(1.0.X)ES( that was generated using the following )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command line:)EP(
+
+  ) 1 33 PR($ bdep new -l c++ -t lib libhello)RP(
+
+  )0 P(It can be used as a predictable test dependency when setting up new
+  projects.)EP(
+  )BR(
+
+  )0 P(Let's say we've visited the )SM(libhello)ES( project's )R13 2 A(home page)EA( \201for
+  example by following a link from the package details page\202 and noticed that
+  it is being developed in a )SM(git)ES( repository. How can we see
+  what's available there? If the releases are tagged, then we can infer the
+  available released versions from the tags. But that doesn't tell us anything
+  about what's happening on the )SM(HEAD)ES( or in the branches. For that
+  we can use the package manager's )0 2 A()SM()BD(bpkg-rep-info\2011\202)ES()ES()EA(
+  command:)EP(
+
+  ) 3 57 PR($ bpkg rep-info https://git.build2.org/hello/libhello.git
+libhello/1.0.0
+libhello/1.1.0)RP(
+
+  )0 P(As you can see, besides )SM(1.0.0)ES( that we have seen in
+  )SM(cppget.org/stable)ES(, there is also )SM(1.1.0)ES( \201which is
+  perhaps being tested in )SM(cppget.org/testing)ES(\202. We can also check
+  what might be available on the )SM(HEAD)ES( \201see )0 2 A()SM()BD(bpkg-repository-types\2011\202)ES()ES()EA(
+  for details on the )SM(git)ES( repository URL format\202:)EP(
+
+  ) 2 62 PR($ bpkg rep-info https://git.build2.org/hello/libhello.git#HEAD
+libhello/1.1.1-a.0.20180504111511.2e82f7378519)RP(
+
+  )BR(
+  )0 P(We can also use the )SM(rep-info)ES( command on archive-based
+  repositories, however, if available, the web interface is usually more
+  convenient and provides more information.)EP(
+  )BR(
+
+  )0 P(To summarize, we found two repositories for the )SM(libhello)ES(
+  package: the archive-based )R6 2 A(cppget.org)EA( that
+  contains the released versions as well as its development )SM(git)ES(
+  repository where we can get the bleeding edge stuff. Let's now see how we
+  can add )SM(libhello)ES( to our project.)EP(
+
+  )0 2 4 H(1.3)WB 24 Sn()WB 6 Sn( Adding and Removing Dependencies)EH(
+
+  )0 P(So we found )SM(libhello)ES( that we would like to use in our
+  )SM(hello)ES( project. First, we edit the
+  )SM(repositories.manifest)ES( file found in the root directory of our
+  project and add one of the )SM(libhello)ES( repositories as a
+  prerequisite. Let's start with )R6 2 A(cppget.org)EA(:)EP(
+
+  ) 2 41 PR(role: prerequisite
+location: https://pkg.cppget.org/1/stable)RP(
+
+  )BR(
+  )0 P(Refer to )0 2 A(Repository
+  Manifest)EA( for details on the repository manifest values.)EP(
+  )BR(
+
+  )0 P(Next, we edit the )SM(manifest)ES( file \201again, found in the root of
+  our project\202 and specify the dependency on )SM(libhello)ES( with
+  optional version constraint. For example:)EP(
+
+  ) 1 24 PR(depends: libhello ^1.0.0)RP(
+
+  )0 P(Let's briefly discuss version constraints \201for details see the )0 2 A()SM(depends)ES()EA(
+  value documentation\202. A version constraint can be expressed with a
+  comparison operator \201)SM(==)ES(, )SM(>)ES(, )SM(<)ES(,
+  )SM(>=)ES(, )SM(<=)ES(\202, a range shortcut operator
+  \201)SM(~)ES( and )SM(^)ES(\202, or a range. Here are a few
+  examples:)EP(
+
+  ) 7 31 PR(depends: libhello == 1.2.3
+depends: libhello >= 1.2.3
+
+depends: libhello ~1.2.3
+depends: libhello ^1.2.3
+
+depends: libhello [1.2.3 1.2.9\202)RP(
+
+  )0 P(You may already be familiar with the tilde \201)SM(~)ES(\202 and caret
+  \201)SM(^)ES(\202 constraints from dependency managers for other languages.
+  To recap, tilde allows upgrades to any further patch versions while caret
+  also allows upgrades to further minor versions. They are equivalent to the
+  following ranges:)EP(
+
+  ) 4 35 PR(~X.Y.Z  [X.Y.Z  X.Y+1.0\202
+
+^X.Y.Z  [X.Y.Z  X+1.0.0\202  if X >  0
+^0.Y.Z  [0.Y.Z  0.Y+1.0\202  if X == 0)RP(
+
+  )BR(
+  )0 P(Zero major version component is customarily used during early development
+  where the minor version effectively becomes major. As a result, the caret
+  constraint has a special treatment of this case.)EP(
+  )BR(
+
+  )0 P(Unless you have good reasons not to \201for example, a dependency does not
+  use semantic versioning\202, we suggest that you use the )SM(^)ES(
+  constraint which provides a good balance between compatibility and
+  upgradability with )SM(~)ES( being a more conservative option.)EP(
+
+  )0 P(Besides the version constraint, the dependency declaration supports a
+  number of more advanced features, including conditional dependencies,
+  dependency alternatives, and dependency configuration. For details, see the
+  )0 2 A()SM(depends)ES()EA(
+  value documentation.)EP(
+
+  )0 P(Ok, we've specified where our package comes from
+  \201)SM(repositories.manifest)ES(\202 and which versions we find acceptable
+  \201)SM(manifest)ES(\202. The next step is to edit
+  )SM(hello/buildfile)ES( and import the )SM(libhello)ES( library
+  into our build:)EP(
+
+  ) 1 34 PR(import libs += libhello%lib{hello})RP(
+
+  )0 P(Finally, we modify our source code to use the library:)EP(
+
+  ) 8 35 PR(#include <libhello/hello.hxx>
+...
+
+int main \201int argc, char* argv[]\202
+{
+  ...
+  hello::say_hello \201cout, argv[1]\202;
+})RP(
+
+  )BR(
+  )0 P(You are probably wondering why we have to specify this repeating
+  information in so many places. Let's start with the source code: we can't
+  specify the version constraint or location there because it will have to be
+  repeated in every source file that uses the dependency.)EP(
+
+  )0 P(Moving up, )SM(buildfile)ES( is also not a good place to specify
+  this information for the same reason \201a library can be imported in multiple
+  buildfiles\202 plus the build system doesn't really know anything about version
+  constraints or repositories which is the purview of the dependency
+  management tools.)EP(
+
+  )0 P(Finally, we have to separate the version constraint and the location
+  because the same package can be present in multiple repositories with
+  different policies. For example, when a package from a version control-based
+  repository is published in an archive-based repository, its
+  )SM(repositories.manifest)ES( file is ignored and all its dependencies
+  should be available from the archive-based repository itself \201or its fixed
+  set of prerequisite repositories\202. In other words, )SM(manifest)ES(
+  belongs to a package while )SM(repositories.manifest)ES( \235 to a
+  repository.)EP(
+
+  )0 P(Also note that this is unlikely to become burdensome since adding new
+  dependencies is not something that happens often. There are also ideas to
+  automate this with a )SM(bdep-add\2011\202)ES( command in the future.)EP(
+  )BR(
+
+  )0 P(To summarize, these are the files we had to modify to add a dependency to
+  our project:)EP(
+
+  ) 4 68 PR(repositories.manifest   # add https://pkg.cppget.org/1/stable
+manifest                # add 'depends: libhello ^1.0.0'
+buildfile               # import libhello library
+hello.cxx               # include libhello header \201or import module\202)RP(
+
+  )BR(
+  )0 P(While the repository URL and package name are easy to find on the )R6 2 A(cppget.org)EA('s package description page, the
+  C/C++ library ecosystem unfortunately does not follow any predictable
+  library or header naming scheme. If the library documentation does not
+  provide any clues, then another place to check are the library tests and
+  examples that can often be found in the package source directory \201or source
+  repository\202. In particular, every library in the )SM(stable)ES( section
+  of the )R6 2 A(cppget.org)EA( repository should provide
+  at least a basic test.)EP(
+  )BR(
+
+  )0 P(With a new dependency added, let's check the status of our project:)EP(
+
+  ) 11 66 PR($ bdep status
+fetching pkg:cppget.org/stable \201prerequisite of dir:/tmp/hello\202
+warning: authenticity of the certificate for pkg:cppget.org/stable
+         cannot be established
+certificate is for cppget.org, "Code Synthesis" <admin@cppget.org>
+certificate SHA256 fingerprint:
+70:64:FE:E4:E0:F3:60:F1:B4:<...>:E5:C2:68:63:4C:A6:47:39:43
+trust this certificate? [y/n] y
+
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.19700101000000#1)RP(
+
+  )0 P(The )0 2 A()SM()BD(bdep-status\2011\202)ES()ES()EA(
+  command has detected that the dependency information has changed and tells
+  us that a new )I(iteration)ES( of our project \201that )SM(#1)ES(\202 is now
+  available for )I(synchronization)ES( with the build configuration.)EP(
+
+  )0 P(We've also been prompted to authenticate the prerequisite repository.
+  This will have to happen once for every build configuration we initialize
+  our project in and can quickly become tedious. To overcome this, we can
+  mention the certificate fingerprint that we wish to automatically trust in
+  the )SM(repositories.manifest)ES( file \201replace it with the actual
+  fingerprint from the repository's about page\202:)EP(
+
+  ) 3 66 PR(role: prerequisite
+location: https://pkg.cppget.org/1/stable
+trust: 70:64:FE:E4:E0:F3:60:F1:B4:<...>:E5:C2:68:63:4C:A6:47:39:43)RP(
+
+  )0 P(To synchronize a project with one or more build configurations we use the
+  )0 2 A()SM()BD(bdep-sync\2011\202)ES()ES()EA(
+  command:)EP(
+
+  ) 4 42 PR($ bdep sync
+synchronizing:
+  new libhello/1.0.0 \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#1)RP(
+
+  )0 P(Or we could just build the project without an explicit )SM(sync)ES(
+  \235 if necessary, it will be automatically synchronized:)EP(
+
+  ) 10 60 PR($ b
+synchronizing:
+  new libhello/1.0.0 \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#1
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello} ->
+    ../hello-gcc/libhello-1.0.0/libhello/objs{hello}
+ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/)RP(
+
+  )0 P(The synchronization as performed by the )SM(sync)ES( command is
+  two-way: dependency packages are first added, removed, upgraded, or
+  downgraded in build configurations according to the project's version
+  constraints and user input. Then the actual versions of the dependencies
+  present in the build configurations are recorded in the project's
+  )SM(lockfile)ES( so that if desired, the build can be reproduced
+  exactly. The )SM(lockfile)ES( functionality is not
+  yet implemented. For a new dependency the latest available version
+  that satisfies the version constraint is used.)EP(
+
+  )BR(
+  )0 P(Synchronization is also the last step in the )0 2 A()SM()BD(bdep-init\2011\202)ES()ES()EA(
+  command's logic.)EP(
+  )BR(
+
+  )0 P(Let's now examine the status in all \201)SM(--all|-a)ES(\202 the build
+  configurations and include the immediate dependencies
+  \201)SM(--immediate|-i)ES(\202:)EP(
+
+  ) 8 43 PR($ bdep status -ai
+in configuration @gcc:
+hello configured 0.1.0-a.0.19700101000000#1
+  libhello ^1.0.0 configured 1.0.0
+
+in configuration @clang:
+hello configured 0.1.0-a.0.19700101000000
+      available 0.1.0-a.0.19700101000000#1)RP(
+
+  )0 P(Since we didn't specify a configuration explicitly, only the default
+  \201)SM(gcc)ES(\202 was synchronized. Normally, you would try a new
+  dependency in one configuration, make sure everything looks good, then
+  synchronize the rest with )SM(--all|-a)ES( \201or, again, just build what
+  you need directly\202. Here are a few examples \201see )0 2 A()SM()BD(bdep-projects-configs\2011\202)ES()ES()EA(
+  for details\202:)EP(
+
+  ) 3 29 PR($ bdep sync -a
+$ bdep sync @gcc @clang
+$ bdep sync -c ../hello-mingw)RP(
+
+  )0 P(After adding a new \201or upgrading/downgrading existing\202 dependency, it's a
+  good idea to )I(deep-test)ES( our project: run not only our own tests but
+  also of its immediate \201)SM(--immediate|-i)ES(\202 or even all
+  \201)SM(--recursive|-r)ES(\202 dependencies. For example:)EP(
+
+  ) 9 71 PR($ bdep test -ai
+in configuration @gcc:
+test ../hello-gcc/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+in configuration @clang:
+test ../hello-clang/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript})RP(
+
+  )0 P(To get rid of a dependency, we simply remove it from the
+  )SM(manifest)ES( file and synchronize the project. For example,
+  assuming )SM(libhello)ES( is no longer mentioned as a dependency in our
+  )SM(manifests)ES(:)EP(
+
+  ) 8 43 PR($ bdep status
+hello configured 0.1.0-a.0.19700101000000#1
+      available  0.1.0-a.0.19700101000000#2
+
+$ bdep sync
+synchronizing:
+  drop libhello/1.0.0 \201unused\202
+  upgrade hello/0.1.0-a.0.19700101000000#2)RP(
+
+  )BR(
+  )0 P(If instead of building a dependency from source you would prefer to use a
+  version that is installed by your system package manager, see )0 12 1 A(Using System-Installed Dependencies)12 0 TN TL()Ec /AF f D(. And for
+  information on using dependencies that are not )SM(build2)ES( packages
+  refer to )0 13 1 A(Using Unpackaged
+  Dependencies)13 0 TN TL()Ec /AF f D(.)EP(
+  )BR(
+
+  )0 2 5 H(1.4)WB 25 Sn()WB 7 Sn( Upgrading and Downgrading
+  Dependencies)EH(
+
+  )0 P(Let's say we would like to try that )SM(1.1.0)ES( version we have
+  seen in the )SM(libhello)ES( )SM(git)ES( repository. First, we
+  need to add the repository to the )SM(repositories.manifest)ES(
+  file:)EP(
+
+  ) 2 51 PR(role: prerequisite
+location: https://git.build2.org/hello/libhello.git)RP(
+
+  )BR(
+  )0 P(Note that we don't need the )SM(trust)ES( value since
+  )SM(git)ES( repositories are not authenticated.)EP(
+  )BR(
+
+  )0 P(To refresh the list of available dependency versions we use the )0 2 A()SM()BD(bdep-fetch\2011\202)ES()ES()EA(
+  command \201or the )SM(--fetch|-f)ES( option to )SM(status)ES(\202:)EP(
+
+  ) 3 43 PR($ bdep fetch
+$ bdep status libhello
+libhello configured 1.0.0 available [1.1.0])RP(
+
+  )0 P(To upgrade \201or downgrade\202 dependencies we again use the )0 2 A()SM()BD(bdep-sync\2011\202)ES()ES()EA(
+  command. We can upgrade one or more specific dependencies by listing them as
+  arguments to )SM(sync)ES(:)EP(
+
+  ) 6 44 PR($ bdep sync libhello
+synchronizing:
+  new libformat/1.0.0 \201required by libhello\202
+  new libprint/1.0.0 \201required by libhello\202
+  upgrade libhello/1.1.0
+  upgrade hello/0.1.0-a.0.19700101000000#3)RP(
+
+  )0 P(Without an explicit version or the )SM(--patch|-p)ES( option,
+  )SM(sync)ES( will upgrade the specified dependencies to the latest
+  available versions. For example, if we don't like version
+  )SM(1.1.0)ES(, we can downgrade it back to )SM(1.0.0)ES( by
+  specifying the version explicitly \201we pass )SM(--old-available|-o)ES(
+  to )SM(status)ES( to see the old versions\202:)EP(
+
+  ) 9 51 PR($ bdep status -o libhello
+libhello configured 1.1.0 available \2011.1.0\202 [1.0.0]
+
+$ bdep sync libhello/1.0.0
+synchronizing:
+  drop libprint/1.0.0 \201unused\202
+  drop libformat/1.0.0 \201unused\202
+  downgrade libhello/1.0.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3)RP(
+
+  )BR(
+  )0 P(The available versions are listed in the descending order with
+  )SM([])ES( indicating that the version is only available as a
+  dependency and )SM(\201\202)ES( marking the current version.)EP(
+  )BR(
+
+  )0 P(Instead of specific dependencies we can also upgrade
+  \201)SM(--upgrade|-u)ES(\202 or patch \201)SM(--patch|-p)ES(\202 immediate
+  \201)SM(--immediate|-i)ES(\202 or all \201)SM(--recursive|-r)ES(\202
+  dependencies of our project.)EP(
+
+  )0 P(As a more realistic example, version )SM(1.1.0)ES( of
+  )SM(libhello)ES( depends on two other libraries: )SM(libformat)ES(
+  and )SM(libprint)ES(. Here is our project's dependency tree while we
+  were still using that version:)EP(
+
+  ) 5 43 PR($ bdep status -r
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello ^1.0.0 configured 1.1.0
+    libformat ^1.0.0 configured 1.0.0
+    libprint ^1.0.0 configured 1.0.0)RP(
+
+  )0 P(A typical conservative dependency management workflow would look like
+  this:)EP(
+
+  ) 9 69 PR($ bdep status -fi  # refresh and examine immediate dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.2] [1.1.1]
+
+$ bdep sync -pi    # upgrade immediate to latest patch version
+synchronizing:
+  upgrade libhello/1.1.2
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y)RP(
+
+  )0 P(Notice that in case of such mass upgrades you are prompted for
+  confirmation before anything is actually changed \201unless you pass
+  )SM(--yes|-y)ES(\202.)EP(
+
+  )0 P(In contrast, the following would be a fairly aggressive workflow where we
+  upgrade everything to the latest available version \201version constraints
+  permitting; here we assume )SM(^1.0.0)ES( was used for all the
+  dependencies\202:)EP(
+
+  ) 13 64 PR($ bdep status -fr  # refresh and examine all dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.1]
+    libprint configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+    libformat configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+
+$ bdep sync -ur    # upgrade all to latest available version
+synchronizing:
+  upgrade libprint/1.1.0
+  upgrade libformat/1.1.0
+  upgrade libhello/1.2.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y)RP(
+
+  )0 P(We can also have something in between: patch all
+  \201)SM(sync\240-pr)ES(\202, upgrade immediate
+  \201)SM(sync\240-ui)ES(\202, or even upgrade immediate and patch the rest
+  \201)SM(sync\240-ui)ES( followed by )SM(sync\240-pr)ES(\202.)EP(
+
+  )0 2 6 H(1.5)WB 26 Sn()WB 8 Sn( Build-Time Dependencies and Linked
+  Configurations)EH(
+
+  )0 P(The )SM(libhello)ES( dependency we've been playing with in the
+  previous two sections is a )I(runtime dependency)ES(, that is, our
+  )SM(hello)ES( executable needs it at run-time. This is typical of
+  libraries and most of our dependencies will be of this kind. However,
+  sometimes we may only wish to use a dependency during the build, typically a
+  tool, such as a source code generator. This kind of dependency is called a
+  )I(build-time dependency)ES(.)EP(
+
+  )BR(
+  )0 P(Build-time dependencies are an advanced topic and if you don't have an
+  immediate need for this functionality, you may skip this section without any
+  loss of continuity.)EP(
+  )BR(
+
+  )0 P(Why do we need to distinguish between the two kinds of dependencies? The
+  primary reason is cross-compilation: if we build a tool in the same
+  \201cross-compiling\202 build configuration as our project, then we will not be
+  able to execute it during the build \201since it's built for a different target
+  than what we are running\202. But even if you are not planning to
+  cross-compile, there are other good reasons: if you have multiple build
+  configurations for your project, you may want to share a single build of
+  your tool between them \201why waste time building the same thing multiple
+  times\202. And even if you only have a single build of your project, you may
+  want to build the tool with different options \201for example, optimized
+  instead of debug\202.)EP(
+
+  )0 P(You can probably see where this is going: in order to properly support
+  build-time dependencies, we need to distinguish them from runtime and we
+  need an ability to build them in a separate build configuration.)EP(
+
+  )0 P(Let's see how all this works using the )R14 2 A()SM(xxd)ES()EA( tool as an example. If
+  you are not familiar, )SM(xxd)ES( is a hexdump utility which can be
+  used to embed external binary data into C/C++ code in a portable manner.
+  Specifically, it can read a binary file and produce a C array definition of
+  its contents. For example:)EP(
+
+  ) 8 67 PR($ xxd -i names.txt
+
+unsigned char names_txt[] = {
+  0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x55, 0x6e, 0x69, 0x76, 0x65,
+  0x72, 0x73, 0x65, 0x0a, 0x50, 0x65, 0x6f, 0x70, 0x6c, 0x65, 0x0a,
+  0x4d, 0x61, 0x72, 0x74, 0x69, 0x61, 0x6e, 0x73, 0x0a
+};
+unsigned int names_txt_len = 31;)RP(
+
+  )BR(
+  )0 P(While the above output is a bit old school \201using )SM(unsigned
+  int)ES( instead of )SM(size_t)ES(\202 and the array/length names are
+  derived from the input file name \201including directories\202, )SM(xxd)ES(
+  can also produce just the array values allowing us to wrap it into an array
+  of our choice. See the )R14 2 A()SM(xxd)ES()EA(
+  package description for examples of )SM(build2)ES( recipes that do
+  that.)EP(
+  )BR(
+
+  )0 P(So here is an idea: instead of failing if the user did not specify the
+  name to greet, let's improve our )SM(hello)ES( program to greet a
+  random generic name from a pre-defined list. To make this list easier to
+  maintain, let's keep it in a separate file called )SM(names.txt)ES( and
+  use )SM(xxd)ES( to embed it into our )SM(hello)ES( executable. We
+  can use the one name per line format, for example:)EP(
+
+  ) 5 15 PR($ cat names.txt
+World
+Universe
+People
+Martians)RP(
+
+  )0 P(The first step in our plan is to add a build-time dependency on
+  )SM(xxd)ES( to our project's )SM(manifest)ES(, similar to how we
+  did for )SM(libhello)ES(:)EP(
+
+  ) 3 24 PR(...
+depends: libhello ^1.0.0
+depends: * xxd >= 8.2.0)RP(
+
+  )0 P(The )SM(*)ES( mark in front of the )SM(xxd)ES( name indicates
+  that it's a build-time dependency.)EP(
+
+  )0 P(Next we import )SM(xxd)ES( in our )SM(buildfile)ES(:)EP(
+
+  ) 7 37 PR(...
+
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+...)RP(
+
+  )0 P(There are two main differences compared to the way we import the
+  )SM(libhello)ES( library: we request metadata \201)SM([metadata])ES(\202
+  and we do immediate importation \201)SM(import!)ES(\202. Let's briefly
+  discuss what this means \201for details, refer to )0 2 A(Target
+  Importation)EA( in the build system manual\202. Metadata for an executable
+  contains information that helps the build system do a better job when an
+  executable is used as part of the build. For example, it includes the
+  uniform program name to be used for low-verbosity diagnostics as well as the
+  version, checksum, and environment that are used to detect changes. And
+  immediate importation instructs the build system to skip rule-specific
+  importation \201for example, search for libraries in compiler-specific search
+  paths\202 and import the target here and now, failing if that's not possible.
+  It is usually appropriate for importing executables. Note also that the
+  metadata can only be requested in immediate importation.)EP(
+
+  )BR(
+  )0 P(While requesting the metadata means that you will have a simpler
+  )SM(buildfile)ES( and a more reliable build, it also likely means that
+  you won't be able to use the system-installed version of the executable
+  since it needs to be patched to provide the metadata.)EP(
+  )BR(
+
+  )0 P(Now that we have the )SM(xxd)ES( tool, let's use it from an ad hoc
+  recipe to convert )SM(names.txt)ES( to )SM(names.cxx)ES(. Here is
+  the complete )SM(buildfile)ES( for our )SM(hello)ES(
+  executable:)EP(
+
+  ) 12 68 PR(libs =
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+exe{hello}: {hxx ixx txx cxx}{** -names} cxx{names} $libs testscript
+
+cxx{names}: file{names.txt} $xxd
+{{
+  i = $path\201$<[0]\202
+  env --cwd $directory\201$i\202 -- $xxd -i $leaf\201$i\202 >$path\201$>\202
+}})RP(
+
+  )0 P(The last bit that we need to do is to modify )SM(hello.cxx)ES( to
+  use the list of fallback names \201the actual implementation is left as an
+  exercise for the reader\202:)EP(
+
+  ) 17 63 PR(#include <iostream>
+
+extern unsigned char names_txt[];
+extern unsigned int names_txt_len;
+
+int main \201int argc, char* argv[]\202
+{
+  using namespace std;
+
+  if \201argc < 2\202
+  {
+    // TODO: pick a random name from names_txt using newline as
+    //       a name separator.
+  }
+
+  ...
+})RP(
+
+  )0 P(Let's recap what we've achieved so far: we've added a build-time
+  dependency on )SM(xxd)ES(, we've imported it in our
+  )SM(buildfile)ES( and used it in an ad hoc recipe to generate
+  )SM(names.cxx)ES(, and we've modified )SM(hello.cxx)ES( to use the
+  generated list of names. The only step left is to actually try to build it.
+  But before doing that, let's also print the list of build configurations we
+  currently have associated with our project \201see the )SM(list)ES(
+  subcommand in )0 2 A()SM()BD(bdep-config\2011\202)ES()ES()EA(\202:)EP(
+
+  ) 3 65 PR($ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized)RP(
+
+  ) 24 69 PR($ b
+creating configuration of host type in /tmp/hello-host/ and
+associating it with project\201s\202:
+  /tmp/hello/
+as if by executing command\201s\202:
+  bdep config create @host --type host --no-default /tmp/hello-host \200
+  cc config.config.load=~host
+while searching for configuration for build-time dependency xxd of
+package hello/0.1.0-a.0.19700101000000#4
+while synchronizing configuration /tmp/hello-gcc/
+continue? [Y/n] y
+
+synchronizing /tmp/hello-gcc/:
+  new xxd/8.2.3075 [/tmp/hello-host/] \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+c ../hello-host/xxd-8.2.3075+1/c{xxd} ->
+  ../hello-host/xxd-8.2.3075+1/obje{xxd}
+ld ../hello-host/xxd-8.2.3075/exe{xxd}
+xxd hello/file{names.txt} -> ../hello-gcc/hello/hello/cxx{names}
+c++ ../hello-gcc/hello/hello/cxx{names} ->
+    ../hello-gcc/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello})RP(
+
+  )0 P(While the diagnostics is hopefully fairly self-explanatory, let's go over
+  the key points. The first part goes exactly as in the previous section:
+  because we've added a new dependency, the build configuration needs to be
+  synchronized with the project state. However, this is a build-time
+  dependency and build-time dependencies are built in configurations of type
+  )SM(host)ES(. So )SM(bdep)ES( first looks for such a configuration
+  among the configurations already associated with the project. In our case
+  there isn't one \201from the listing above we can see that all our
+  configurations are of type )SM(target)ES(\202. In this case,
+  )SM(bdep)ES( offers to create one automatically. We accept this offer
+  by answering )SM(y)ES( at the prompt and the rest should again look
+  familiar: the new dependency is configured and built \201but now in the host
+  configuration\202 and our project is updated \201which involves running the new
+  dependency\202. If we now again print the list of build configurations
+  associated with our project, we will see the new configuration among
+  them:)EP(
+
+  ) 4 65 PR($ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized
+@host /tmp/hello-host/ 3 host forwarded,auto-synchronized)RP(
+
+  )0 P(Let's also try to update our project in the )SM(clang)ES(
+  configuration:)EP(
+
+  ) 9 66 PR($ bdep update @clang
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+xxd hello/file{names.txt} -> ../hello-clang/hello/hello/cxx{names}
+c++ ../hello-clang/hello/hello/cxx{names} ->
+    ../hello-clang/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello})RP(
+
+  )0 P(This time we are neither prompted to create another configuration nor is
+  a new instance of )SM(xxd)ES( built \235 as we would have expected,
+  the existing host configuration with the already built )SM(xxd)ES( is
+  reused.)EP(
+
+  )0 P(From the above output we can see that )SM(bdep)ES( creates the host
+  configuration using the default host compiler and build options
+  \201)SM(~host)ES(\202 which means the result will most likely be optimized.
+  But if we don't like something about the host configuration that
+  )SM(bdep)ES( offers us to create, we can answer )SM(n)ES( at the
+  prompt, create one ourselves \201by perhaps copying and tweaking the command
+  line )SM(bdep)ES( was going to use\202, and then restart the build.)EP(
+
+  )0 P(Besides the )SM(target)ES( and )SM(host)ES( types, the third
+  pre-defined configuration type is )SM(build2)ES(, which is used for
+  build system modules. If you would like to try a build-time dependency on a
+  build system module, there is a dummy )SM(libbuild2-hello)ES( module
+  that you can use. Simply add the following line to your
+  )SM(manifest)ES(:)EP(
+
+  ) 1 26 PR(depends: * libbuild2-hello)RP(
+
+  )0 P(And the following line somewhere in your )SM(buildfile)ES(:)EP(
+
+  ) 1 11 PR(using hello)RP(
+
+  )0 P(Then build the project and see what happens.)EP(
+
+  )BR(
+  )0 P(The )SM(target)ES( type signifies a configuration for the end-result
+  of our build. If no type is specified during the configuration creation with
+  the )SM(--type)ES( option \201or )SM(--config-type)ES( if using
+  )SM(bdep-new)ES(\202, then )SM(target)ES( is assumed.)EP(
+
+  )0 P(The )SM(host)ES( type signifies a configuration corresponding to the
+  host machine, that is, the machine on which the build is performed. It is
+  expected that an executable built in the host configuration can be executed.
+  Oftentimes, target and host are the same. In this case, if you would prefer
+  not to have separate configurations, then you can make your target
+  configuration )I(self-hosted)ES( by using the )SM(host)ES( type rather
+  than )SM(target)ES(. For example:)EP(
+
+  ) 1 62 PR($ bdep init -C ../hello-gcc @gcc --type host cc config.cxx=g++)RP(
+
+  )0 P(The )SM(build2)ES( type is a special kind of host configuration that
+  is used to build build system modules. It cannot be self-hosted.)EP(
+  )BR(
+
+  )0 P(Building build-time dependencies in separate configurations is just one
+  application of the more general configuration linking mechanism which allows
+  us to build a package in one configuration while its dependencies \235 in
+  one or more linked configurations. This, for example, can be used to create
+  a "base" configuration with common dependencies that are shared between
+  multiple configurations \201sometimes also referred to as build configuration
+  overlaying\202.)EP(
+
+  )0 P(Let's see how this works on our )SM(hello)ES( project. Imagine
+  )SM(libhello)ES( that we depend on is very big and takes a while to
+  compile. We also aren't really interested in building it in both
+  )SM(gcc)ES( and )SM(clang)ES( configurations \201it's our project
+  that we are interested in building with different compilers\202. Since these
+  two compilers are ABI-compatible \201at least on Linux\202, we could build
+  )SM(libhello)ES( with just one of them and reuse the result with the
+  other. Let's see how we can achieve this with linked configurations \201refer
+  to )0 2 A()SM()BD(bdep-config\2011\202)ES()ES()EA(
+  for details on subcommands involved\202:)EP(
+
+  ) 9 71 PR($ bdep config create ../hello-base @base --no-default cc config.cxx=g++
+$ bdep config create ../hello-gcc @gcc --default cc config.cxx=g++
+$ bdep config create ../hello-clang @clang cc config.cxx=clang++
+
+$ bdep config link @gcc @base
+$ bdep config link @clang @base
+
+$ bdep init @gcc { @base }+ ?libhello
+$ bdep init @clang)RP(
+
+  )0 P(Most of the commands are hopefully self-explanatory except for the
+  )SM({ @base }+ ?libhello)ES( part. Here )SM(?)ES( is a package
+  flag that instructs )SM(bdep)ES( to treat )SM(libhello)ES( as a
+  dependency. And )SM({ @base }+)ES( tells it to build this dependency in
+  the )SM(base)ES( configuration \201we don't have to do the same for
+  )SM(clang)ES( since the dependency is already built\202. See )0 2 A()SM()BD(bdep-sync\2011\202)ES()ES()EA(
+  for details on this syntax.)EP(
+
+  )0 2 7 H(1.6)WB 27 Sn()WB 9 Sn( Versioning and Release
+  Management)EH(
+
+  )0 P(Let's now discuss versioning and release management and, yes, that
+  strange-looking )SM(0.1.0-a.0.19700101000000)ES( we keep seeing. While
+  a build system project doesn't need a version and a )SM(bpkg)ES(
+  package can use custom versioning schemes \201see )0 2 A(Package
+  Version)EA(\202, a project managed by )SM(bdep)ES( must use )I(standard
+  versioning)ES(. A dependency, which is a
+  )SM(bpkg)ES( package, need not use standard versioning.)EP(
+
+  )0 P(Standard versioning \201)I(stdver)ES(\202 is a )R15 2 A(semantic versioning)EA( \201)I(semver)ES(\202 scheme
+  with a more precisely defined pre-release component and without any build
+  metadata.)EP(
+
+  )BR(
+  )0 P(If you believe that )I(semver)ES( is just
+  )SM()I(major)ES(.)I(minor)ES(.)I(patch)ES()ES(, then in your worldview
+  )I(stdver)ES( would be the same as )I(semver)ES(. In reality, )I(semver)ES(
+  also allows loosely defined pre-release and build metadata components. For
+  example, )SM(1.2.3-beta.1+build.23456)ES( is a valid )I(semver)ES(.)EP(
+  )BR(
+
+  )0 P(A standard version has the following form:)EP(
+
+  )0 P()SM()I(major)ES()BD(.)ES()I(minor)ES()BD(.)ES()I(patch)ES([)BD(-)ES()I(prerel)ES(])ES()EP(
+
+  )0 P(The )SM()I(major)ES()ES(, )SM()I(minor)ES()ES(, and
+  )SM()I(patch)ES()ES( components have the same meaning as in
+  )I(semver)ES(. The )SM()I(prerel)ES()ES( component is used to provide
+  )I(continuous versioning)ES( of our project between releases. Specifically,
+  during development of a new version we may want to publish several
+  pre-releases, for example, alpha or beta. In between those we may also want
+  to publish a number of snapshots, for example, for CI. With continuous
+  versioning all these releases, pre-releases, and snapshots are assigned
+  unique, properly ordered versions.)EP(
+
+  )BR(
+  )0 P(Continuous versioning is a cornerstone of the )SM(build2)ES( project
+  dependency management. In case of snapshots, an appropriate version is
+  assigned automatically in cooperation with your VCS.)EP(
+  )BR(
+
+  )0 P(The )SM()I(prerel)ES()ES( component for a pre-release has the
+  following form:)EP(
+
+  )0 P()SM(\201)BD(a)ES(|)BD(b)ES(\202)BD(.)ES()I(num)ES()ES()EP(
+
+  )0 P(Here )SM()BD(a)ES()ES( stands for alpha, )SM()BD(b)ES()ES( stands
+  for beta, and )SM()I(num)ES()ES( is the alpha/beta number. For
+  example:)EP(
+
+  ) 5 52 PR(1.1.0        # final              release  for 1.1.0
+1.2.0-a.1    # first  alpha   pre-release  for 1.2.0
+1.2.0-a.2    # second alpha   pre-release  for 1.2.0
+1.2.0-b.1    # first  beta    pre-release  for 1.2.0
+1.2.0        # final              release  for 1.2.0)RP(
+
+  )0 P(The )SM()I(prerel)ES()ES( component for a snapshot has the following
+  form:)EP(
+
+  )0 P()SM(\201)BD(a)ES(|)BD(b)ES(\202)BD(.)ES()I(num)ES()BD(.)ES()I(snapsn)ES([)BD(.)ES()I(snapid)ES(])ES()EP(
+
+  )0 P(Where )SM()I(snapsn)ES()ES( is the snapshot sequence number and
+  )SM()I(snapid)ES()ES( is the snapshot id. In case of )SM(git)ES(,
+  )SM()I(snapsn)ES()ES( is the commit timestamp in the
+  )SM(YYYYMMDDhhmmss)ES( form and UTC timezone while
+  )SM()I(snapid)ES()ES( is a 12-character abbreviated commit id. For
+  example:)EP(
+
+  ) 1 37 PR(1.2.3-a.1.20180319215815.26efe301f4a7)RP(
+
+  )0 P(Notice also that a snapshot version is ordered )I(after)ES( the
+  corresponding pre-release version. That is,
+  )SM(1.2.3-a.1\240<\2401.2.3-a.1.1)ES(. As a result, it is
+  customary to start the development of a new version with
+  )SM(X.Y.Z-a.0.z)ES(, that is, a snapshot after the \201non-existent\202
+  zero'th alpha release. We will explain the meaning of
+  )SM()BD(z)ES()ES( in this version momentarily. The following
+  chronologically-ordered versions illustrate a typical release flow of a
+  project that uses )SM(git)ES( as its VCS:)EP(
+
+  ) 15 67 PR(0.1.0-a.0.19700101000000               # snapshot \201no commits yet\202
+0.1.0-a.0.20180319215815.26efe301f4a7  # snapshot \201first commit\202
+...                                    # more commits/snapshots
+0.1.0-a.1                              # pre-release \201first alpha\202
+0.1.0-a.1.20180319221826.a6f0f41205b8  # snapshot
+...                                    # more commits/snapshots
+0.1.0-a.2                              # pre-release \201second alpha\202
+0.1.0-a.2.20180319231937.b701052316c9  # snapshot
+...                                    # more commits/snapshots
+0.1.0-b.1                              # pre-release \201first beta\202
+0.1.0-b.1.20180319242038.c812163417da  # snapshot
+...                                    # more commits/snapshots
+0.1.0                                  # release
+0.2.0-a.0.20180319252139.d923274528eb  # snapshot \201first in 0.2.0\202
+...)RP(
+
+  )0 P(For a more detailed discussion of standard versioning and its support in
+  )SM(build2)ES( refer to )0 2 A()SM(version)ES(
+  Module)EA(.)EP(
+
+  )0 P(Let's now see how this works in practice by publishing a couple of
+  versions for our )SM(hello)ES( project. By now it should be clear what
+  that )SM(0.1.0-a.0.19700101000000)ES( means \235 it is the first
+  snapshot version of our project. Since there are no commits yet, it has the
+  UNIX epoch as its commit timestamp. Let's see what changes after we've made
+  our first commit:)EP(
+
+  ) 6 54 PR($ git add .
+$ git commit -m "Initial implementation"
+
+$ bdep status
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.20180507062614.ee006880fc7e)RP(
+
+  )0 P(Just like with changes to dependency information, )SM(status)ES( has
+  detected that a new \201snapshot\202 version of our project is available for
+  synchronization.)EP(
+
+  )BR(
+  )0 P(Another way to view the project's version \201which works even if we are not
+  using )SM(bdep)ES(\202 is with the build system's )SM(info)ES(
+  meta-operation:)EP(
+
+  ) 5 46 PR($ b info
+project: hello
+version: 0.1.0-a.0.20180507062614.ee006880fc7e
+summary: hello C++ executable
+...)RP(
+  )BR(
+
+  )0 P(Let's synchronize with the default build configuration:)EP(
+
+  ) 6 54 PR($ bdep sync
+synchronizing:
+  upgrade hello/0.1.0-a.0.20180507062614.ee006880fc7e
+
+$ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e)RP(
+
+  )BR(
+  )0 P(Notice that we didn't have to manually change the version anywhere. All
+  we had to do was commit our changes and a new snapshot version was
+  automatically derived by )SM(build2)ES( from the new )SM(git)ES(
+  commit. Without this automation continuous versioning would hardly be
+  practical.)EP(
+  )BR(
+
+  )0 P(If we now make another commit, we will see a similar picture:)EP(
+
+  ) 3 54 PR($ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e
+      available  0.1.0-a.0.20180507062615.8fb9de05b38f)RP(
+
+  )BR(
+  )0 P(Note that you don't need to manually run )SM(sync)ES( after every
+  commit. As discussed earlier, you can simply run the build system to update
+  your project and things will get automatically synchronized if
+  necessary.)EP(
+  )BR(
+
+  )0 P(Ok, time for our first release. Let's start with )SM(0.1.0-a.1)ES(.
+  Unlike snapshots, for pre-releases as well as final releases we have to
+  change the version in the )SM(manifest)ES( file:)EP(
+
+  ) 1 18 PR(version: 0.1.0-a.1)RP(
+
+  )BR(
+  )0 P(The )SM(manifest)ES( file is the singular place where we specify the
+  package version. The build system's )0 2 A()SM(version)ES(
+  module)EA( makes it available in various forms in buildfiles and even source
+  code.)EP(
+  )BR(
+
+  )0 P(To ensure continuous versioning, this change to version must be the last
+  commit for this \201pre-\202release which itself must be immediately followed by a
+  second change to the version starting the development of the next
+  \201pre-\202release. We also recommend that you tag the release commit with a tag
+  name in the )SM()BD(v)ES()I(X)ES(.)I(Y)ES(.)I(Z)ES()ES( form.)EP(
+
+  )BR(
+  )0 P(Having regular release tag names with the )SM()BD(v)ES()ES( prefix
+  allows one to distinguish them from other tags, for example, with wildcard
+  patterns.)EP(
+  )BR(
+
+  )0 P(Here is the release workflow for our example:)EP(
+
+  ) 11 50 PR($ git commit -a -m "Release version 0.1.0-a.1"
+$ git tag -a v0.1.0-a.1 -m "Tag version 0.1.0-a.1"
+$ git push --follow-tags
+
+# Version 0.1.0-a.1 is now public.
+
+$ edit manifest  # change 'version: 0.1.0-a.1.z'
+$ git commit -a -m "Change version to 0.1.0-a.1.z"
+$ git push
+
+# Master is now open for business.)RP(
+
+  )0 P(Notice also that when specifying a snapshot version in
+  )SM(manifest)ES( we use the special )SM()BD(z)ES()ES( snapshot
+  value \201for example, )SM(0.1.0-a.1.z)ES(\202 which is recognized and
+  automatically replaced by )SM(build2)ES( with, in case of
+  )SM(git)ES(, the current commit timestamp and id \201refer to )0 2 A()SM(version)ES(
+  Module)EA( for details\202.)EP(
+
+  )0 P(While not particularly complicated, performing the release steps manually
+  is both tedious and error-prone. Instead, this process can be automated with
+  the )0 2 A()SM()BD(bdep-release\2011\202)ES()ES()EA(
+  command. Specifically, in its default mode, this command will update the
+  version in the )SM(manifest)ES( file, commit and tag this change, open
+  the next development cycle \201again, by changing )SM(manifest)ES( and
+  committing\202, and, finally, if )SM(--push)ES( is specified, push
+  everything to the remote. So, instead of the above manual steps, we could
+  have simply run:)EP(
+
+  ) 16 46 PR($ bdep release --alpha --push
+releasing:
+  package: hello
+  current: 0.1.0-a.0.z
+  release: 0.1.0-a.1
+  open:    0.1.0-a.1.z
+  commit:  yes
+  tag:     v0.1.0-a.1
+  push:    origin/master
+continue? [y/n] y
+[master 82a7e65] Release version 0.1.0-a.1
+[master e6cf3c0] Change version to 0.1.0-a.1.z
+pushing branch master, tag v0.1.0-a.1
+To github.com:john-doe/hello.git
+   26ec5c9..e6cf3c0  master -> master
+ * [new tag]         v0.1.0-a.1 -> v0.1.0-a.1)RP(
+
+  )BR(
+  )0 P(The )SM(release)ES( command has a number of alternative modes, such
+  as for releasing a package revision, as well as a number of options that
+  control which version will be released and which version will be opened. See
+  )0 2 A()SM()BD(bdep-release\2011\202)ES()ES()EA(
+  for details.)EP(
+  )BR(
+
+  )0 P(Publishing the final release to the version control repository is exactly
+  the same. This time, however, let's see how we can also publish it to an
+  archive-based repository. The first step is again to make the release, which
+  we will do with the help of the )SM(release)ES( command. Except now we
+  will delay opening the next development cycle by passing
+  )SM(--no-open)ES( \201there is also no )SM(--alpha)ES( since this is
+  the final release\202:)EP(
+
+  ) 14 38 PR($ bdep release --no-open --push
+releasing:
+  package: hello
+  current: 0.1.0-a.1.z
+  release: 0.1.0
+  commit:  yes
+  tag:     v0.1.0
+  push:    origin/master
+continue? [y/n] y
+[master 00ed45a] Release version 0.1.0
+pushing branch master, tag v0.1.0
+To github.com:john-doe/hello.git
+   5d5094c..00ed45a  master -> master
+ * [new tag]         v0.1.0 -> v0.1.0)RP(
+
+  )0 P(To publish our project to an archive-based repository we use the )0 2 A()SM()BD(bdep-publish\2011\202)ES()ES()EA(
+  command. For example:)EP(
+
+  ) 15 68 PR($ bdep publish
+publishing:
+  to:      https://cppget.org
+  as:      John Doe <john@example.org>
+  package: hello
+  version: 0.1.0
+  project: hello
+  section: alpha
+  control: https://github.com/john-doe/hello.git
+continue? [y/n] y
+pushing branch build2-control
+submitting hello-0.1.0.tar.gz
+############################################################# 100.0%
+package submission is queued: https://queue.cppget.org/hello/0.1.0
+reference: 0c596fca2017)RP(
+
+  )0 P(Let's see what's going on here. By default )SM(publish)ES( submits
+  to the )R6 2 A(cppget.org)EA( repository. On
+  )SM(cppget.org)ES( package names are assigned on a first come first
+  serve basis. But instead of using logins or emails to authenticate package
+  ownership, )SM(cppget.org)ES( uses your version control repository as a
+  proxy. In a nutshell, when we submit a package for the first time, its
+  control repository is associated with its name and all subsequent
+  submissions have to use the same control repository \201the authentication
+  part\202. When submitting a package, )SM(publish)ES( also adds a file to
+  the )SM(build2-control)ES( branch of the control repository with the
+  package archive checksum. On the other side, )SM(cppget.org)ES( checks
+  for the presence of this file to make sure that whomever is making this
+  submission has write access to the control repository \201the authorization
+  part\202. See )0 2 A()SM()BD(bdep-publish\2011\202)ES()ES()EA(
+  for details.)EP(
+
+  )0 P(The rest should be pretty straightforward: )SM(publish)ES( prepares
+  and uploads a distribution of our package which goes into the
+  )SM(alpha)ES( section of the repository \201because it has )SM(0)ES(
+  major version\202. In response we get a URL which we can use to check the
+  status of our submission on )R16 2 A(queue.cppget.org)EA(. And after some basic
+  testing and verification, our package should appear on
+  )SM(cppget.org)ES( \201the exact steps are described in )R17 2 A(Submission Policies)EA(\202. Note also that
+  package submissions to )SM(cppget.org)ES( are public and permanent and
+  cannot be removed under any circumstances.)EP(
+
+  )0 P(Finally, we also shouldn't forget to increment the version for the next
+  development cycle. For that we can use the )SM(--open)ES( mode of the
+  )SM(release)ES( command. For example:)EP(
+
+  ) 12 46 PR($ bdep release --open --push
+opening:
+  package: hello
+  current: 0.1.0
+  open:    0.2.0-a.0.z
+  commit:  yes
+  push:    origin/master
+continue? [y/n] y
+[master ace2f6e] Change version to 0.2.0-a.0.z
+pushing branch master
+To github.com:john-doe/hello.git
+   00ed45a..ace2f6e  master -> master)RP(
+
+  )BR(
+  )0 P(One sticky point of continuous versioning is choosing the next version.
+  For example, above should we continue with )SM(0.1.1-a.0)ES(,
+  )SM(0.2.0-a.0)ES(, or )SM(1.0.0-a.0)ES(? The important rule to
+  keep in mind is that we can jump forward to any further version at any time
+  and without breaking continuous versioning. But we can never jump
+  backwards.)EP(
+
+  )0 P(For example, we can start with )SM(0.2.0-a.0)ES( but if we later
+  realize that this will actually be a new major release, we can easily change
+  it to )SM(1.0.0-a.0)ES(. As a result, the general guideline is to start
+  conservatively by either incrementing the patch or the minor version
+  component. And the recommended strategy is to increment the minor component
+  and, if required, release patch versions from a separate branch \201created by
+  branching off from the release commit\202. This is the default behavior of the
+  )SM(release)ES( command.)EP(
+
+  )0 P(Note also that you don't have to make any pre-releases if you don't need
+  them. While during development you would still keep the version as
+  )SM(X.Y.Z-a.0)ES(, at release you simply change it directly to the
+  final )SM(X.Y.Z)ES(.)EP(
+  )BR(
+
+  )0 P(When publishing the final release you may also want to clean up now
+  obsolete pre-release tags. For example:)EP(
+
+  ) 2 56 PR($ git tag -l 'v0.1.0-*' | xargs git push --delete origin
+$ git tag -l 'v0.1.0-*' | xargs git tag --delete)RP(
+
+  )BR(
+  )0 P(While at first removing such tags may seem like a bad idea, pre-releases
+  are by nature temporary and their use only makes sense until the final
+  release is published.)EP(
+
+  )0 P(Also note that having a )SM(git)ES( repository with a large number
+  of published but unused version tags may result in a significant download
+  overhead.)EP(
+  )BR(
+
+  )0 P(Let's also briefly discuss in which situations we should increment each
+  of the version components. While )I(semver)ES( gives basic guidelines, there
+  are several ways to apply them in the context of C/C++ where there is a
+  distinction between binary and source compatibility. We recommend that you
+  reserve )I(patch)ES( releases for specific bug fixes and security issues
+  that you can guarantee with a high level of certainty to be
+  binary-compatible. Otherwise, if the changes are source-compatible,
+  increment )I(minor)ES(. And if they are breaking \201that is, the user code
+  likely will need adjustments\202, increment )I(major)ES(. During early
+  development, when breaking changes are frequent, it is customary to use the
+  )SM(0.Y.Z)ES( versions where )SM(Y)ES( effectively becomes the
+  )I(major)ES( component. Again, refer to the )0 2 A()SM(version)ES(
+  Module)EA( for a more detailed discussion of this topic.)EP(
+
+  )0 2 8 H(1.7)WB 28 Sn()WB 10 Sn( Developing Multiple Packages and Projects)EH(
+
+  )0 P(How does a library like )SM(libhello)ES( get developed? It's
+  possible someone woke up one day and realized that they were going to build
+  a useful library that everyone was going to use. But somehow this doesn't
+  feel like how it really works. In the real world things start organically:
+  someone had a project like )SM(hello)ES( and then needed the same
+  functionality in another project. Or someone else needed it and asked the
+  author to factor it out into a library. For this approach to work, however,
+  moving such common functionality into a library and then continue its
+  parallel development must be a simple, frictionless process. Let's see how
+  this works in )SM(build2)ES(.)EP(
+
+  )0 P(First, we need to decide whether to make )SM(libhello)ES( another
+  package in our )SM(hello)ES( project \201that is, in the same
+  )SM(git)ES( repository\202 or a separate project \201with a separate
+  repository\202. Both arrangements are equally well supported.)EP(
+
+  )BR(
+  )0 P(A multi-package project works best if all the packages have the same
+  version and are released together. While the packages themselves can have
+  different versions \201since each has its own )SM(manifest)ES(\202, in this
+  scenario following the release tagging recommendations discussed earlier
+  will be problematic.)EP(
+  )BR(
+
+  )0 P(Let's start with a separate project since it is simpler. As the first
+  step we use )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA( to
+  create a new library project next to our )SM(hello)ES(:)EP(
+
+  ) 21 54 PR($ bdep new -l c++ -t lib libhello
+created new library project libhello in /tmp/libhello/
+
+$ ls
+hello/
+libhello/
+hello-gcc/
+hello-clang/
+
+$ tree libhello
+libhello/
+|-- build/
+|   \267-- ...
+|-- libhello/
+|   |-- hello.hxx
+|   |-- hello.cxx
+|   \267-- buildfile
+|-- buildfile
+|-- manifest
+|-- README.md
+\267-- repositories.manifest)RP(
+
+  )BR(
+  )0 P(Similar to the executable project, this layout is not mandatory and )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA( can
+  create a number of alternative library structures. For example, if you
+  prefer the )SM(include/src)ES( split, try:)EP(
+
+  ) 1 39 PR($ bdep new -l c++ -t lib,split libhello)RP(
+
+  )0 P(See )0 2 A(SOURCE LAYOUT)EA(
+  for more examples.)EP(
+  )BR(
+
+  )0 P(Let's edit the generated )SM(manifest)ES( file and add the
+  )SM(project)ES( value \201customarily after )SM(version)ES(\202 to
+  indicate that our library belongs to the same overall project as our
+  executable:)EP(
+
+  ) 7 26 PR($ cat libhello/manifest
+: 1
+name: libhello
+version: 0.1.0-a.0.z
+project: hello
+summary: hello C++ library
+...)RP(
+
+  )BR(
+  )0 P(The )SM(project)ES( value is used to group related packages together
+  in order to help with their organization and discovery. For example, if
+  later we create )SM(libhello2)ES( or )SM(libhello-extra)ES(, then
+  it would make sense for them to also belong to the )SM(hello)ES(
+  project. See the )0 2 A()SM(project)ES()EA(
+  value documentation for details.)EP(
+  )BR(
+
+  )0 P(Our two projects will be sharing the same set of build configurations, so
+  next we initialize )SM(libhello)ES( in )SM(hello-gcc)ES( and
+  )SM(hello-clang)ES( \201notice the use of )SM(--config-add|-A)ES(
+  instead of )SM(--config-create|-C)ES(\202:)EP(
+
+  ) 13 66 PR($ cd libhello
+
+$ bdep init -A ../hello-gcc @gcc
+initializing in project /tmp/libhello/
+added configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000
+
+$ bdep init -A ../hello-clang @clang
+initializing in project /tmp/libhello/
+added configuration @clang /tmp/hello-clang/ auto-synchronized
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000)RP(
+
+  )BR(
+  )0 P(If two or more projects share the same build configuration, then all of
+  them are always synchronized at once, regardless of the originating project.
+  It also makes sense to have the same default configuration and use identical
+  configuration names in all the projects.)EP(
+  )BR(
+
+  )0 P(The last step is to move the desired functionality from
+  )SM(hello)ES( to )SM(libhello)ES( and at the same time add a
+  dependency on )SM(libhello)ES(, just as we did earlier \201add a
+  )SM(depends)ES( entry to )SM(manifest)ES(, then import the library
+  in )SM(buildfile)ES(, and so on\202. One interesting question is what to
+  put as a prerequisite repository in )SM(repositories.manifest)ES(. Our
+  own setup will work even if we don't put anything there \235 the
+  dependency will be automatically resolved to our local version of
+  )SM(libhello)ES( since we have initialized it in all our build
+  configurations. However, in case our )SM(hello)ES( repository is used
+  by someone else, it's a good idea to add the remote )SM(git)ES(
+  repository for )SM(libhello)ES( as a prerequisite.)EP(
+
+  )BR(
+  )0 P(By now you have probably realized that our project directory is just
+  another type of package repository. See )0 2 A()SM()BD(bpkg-repository-types\2011\202)ES()ES()EA(
+  for more information.)EP(
+  )BR(
+
+  )0 P(And that's it, now we can build and test our new arrangement:)EP(
+
+  ) 12 71 PR($ cd ../hello   # back to hello project root
+$ bdep test -i
+c++ ../libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ ../libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript})RP(
+
+  )0 P(This is also the approach we would use if we wanted to fix a bug in
+  someone else's library. That is, we would clone their library repository and
+  initialize it in the build configurations of our project which will
+  "upgrade" the dependency to use the local version. Then we make the fix,
+  submit it upstream, and continue using the local version until our fix is
+  merged/published, at which point we deinitialize their library repository
+  and our project will be automatically switched back to using the new
+  upstream version of the library. Here is the summary of the steps in this
+  workflow:)EP(
+
+  ) 14 72 PR($ cd hello/                      # Our project.
+$ bdep init -C @gcc ...          # Configures libhello as a dependency.
+
+$ git clone .../libhello.git     # Need to fix a bug in libhello.
+$ cd libhello
+$ bdep init -A ../hello-gcc @gcc # Upgrades libhello to local version.
+
+# Fix the bug in libhello, test, and submit upstream.
+# Continue using local libhello until the bugfix is published.
+
+$ cd libhello                    # Bugfix has been published.
+$ bdep deinit @gcc               # Switches libhello back to dependency.
+
+$ rm -r libhello                 # If no longer needed.)RP(
+
+  )0 P(Let's now examine the second option: making )SM(libhello)ES( a
+  package inside )SM(hello)ES(. Here is the original structure of our
+  )SM(hello)ES( project:)EP(
+
+  ) 10 25 PR(hello/
+|-- .git/
+|-- build/
+|-- hello/
+|   |-- hello.cxx
+|   \267-- buildfile
+|-- buildfile
+|-- manifest
+|-- README.md
+\267-- repositories.manifest)RP(
+
+  )0 P(As the first step, we move the )SM(hello)ES( program into its own
+  subdirectory:)EP(
+
+  ) 11 25 PR(hello/
+|-- .git/
+|-- hello/
+|   |-- build/
+|   |-- hello/
+|   |   |-- hello.cxx
+|   |   \267-- buildfile
+|   |-- buildfile
+|   |-- manifest
+|   \267-- README.md
+\267-- repositories.manifest)RP(
+
+  )0 P(Next we again use )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA( to
+  create a new library but this time as a package inside an already existing
+  project:)EP(
+
+  ) 3 60 PR($ cd hello
+$ bdep new --package -l c++ -t lib libhello
+created new library package libhello in /tmp/hello/libhello/)RP(
+
+  )0 P(Let's see what our project looks like now:)EP(
+
+  ) 11 25 PR(hello/
+|-- .git/
+|-- hello/
+|   |-- ...
+|   \267-- manifest
+|-- libhello/
+|   |-- ...
+|   \267-- manifest
+|-- buildfile
+|-- packages.manifest
+\267-- repositories.manifest)RP(
+
+  )BR(
+  )0 P(Notice that, as discussed earlier, )SM(repositories.manifest)ES(
+  belongs to the project \201repository\202 while )SM(manifest)ES( \235 to
+  the package.)EP(
+  )BR(
+
+  )0 P(Besides the )SM(libhello)ES( directory the )SM(new)ES( command
+  also created the )SM(buildfile)ES( and )SM(packages.manifest)ES(
+  files in the root directory of our project. First let's take a look inside
+  )SM(buildfile)ES(:)EP(
+
+  ) 3 16 PR(import pkgs = */
+
+./: $pkgs)RP(
+
+  )0 P(This is what we call a )I(glue )SM(buildfile)ES()ES(. Its purpose is
+  to "pull" together several packages so that we are able to invoke the build
+  system driver from the project root. See )0 2 A(Target
+  Importation)EA( for details.)EP(
+
+  )0 P(Now let's examine )SM(packages.manifest)ES(:)EP(
+
+  ) 3 23 PR($ cat packages.manifest
+: 1
+location: libhello/)RP(
+
+  )0 P(Up until now our )SM(hello)ES( was a simple, single-package project
+  that didn't need this file \235 )SM(manifest)ES( in its root
+  directory was sufficient \201see )0 2 A()SM()BD(bpkg-repository-types\2011\202)ES()ES()EA(
+  for details on the project repository structure\202. But now it contains
+  several packages and we need to specify where they are located within the
+  project. So let's go ahead and add the location of the )SM(hello)ES(
+  package:)EP(
+
+  ) 5 23 PR($ cat packages.manifest
+: 1
+location: libhello/
+:
+location: hello/)RP(
+
+  )BR(
+  )0 P(Packages in a project can reside next to each other or in subdirectories
+  but they cannot nest. When published to an archive-based repository, each
+  such package will be placed into its own archive.)EP(
+  )BR(
+
+  )0 P(Next we initialize the new package in all our build configurations:)EP(
+
+  ) 12 42 PR($ cd libhello
+$ bdep init -a
+initializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000
+
+in configuration @clang:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000)RP(
+
+  )BR(
+  )0 P(Notice that the )SM(hello)ES( package has been "upgraded" to reflect
+  its new location.)EP(
+  )BR(
+
+  )0 P(Finally, as before, we move the desired functionality from
+  )SM(hello)ES( to )SM(libhello)ES( and at the same time add a
+  dependency on )SM(libhello)ES(. Note, however, that in this case we
+  don't need to add anything to )SM(repositories.manifest)ES( since both
+  packages are in the same project \201repository\202. And that's it, now we can
+  build and test our new arrangement:)EP(
+
+  ) 13 66 PR($ cd ..      # back to hello project root
+$ bdep test
+c++ libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} +
+     hello/hello/testscript{testscript})RP(
+
+  )BR(
+  )0 P(A multi-package project could have several files, such as
+  )SM(README.md)ES( and )SM(LICENSE)ES(, which, while shared by all
+  the packages, must nevertheless reside within each package's directory. The
+  recommended way to avoid the duplication is to use symlinks. For
+  example:)EP(
+
+  ) 14 30 PR(hello/
+|-- .git/
+|-- hello/
+|   |-- ...
+|   |-- LICENSE  -> ../LICENSE
+|   \267-- manifest
+|-- libhello/
+|   |-- ...
+|   |-- LICENSE  -> ../LICENSE
+|   \267-- manifest
+|-- LICENSE
+|-- buildfile
+|-- packages.manifest
+\267-- repositories.manifest)RP(
+
+  )0 P(See )R18 2 A(Using Symlinks in
+  )SM(build2)ES( Projects)EA( for details.)EP(
+  )BR(
+
+  )0 2 9 H(1.8)WB 29 Sn()WB 11 Sn( Package Consumption)EH(
+
+  )0 P(Ok, now that we have published a few releases of )SM(hello)ES(, how
+  would the users of our project get them? While they could clone the
+  repository and use )SM(bdep)ES( just like we did, this is more of a
+  development than a consumption workflow. For consumption it is much easier
+  to use the package dependency manager, )0 2 A()SM()BD(bpkg\2011\202)ES()ES()EA(,
+  directly.)EP(
+
+  )BR(
+  )0 P(Note that this approach also works for libraries in case you wish to use
+  them in a project with a build system other than )SM(build2)ES(. See )0 13 1 A(Using Unpackaged Dependencies)13 0 TN TL()Ec /AF f D( for
+  background on cross-build system library consumption.)EP(
+  )BR(
+
+  )0 P(First, we create a suitable build configuration with the )0 2 A()SM()BD(bpkg-cfg-create\2011\202)ES()ES()EA(
+  command. We can use the same place for building all our tools so let's call
+  the directory )SM(tools)ES(. Seeing that we are only interested in
+  using \201rather than developing\202 such tools, let's build them optimized and
+  also configure a suitable installation location:)EP(
+
+  ) 6 40 PR($ bpkg create -d tools cc        \200
+  config.cxx=g++                 \200
+  config.cc.coptions=-O3         \200
+  config.install.root=/usr/local \200
+  config.install.sudo=sudo
+created new configuration in /tmp/tools/)RP(
+
+  )0 P(The same step on Windows using Visual Studio would look like this:)EP(
+
+  ) 4 33 PR($ bpkg create -d tools cc ^
+  config.cxx=cl           ^
+  config.cc.coptions=/O2  ^
+  config.install.root= C:\200install)RP(
+
+  )0 P(To fetch and build packages \201as well as all their dependencies\202 we use
+  the )0 2 A()SM()BD(bpkg-pkg-build\2011\202)ES()ES()EA(
+  command. We can use either an archive-based repository like )R6 2 A(cppget.org)EA( or build directly from
+  )SM(git)ES(:)EP(
+
+  ) 25 65 PR($ cd tools
+
+$ bpkg build hello@https://git.build2.org/hello/hello.git
+fetching from https://git.build2.org/hello/hello.git
+  new libformat/1.0.0 \201required by libhello\202
+  new libprint/1.0.0 \201required by libhello\202
+  new libhello/1.1.0 \201required by hello\202
+  new hello/1.0.0
+continue? [Y/n] y
+configured libformat/1.0.0
+configured libprint/1.0.0
+configured libhello/1.1.0
+configured hello/1.0.0
+c++ libprint-1.0.0/libprint/cxx{print} ->
+    libprint-1.0.0/libprint/objs{print}
+c++ hello-1.0.0/hello/cxx{hello} -> hello-1.0.0/hello/obje{hello}
+c++ libhello-1.1.0/libhello/cxx{hello} ->
+    libhello-1.1.0/libhello/objs{hello}
+c++ libformat-1.0.0/libformat/cxx{format} ->
+    libformat-1.0.0/libformat/objs{format}
+ld libprint-1.0.0/libprint/libs{print}
+ld libformat-1.0.0/libformat/libs{format}
+ld libhello-1.1.0/libhello/libs{hello}
+ld hello-1.0.0/hello/exe{hello}
+updated hello/1.0.0)RP(
+
+  )BR(
+  )0 P(Passing a repository URL to the )SM(build)ES( command is a shortcut
+  to the following sequence of commands:)EP(
+
+  ) 3 67 PR($ bpkg add https://git.build2.org/hello/hello.git  # add repository
+$ bpkg fetch                             # fetch package list
+$ bpkg build hello                       # build package by name)RP(
+  )BR(
+
+  )BR(
+  )0 P(If building a package involves building a build-time dependency and no
+  configuration of type )SM(host)ES( \201or )SM(build2)ES(, if the
+  dependency is a build system module\202 is linked with the target
+  configuration, then a private configuration of a suitable type is
+  automatically created and linked. See )0 8 1 A(Build-Time Dependencies and Linked
+  Configurations)8 0 TN TL()Ec /AF f D( for background on build-time dependencies and )0 2 A()SM()BD(bpkg-cfg-create\2011\202)ES()ES()EA(
+  for more information on )SM(bpkg)ES( configuration linking.)EP(
+  )BR(
+
+  )0 P(Once built, we can install the package to the location that we have
+  specified with )SM(config.install.root)ES( using the )0 2 A()SM()BD(bpkg-pkg-install\2011\202)ES()ES()EA(
+  command:)EP(
+
+  ) 9 65 PR($ bpkg install hello
+...
+install libformat-1.0.0/libformat/libs{format} -> /usr/local/lib/
+install libprint-1.0.0/libprint/libs{print} -> /usr/local/lib/
+install libhello-1.1.0/libhello/libs{hello} -> /usr/local/lib/
+install hello-1.0.0/hello/exe{hello} -> /usr/local/bin/
+
+$ hello World
+Hello, World!)RP(
+
+  )BR(
+  )0 P(If on your system the installed executables don't run from
+  )SM(/usr/local)ES( because of the unresolved shared libraries \201or if
+  you are installing somewhere else, such as )SM(/opt)ES(\202, then the
+  easiest way to fix this is with )I(rpath)ES(. Simply add the following
+  configuration variable when creating the build configuration \201or as an
+  argument to the )SM(install)ES( command\202:)EP(
+
+  ) 1 31 PR(config.bin.rpath=/usr/local/lib)RP(
+
+  )0 P(Note to Windows users: this is not an issue on this platform since
+  executables and shared \201DLL\202 libraries are installed into the same
+  subdirectory \201)SM(bin)ES(\202 of the installation directory.)EP(
+  )BR(
+
+  )0 P(The installation contents and layout under
+  )SM(config.install.root)ES( would be along these lines:)EP(
+
+  ) 12 26 PR(/usr/local/
+|-- bin/
+|\302\240\302\240 \267-- hello
+|-- lib/
+|\302\240\302\240 |-- libformat-1.0.so
+|\302\240\302\240 |-- libhello-1.1.so
+|\302\240\302\240 \267-- libprint-1.0.so
+\267-- share/
+    \267-- doc/
+        \267-- hello/
+            |-- manifest
+            \267-- README.md)RP(
+
+  )BR(
+  )0 P(The installation locations of various types of files \201executables,
+  libraries, headers, documentation, etc\202 can be customized using a number of
+  the )SM(config.install.*)ES( variables with the most commonly used ones
+  and their defaults \201relative to )SM(config.install.root)ES(\202 listed
+  below \201see the )SM(install)ES( build system module documentation for
+  the complete list\202.)EP(
+
+  ) 5 40 PR(config.install.bin     = root/bin/
+config.install.lib     = root/lib/
+config.install.doc     = root/share/doc/
+config.install.man     = root/share/man/
+config.install.include = root/include/)RP(
+  )BR(
+
+  )0 P(If we need to uninstall a previously installed package, there is the )0 2 A()SM()BD(bpkg-pkg-uninstall\2011\202)ES()ES()EA(
+  command:)EP(
+
+  ) 6 67 PR($ bpkg uninstall hello
+uninstall hello-1.0.0/hello/exe{hello} <- /usr/local/bin/
+uninstall libhello-1.1.0/libhello/libs{hello} <- /usr/local/lib/
+uninstall libprint-1.0.0/libprint/libs{print} <- /usr/local/lib/
+uninstall libformat-1.0.0/libformat/libs{format} <- /usr/local/lib/
+...)RP(
+
+  )BR(
+  )0 P(From the above listing we can gather that only the shared library
+  binaries were installed. In particular, neither static library binaries nor
+  headers and other development-related files \201such as non-versioned shared
+  library symlinks, )SM(pkg-config)ES( )SM(.pc)ES( files, etc\202 were
+  installed.)EP(
+
+  )0 P(The reason for this behavior is that by default the )0 2 A()SM()BD(bpkg-pkg-install\2011\202)ES()ES()EA(
+  command only instructs the build system to install packages that were
+  specified on the command line \201)SM(hello)ES( in out case\202 while the
+  build system in turn installs from dependency packages only what's necessary
+  for the packages it was instructed to install. In our case, installing the
+  )SM(hello)ES( also requires installing the shared library binaries that
+  it uses but none of the development-related files \201we don't need library
+  headers in order to run an executable\202.)EP(
+
+  )0 P(However, this default behavior of )0 2 A()SM()BD(bpkg-pkg-install\2011\202)ES()ES()EA(
+  \201and )0 2 A()SM()BD(bpkg-pkg-uninstall\2011\202)ES()ES()EA(\202
+  can be changed with the )SM(--recursive)ES( option, which instructs
+  )SM(bpkg)ES( to additionally fully install/uninstall dependency
+  packages.)EP(
+  )BR(
+
+  )0 P(Rather than installing the package locally we could instead generate a
+  )I(binary distribution package)ES( for it using the )0 2 A()SM()BD(bpkg-pkg-bindist\2011\202)ES()ES()EA(
+  command. Such a binary package can then be installed on a different machine.
+  Currently, the )SM(bindist)ES( command supports producing Debian \201and
+  alike, such as Ubuntu\202 and Fedora \201and alike, such as RHEL\202 packages as well
+  as installation archives for all operating systems. For example, to generate
+  a Debian package for our )SM(hello)ES( \201running on Debian or
+  alike\202:)EP(
+
+  ) 9 70 PR($ bpkg bindist --recursive=auto --private -o /tmp/hello-deb/ hello
+...
+generated debian package for hello/1.0.0:
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello-dbgsym_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.buildinfo
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.changes
+
+$ sudo apt-get install /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb)RP(
+
+  )0 P(And to generate a Fedora package \201running on Fedora or alike\202:)EP(
+
+  ) 7 71 PR($ bpkg bindist --recursive=auto --private hello
+...
+generated fedora package for hello/1.0.0:
+  ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm
+  ~/rpmbuild/RPMS/x86_64/hello-debuginfo-1.0.0-1.fc38.x86_64.rpm
+
+$ sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm)RP(
+
+  )0 P(And to generate an installation archive \201running on Windows in this
+  example\202:)EP(
+
+  ) 9 51 PR($ bpkg bindist --recursive=auto   ^
+  --private                       ^
+  --distribution=archive          ^
+  -o C:\200tmp\200hello-zip\200            ^
+  config.install.relocatable=true ^
+  hello
+...
+generated archive package for hello/1.0.0:
+  C:\200tmp\200hello-zip\200hello-1.0.0-x86_64-windows10.zip)RP(
+
+  )0 P(To upgrade or downgrade packages we again use the )SM(build)ES(
+  command. Here is a typical upgrade workflow:)EP(
+
+  ) 6 61 PR($ bpkg fetch              # refresh available package list
+$ bpkg status             # see if new versions are available
+
+$ bpkg uninstall hello    # uninstall old version
+$ bpkg build     hello    # upgrade to the latest version
+$ bpkg install   hello    # install new version)RP(
+
+  )0 P(Similar to )SM(bdep)ES(, to downgrade we have to specify the desired
+  version explicitly. There are also the )SM(--upgrade|-u)ES( and
+  )SM(--patch|-p)ES( as well as )SM(--immediate|-i)ES( and
+  )SM(--recursive|-r)ES( options that allow us to upgrade or patch
+  packages that we have built and/or their immediate or all dependencies \201see
+  )0 2 A()SM()BD(bpkg-pkg-build\2011\202)ES()ES()EA(
+  for details\202. For example, to make sure everything is patched, run:)EP(
+
+  ) 2 16 PR($ bpkg fetch
+$ bpkg build -pr)RP(
+
+  )0 P(If a package is no longer needed, we can remove it from the configuration
+  with )0 2 A()SM()BD(bpkg-pkg-drop\2011\202)ES()ES()EA(:)EP(
+
+  ) 16 51 PR($ bpkg drop hello
+following dependencies were automatically built but
+will no longer be used:
+  libhello
+  libformat
+  libprint
+drop unused packages? [Y/n] y
+  drop hello
+  drop libhello
+  drop libformat
+  drop libprint
+continue? [Y/n] y
+purged hello
+purged libhello
+purged libformat
+purged libprint)RP(
+
+  )0 2 10 H(1.9)WB 30 Sn()WB 12 Sn( Using System-Installed Dependencies)EH(
+
+  )0 P(Our operating system might already have a package manager \201which we will
+  refer to as )I(system package manager)ES(\202 and for various reasons we may
+  want to use the system-installed version of a dependency rather than
+  building one from source.)EP(
+
+  )BR(
+  )0 P(Using system-installed versions works best for mature rather than
+  rapidly-developed packages since for the latter you often need to track the
+  latest version \201which may not yet be available from the system repository\202
+  and/or test with multiple versions \201which is not something that many system
+  package managers support\202.)EP(
+
+  )0 P(We can also have some build configurations using a system-installed
+  version of a dependency while in others building it from source, for
+  example, for testing.)EP(
+  )BR(
+
+  )0 P(We can instruct )SM(build2)ES( to configure a dependency package as
+  available from the system rather than building it from source. Specifically,
+  we can install a suitable version manually \201for example, using the system
+  package manager\202 and then communicate this fact as well as the version
+  installed to )SM(build2)ES( so that it can use this information when
+  resolving version constraints. Furthermore, for Debian \201and alike, such as
+  Ubuntu\202 and Fedora \201and alike, such as RHEL\202 )SM(build2)ES( can
+  automatically query the system package manager for the installed version
+  and, if requested, automatically install a suitable version from the system
+  repository if none is already installed.)EP(
+
+  )0 P(Let's see how all this works in an example. Say, we want to use )R19 2 A()SM(libsqlite3)ES()EA( in our
+  )SM(hello)ES( project.)EP(
+
+  )0 P(The first step is to add it as a dependency, just like we did for
+  )SM(libhello)ES(. That is, add another )SM(depends)ES( entry to
+  )SM(manifest)ES(, then import it in )SM(buildfile)ES(, and so
+  on.)EP(
+
+  )0 P(Now, if we just run )SM(sync)ES( or try to build our project,
+  )SM(build2)ES( will download and build the new dependency from source,
+  just like it did for )SM(libhello)ES(. Instead, we can issue an
+  explicit )SM(sync)ES( command that configures the
+  )SM(libsqlite3)ES( package as coming from the system:)EP(
+
+  ) 1 27 PR($ bdep sync ?sys:libsqlite3)RP(
+
+  )0 P(Here )SM(?)ES( is a package flag that instructs )SM(build2)ES(
+  to treat it as a dependency and )SM(sys)ES( is a package scheme that
+  tells )SM(build2)ES( it comes from the system. See )0 2 A()SM()BD(bpkg-pkg-build\2011\202)ES()ES()EA(
+  for details.)EP(
+
+  )0 P(Now what exactly happens in this case depends on which operating system
+  we are running as well as whether )SM(libsqlite3)ES( is already
+  installed. Let's examine each combination in turn.)EP(
+
+  )0 P(If we are running on an operating system for which there is
+  )SM(build2)ES( support for the system package manager interactions
+  \201currently Debian, Fedora, or alike\202 and )SM(libsqlite3)ES( is already
+  installed, then )SM(build2)ES( will get its version from the system
+  package manager and use that when resolving version constraints.  For
+  example, running the above command on Debian with
+  )SM(libsqlite3-dev)ES( version )SM(3.42.0)ES( already
+  installed:)EP(
+
+  ) 4 53 PR($ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/3.42.0 \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#3)RP(
+
+  )0 P(If, on the other hand, we are running on an operating system for which
+  there is )SM(build2)ES( support for the system package manager
+  interactions but )SM(libsqlite3)ES( is not installed, then
+  )SM(build2)ES( will fail:)EP(
+
+  ) 7 68 PR($ bdep sync ?sys:libsqlite3
+error: no installed system package for libsqlite3
+  info: specify --sys-install to try to install it
+  info: specify libsqlite3/* if package is not installed with system
+        package manager
+  info: specify --sys-no-query to disable system package manager
+        interactions)RP(
+
+  )0 P(As you can see, )SM(build2)ES( will not attempt to automatically
+  install system packages unless explicitly requested with the
+  )SM(--sys-install)ES( option. Let's try to add that \201again, running on
+  Debian\202:)EP(
+
+  ) 16 64 PR($ bdep sync --sys-install ?sys:libsqlite3
+updating debian package index...
+synchronizing:
+  sys-install libsqlite3-0/3.42.0-1 \201required by sys:libsqlite3\202
+  configure sys:libsqlite3/3.42.0 \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#3
+installing debian packages...
+The following NEW packages will be installed:
+  libsqlite3-dev
+The following packages will be upgraded:
+  libsqlite3-0 sqlite3
+Do you want to continue? [Y/n] y
+...
+Setting up libsqlite3-0:amd64 \2013.42.0-1\202 ...
+Setting up libsqlite3-dev:amd64 \2013.42.0-1\202 ...
+Setting up sqlite3 \2013.42.0-1\202 ...)RP(
+
+  )BR(
+  )0 P(You can suppress the system package manager confirmation prompt with the
+  )SM(--sys-yes)ES( option. By default )SM(build2)ES( uses
+  )SM(sudo)ES( for system package manager interactions that normally
+  require administrative privileges \201fetch package metadata, install packages,
+  etc\202. This can be customized with the )SM(--sys-sudo)ES( option.)EP(
+  )BR(
+
+  )0 P(Finally, if we are running on an operating system for which there is no
+  )SM(build2)ES( support for the system package manager interactions,
+  then, as mentioned earlier, it is the user's responsibility to make sure a
+  suitable package is installed and, optionally, communicate its version. In
+  this case, unless we specify the installed version explicitly, a
+  system-installed package is assumed to satisfy any dependency constraint
+  \201indicated with the )SM(*)ES( wildcard instead of the version\202:)EP(
+
+  ) 4 48 PR($ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/* \201required by hello\202
+  upgrade hello/0.1.0-a.0.19700101000000#3)RP(
+
+  )BR(
+  )0 P(You can reduce the supported system package manager case to this case by
+  disabling the system package manager interactions with the
+  )SM(--sys-no-query)ES( option.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The system-installed dependency doesn't really have to come from the
+  system package manager. It can also be manually installed and, as discussed
+  in )0 13 1 A(Using Unpackaged Dependencies)13 0 TN TL()Ec /AF f D(, not
+  necessarily into the system-default location like
+  )SM(/usr/local)ES(.)EP(
+  )BR(
+
+  )0 P(In the above examples our dependency \201)SM(libsqlite3)ES(\202 still has
+  to be packaged and available from one of the project's prerequisite
+  repositories. But it can be a )I(stub)ES( \235 a package that does not
+  contain any source code and that can only be "obtained" from the system.)EP(
+
+  )BR(
+  )0 P(The purpose of a stub is to provide the )SM(build2)ES( package to
+  system package name and version mapping, in case it cannot be deduced
+  automatically. See )0 2 A(Package
+  Version)EA( and )0 2 A()SM(*-{name,
+  version, to-downstream-version})ES()EA( package manifest values for
+  details.)EP(
+  )BR(
+
+  )0 P(If we would like to use a completely unpackaged dependency, then, for the
+  supported system package manager case, we will need to pass the
+  )SM(--sys-no-stub)ES( option:)EP(
+
+  ) 1 55 PR($ bdep sync --sys-install --sys-no-stub ?sys:libsqlite3)RP(
+
+  )0 P(And for the unsupported system package manager case we will have to
+  specify the system version explicitly either as the actual version or as the
+  )SM(*)ES( wildcard, for example:)EP(
+
+  ) 1 49 PR($ bdep sync ?sys:libsqlite3/* ?sys:libcurl/7.47.0)RP(
+
+  )BR(
+  )0 P(The reason at least a stub is required by default is due to the automatic
+  mapping between )SM(build2)ES( and system packages often being
+  unreliable.)EP(
+  )BR(
+
+  )0 2 11 H(1.10)WB 31 Sn()WB 13 Sn( Using Unpackaged Dependencies)EH(
+
+  )0 P(Generally, we will have a much better time if all our dependencies come
+  as )SM(build2)ES( packages. Unfortunately, this won't always be the
+  case in the real world and some libraries that you may need will use other
+  build systems.)EP(
+
+  )BR(
+  )0 P(There is also the opposite problem: you may want to consume a library
+  that uses )SM(build2)ES( in a project that uses a different build
+  system. For that refer to )0 11 1 A(Package
+  Consumption)11 0 TN TL()Ec /AF f D(.)EP(
+  )BR(
+
+  )0 P(The standard way to consume such unpackaged libraries is to install them
+  \201not necessarily into a system-default location like
+  )SM(/usr/local)ES(\202 so that we have a single directory with their
+  headers and a single directory with their libraries. We can then configure
+  our builds to use these directories when searching for imported
+  libraries.)EP(
+
+  )BR(
+  )0 P(Needless to say, none of the )SM(build2)ES( dependency management
+  mechanisms such as version constraints or upgrade/downgrade will work on
+  such unpackaged libraries. You will have to manage all these yourself
+  manually.)EP(
+  )BR(
+
+  )0 P(Let's see how this all works in an example. Say, we want to use
+  )SM(libextra)ES( that uses a different build system in our
+  )SM(hello)ES( project. The first step is to manually build and install
+  this library for each build configuration that we have. For example, we can
+  install all such unpackaged libraries into )SM(unpkg-gcc)ES( and
+  )SM(unpkg-clang)ES(, next to our )SM(hello-gcc)ES( and
+  )SM(hello-clang)ES( build configurations:)EP(
+
+  ) 6 12 PR($ ls
+hello/
+hello-gcc/
+unpkg-gcc/
+hello-clang/
+unpkg-clang/)RP(
+
+  )BR(
+  )0 P(If you would like to try this out but don't have a suitable
+  )SM(libextra)ES(, you can create and install one with these
+  commands:)EP(
+
+  ) 2 67 PR($ bdep new -l c++ -t lib libextra -C libextra-gcc cc config.cxx=g++
+$ b install: libextra-gcc/ config.install.root=/tmp/unpkg-gcc)RP(
+  )BR(
+
+  )0 P(If we look inside one of these )SM(unpkg-*)ES( directories, we
+  should see something like this:)EP(
+
+  ) 10 23 PR($ tree unpkg-gcc
+unpkg-gcc/
+|-- include/
+|   \267-- libextra/
+|       \267-- extra.hxx
+\267-- lib/
+    |-- libextra.a
+    |-- libextra.so
+    \267-- pkgconfig/
+        \267-- libextra.pc)RP(
+
+  )0 P(Notice that )SM(libextra.pc)ES( \235 it's a
+  )SM()BD(pkg-config\2011\202)ES()ES( file that contains any extra compile and
+  link options that may be necessary to consume this library. This is the
+  )I(de facto)ES( standard for build systems to communicate library build
+  information to each other and is today supported by most commonly used
+  implementations. Speaking of )SM(build2)ES(, it both recognizes
+  )SM(.pc)ES( files when consuming third-party libraries and
+  automatically produces them when installing its own.)EP(
+
+  )BR(
+  )0 P(While this may all seem foreign to Windows users, there is nothing
+  platform-specific about this approach, including support for
+  )SM(pkg-config)ES(, which, at least in case of )SM(build2)ES(,
+  works equally well on Windows.)EP(
+  )BR(
+
+  )0 P(Next, we create a build configuration and configure it to use one of
+  these )SM(unpkg-*)ES( directories \201replace )SM(...)ES( with the
+  absolute path\202:)EP(
+
+  ) 3 52 PR($ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ \200
+  config.cc.poptions=-I.../unpkg-gcc/include       \200
+  config.cc.loptions=-L.../unpkg-gcc/lib)RP(
+
+  )BR(
+  )0 P(If using Visual Studio, replace )SM(-I)ES( with )SM(/I)ES( and
+  )SM(-L)ES( with )SM(/LIBPATH:)ES(.)EP(
+  )BR(
+
+  )0 P(Alternatively, if you want to reconfigure one of the existing build
+  configurations, then simply edit the )SM(build/config.build)ES( file
+  \201that is, )SM(hello-gcc/build/config.build)ES( in our case\202 and adjust
+  the )SM(poptions)ES( and )SM(loptions)ES( values. Or you can use
+  the build system directly to reconfigure the build configuration \201see )0 2 A()SM()BD(b\2011\202)ES()ES()EA( for
+  details\202:)EP(
+
+  ) 3 47 PR(b configure: ../hello-gcc/                    \200
+  config.cc.poptions+=-I.../unpkg-gcc/include \200
+  config.cc.loptions+=-L.../unpkg-gcc/lib)RP(
+
+  )BR(
+  )0 P(If all the unpackaged libraries included )SM(.pc)ES( files, then the
+  )SM(-L)ES( alone would have been sufficient. However, it doesn't hurt
+  to also add )SM(-I)ES(, for good measure.)EP(
+  )BR(
+
+  )0 P(Once this is done, adjust your )SM(buildfile)ES( to import the
+  library:)EP(
+
+  ) 1 34 PR(import libs += libextra%lib{extra})RP(
+
+  )0 P(And your source code to use it:)EP(
+
+  ) 1 29 PR(#include <libextra/extra.hxx>)RP(
+
+  )BR(
+  )0 P(Notice that we don't add the corresponding )SM(depends)ES( value to
+  the project's )SM(manifest)ES( since this library is not a package.
+  However, it is a good idea to instead add a )0 2 A()SM(requires)ES()EA(
+  entry as a documentation to users of our project.)EP(
+  )BR(
+
+  )0 1 12 H(2)WB 32 Sn()WB 14 Sn( Canonical Project Structure)EH(
+
+  )0 P(The goal of establishing a canonical )SM(build2)ES( project
+  structure is to create an ecosystem of packages that can coexist, are easy
+  to comprehend by both humans and tools, scale to complex, real-world
+  requirements, and, last but not least, are pleasant to work with.)EP(
+
+  )BR(
+  )0 P(Here by )I(canonical)ES( we mean a structure that on balance achieves
+  these objectives in the simplest possible way. However, not everyone agrees
+  with where that balance should be struck. As a result, this structure is
+  only recommended and )SM(build2)ES( is flexible enough to support
+  various arrangements used in modern C and C++ projects. Furthermore, the )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command provides a number of customization options and chances are you will
+  be able to create your preferred layout automatically. See )0 2 A(SOURCE LAYOUT)EA( for more
+  information and examples.)EP(
+  )BR(
+
+  )0 P(This canonical structure is primarily meant for a package \235 a
+  single library or program \201or, sometimes, a collection of related libraries
+  or programs\202 with a specific and well-defined function. While it may be less
+  suitable for more elaborate, multi-library/program )I(end-products)ES( that
+  are not meant to be packaged, most of the recommendations discussed below
+  would still apply. Oftentimes, you would start with a canonical project and
+  expand from there. Note also that while the discussion below focuses on C++,
+  most of it applies equally to C projects.)EP(
+
+  )BR(
+  )0 P(We often find ourselves factoring common functionality out of such
+  end-products and into separate packages, for example, in order to be reused
+  in another end-product. In this light, it can be helpful to organize a new
+  end-product project as a composition of individual packages or source
+  subdirectories that follow the canonical structure. The )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  )SM(--package)ES( and )SM(--source)ES( modes can be used to
+  automate this process.)EP(
+  )BR(
+
+  )0 P(By default, projects created by the )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command have the canonical structure. The overall layouts for executable
+  \201)SM(-t\240exe)ES(\202 and library \201)SM(-t\240lib)ES(\202 projects
+  are presented below.)EP(
+
+  ) 10 23 PR(<name>/
+|-- build/
+|-- <name>/
+|   |-- <name>.cxx
+|   |-- <name>.test.cxx
+|   |-- testscript
+|   \267-- buildfile
+|-- buildfile
+|-- manifest
+\267-- README.md)RP(
+
+  ) 13 23 PR(lib<name>/
+|-- build/
+|-- lib<name>/
+|   |-- <name>.hxx
+|   |-- <name>.cxx
+|   |-- <name>.test.cxx
+|   |-- export.hxx
+|   |-- version.hxx.in
+|   \267-- buildfile
+|-- tests/
+|-- buildfile
+|-- manifest
+\267-- README.md)RP(
+
+  )0 P(The canonical structure for both project types is discussed in detail in
+  the following sections with a short summary of the key points presented
+  below.)EP(
+
+  )UL(  )-1 LI()I(Header and source files \201or module interface
+  and implementation files\202 are next to each other \201no )SM(include/)ES(
+  and )SM(src/)ES( split\202.)ES(
+
+  )-1 LI()I(Headers are included with )SM(<>)ES(
+  and contain the project name as a subdirectory prefix, for example,
+  )SM(<libhello/hello.hxx>)ES(.)ES(
+
+  )-1 LI()I(Header and source file extensions are either
+  )SM(.hpp/.cpp)ES( or )SM(.hxx/.cxx)ES( \201)SM(.mpp)ES( or
+  )SM(.mxx)ES( for module interfaces\202.)ES(
+
+  )-1 LI()I(No special characters other
+  than )SM(_)ES( and )SM(-)ES( in file names with )SM(.)ES(
+  only used for extensions.)ES(
+  )LU(
+
+  )0 P(Let's start with naming our projects: A project name should only contain
+  ASCII alphabetic characters \201)SM([a-zA-Z])ES(\202, digits
+  \201)SM([0-9])ES(\202, underscores \201)SM(_)ES(\202, plus/minus
+  \201)SM(+-)ES(\202, and dots \201)SM(.)ES(\202 as well as be at least two
+  characters long \201see )0 2 A(Package
+  Name)EA( for additional restrictions and recommendations\202.)EP(
+
+  )0 P(If a project consists of a library and an executable, then they should be
+  split into separate packages \201see )0 10 1 A(Developing
+  Multiple Packages and Projects)10 0 TN TL()Ec /AF f D( for some common arrangements\202. In this
+  case, by convention, the library name should start with the )SM(lib)ES(
+  prefix, for example, )SM(libhello)ES( and )SM(hello)ES(. It is
+  also recommended \201but not required\202 to follow this convention in new
+  projects, even if there are no plans to have a related executable.)EP(
+
+  )BR(
+  )0 P(Using the )SM(lib)ES( prefix consistently offers several
+  benefits:)EP(
+
+  )4 OL(  )-1 LI(It is clear from the name to both humans and
+  tools what kind of project it is.
+
+  )-1 LI(All libraries are consistently named \201as opposed
+  to some with the )SM(lib)ES( prefix and some without\202.
+
+  )-1 LI(All library names are future-proofed to co-exist
+  with executables. If one starts with a library without the )SM(lib)ES(
+  prefix but later decides to add an executable, renaming the library would
+  unlikely be an option. And there is no need to spend mental energy on
+  thinking whether it's possible that an executable will be added later.
+  )LO(
+  )BR(
+
+  )0 P(The project's root directory should contain the root
+  )SM(buildfile)ES( and package )SM(manifest)ES( file. Other
+  recommended top-level subdirectory names are )SM(examples/)ES( \201for
+  libraries it is normally a subproject like )SM(tests/)ES(, as discussed
+  below\202, )SM(doc/)ES(, and )SM(etc/)ES( \201sample configurations,
+  scripts, third-party contributions, etc\202. See also build system )0 2 A(Project
+  Structure)EA( for details on the build-related files
+  \201)SM(buildfile)ES(\202 and subdirectories \201)SM(build/)ES(\202 as well as
+  the available alternative naming scheme.)EP(
+
+  )0 2 13 H(2.1)WB 33 Sn()WB 15 Sn( Source Subdirectory)EH(
+
+  )0 P(The project's source code is placed into a subdirectory of the root
+  directory named the same as the project, for example,
+  )SM(hello/hello/)ES( or )SM(libhello/libhello/)ES(. It is called
+  the project's )I(source subdirectory)ES(.)EP(
+
+  )0 P(There are several reasons for this layout: It implements the canonical
+  inclusion scheme \201discussed below\202 where each header is prefixed with its
+  project name as a subdirectory. It also has a predictable name where users
+  \201and tools\202 can expect to find our project's source code. Finally, this
+  layout prevents clutter in the project's root directory which usually
+  contains various other files \201like )SM(README)ES(,
+  )SM(LICENSE)ES(\202 and directories \201like )SM(doc/)ES(,
+  )SM(tests/)ES(, )SM(examples/)ES(\202.)EP(
+
+  )BR(
+  )0 P(Another popular approach is to place public headers into the
+  )SM(include/)ES( subdirectory and source files as well as private
+  headers into )SM(src/)ES(. The cited advantage of this layout is the
+  predictable location \201)SM(include/)ES(\202 that contains only the
+  project's public headers \201that is, its API\202. This can make the project
+  easier to navigate and understand while harder to misuse, for example, by
+  including a private header.)EP(
+
+  )0 P(However, this split layout is not without drawbacks:)EP(
+
+  )UL(  )-1 LI(Navigating between corresponding headers and sources is cumbersome. This
+  affects editing, grep'ing, as well as code browsing \201for example, on
+  GitHub\202.
+
+  )-1 LI(Implementing the canonical inclusion scheme would require an extra level
+  of subdirectories \201for example, )SM(include/libhello/)ES( and
+  )SM(src/libhello/)ES(\202, which only amplifies the previous issue.
+
+  )-1 LI(Supporting generated source code can be challenging: Source code
+  generators rarely provide support for writing headers and sources into
+  different directories. Even if we can move things around post-generation,
+  build systems may not support this arrangement \201for example,
+  )SM(build2)ES( does not currently support target groups with members in
+  different directories\202.
+  )LU(
+
+  )0 P(Also, the stated advantage of this layout \235 separation of public
+  headers from private \235 is not as clear cut as it may seem at first.
+  The common assumption of the split layout is that only headers from
+  )SM(include/)ES( are installed and, conversely, to use the headers
+  in-place, all one has to do is add )SM(-I)ES( pointing to
+  )SM(include/)ES(. On the other hand, it is common for public headers to
+  include private headers to, for example, call an implementation detail
+  function in inline or template code \201note that the same applies to private
+  modules imported in public module interfaces\202. Which means such private \201or
+  probably now more accurately called )I(implementation detail)ES(\202 headers
+  have to be placed in the )SM(include/)ES( directory as well, perhaps
+  into a subdirectory \201such as )SM(details/)ES(\202 or with a file name
+  suffix \201such as )SM(-impl)ES(\202 to signal to the user that they are
+  still "private". Needless to say, in an actively developed project, keeping
+  track of which private headers can still stay in )SM(src/)ES( and which
+  have to be moved to )SM(include/)ES( \201and vice versa\202 is a tedious,
+  error-prone task. As a result, practically, the split layout quickly
+  degrades into the "all headers in )SM(include/)ES(" arrangement which
+  negates its main advantage.)EP(
+
+  )0 P(It is also not clear how the split layout will translate to modularized
+  projects. With modules, both the interface and implementation \201including
+  non-inline/template function definitions\202 can reside in the same file with a
+  substantial number of C++ developers finding this arrangement appealing. If
+  a project consists of only such single-file modules, then
+  )SM(include/)ES( and )SM(src/)ES( have effectively become the same
+  thing \201note that there couldn't be any "private" modules in
+  )SM(src/)ES( since there would be nobody to import them\202. In a sense,
+  we already have this situation with header-only libraries except that, in
+  the case of modules, calling the directory )SM(include/)ES( would be an
+  anachronism.)EP(
+
+  )0 P(To summarize, the split directory arrangement offers little benefit over
+  the combined directory layout, has a number of real drawbacks, and does not
+  fit modularized projects well. In practice, private headers are placed into
+  )SM(include/)ES(, often either in a subdirectory or with a special file
+  name suffix, a mechanism that is readily available in the combined directory
+  layout.)EP(
+  )BR(
+
+  )0 P(All headers within a project should be included using the
+  )SM(<>)ES( style inclusion and contain the project name as a
+  subdirectory prefix. And all headers means )I(all headers)ES( \235
+  public, private, or implementation detail, in executables or in
+  libraries.)EP(
+
+  )0 P(As an example, let's say we've added )SM(utility.hxx)ES( to our
+  )SM(hello)ES( project. This is how it should be included in
+  )SM(hello.cxx)ES(:)EP(
+
+  ) 5 45 PR(// #include "utility.hxx"           // Wrong.
+// #include <utility.hxx>           // Wrong.
+// #include "../hello/utility.hxx"  // Wrong.
+
+#include <hello/utility.hxx>)RP(
+
+  )0 P(Similarly, if we want to include )SM(hello.hxx)ES( from
+  )SM(libhello)ES(, then the inclusion should look like this:)EP(
+
+  ) 1 29 PR(#include <libhello/hello.hxx>)RP(
+
+  )BR(
+  )0 P(The problem with the )SM("")ES( style inclusion is if the header is
+  not found relative to the including file, most compilers will continue
+  looking for it in the include search paths, the same as for
+  )SM(<>)ES(. As a result, if the header is not present in the right
+  place \201for example, because it was mistakenly not listed as to be
+  installed\202, chances are that a completely unrelated header with the same
+  name will be found and included. Needless to say, debugging situations like
+  these is unpleasant.)EP(
+
+  )0 P(Prefixing all inclusions with the project name as subdirectory also makes
+  sure that headers with common names \201for example, )SM(utility.hxx)ES(\202
+  can coexist \201for example, when installed into a system-wide directory, such
+  as )SM(/usr/include)ES(\202. The subdirectory prefix also plays an
+  important role in supporting auto-generated headers.)EP(
+
+  )0 P(Note also that this header inclusion scheme is consistent with the module
+  importation, for example:)EP(
+
+  ) 1 21 PR(import hello.utility;)RP(
+
+  )0 P(Finally, note that while adding the subdirectory prefix to the
+  )SM("")ES( style inclusion \201for example,
+  )SM("libhello/hello.hxx")ES(\202 will make finding an unrelated header
+  unlikely, there is still a possibility. And it is not clear why take the
+  chance when there are no benefits. So let's imagine the )SM("")ES(
+  style inclusion does not exist and we will all have a much better time.)EP(
+  )BR(
+
+  )0 P(If you have to disregard every rule and recommendation in this section
+  but one, for example, because you are working on an existing library, then
+  at minimum insist on this: )BD(public header inclusions must use the library
+  name as a subdirectory prefix)ES(.)EP(
+
+  )0 P(The project's source subdirectory can have subdirectories of its own, for
+  example, to organize the code into components. Naturally, header inclusions
+  will need to contain such subdirectories, for example
+  )SM(<libhello/core/hello.hxx>)ES(. When the project's headers are
+  installed \201for example, into )SM(/usr/include)ES(\202, this subdirectory
+  hierarchy is automatically recreated.)EP(
+
+  )0 P(If you would like to separate public API headers/modules from
+  implementation details, the convention is to place them into the
+  )SM(details/)ES( subdirectory. For example:)EP(
+
+  ) 5 23 PR(libhello/
+\267-- libhello/
+    |-- details/
+    |   \267-- utility.hxx
+    \267-- ...)RP(
+
+  )BR(
+  )0 P(If a project has truly private headers \201for example, proprietary code\202
+  that must be clearly separated from public and implementation detail
+  headers, then they can be placed into the )SM(private/)ES(
+  subdirectory, next to )SM(details/)ES(. In a sense, this arrangement
+  mimics the C++ public/protected/private member access.)EP(
+  )BR(
+
+  )0 P(It is recommended that you still install the implementation detail
+  headers and modules for the reasons discussed above. If, however, you would
+  like to disable their installation, you can add the following line to your
+  source subdirectory )SM(buildfile)ES(:)EP(
+
+  ) 1 31 PR(details/hxx{*}: install = false)RP(
+
+  )BR(
+  )0 P(If you are creating a )I(family of libraries)ES( with a common name
+  prefix, then it may make sense to use a nested source subdirectory layout
+  with a common top-level directory. As an example, let's say we have the
+  )SM(libstud-path)ES( and )SM(libstud-url)ES( libraries that belong
+  to the same )SM(libstud)ES( family. Their source subdirectory layouts
+  could look like this:)EP(
+
+  ) 15 23 PR(libstud-path/
+\267-- libstud/
+    \267-- path/
+        |-- path.hxx
+        |-- path-io.hxx
+        |-- ...
+        \267-- buildfile
+
+libstud-url/
+\267-- libstud/
+    \267-- url/
+        |-- url.hxx
+        |-- url-io.hxx
+        |-- ...
+        \267-- buildfile)RP(
+
+  )0 P(With the header inclusion paths adjusted accordingly:)EP(
+
+  ) 2 32 PR(#include <libstud/path/path.hxx>
+#include <libstud/url/url.hxx>)RP(
+
+  )0 P(The )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command provides the )SM(subdir)ES( project type sub-option that allows
+  us to customize the source subdirectory within a project. For example:)EP(
+
+  ) 1 57 PR($ bdep new -l c++ -t lib,subdir=libstud/path libstud-path)RP(
+  )BR(
+
+  )0 2 14 H(2.2)WB 34 Sn()WB 16 Sn( Source Naming)EH(
+
+  )0 P(When naming source files, only use ASCII alphabetic characters, digits,
+  as well as )SM(_)ES( \201underscore\202 and )SM(-)ES( \201minus\202. Use
+  )SM(.)ES( \201dot\202 only for extensions, that is, trailing parts of the
+  name that )I(classify)ES( your files. Examples of good names:)EP(
+
+  ) 4 21 PR(SmallVector.hxx
+small-vector.hxx
+small_vector.hxx
+small-vector.test.cxx)RP(
+
+  )0 P(Examples of bad names:)EP(
+
+  ) 2 16 PR(small+vector.hxx
+small.vector.hxx)RP(
+
+  )BR(
+  )0 P(If you are using )SM(_)ES( or )SM(-)ES( as word separators in
+  filesystem names, pick one and use it consistently throughout the
+  project.)EP(
+  )BR(
+
+  )0 P(The C source file extensions are always )SM(.h)ES(/)SM(.c)ES(.
+  The two alternative C++ source file extension schemes are )SM(.?pp)ES(
+  and )SM(.?xx)ES(:)EP(
+
+  ) 7 22 PR(file        .?pp  .?xx
+
+header      .hpp  .hxx
+module      .mpp  .mxx
+inline      .ipp  .ixx
+template    .tpp  .txx
+source      .cpp  .cxx)RP(
+
+  )BR(
+  )0 P(The )SM(.mxx)ES(/)SM(.mpp)ES( extension is for the module
+  interface translation units with module implementation units \201if any\202 using
+  the )SM(.cxx)ES(/)SM(.cpp)ES( extension. If both are present, then
+  it makes sense to use the same base name, similar to headers. For
+  example:)EP(
+
+  ) 2 14 PR(hello-core.mxx
+hello-core.cxx)RP(
+  )BR(
+
+  )0 P(The use of inline and template files is a matter of taste. If used, they
+  are included at the end of the header/module files and contain definitions
+  of inline and non-inline template functions, respectively. The
+  )SM(.?xx)ES(/)SM(.?pp)ES( files with the same name \201or, sometimes,
+  name prefix\202 are assumed to be related and are collectively called a
+  )I(module)ES(. This term is meant to correspond directly
+  to a C++ module.)EP(
+
+  )0 P(By default the )0 2 A()SM()BD(bdep-new\2011\202)ES()ES()EA(
+  command uses the naming )SM(.?xx)ES( scheme. To use )SM(.?pp)ES(
+  instead, pass )SM(-t\240c++,cpp)ES(.)EP(
+
+  )BR(
+  )0 P(There are several reasons not to "reuse" the )SM(.h)ES( C header
+  extension for C++ files:)EP(
+
+  )UL(  )-1 LI(There can be a need for both C and C++ headers for the same module.
+
+  )-1 LI(It allows tools to accurately determine the language from the file
+  name.
+
+  )-1 LI(It is easier to search for C++ source code using wildcard patterns
+  \201)SM(*.?pp)ES(\202.
+  )LU(
+
+  )0 P(The last two reasons are also why headers without extensions are probably
+  not worth the trouble.)EP(
+  )BR(
+
+  )0 P(Source files corresponding to C++ modules need to embed a sufficient
+  amount of "module name tail" in their names to unambiguously resolve all the
+  modules used in a project. When deriving file names from C++ module names,
+  )SM(.)ES( \201dot\202 should be replaced with either )SM(_)ES(
+  \201underscore\202, )SM(-)ES( \201minus\202, a case change, or a directory
+  separator, according to your project's file naming scheme. For example, if
+  our )SM(libhello)ES( had two modules, )SM(hello.core)ES( and
+  )SM(hello.extra)ES(, then their interface units could be named as
+  follows:)EP(
+
+  ) 14 15 PR(hello-core.mxx
+hello-extra.mxx
+
+hello_core.mxx
+hello_extra.mxx
+
+HelloCore.mxx
+HelloExtra.mxx
+
+hello/core.mxx
+hello/extra.mxx
+
+core.mxx
+extra.mxx)RP(
+
+  )0 P(As discussed in the next section, public module names should start with
+  the project name and for such modules it is customary to omit this first
+  component from file names \201the last variant in the above example\202. See also
+  )0 2 A(Building
+  Modules)EA( for a more detailed discussion of the module name to file name
+  mapping.)EP(
+
+  )0 2 15 H(2.3)WB 35 Sn()WB 17 Sn( Source Contents)EH(
+
+  )0 P(Let's now move inside our source files. All macros defined by a project,
+  such as include guards, version and symbol export macros, etc., must all
+  start with the project name \201including the )SM(lib)ES( prefix for
+  libraries\202, for example )SM(LIBHELLO_VERSION)ES(. Similarly, the
+  library's namespace and module names \201both public and implementation detail\202
+  should all start with the library name but without the )SM(lib)ES(
+  prefix. For example:)EP(
+
+  ) 8 25 PR(// libhello/hello.mxx
+
+export module hello.core;
+
+namespace hello
+{
+  ...
+})RP(
+
+  )0 P(An executable project may use a namespace \201in which case it is natural to
+  name it after the project\202 and its \201private\202 modules shouldn't be qualified
+  with the project name \201in order not to clash with similarly named modules
+  from the corresponding library, if any\202. A library may
+  also have private modules in which case they shouldn't be qualified
+  either.)EP(
+
+  )BR(
+  )0 P(Hopefully by now the recommendation for the )SM(lib)ES( prefix
+  should be easy to understand: oftentimes executables and libraries come in
+  pairs, for example )SM(hello)ES( and )SM(libhello)ES(, with the
+  reusable functionality being factored out from the executable into the
+  library. It is natural to want to use the same name )I(stem)ES(
+  \201)SM(hello)ES( in our case\202 for both.)EP(
+
+  )0 P(The above naming scheme \201with the )SM(lib)ES( prefix present in some
+  names but not others\202 is carefully chosen to allow such library/executable
+  pairs to coexist and be used together without too much friction. For
+  example, both the library and executable can have a header called
+  )SM(utility.hxx)ES( with the executable being able to include both and
+  even get the "merged" functionality without extra effort \201since they use the
+  same namespace\202:)EP(
+
+  ) 9 40 PR(// hello/hello.cxx
+
+#include <hello/utility.hxx>
+#include <libhello/utility.hxx>
+
+namespace hello
+{
+  // Contains names from both utilities.
+})RP(
+  )BR(
+
+  )0 P(A canonical library project contains two special headers:
+  )SM(export.hxx)ES( \201or )SM(export.hpp)ES(\202 that defines the
+  library's symbol exporting macro as well as )SM(version.hxx)ES( \201or
+  )SM(version.hpp)ES(\202 that defines the library's version macros \201see )0 2 A()SM(version)ES(
+  Module)EA( for details\202.)EP(
+
+  )0 2 16 H(2.4)WB 36 Sn()WB 18 Sn( Tests)EH(
+
+  )0 P(A project may have )I(unit)ES( and/or )I(functional/integration)ES(
+  tests. Unit tests exercise each module's \201potentially private\202 functionality
+  in isolation. In contrast, functional/integration tests exercise the project
+  via its public API, just like the real users of the project would.)EP(
+
+  )0 P(A source file that implements a module's unit tests should be placed next
+  to that module's files and be called with the module's name plus the
+  )SM(.test)ES( second-level extension. It is expected to implement an
+  executable \201that is, define )SM(main\201\202)ES(\202. If a module uses
+  Testscript for unit testing, then the corresponding file should be called
+  with the module's name plus the )SM(.test.testscript)ES( extension. For
+  example:)EP(
+
+  ) 6 29 PR(libhello/
+\267-- libhello/
+    |-- hello.hxx
+    |-- hello.cxx
+    |-- hello.test.cxx
+    \267-- hello.test.testscript)RP(
+
+  )BR(
+  )0 P(All source files \201that is, headers, modules, etc\202 with the
+  )SM(.test)ES( second-level extension are assumed to belong to unit
+  tests and are automatically excluded from the library/executable
+  sources.)EP(
+  )BR(
+
+  )0 P(A library's functional/integration tests should go into the
+  )SM(tests/)ES( subdirectory. Each such test should reside in a separate
+  subdirectory, potentially organized into nested subdirectories \201for
+  instance, to correspond to the source subdirectory components\202. For example,
+  if we were creating an XML parsing and serialization library, then our
+  )SM(tests/)ES( could have the following layout:)EP(
+
+  ) 13 22 PR(tests/
+|-- basics/
+|   |-- driver.cxx
+|   \267-- buildfile
+|-- parser/
+|   |-- pull/
+|   |   |-- driver.cxx
+|   |   \267-- buildfile
+|   \267-- push/
+|       |-- driver.cxx
+|       \267-- buildfile
+\267-- serializer/
+    \267-- ...)RP(
+
+  )0 P(In the canonical library project created by )SM(bdep-new)ES( the
+  )SM(tests/)ES( subdirectory is an unnamed subproject \201in the build
+  system terms\202. This allows us to build and run tests against an installed
+  version of the library \201see )0 2 A(Testing)EA(
+  for more information on the contents of this directory\202.)EP(
+
+  )BR(
+  )0 P(The )SM(build2)ES( CI implementation will automatically perform the
+  installation test if a project contains the )SM(tests/)ES( subproject.
+  See )SM(bbot)ES( )0 2 A(Worker
+  Logic)EA( for details.)EP(
+  )BR(
+
+  )0 P(By default executable projects do not have the )SM(tests/)ES(
+  subprojects instead placing integration tests next to the source code \201the
+  )SM(testscript)ES( file; see )0 2 A(The build2 Testscript
+  Language)EA( for details\202. However, if desired, executable projects can have
+  the )SM(tests/)ES( subproject, the same as libraries.)EP(
+
+  )BR(
+  )0 P(By default projects created by )SM(bdep-new)ES( include support for
+  functional/integration testing but exclude support for unit testing. These
+  defaults, however, can be overridden with )SM(no-tests)ES( and
+  )SM(unit-tests)ES( options, respectively. For example:)EP(
+
+  ) 1 44 PR($ bdep new -l c++ -t lib,unit-tests libhello)RP(
+
+  )0 P(The rationale behind these defaults is that if a functionality can be
+  tested through the public API, then we should generally prefer integration
+  to unit testing. And in simple projects the entire functionality is often
+  exposed through the public API. At the same time, support for unit testing
+  adds extra complexity to the build infrastructure. Note also that it is
+  fairly straightforward to add support for unit testing at a later stage. The
+  relevant build logic is localized in the source subdirectory
+  )SM(buildfile)ES( so you can simply generate a new project with unit
+  tests enabled and copy over the relevant parts.)EP(
+  )BR(
+
+  )0 2 17 H(2.5)WB 37 Sn()WB 19 Sn( Build Output)EH(
+
+  )0 P(There are no )SM(bin/)ES( or )SM(obj/)ES( subdirectories: build
+  output \201object files, libraries, executables, etc\202 go into a parallel
+  directory structure \201in case of an out of source build\202 or next to the
+  sources \201in case of an in source build\202. See )0 2 A(Output
+  Directories and Scopes)EA( for details on in and out of source builds.)EP(
+
+  )0 P(Projects managed with )0 2 A()SM()BD(bdep\2011\202)ES()ES()EA( are always
+  built out of source. However, by default, the source directory is configured
+  as )I(forwarded)ES( to one of the out of source builds. This has two
+  effects: we can run the build system driver )0 2 A()SM()BD(b\2011\202)ES()ES()EA( directly in the
+  source directory and certain "interesting" targets \201such as executables,
+  documentation, test results, etc\202 will be automatically )I(backlinked)ES( to
+  the source directory \201see )0 2 A(Configuration)EA(
+  for details on forwarded configurations\202. The following listing illustrates
+  this setup for our )SM(hello)ES( project \201executables are marked with
+  )SM(*)ES(\202:)EP(
+
+  ) 6 36 PR(                 hello-gcc/
+hello/    ~~>    \267-- hello/
+|-- build/    ~~>    |-- build/
+\267-- hello/    ~~>    \267-- hello/
+    |-- hello.cxx        |-- hello.o
+    \267-- hello     -->    \267-- *hello)RP(
+
+  )0 P(The result is an )I(as-if)ES( in source build with all the benefits \201such
+  as having both source and relevant output in the same directory\202 but without
+  any of the drawbacks \201such as the inability to have multiple builds or
+  source directory cluttered with object files\202.)EP(
+
+  )BR(
+  )0 P(The often cited motivation for placing executables into )SM(bin/)ES(
+  is that in many build systems it is the only way to make things runnable in
+  a reasonably cross-platform manner. The major drawback of this arrangement
+  is the need for unique executable names which is especially constraining
+  when writing tests where it is convenient to call the executable just
+  )SM(driver)ES( or )SM(test)ES(.)EP(
+
+  )0 P(In )SM(build2)ES( there is no such restriction and all executables
+  can run )I(in-place)ES(. This is achieved with )SM(rpath)ES( which is
+  emulated with DLL assemblies on Windows.)EP(
+  )BR(
+
+)BR(
+
+)WB NL
+/TE t D NP /OU t D TU PM 1 eq and{/Pn () D showpage}if end restore

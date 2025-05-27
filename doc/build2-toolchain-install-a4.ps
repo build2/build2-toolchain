@@ -1,0 +1,2317 @@
+%!PS
+%%Title: The build2 Toolchain Installation and Upgrade
+%%Creator: html2ps version 1.0 beta7
+%%EndComments
+save
+2000 dict begin
+/d {bind def} bind def
+/D {def} d
+/t true D
+/f false D
+/FL [/Times-Roman
+/Times-Italic
+/Times-Bold
+/Times-BoldItalic
+/Courier
+/Courier-Oblique
+/Courier-Bold
+/Courier-BoldOblique
+/Helvetica
+/Helvetica-Oblique
+/Helvetica-Bold
+/Helvetica-BoldOblique] D
+/WF t D
+/WI 0 D
+/F 1 D
+/IW 454 F div D
+/IL 672 F div D
+/PS 842 D
+/EF [0 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 2 2] D
+/EZ [12 9 19 17 15 13 12 11 12 12 12 12 12 12 12 12 12 12 12 12 12 12 8 8] D
+/Ey [0 0 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] D
+/EG [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1] D
+/Tm [1 1 0.8 0.8 0.8 0.8 0.8 0.8 0 0 0 0 0 0 0.5 1 1 1 1 0 0 1.3 0 0] D
+/Bm [1 1 0.5 0.5 0.5 0.5 0.5 0.5 0 0 0 0 0 0 0.5 1 1 1 1 0 0 1 0 0] D
+/Lm [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 2 0 0 2 0 0 0] D
+/Rm [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0] D
+/EU [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 0 0] D
+/NO f D
+/YY [[{()}{ h }][{ h }{()}][{()}{()}]] D
+/ZZ [[{ (Revision ) ME 0 get join(, May 2025)join }{ Pn }][{ Pn }{ (Revision ) ME 0 get join(, May 2025)join }][{ Ti }{ Ti }]] D
+/Ts EZ 0 get D
+/TU f D
+/Xp t D
+/AU f D
+/SN 0 D
+/Cf t D
+/Tp t D
+/Fe f D
+/TI 2 Ts mul D
+/Fm 14 D
+/xL 71 D
+/xR 71 D
+/yL 757 D
+/yR 757 D
+/Wl 454 F div D
+/Wr 454 F div D
+/hL 672 F div D
+/hR 672 F div D
+/FE {newpath Fm neg Fm M CP BB IW Fm add Fm L IW Fm add IL Fm add neg L CP BB
+ Fm neg IL Fm add neg L closepath} D
+/LA {PM 0 eq{/IW Wl D /IL hL D}{/IW Wr D /IL hR D}ie /W IW D /LL W D /LS W D
+ TU PM 0 eq and{IW 56 F div add SA{Sf div}if 0 translate}
+ {PM 0 eq{xL yL}{xR yR}ie translate F SA{Sf mul}if dup scale
+ CS CF FS Cf{CA CL get VC}if /Bb f D}ie 0 0 M
+ TF not Tc or {Cf{gsave SA{1 Sf div dup scale}if Cb VC FE fill grestore}if}if}D
+/Pi 0 Ts mul D
+/SG [0.8 1 1] D
+/Ab 15 D
+/J 0 D
+/Tc t D
+/NH 6 D
+/Nf f D
+/Pa f D
+/LH 1.2 D
+/XR f D
+/Xr {/pN E D ( [p ) WB pN WB (] )WB} D
+/Db [16#FF 16#FF 16#FF] D
+/Dt [16#00 16#00 16#00] D
+/eA f D
+/Fi f D
+/bT f D
+/Lc t D
+/Dl [16#00 16#00 16#00] D
+/LX f D
+/Br 0.25 D
+/IA ([IMAGE]) D
+/DS {/PF f D()WB NL NP()pop RC ZF} D
+/Gb f D
+/Mb t D
+/Hc [16#00 16#00 16#00] D
+/Bl 3 D
+/MI -15.6 D
+/DX (DRAFT) D
+/Di 0 D
+/Tt 113.385826771654 D
+/Th { (
+) 2 Al()BR (
+  ) 0 1 -1 H()4 FZ (The ) SM (build2) ES ( ) ME 1 get join ES()EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+  ) 0 1 -1 H ( ) EH (
+) Ea()BR (
+  ) 0 P (Copyright © ) ME 2 get join(.)join BR (  Permission is granted to copy, distribute and/or modify this document under
+  the terms of the MIT License.) EP (
+
+  ) 0 P (Revision ) SM() ME 0 get join ES (, May 2025) BR (  This revision of the document describes the ) SM (build2) ES ( ) ME 3 get join(
+  )join SM() ME 0 get join(.x)join ES ( series.) EP()} D
+/tH {()0 1 -1 H (Table of Contents) EH()} D
+/FD 2 D
+/Dy 2 D
+/cD [16#F0 16#F0 16#F0] D
+/FW 0.6 D
+/FU [16#00 16#00 16#00] D
+/ET {/RM f D /A0 3 D /PN SN D /OU t D /Ou t D /W IW D /LL W D D1
+ Ms not TP and{Ip}if /TF f D} D
+
+%-- End of variable part --
+/MySymbol 10 dict dup begin
+ /FontType 3 D /FontMatrix [.001 0 0 .001 0 0 ] D /FontBBox [25 -10 600 600] D
+ /Encoding 256 array D 0 1 255{Encoding exch /.notdef put}for
+ Encoding (e) 0 get /euro put
+ /Metrics 2 dict D Metrics begin
+  /.notdef 0 D
+  /euro 651 D
+ end
+ /BBox 2 dict D BBox begin
+  /.notdef [0 0 0 0] D
+  /euro [25 -10 600 600] D
+ end
+ /CharacterDefs 2 dict D CharacterDefs begin
+  /.notdef {} D
+  /euro{newpath 114 600 moveto 631 600 lineto 464 200 lineto 573 200 lineto
+   573 0 lineto -94 0 lineto 31 300 lineto -10 300 lineto closepath clip
+   50 setlinewidth newpath 656 300 moveto 381 300 275 0 360 arc stroke
+   -19 350 moveto 600 0 rlineto -19 250 moveto 600 0 rlineto stroke}d
+ end
+ /BuildChar{0 begin
+  /char E D /fontdict E D /charname fontdict /Encoding get char get D
+  fontdict begin
+   Metrics charname get 0 BBox charname get aload pop setcachedevice
+   CharacterDefs charname get exec
+  end
+ end}D
+ /BuildChar load 0 3 dict put /UniqueID 1 D
+end
+definefont pop
+
+/Cd {aload length 2 idiv dup dict begin {D} repeat currentdict end} D
+/EX {EC cvx exec} D
+/DU {} d
+/BB {pop pop}d
+/ie {ifelse} d
+/E {exch} d
+/M {moveto} d
+/R {rmoveto} d
+/L {lineto} d
+/RL {rlineto} d
+/CP {currentpoint} d
+/SW {stringwidth} d
+/GI {getinterval} d
+/PI {putinterval} d
+/Sg {setgray} d
+/LW {setlinewidth} d
+/S {dup () ne OU and{0 Co R AT 3 eq LB and HF not and A1 0 ne A2 0 ne or and
+ {A2 0 32 A1 0 6 -1 roll awidthshow}{show}ie 0 Co neg R}{pop}ie
+ OU PH 3 eq or{/Ms t D}if} D
+/U {OU{gsave CP currentfont /FontInfo get /UnderlinePosition get
+ 0 E currentfont /FontMatrix get dtransform E pop add newpath M dup SW pop
+ CJ 0 RL stroke grestore}if} D
+/B {OU Br 0 gt and{CP Ts neg Ts .33 mul R gsave 0 Sg
+ CP newpath Ts Br mul 0 360 arc closepath UI 2 mod 0 eq{stroke}{fill}ie
+ grestore M CP E Ts Br 1 add mul sub E BB /Ms t D}if}D
+/NP {Ms TP not or PA and OU and{TP{OR}if f1{mF k2 /mF E D /YC 0 D}if
+ TP TU not PM 0 eq or and{showpage}if DU Ip TE not{LA}if 0.6 LW
+ /CI 0 D /TP t D /Hs f D /hl 6 D /Hv 6 D /HI hi D /Ms f D}if Bs XO BO M} D
+/Np {LE sub CP E pop gt PL 0 eq and{NP}if}D
+/Ip {/PN PN 1 add D /Pn RM{1}{4}ie PN Ns D /PM PN SN sub 2 mod D} D
+/GP {E dup 3 -1 roll get PN 1 add 2 mod get dup type /integertype eq
+ {get 0 get}{E pop}ie}d
+/Fc {dup 2 GP exec SW pop /S1 E D dup 1 GP exec SW pop /S2 E D 0 GP exec SW
+ pop /S3 E D S1 0 gt{S2 2 mul S1 add S3 2 mul S1 add 2 copy lt{E}if pop}{0}ie
+ S2 S3 add 2 copy lt{E}if pop IW .9 mul div dup 1 gt{1 E div}{pop 1}ie}D
+/OR {Df{Sd}if tp not{gsave SA{1 Sf div dup scale}if Fe{Cf{FU VC}if FW LW
+ 1 setlinejoin FE stroke}if /YO {60 F div dup 40 gt{pop 40}if}D /cs CS D
+ /cf CF D /CF 0 D /pf PF D /PF f D /Fn FN D /At AT D /AT 0 D /FN EF Hf 1 add
+ get D Fz Fs FS ZZ Fc Fz mul Fs FS EU Hf 1 add get dup type /arraytype eq
+ Cf and{VC}{pop 0 Sg}ie IW IL neg YO sub M ZZ 1 GP exec dup SW pop neg 0 R Sh
+ 0 IL neg YO sub M ZZ 0 GP exec Sh ZZ 2 GP exec dup SW pop IW E sub 2 div
+ IL neg YO sub M Sh Fz Fs FS NO{/AW IW Pn SW pop sub D AW 2 div IL neg YO sub
+ S1 0 gt S2 AW .45 mul gt or S3 AW .45 mul gt or{Fz 2 mul sub}if M Pn Sh}if
+ EU Hf get dup type /arraytype eq Cf and{VC}{pop 0 Sg}ie YY Fc /FN EF Hf get D
+ Hz mul HS FS IW YO M YY 1 GP exec dup SW pop neg 0 R Sh 0 YO M YY 0 GP exec Sh
+ YY 2 GP exec dup SW pop IW E sub 2 div YO M Sh /FN Fn D /AT At D t Pb XO SZ
+ SL get neg R /PF pf D grestore /CF 0 D cs cf FS}if}D
+/Sh {dup () ne{CP Hz 4 div sub BB show CP CS add BB}{pop}ie}D
+/Pb {/OU E D /Ou OU D /PB t D 0 0 M Ba{/Sa save D /BP t D /Fl t D RC /PL 0 D
+ /PH 0 D /W IW D /LE IL .7 mul D /EO 0 D SI ZF /YA 0 D /BO 0 D /C1 () D
+ BA 0 Ts neg R Bb{Xl Yl Xh Yh}if Bb CP Sa restore M
+ {/Yh E D /Xh E D /Yl E D /Xl E D}if /Fl t D}if
+ BL /OU t D /HM f D /Ou t D /PB f D} D
+/Bs {/BP Ba not D}D
+/reencodeISO {
+ dup dup findfont dup length dict begin{1 index /FID ne{D}{pop pop}ie}forall
+ /Encoding ISOLatin1Encoding D currentdict end definefont} D
+/ISOLatin1Encoding [
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quoteright
+/parenleft/parenright/asterisk/plus/comma/hyphen/period/slash
+/zero/one/two/three/four/five/six/seven/eight/nine/colon/semicolon
+/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N
+/O/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright
+/asciicircum/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m
+/n/o/p/q/r/s/t/u/v/w/x/y/z/braceleft/bar/braceright/asciitilde
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/space/exclamdown/cent/sterling/currency/yen/brokenbar
+/section/dieresis/copyright/ordfeminine/guillemotleft/logicalnot
+/hyphen/registered/macron/degree/plusminus/twosuperior/threesuperior
+/acute/mu/paragraph/periodcentered/cedilla/onesuperior/ordmasculine
+/guillemotright/onequarter/onehalf/threequarters/questiondown
+/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex
+/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute
+/Thorn/germandbls/agrave/aacute/acircumflex/atilde/adieresis
+/aring/ae/ccedilla/egrave/eacute/ecircumflex/edieresis/igrave
+/iacute/icircumflex/idieresis/eth/ntilde/ograve/oacute/ocircumflex
+/otilde/odieresis/divide/oslash/ugrave/uacute/ucircumflex/udieresis
+/yacute/thorn/ydieresis
+] D
+[128/backslash 129/parenleft 130/parenright 141/circumflex 142/tilde
+143/perthousand 144/dagger 145/daggerdbl 146/Ydieresis 147/scaron 148/Scaron
+149/oe 150/OE 151/guilsinglleft 152/guilsinglright 153/quotesinglbase
+154/quotedblbase 155/quotedblleft 156/quotedblright 157/endash 158/emdash
+159/trademark]
+aload length 2 idiv 1 1 3 -1 roll{pop ISOLatin1Encoding 3 1 roll put}for
+/colorimage where{pop}{
+ /colorimage {
+  pop pop /Pr E D {/Cv Pr D /Gr Cv length 3 idiv string D 0 1 Gr length 1 sub
+   {Gr E dup /i E 3 mul D Cv i get 0.299 mul Cv i 1 add get 0.587 mul add
+    Cv i 2 add get 0.114 mul add cvi put}for Gr} image} D
+}ie
+/pdfmark where{pop}{userdict /pdfmark /cleartomark load put}ie
+WF{FL{reencodeISO D}forall}{4 1 FL length 1 sub{FL E get reencodeISO D}for}ie
+/Symbol dup dup findfont dup length dict begin
+ {1 index /FID ne{D}{pop pop}ie}forall /Encoding [Encoding aload pop]
+ dup 128 /therefore put D currentdict end definefont D
+
+/SF {/CS E D SZ SL CS put FO SL FN put /YI CS LH neg mul D dup ST cvs ( ) join
+ CS ST cvs join C1 E join ( NF ) join /C1 E D CS NF /Wf WF FN 0 gt or D
+ /BW Wf{( ) SW pop}{0}ie D}D
+/NF {/cS E D /cF E D cF 0 ge{FL cF get}{cF -1 eq{/Symbol}{/MySymbol}ie}ie
+ findfont cS scalefont setfont} D
+/FS {CF or /CF E D FR SL CF put CF CF 0 ge{FN 4 mul add}if E SF} D
+/PC {SH /BP f D fin not GL not and{NL}if /HM t D /LL LS D} D
+/BS {/TX E D Wf{/fin f D /CW 0 D /LK 0 D /SC 0 D
+ /RT TX D {RT ( ) search{/NW E D pop /RT E D /WH NW SW pop D CW WH add LL gt
+ {TX SC LK SC sub 1 sub NN GI GL{SH cF cS OC
+ 2 copy cS ne E cF ne or{NF}{pop pop}ie}{PC /CW WH BW add D}ie
+ /SC LK D}
+ {GL{JC}if
+ /CW CW WH add BW add D /HM t D}ie /GL f D /Ph f D
+ /LK LK NW length 1 add add D}{pop exit}ie}loop
+ /fin t D TX SC LK SC sub GI SH RT () ne{GL not{CC}if}if
+ /LC TX length D /WH RT SW pop D CW WH add Hy{HC SW pop add}if LL gt
+ {RT GL{SH cF cS OC 2 copy cS ne E cF ne or{NF}{pop pop}ie
+ Hy{/Ph t D}if /LL LS D}{NL /LL LS D SH}ie}
+ {RT PC Hy{CC}if /Ph Ph Hy or D}ie RT () ne{/GL t D /HM t D}if}
+ {TX SW pop LL le{TX SH}{/NW () D 0 2 TX length 1 sub
+ {/CW E D TX 0 CW GI dup SW pop LL gt{pop NW SH /HM t D NL/LL W XO sub MR sub D
+ /CW CW 2 sub NN D /TX TX CW TX length CW sub GI D TX BS exit}
+ {/NW E D}ie}for}ie}ie /HM t D}D
+/CC {C0 length 0 gt{JC}if /C0 [C1 L1 YA YB Mf NS NB TB AF Bw] D
+ /C1 () D /L0 L1 D /YA 0 D /YB 0 D /Mf 0 D /NS 0 D /NB 0 D}D
+/JC {C0 aload length 0 gt{pop pop pop NB add /NB E D NS add /NS E D
+ dup Mf gt{/Mf E D}{pop}ie dup YB gt{/YB E D}{pop}ie
+ dup YA gt{/YA E D}{pop}ie pop C1 join /C1 E D /C0 [] D}if}D
+/OC {C0 length 0 gt{C1 L1 L0 sub YA YB Mf NS NB TB AF Bw GL C0 aload pop
+ /Bw E D /AF E D /TB E D /NB E D /NS E D /Mf E D /YB E D /YA E D /C0 [] D
+ /L1 E D /C1 E D Ph{HC SH}if NL /GL E D /Bw E D /AF E D /TB E D /NB E D /NS E D
+ /Mf E D /YB E D /YA E D /L1 E D /LL W L1 sub XO sub MR sub WH sub D /CW 0 D
+ C1 E join /C1 E D}if}D
+/BT {/LB t D dup length string copy RS dup dup () ne E ( ) ne and
+ {/CI 0 D /LS LL D /LL W L1 sub XO sub MR sub D BS}
+ {dup ( ) eq{/GL f D}if dup () eq L1 0 eq or{pop}{SH /BP f D /Ph f D}ie}ie
+ /LB f D} D
+/BL {CP E pop XO E M} D
+/NL {JC /GL f D /SK W XO sub MR sub L1 sub TB{Bw add}if D
+ /YA LF{Mf HM Fl not and PF or{LH mul}if}{0 /LF t D}ie YA 2 copy lt{E}if pop D
+ C1 () ne{/FB YB Mf SA{Sf mul}if 4 div 2 copy lt{E}if pop D}if Fl{/Ya YA D}if
+ CP E pop YA sub YB sub LE neg lt Fl not and PB not and{NP}if NT TL BL
+ OU PF not and PB or{/RE L1 TB{Bw sub}if
+ W XO sub MR sub div YA YB add LE BO add div 2 copy lt{E}if pop D
+ RE 1 gt{BL 1 RE div dup scale}if}if
+ AT 2 le{SK AT mul 2 div YA neg R}if
+ AT 3 eq{0 YA neg R TB{/NB NB 1 sub D /NS NS 1 sub D}if /NB NB 1 sub NN D
+ /A3 NS 6 mul NB add D NS NB add 0 eq
+  {/A1 0 D /A2 0 D}
+  {NS 0 eq{/A1 SK NB div dup J gt{pop 0}if D /A2 0 D}{J A3 mul SK lt
+   {/A1 J D /A2 SK J NB mul sub NS div dup Ab gt{/A1 0 D pop 0}if D}
+   {/A1 SK A3 div D /A2 A1 6 mul D}ie}ie}ie /A1 A1 NN D /A2 A2 NN D}if
+ AT 4 eq{0 YA neg R PH 2 le{PD 0 lt{/PD L1 D}if PD M1 gt{/M1 PD D}if
+ L1 PD sub M2 gt{/M2 L1 PD sub D}if}{DV ID 1 sub get 0 ge{Lo 0 R}if}ie}if
+ F0 cF ne Cs cS ne or{F0 Cs NF}if
+ /ms Ms D /Ms f D CP FB sub
+ C1 cvx exec XO EO sub L1 add TB{BW sub}if dup LM gt{/LM E D}{pop}ie
+ PH 0 eq PH 4 eq or Ms and{HF not{/PO t D /AH t D}if
+ BB CP YA add E AT 3 eq LB and{A1 sub}if TB{BW sub}if E BB}
+ {pop pop}ie Ms HM PH 3 eq and or{/BP f D /Fl f D}if
+ /Lo 0 D /L1 0 D /F0 cF D /Cs cS D BP not{0 YB NN neg R}if
+ OU f1 and mF not and{k2 /f1 f D}if
+ OU PF not and PB or{RE 1 gt{RE dup scale}if}if /Ms ms Ms or D
+ /C1 AF{(Cp )}{()}ie D /YA 0 D /YB 0 D BL
+ AT 4 eq LB not and PH 3 ge and
+ {ID DV length lt{DV ID get dup 0 ge{DO E sub /Lo E D /L1 Lo D}{pop}ie
+ /ID ID 1 add D}if}if /T t D CD{/LN LN 1 add D PD}if
+ /PD -1 D /NS 0 D /NB 0 D /TB f D /Ph f D /Mf 0 D /HM f D} D
+/RS {/TM E D /CN 0 D TM{10 eq{TM CN ( ) PI}if /CN CN 1 add D}forall
+ /CN 0 D /BK HM EN and{0}{1}ie D TM
+ {dup 32 ne{TM CN 3 2 roll put /CN CN 1 add D /BK 0 D}
+ {pop BK 0 eq{TM CN 32 put /CN CN 1 add D}if /BK 1 D}ie}forall
+ TM 0 CN GI dup dup () ne E ( ) ne and
+ {dup CN 1 sub get 32 eq{/EN f D}{/EN t D}ie}if} D
+/join {2 copy length E length add string dup 4 2 roll 2 index 0 3 index
+ PI E length E PI}d
+/WR {(\n) search{dup () ne BP not or
+ {Li 4 le CP E pop YI Li mul add LE add 0 lt and PL 0 eq and{NP}if
+ SH NL pop /Li Li 1 sub D WR}{pop pop WR}ie}{SH}ie /CI 0 D /BP f D} D
+/SH {dup dup () ne E ( ) ne and PF or CS Mf gt and{/Mf CS D}if
+ T not Wf and{( ) E join /T t D}if dup BP{/MF CS D}if
+ AT 3 eq{2 copy length dup 0 gt{/NB E NB add D
+ {( ) search{/NS NS 1 add D pop pop}{pop exit}ie}loop}{pop pop}ie}if
+ CD PD 0 lt and{dup DC search{SW pop /PD E L1 add D pop pop}{pop}ie}if
+ 0 Np dup SW pop L1 add /L1 E D dup () ne
+ {C1 (\() join E join (\)) join AU AF and UF or Wf and{( U ) join}if
+ sF{( s ) join}if ( S ) join
+ /C1 E D dup length 1 sub get 32 eq /TB E D /Bw BW D}{pop pop}ie} D
+/BG {AI LG BC add add 0 eq} D
+/ON {OU{Ty AR AI NN get dup 1 add Ln Ns Ty 2 mod 0 eq{(.  )}{(\)  )}ie join
+ dup SW pop neg 0 R CP E 0 lt{0 E M}{pop}ie CP BB show /Ms t D}if} D
+/Ln {AR AI 3 -1 roll put}D
+/SP {dup CI lt BP not and{dup CI sub 0 E R /CI E D}{pop}ie} D
+/BN {PF{WR /HM f D}{BT NL}ie} D
+/NN {dup 0 lt{pop 0}if} D
+/h {(h) HI ST cvs join cvx exec dup 1 get E Nf{0 get E join}{pop}ie} D
+/H {/fn FN D /Hi E 1 add D 1 sub /HL E D /H2 HL 2 add D /GS EZ H2 get D
+ E Tm H2 get GS mul BE dup 0 gt{1 sub}{pop EG H2 get dup 0 lt{pop AT}if}ie NA
+ WW Np /SL SL 1 add D /FN EF H2 get D GS Ey H2 get FS
+ EU H2 get Sc Hs not HL Hl lt and Hs HL hl lt and or Hi 0 eq or
+ {/HI Hi D /Hs t D /hl HL D /Hv HL D}if HL Hl lt{/hi Hi D}if
+ Nf HI 0 gt and{(h) Hi ST cvs join cvx exec 0 get WB}if
+ /HF t D /AH f D /PO f D} D
+/EH {Bm H2 get GS mul BE OA /SL SL 1 sub NN D /CF 0 D /FN fn D
+ SZ SL get FR SL get FS /HF f D /GS Ts D ()Ec} D
+/P {E PF{WR}{PO{EP}{BN}ie Ts 4 mul Np AE not{Tm 0 get Ts mul neg SP}if
+ dup 0 ge AH and{Pi Pd}if}ie 1 sub dup 0 lt{pop AV AL get}if /AT E D /PO t D} D
+/EP {PF{WR}{BN Ts 4 mul Np}ie AE not{Bm 0 get Ts mul neg SP}if
+ /AT AV AL get D /PO f D} D
+/BE {E PO{EP}{BN}ie Ts 4 mul Np neg SP} D
+/HR {/Aw W EO sub D /RW E dup 0 gt{Aw mul}{neg}ie dup Aw gt{pop Aw}if D /RZ E D
+ E BN Ts neg SP 1 sub 2 div Aw RW sub mul EO add CP E pop M PF{0 Ps neg R}if
+ 0 Np OU{gsave RZ LW Cf{Hc VC}{0 Sg}ie CP BB RW 0 RL CP BB stroke grestore}if
+ /CI 0 D /BP f D PF not{Ts neg SP}if /Ms t D} D
+/AD {I NL EG 14 get dup 0 lt{pop AT}if NA /AE t D Tm 14 get Ts mul neg SP
+ Cf{EU 14 get dup -1 eq{pop CA CL get}if Sc}if} D
+/DA {BN ()ES OA /AE f D ()Ec Bm 14 get Ts mul neg SP} D
+/PR {/MW E D /Li E D Tm 1 get Ps mul BE 0 NA /FN Fp D /PF t D SI /SL SL 1 add D
+ /CF 0 D Ps CS mul Ts div MW WC mul CS mul Ts div dup LL gt PL 0 eq and
+ {LL div div}{pop}ie Ey 1 get FS CP E pop LE add YI neg div cvi dup Li lt
+ AH and{4 lt YI Li mul 5 mul LE add 0 gt or PL 0 eq and{NP}if}{pop}ie
+ EU 1 get Sc /GS Ps D}D
+/RP {WR NL () /PF f D SI /FN 0 D ES Bm 1 get Ps mul neg SP OA /GS Ts D} D
+/SI {/XO Lm 15 get BC NN mul Lm 16 get AI UI sub NN mul add
+ Lm 17 get UI NN mul add Lm 20 get LG NN mul add Ts mul
+ PF{Lm 1 get Ps mul add}if EO add D
+ /MR Rm 15 get BC NN mul Rm 16 get AI UI sub NN mul add
+ Rm 17 get UI NN mul add Rm 20 get LG NN mul add Ts mul
+ PF{Rm 1 get Ps mul add}if D /LL W XO sub MR sub D} D
+/DT {/cC E D BN /LG LG 1 sub D SI /LG LG 1 add D WW 2 div Np BL} D
+/DD {WB Cc 0 eq cC 0 eq and L1 0 eq or Lm 20 get Ts mul L1 sub TB{BW add}if
+ Ts 2 div lt or NL /LF E D SI BL /cC 0 D} D
+/DL {Dc LG Cc put /Cc E D BG{Tm 18 get Ts mul BE}{BN}ie /LG LG 1 add D BL} D
+/LD {BN LG 0 gt{/LG LG 1 sub D}if /Cc Dc LG get D SI
+ BG{()Bm 18 get Ts mul BE}if BL} D
+/UL {BG{Tm 17 get Ts mul BE}{BN}ie NR AI NN 0 put /UI UI 1 add D
+ /AI AI 1 add D SI BL} D
+/LU {BN /UI UI 1 sub D /AI AI 1 sub D SI BG{()Bm 17 get Ts mul BE}if BL} D
+/OL {E BG{Tm 16 get Ts mul BE}{BN}ie TR AI NN Ty put /Ty E D NR AI NN 1 put
+ /AI AI 1 add D SI BL 1 Ln} D
+/LO {BN /AI AI 1 sub D /Ty TR AI get D SI BG{()Bm 16 get Ts mul BE}if BL} D
+/LI {E BN -1 SP /BP f D /CI 0 D 0 Np NR AI 1 sub NN get 1 eq
+ {dup dup 0 gt E 4 le and{/Ty E D}{pop}ie
+ /L1 L1 Ty AR AI NN get Ns SW pop XO sub dup 0 lt{pop 0}if add D ( ON )}
+ {pop ( B )}ie C1 E join /C1 E D CS Mf gt{/Mf CS D}if BL} D
+/BQ {Tm 15 get Ts mul BE /BC BC 1 add D SI BL} D
+/QB {Bm 15 get Ts mul BE /BC BC 1 sub D SI BL} D
+/Al {E EP 1 sub dup 0 lt{pop AV AL get}if NA} D
+/Ea {EP OA} D
+/WB {PF{WR}{BT}ie} D
+/F1 {WB /FN 0 D CS 0 FS} D
+/F2 {WB /FN WI D CS 0 FS} D
+/HY {/Hy t D WB /Hy f D} D
+/YH {WB} D
+/A {/LT E D LT 1 eq{/RN E D}if /Lh E D WB /C1 C1 ( Cp ) join D
+ Lc AF not and{Cl Sc}if /AF t D} D
+/EA {Lc AF and{Ec}{WB}ie TL Pa AF and Lh 0 ne and
+ {( \() Lh join (\)) join /AF f D WB}if /AF f D} D
+/TL {C1 ( Tl ) apa /C1 E D} d
+/apa {AF OU and Lh 0 ne LT 1 eq or and{LT 1 eq{RN ( /) E ST cvs join}
+ {(\() Lh join (\)) join}ie E join join}{pop}ie} d
+/Cp {/Xc CP /Yc E D D} D
+/SS {Cf{dup 0 ge{EU E get dup -1 eq{pop CA CL get}if}{pop CA CL get}ie Sc}
+ {pop}ie SZ SL get /SL SL 1 add D} D
+/I {WB 8 SS 1 FS} D
+/EM {WB 8 SS /CF CF 1 xor D 0 FS} D
+/BD {WB 9 SS 2 FS} D
+/TT {WB 10 SS /FN Fp D 0 FS} D
+/KB {WB 11 SS /FN Fp D 2 FS} D
+/CT {WB 12 SS 1 FS} D
+/SM {WB 13 SS /FN Fp D 0 FS} D
+/Q {/QL QL 1 add D QO QL 2 mod get La get join WB} D
+/EQ {QC QL 2 mod get La get join WB /QL QL 1 sub D} D
+/RO {WB -1 SS /CF 0 D 0 FS} D
+/SY {WB -1 SS -1 FS} D
+/MY {WB -1 SS -2 FS} D
+/ES {WB /SL SL 1 sub NN D /CF 0 D /FN FO SL get D SZ SL get FR SL get FS ()Ec}D
+/FZ {3 sub 1.2 E exp GS mul E WB TL /C1 C1 ( Cp ) join D /SL SL 1 add D 0 FS} D
+/Ef {WB TL ()ES /C1 C1 ( Cp ) join D} D
+/BZ {dup /Bf E D FZ}D
+/Sc {dup -1 ne Cf and{/CL CL 1 add D dup 0 eq{pop [0 0 0]}if
+ dup CA E CL E put VS ( VC ) join C1 E join /C1 E D}{pop}ie} D
+/Ec {WB Cf{/CL CL 1 sub NN D CA CL get VS ( VC ) join C1 E join /C1 E D}if} D
+/VS {dup type /arraytype eq{([) E {ST cvs join ( ) join}forall (]) join}if} D
+/VC {{255 div}forall setrgbcolor} D
+/Sl {dup type /integertype ne{Ds}if /La E D WB}d
+/UN {WB /UF t D} D
+/NU {WB /UF f D} D
+/SE {WB /sF t D} D
+/XE {WB /sF f D} D
+/sM {/C1 C1 ( k1 ) join D}d
+/eM {/C1 C1 ( k2 ) join D}d
+/k1 {/YC CP E pop Ts add D /mF t D /f1 t D}d
+/k2 {gsave 3 LW -9 CP E pop Ts 0.2 mul sub M -9 YC L stroke grestore /mF f D}d
+/Ac {/AC E D WB}d
+/Ca {eA{( \()join AC join(\) )join}if WB}d
+/s {OU{gsave 0 CS .25 mul R dup SW pop CJ 0 RL stroke grestore}if}D
+/CJ {AT 3 eq LB and{E dup dup length 1 sub A1 mul E
+ {( ) search{pop pop E A2 add E}{pop exit}ie}loop 3 -1 roll add
+ W CP pop sub 2 copy gt{E}if pop}if}D
+/So {/Co E D} D
+/SO {C1 Yo ST cvs join ( So ) join /C1 E D (j) SW pop 2 div Pd} D
+/Se {E WB CS E div Pd}D
+/Pd {dup type /stringtype eq{SW pop}if dup /L1 E L1 add D
+ ST cvs ( 0 R ) join C1 E join /C1 E D} D
+/Sp {0.35 CO} D
+/Sb {-0.2 CO} D
+/CO {OV Io Yo put /Yo E CS mul Yo add D /Io Io 1 add D -1.5 Io mul 3 add FZ SO
+ CS Yo add dup YA gt{/YA E D}{pop}ie
+ Yo neg dup YB gt{/YB E D}{pop}ie} D
+/Es {ES /Io Io 1 sub NN D /Yo OV Io get D SO} D
+/SB {/N2 0 D 0 1 NI{/N E D{IX N2 get 0 lt{/N2 N2 1 add D}{exit}ie}loop
+ /K WS N get FC N get mul D /NY AY N2 get D /BV NY array D
+ 0 1 NY 1 sub{/TM K string D currentfile TM readhexstring pop pop BV E TM put}
+ for BM N BV put /N2 N2 1 add D}for} D
+/IC [{/MA E D /MB 0 D}{2 div /MA E D /MB MA D}{/MB E CS sub D /MA CS D}
+ {pop /MA YS AB mul D /MB 1 AB sub YS mul D}{pop /MA 0 D /MB 0 D}] D
+/IP {BV N get /N N 1 add D} D
+/II {/K E D IX K get 0 lt{/EC E D}if /TY E D
+ TY 4 eq{/Y E D /X E D}if TY 3 eq{/AB E D}if
+ /XW AX K get D /YW AY K get D /IS SG IT K get get D /XS XW IS mul D
+ /YS YW IS mul D YS IC TY get exec /MA MA Fl not{3 add}if D} D
+/IM {II /ty TY D /xs XS D /ys YS D /ya YA D /yb YB D /ma MA D /mb MB D /k K D
+ /ec EC D /BP f D /CI 0 D WB TL L1 xs add dup XO add MR add W gt
+ {pop /ma ma Fl{3 add}if D NL /YA ma D /YB mb D /YS ys D /L1 xs D}
+ {/L1 E D ma YA gt{/YA ma D}if mb YB gt{/YB mb D}if}ie /TB f D
+ OU{CP E pop YS sub LE neg lt Fl not and PB not and{NP /YA ma D /YB mb D}if
+ /BP f D ty ST cvs ( ) join IX k get 0 lt{(\() join ec join (\) ) join}if
+ k ST cvs join ty 3 eq{AB ST cvs ( ) join E join}if
+ ty 4 eq{X ST cvs ( ) join Y ST cvs join ( ) join E join}if C1 E join
+ ( DI ) join FP 2 eq FP 1 eq AF and or{( FM ) join}if
+ ( Il Cp ) apa /C1 E D /EN f D}if /HM t D /T f D} D
+/DI {II /Xc CP /Yc E D D /YN YW neg D /HM t D /CI 0 D /K2 IX K get D gsave
+ TY 4 eq{OX X IS mul add OY FY add YS sub Y IS mul sub}
+ {/FY YS D CP MB sub 2 copy /OY E D /OX E D}ie
+ translate K2 0 ge{/DP AZ K2 get D /BV BM K2 get D XS YS scale /N 0 D XW YW DP
+ [XW 0 0 YN 0 YW] {IP} FC K2 get 1 eq{image}{f 3 colorimage}ie}
+ {EX}ie grestore XS 0 R /Ms t D} D
+/FM {gsave 0 Sg CP MB sub translate XS neg 0 M 0 YS RL XS 0 RL 0 YS neg RL
+ XS neg 0 RL stroke grestore} D
+/NA {/AT E D /AL AL 1 add D AV AL AT put} D
+/OA {AL 0 gt{/AL AL 1 sub D /AT AV AL get D}if} D
+/D1 {/BR {CP E pop E BN Mb{CP E pop eq{0 YI R}if}{pop}ie} D
+ /Sn {OU{C1 E ST cvs join ( Ld ) join /C1 E D}{pop}ie} D} D
+/D1 {/BR {BN} D /Sn {OU {C1 E ST cvs join ( Ld ) join /C1 E D} {pop} ie} D} D
+/TC {/TF t D /ML 0 D HN{SW pop dup ML gt{/ML E D}{pop}ie}forall NP /RM RM not D
+ RC /OU Tc D Ep /PN 0 D Ms not TP and{Ip}if /W IW ML sub Ts sub D
+ /A0 0 D TH{/BR {( ) join BT} D /Sn {pop} D /Au () D}if} D
+/TN {0 eq{E EA PF HF or not XR and{HN E get Xr}{pop}ie}
+ {OU{Tn 0 ge{() BN}if /Tn E D}{pop}ie WB}ie} D
+/NT {OU LB not and Tn 0 ge and{PL 0 eq{Ms not{CS CF FS}if CP dup
+ /y E YA sub D W 9 sub CS -1.8 mul XO L1 add 2 add{y M (.) show}for
+ HN Tn get dup SW pop IW E sub y M show CP BB M}if /Tn -1 D}if} D
+/Ld {/DN E D HN DN Pn put [/View [/XYZ -4 Fl{PS}{CP YA add US E pop}ie null]
+ /Dest DN ST cvs cvn /DEST pdfmark} D
+/C {ND 1 eq{1 sub}if TI mul /XO E D NL Nf not{pop()}if 0 3 -1 roll 1 A} D
+/OP {BP not{NP}if PN 2 mod 0 eq{/Ms t D NP}if}D
+/Ep {Xp PN 2 mod 0 eq and OU and{/Pn (-) D showpage /PM 1 D LA}if}D
+/Dg [73 86 88 76 67 68 77] D
+/Rd [0 [1 1 0][2 1 0][3 1 0][2 1 1][1 1 1][2 2 1][3 3 1][4 4 1][2 1 2]] D
+/Ns {/m E D /c E 32 mul D /j m 1000 idiv D /p j 12 add string D
+ c 96 le m 0 gt and{c 32 le {/i 0 D /d 77 D /l 100 D /m m j 1000 mul sub D
+  j -1 1 {pop p i d c add put /i i 1 add D}for
+  4 -2 0 {/j E D /n m l idiv D /m m n l mul sub D /d Dg j get D
+   n 0 gt {/x Rd n get D x 0 get -1 1 {pop p i d c add put /i i 1 add D}for
+   p i x 1 get sub Dg x 2 get j add get c add put}if /l l 10 idiv D
+  }for p 0 i GI}
+  {/i ST length 1 sub D m {1 sub dup 0 ge{dup 26 mod c add 1 add
+   ST i 3 -1 roll put 26 idiv dup 0 eq{pop exit}if}if /i i 1 sub D}loop
+   ST i ST length i sub GI}ie}
+ {m p cvs}ie} D
+/US {matrix currentmatrix matrix defaultmatrix matrix invertmatrix
+ matrix concatmatrix transform} D
+/GB {Gb{US}if}D
+/Tl {/Rn E D Xc CP pop ne{
+ [/Rect [Xc 1 sub Yc cS 0.25 mul sub GB CP E 1 add E cS 0.85 mul add GB]
+  /Subtype /Link /Border [0 0 Cf Lc and LX and AU or{0}{1}ie] Rn type
+  /nametype eq {/Dest Rn}{/Action [/Subtype /URI /URI Rn] Cd}ie
+  /ANN pdfmark}if} D
+/Il {/Rn E D [/Rect [Xc Yc GB Xc XS add Yc YS add GB] /Subtype /Link
+ /Border [0 0 0] Rn type /nametype eq{/Dest Rn}
+ {/Action [/Subtype /URI /URI Rn] Cd}ie /ANN pdfmark} D
+/XP {[{/Z Bz 2 div D Z 0 R Z Z RL Z neg Z RL Z neg Z neg RL Z Z neg RL
+ Fi cH 1 eq and{fill}if} {Bz 0 RL 0 Bz RL Bz neg 0 RL 0 Bz neg RL
+ Fi cH 1 eq and{fill}if} {0 -5 R Bz 0 RL 0 21 RL Bz neg 0 RL 0 -21 RL}]} D
+/MS {/Sm E D WB}D
+/O {BN()0 Sm BX} D
+/BX {/Bt E D Bt 2 lt{/Ch E D CS 0.8 mul}{11 mul}ie W XO sub MR sub
+ 2 copy gt{E}if pop /HZ E D Bt 2 eq{Fi not{pop()}if ( )E join /Ft E D TT
+ /PF t D /MW 1 D /Li 1 D /Fw Ft SW pop D Fw HZ gt{/HZ Fw 8 add D}if
+ HZ ST cvs( )join}{WB Ch ST cvs( )join}ie L1 HZ add XO add MR add W gt{NL}if
+ Bt 2 eq{Ft ES Fw neg HM{CS sub}if Pd}if Bt ST cvs join( Bx )join
+ Bt 2 eq HM and{CS Pd}if C1 E join /C1 E D /L1 L1 HZ add D /T f D
+ ( ) Pd /PF f D Bt 2 lt{YA CS .8 mul lt{/YA CS .8 mul D}if}
+ {YB 5 lt{/YB 5 D}if YA 21 lt{/YA 21 D}if}ie /CI 0 D} D
+/Bx {dup 2 eq{E /Bz E D}{E /cH E D /Bz CS .8 mul D}ie
+ OU {gsave 0 Sg XP E get exec stroke grestore}{pop}ie Bz 0 R /Ms t D}D
+/SD {FD 4 mul Dy add DZ NF newpath 0 0 M DX t charpath pathbbox
+ 3 -1 roll sub /DY E D E dup /X1 E D sub WM mul WX DY mul add WM DG mul E div
+ /DF E D /DR WX DF mul DY mul WM div 2 div D} d
+/Sd {gsave 0 IL Di mul neg translate IL IW atan Di 0 eq{neg}if rotate
+ FD 4 mul Dy add DZ NF DR X1 sub DY 2 div neg M cD VC DX show grestore} d
+/Pt {/tp t D Tp{NP /Pn (TP) D 0 Tt neg R Th BN NP Ep ET RC ZF}if /tp f D} D
+/RC {/AI 0 D /LG 0 D /BC 0 D /UI 0 D /PF f D /Cc 0 D /cC 0 D /Dc 10 array D
+ /NR [0 1 9{pop 0}for] D /La Ds D /AR 10 array D /TR 10 array D /AV 30 array D
+ SI /AL -1 D /AT A0 D AT NA /OV 9 array D /Yo 0 D /Co 0 D /Io 0 D /Hy f D
+ /Ph f D /CL -1 D Ct Sc}D
+/ZF {/FR [0 1 30{pop 0}for] D /SZ [0 1 30{pop 0}for] D /FO [0 1 30{pop 0}for] D
+ /SL 0 D /CF 0 D /FN 0 D 0 Ts SF}D
+/QO [[(\273)(\234)(\253\240)(\232)(\233)(\253)][(\273)(')(\253\240)(\231)(`)(\253)]] D
+/QC [[(\253)(\234)(\240\273)(\233)(\234)(\273)][(\253)(')(\240\273)(`)(')(\273)]] D
+/Hf EF length 2 sub D
+/Hz EZ Hf get D
+/HS Ey Hf get D
+/Fz EZ Hf 1 add get D
+/Fs Ey Hf 1 add get D
+/LE IL D
+/Ps EZ 1 get D
+/Fp EF 1 get D
+/XO 0 D
+/YI 0 D
+/CI 0 D
+/FP 0 D
+/WW Ts 7 mul D
+/Mf 0 D
+/YA 0 D
+/YB 0 D
+/Cs Ts D
+/GS Ts D
+/F0 0 D
+/NS 0 D
+/NB 0 D
+/N 0 D
+/C0 [] D
+/C1 () D
+/Lo 0 D
+/L1 0 D
+/LM 0 D
+/PH 0 D
+/EC 0 D
+/Lh 0 D
+/LT 0 D
+/CH 1 string D
+/ST 16 string D
+/CA 9 array D
+/HC (\255) D
+/HM f D
+/PF f D
+/EN f D
+/TB f D
+/UF f D
+/sF f D
+/AE f D
+/AF f D
+/BP t D
+/CD f D
+/PA t D
+/GL f D
+/T t D
+/HF f D
+/AH f D
+/SA f D
+/PB f D
+/f1 f D
+/mF f D
+/OX 0 D
+/OY 0 D
+/FY 0 D
+/EO 0 D
+/FB 0 D
+/PL 0 D
+/Bw 0 D
+/PD -1 D
+/TP f D
+/tp f D
+/TH t D
+/Ty 4 D
+/Tn -1 D
+/Fl t D
+/LB t D
+/PM 1 D
+/Ms f D
+/Ba f D
+/Bb f D
+/Hl 3 D
+/hl 6 D
+/Hv 6 D
+/Hs f D
+/HI 0 D
+/hi 0 D
+/PO t D
+/TE f D
+/LF t D
+/BO 0 D
+/Sm 1 D
+/Bf 3 D
+/A1 0 D
+/A2 0 D
+/Ds 4 D
+/QL -1 D
+/Cb Db D
+/Ct Dt D
+/Cl Dl D
+[/Creator (html2ps version 1.0 beta7) /Author () /Keywords () /Subject (toolchain)
+ /Title (The build2 Toolchain Installation and Upgrade) /DOCINFO pdfmark
+/ND 1 D
+/HN [(1) (1) (1) (1) (2) (4) (8) (12) (17) (17) (22) (1) (1) (2) (4) (8) (12)
+(17) (17) (22)] D
+/h0 [()(Table of Contents)] D
+/h1 [(1\240\240)(Preface)] D
+/h2 [(2\240\240)(1 Introduction)] D
+/h3 [(3\240\240)(2 Bootstrapping on Windows)] D
+/h4 [(3.1\240\240)(2.1 Bootstrapping on Windows with MSVC)] D
+/h5 [(3.2\240\240)(2.2 Bootstrapping on Windows with Clang)] D
+/h6 [(3.3\240\240)(2.3 Bootstrapping on Windows with MinGW)] D
+/h7 [(4\240\240)(3 Bootstrapping on Mac OS X)] D
+/h8 [(5\240\240)(4 Bootstrapping on UNIX)] D
+/h9 [(6\240\240)(5 Upgrading)] D
+/Hr [11 12 13 14 15 16 17 18 19]D
+/HV [1 1 1 2 2 2 1 1 1]D
+/Cn [0 0 3 0 0 0 0 0 0]D
+Hr length 0 gt{[/PageMode /UseOutlines /DOCVIEW pdfmark}if
+/Hn 1 D
+0 1 Hr length 1 sub{
+ /Bn E D [Cn Bn get dup 0 gt{/Count E HV Bn get Bl ge{neg}if}{pop}ie
+ /Dest Hr Bn get dup abs ST cvs cvn E 0 ge{(h)Hn ST cvs join cvx exec
+ dup 1 get E Nf{0 get E join}{pop}ie /Hn Hn 1 add D}{()}ie
+ /Title E dup length 255 gt{0 255 getinterval}if /OUT pdfmark}for
+ZF /FN Fp D Ps 0 FS /WC Wf{( )}{<A1A1>}ie SW pop D
+ET RC ZF
+/Df f D
+/R1 (https://build2.org/install.xhtml) D
+/R2 (https://build2.org/download.xhtml) D
+/Ba f D /BO 0 D Bs
+/UR (-) D
+/Ti (The build2 Toolchain Installation and Upgrade) D
+/Au () D
+/Df f D
+/ME [(0.18)(Toolchain Installation and Upgrade)(2014-2025 the build2 authors)(toolchain)] D
+Pt
+/BO 0 D TC /Ba f D Bs /AU f D /UR () D RC ZF
+ tH WB
+ND 1 gt{Ts 3 mul Np 0()0 C()BD(The build2 Toolchain Installation and Upgrade)ES()0 1 TN()EA()BN}if
+1 NH le{11(1\240\240)1 C(Preface)WB 2 Sn()11 1 TN()EA()BN}if
+1 NH le{12(2\240\240)1 C(1)WB 3 Sn( Introduction)12 1 TN()EA()BN}if
+1 NH le{13(3\240\240)1 C(2)WB 4 Sn( Bootstrapping on Windows)13 1 TN()EA()BN}if
+2 NH le{14(3.1\240\240)2 C(2.1)WB 5 Sn( Bootstrapping on Windows with MSVC)14 1 TN()EA()BN}if
+2 NH le{15(3.2\240\240)2 C(2.2)WB 6 Sn( Bootstrapping on Windows with
+  Clang)15 1 TN()EA()BN}if
+2 NH le{16(3.3\240\240)2 C(2.3)WB 7 Sn( Bootstrapping on Windows with
+  MinGW)16 1 TN()EA()BN}if
+1 NH le{17(4\240\240)1 C(3)WB 8 Sn( Bootstrapping on Mac OS X)17 1 TN()EA()BN}if
+1 NH le{18(5\240\240)1 C(4)WB 9 Sn( Bootstrapping on UNIX)18 1 TN()EA()BN}if
+1 NH le{19(6\240\240)1 C(5)WB 10 Sn( Upgrading)19 1 TN()EA()BN}if
+/OU t D /Cb Db D NP Ep ET 
+/Cb Db D /Ct [16#00 16#00 16#00] D /Cl [16#00 16#00 16#00] D /CL -1 D Ct Sc
+
+/Ba f D /BO 0 D Bs
+/UR (-) D
+/Ti (The build2 Toolchain Installation and Upgrade) D
+/Au () D
+/Df f D
+/ME [(0.18)(Toolchain Installation and Upgrade)(2014-2025 the build2 authors)(toolchain)] D
+
+NP RC ZF
+()4 Sl()WB 0 Sn(
+)BR()WB 1 Sn(
+   
+  )0 1 0 H(Preface)WB 11 Sn()WB 2 Sn()EH(
+
+  )0 P(The recommended way to install and upgrade the )SM(build2)ES(
+  toolchain in most circumstances is using the automated install scripts as
+  described on the )R1 2 A(Install)EA(
+  page. This document describes the manual installation and upgrade process
+  which offers greater control that can be helpful in situations where the
+  automated scripts cannot be used \201packaging for system package managers,
+  unsupported by the install scripts platform/compiler, etc\202.)EP(
+
+  )0 1 1 H(1)WB 12 Sn()WB 3 Sn( Introduction)EH(
+
+  )0 P(One of the primary goals of the )SM(build2)ES( toolchain is to
+  provide a uniform build interface across all the platforms and compilers. As
+  a result, if you already have the toolchain installed and would like to
+  upgrade to a newer version, then there is a single set of )0 10 1 A(upgrade instructions)10 0 TN TL()Ec /AF f D( for all the platforms.)EP(
+
+  )0 P(If, however, you need to install the toolchain for the first time, then
+  it has to be bootstrapped and that process is platform-specific. The rest of
+  this section discusses a few general bootstrap considerations and then
+  directs you to the appropriate platform-specific instructions.)EP(
+
+  )0 P(In the rest of this guide we use the )SM($)ES( symbol for a UNIX
+  shell prompt and )SM(>)ES( for the Windows command prompt. Similarly,
+  we use )SM(\200)ES( for UNIX command line continuations and )SM(^)ES(
+  for Windows. Usually you should be able to copy and paste \201sans the prompt\202
+  example commands in order to execute them but sometimes you might need to
+  change a thing or two \201for example, replace )SM(X.Y.Z)ES( with the
+  actual version\202. Once we are able to use the )SM(build2)ES( toolchain,
+  the command line interface becomes regular and we usually only show the UNIX
+  version of the commands. In this case making a Windows version is a simple
+  matter of adjusting paths and, if used, line continuations.)EP(
+
+  )0 P(The )SM(build2)ES( toolchain requires a C++14 compiler. From the
+  commonly-used options, GCC 4.9, Clang 3.7, and MSVC 14 \2012015\202 Update 3 or
+  any later versions of these compilers should work.)EP(
+
+  )BR(
+  )0 P(Note that the C++ compiler that you use to build the )SM(build2)ES(
+  toolchain and the one that you will use to build your projects need not be
+  the same. For example, if you are using MSVC 12 \2012013\202 \201which cannot build
+  )SM(build2)ES(\202, it is perfectly fine to get a minimal MinGW toolchain
+  and use that to build )SM(build2)ES(; you will still be able to use
+  MSVC 12 to build your own code.)EP(
+  )BR(
+
+  )0 P(At the high level, the bootstrap process involves the following 5
+  steps.)EP(
+
+  )0 DL(  )0 DT()BD(1. Bootstrap, Phase 1)ES(
+  )DD(First, a minimal build system executable is built using provided shell
+  scripts/batch files or a GNU makefile. The result is only guaranteed to be
+  able to rebuild the build system itself.
+
+  )0 DT()BD(2. Bootstrap, Phase
+  2)ES(
+  )DD(Then, the build system is rebuilt with static libraries. The result is
+  only guaranteed to be able to build the build system and the package
+  manager.
+
+  )0 DT()BD(3. Stage)ES(
+  )DD(At this step the build system and package manager are built with shared
+  libraries and then staged.
+
+  )0 DT()BD(4. Install)ES(
+  )DD(Next, the staged tools are used to build and install the entire
+  toolchain from the package repository with the package manager.
+
+  )0 DT()BD(5. Clean)ES(
+  )DD(Finally, the staged at step 3 tools are uninstalled.
+  )LD(
+
+  )0 P(The end result of the bootstrap process is the installed toolchain as
+  well as the package manager configuration \201created at step 4\202 that can be
+  used to upgrade to newer versions.)EP(
+
+  )BR(
+  )0 P(You can skip step 4 and instead install at step 3 if for some reason you
+  prefer not to build from packages \201for example, because the machine is
+  offline\202.)EP(
+  )BR(
+
+  )0 P(For Windows, if you are using either MSVC, Clang, or MinGW, continue with
+  )0 4 1 A(Bootstrapping on Windows)4 0 TN TL()Ec /AF f D(. If using WSL,
+  MSYS, or Cygwin, then instead refer to )0 9 1 A(Bootstrapping on UNIX)9 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 P(For Mac OS X, continue with )0 8 1 A(Bootstrapping on
+  Mac OS X)8 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 P(For other UNIX-like operating systems \201GNU/Linux, FreeBSD, etc; this also
+  includes WSL, MSYS, and Cygwin\202, continue with )0 9 1 A(Bootstrapping on UNIX)9 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 1 2 H(2)WB 13 Sn()WB 4 Sn( Bootstrapping on Windows)EH(
+
+  )0 P(The following instructions are for bootstrapping )SM(build2)ES( from
+  the Windows command prompt with either MSVC, Clang \201targeting the MSVC
+  runtime\202, or MinGW. If you are using any kind of UNIX emulation layer \201for
+  example, WSL, MSYS, or Cygwin\202 and already have a UNIX shell with standard
+  utilities, then you most likely should follow )0 9 1 A(Bootstrapping on UNIX)9 0 TN TL()Ec /AF f D( instead.)EP(
+
+  )BR(
+  )0 P(Note that if you continue with these instructions but you already have
+  your own installation of MSYS and/or MinGW, then make sure that their paths
+  are not in your )SM(PATH)ES( environment variable when building and
+  using )SM(build2)ES( since they may provide conflicting DLLs.)EP(
+  )BR(
+
+  )0 P(The )SM(build2)ES( toolchain on Windows requires a set of extra
+  utilities \201)SM(install)ES(, )SM(diff)ES(, )SM(curl)ES(,
+  )SM(tar)ES(, etc\202. These are provided by the
+  )SM(build2-baseutils)ES( package \201see the )SM(README)ES( file
+  inside for details\202. Normally, the )SM(build2)ES( toolchain itself is
+  installed into the same directory as the utilities in order to produce the 
+  combined installation.)EP(
+
+  )0 P(To build on Windows you will need either MSVC 14 Update 3 or later, Clang
+  8 or later \201either bundled with MSVC or installed separately\202, or MinGW GCC
+  4.9 or later. If you don't already have a suitable C++ compiler, then you
+  can use the )SM(build2-mingw)ES( package which provides a minimal
+  MinGW-W64 GCC distribution \201see the )SM(README)ES( file inside for
+  details\202. If used, then it should be unpacked into the same directory as
+  )SM(build2-baseutils)ES(.)EP(
+
+  )BR(
+  )0 P(If using your own MinGW GCC installation, make sure it is configured with
+  the )SM(posix)ES( threading model \201this is currently the only
+  configuration that implements C++11 threads; run )SM(g++ -v)ES( to
+  verify\202.)EP(
+  )BR(
+
+  )BR(
+  )0 P(Only 64-bit variants of the )SM(baseutils)ES( and )SM(mingw)ES(
+  packages are provided and they )BD(must)ES( match the width of the
+  )SM(build2)ES( toolchain. Note also that the 64-bit )SM(build2)ES(
+  toolchain can be used to build 32-bit applications without any
+  restrictions.)EP(
+  )BR(
+
+  )0 P(To bootstrap on Windows with either MSVC, Clang, or MinGW start with the
+  following common steps:)EP(
+
+  )0 DL(  )0 DT()BD(1. Open Command Prompt)ES(
+  )DD(Start the standard Windows Command Prompt. If you plan to build with
+  MSVC or Clang bundled with MSVC, then you may go ahead and start the Visual
+  Studio "x64 Native Tools Command Prompt" \201or wait for MSVC/Clang-specific
+  instructions\202.
+
+  )0 DT()BD(2. Create Build
+  Directory)ES(
+  )DD(You will want to keep this directory around in order to upgrade to new
+  toolchain versions in the future. In this guide we use
+  )SM(C:\200build2-build\200)ES( as the build directory and
+  )SM(C:\200build2\200)ES( as the installation directory but you can use other
+  paths.
+
+  ) 3 20 PR(> cd /D C:\200
+> mkdir build2-build
+> cd build2-build)RP(
+
+  )0 DT()BD(3. Download
+  Archives)ES(
+  )DD(Download the following files as well as their )SM(.sha256)ES(
+  checksums from the )R2 2 A(Download)EA(
+  page:
+
+  ) 3 56 PR(build2-baseutils-X.Y.Z-x86_64-windows.zip
+build2-mingw-X.Y.Z-x86_64-windows.tar.xz   \201if required\202
+build2-toolchain-X.Y.Z.tar.xz)RP(
+
+  )0 P(Place everything into )SM(C:\200build2-build\200)ES( \201build
+  directory\202.)EP(
+
+  )0 DT()BD(4. Verify Archive
+  Checksums)ES(
+  )DD(Verify archive checksums match \201compare visually\202:
+
+  ) 2 56 PR(> type *.sha256
+> for %f in \201*.zip *.xz\202 do certutil -hashfile %f SHA256)RP(
+
+  )0 DT()BD(5. Unpack
+  )SM(build2-baseutils)ES()ES(
+  )DD(Unpack the )SM(build2-baseutils-X.Y.Z-x86_64-windows.zip)ES(
+  archive into )SM(C:\200)ES( using Windows Explorer \201for example, copy the
+  archive directory and then paste it\202. Rename it to )SM(C:\200build2\200)ES(.
+  This will be the toolchain installation directory.
+
+  )0 DT()BD(6. Set
+  )SM(PATH)ES()ES(
+  )DD(Set the )SM(PATH)ES( environment variable and verify that the
+  utilities are found and work:
+
+  ) 3 33 PR(> set "PATH=C:\200build2\200bin;%PATH%"
+> where tar
+> tar --version)RP(
+
+  )0 DT()BD(7. Unpack
+  )SM(build2-mingw)ES( \201optional\202)ES(
+  )DD(If required, unpack the
+  )SM(build2-mingw-X.Y.Z-x86_64-windows.tar.xz)ES( archive into
+  )SM(C:\200build2\200)ES(:
+
+  ) 3 49 PR(> xz -d build2-mingw-X.Y.Z-x86_64-windows.tar.xz
+> tar -xf build2-mingw-X.Y.Z-x86_64-windows.tar ^
+  --one-top-level=C:\200build2 --strip-components=1)RP(
+
+  )0 P(Verify that the MinGW GCC is found and works:)EP(
+
+  ) 2 15 PR(> where g++
+> g++ --version)RP(
+
+  )0 DT()BD(8. Unpack
+  )SM(build2-toolchain)ES()ES(
+  )DD(Unpack the )SM(build2-toolchain-X.Y.Z.tar.xz)ES( archive and change
+  to its directory:
+
+  ) 3 37 PR(> xz -d build2-toolchain-X.Y.Z.tar.xz
+> tar -xf build2-toolchain-X.Y.Z.tar
+> cd build2-toolchain-X.Y.Z)RP(
+  )LD(
+
+  )0 P(If building with MSVC, continue with )0 5 1 A(Bootstrapping on Windows with MSVC)5 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 P(If building with Clang, continue with )0 6 1 A(Bootstrapping on Windows with Clang)6 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 P(If building with MinGW, continue with )0 7 1 A(Bootstrapping on Windows with MinGW)7 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 2 3 H(2.1)WB 14 Sn()WB 5 Sn( Bootstrapping on Windows with MSVC)EH(
+
+  )0 P(Continuing from )0 4 1 A(Bootstrapping on
+  Windows)4 0 TN TL()Ec /AF f D(, if you have already started an appropriate Visual Studio
+  command prompt, then you can continue using it. Otherwise, start the Visual
+  Studio "x64 Native Tools Command Prompt". Also set the )SM(PATH)ES(
+  environment variable as on the previous steps:)EP(
+
+  ) 1 33 PR(> set "PATH=C:\200build2\200bin;%PATH%")RP(
+
+  )0 P(To build with MSVC you can either perform the following steps manually
+  or, if after reviewing the steps you are happy with using the defaults, run
+  the )SM(build-msvc.bat)ES( batch file. It performs \201and echoes\202 the
+  same set of steps as outlined below but only allows you to customize the
+  installation directory and a few other things \201run )SM(build-msvc.bat
+  /?)ES( for usage\202.)EP(
+
+  )0 P(For example, you could run this batch file \201from the above-mentioned
+  command prompt\202 like this:)EP(
+
+  ) 1 18 PR(> .\200build-msvc.bat)RP(
+
+  )BR(
+  )0 P(Note that at about half way through \201)SM(bpkg fetch)ES( at step 4
+  below\202 the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the )SM(--trust)ES( option \201see
+  )SM(build-msvc.bat /?)ES( for details\202.)EP(
+  )BR(
+
+  )0 P(The end result of the bootstrap process \201performed either with the script
+  or manually\202 is the installed toolchain as well as the )SM(bpkg)ES(
+  configuration in )SM(build2-toolchain-X.Y\200)ES( that can be used to )0 10 1 A(upgrade)10 0 TN TL()Ec /AF f D( to newer versions. It can also be used to
+  uninstall the toolchain:)EP(
+
+  ) 2 25 PR(> cd build2-toolchain-X.Y
+> bpkg uninstall --all)RP(
+
+  )BR(
+  )0 P(Note that in both cases \201manual or scripted bootstrap\202, if something goes
+  wrong and you need to restart the process, you )BD(must)ES( start with a
+  clean toolchain source by unpacking it afresh from the archive.)EP(
+  )BR(
+
+  )0 P(The rest of this section outlines the manual bootstrap process.)EP(
+
+  )0 DL(  )0 DT()BD(1. Bootstrap, Phase 1)ES(
+  )DD(First, we build a minimal build system with the provided
+  )SM(bootstrap-msvc.bat)ES( batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run )SM(bootstrap-msvc.bat /?)ES( and see
+  the )SM(build2\200INSTALL)ES( file for details.
+
+  ) 4 33 PR(> cd build2
+> .\200bootstrap-msvc.bat cl /w /MP8
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(2. Bootstrap, Phase
+  2)ES(
+  )DD(Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  ) 4 55 PR(> b\200b-boot config.cxx=cl config.bin.lib=static b\200exe{b}
+> move /y b\200b.exe b\200b-boot.exe
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(3. Stage)ES(
+  )DD(At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  ) 10 42 PR(> cd ..  # Back to build2-toolchain-X.Y.Z\200
+
+> build2\200b\200b-boot configure           ^
+  config.cxx=cl                       ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\200build2       ^
+  config.install.data_root=root\200stage
+
+> build2\200b\200b-boot install: build2\200 bpkg\200)RP(
+
+  )0 P(The strange-looking )SM(config.install.data_root=root\200stage)ES(
+  means install data files \201as opposed to executable files\202 into the
+  )SM(stage\200)ES( subdirectory of wherever
+  )SM(config.install.root)ES( points to \201so in our case it will be
+  )SM(C:\200build2\200stage\200)ES(\202. This subdirectory is temporary and will be
+  removed in a few steps.)EP(
+
+  )0 P(Verify that the toolchain binaries can be found and work \201this relies on
+  the )SM(PATH)ES( environment variable we have set earlier\202:)EP(
+
+  ) 8 28 PR(> where b-stage
+C:\200build2\200bin\200b-stage.exe
+
+> where bpkg-stage
+C:\200build2\200bin\200bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version)RP(
+
+  )0 P(At the next step we will use )SM(bpkg)ES( to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  \201for example, because the machine is offline\202, then you can convert this
+  step into a local installation and skip the rest of the steps.)EP(
+
+  )BR(
+  )0 P(To perform a local installation with the )SM(build-msvc.bat)ES(
+  batch file, pass the )SM(--local)ES( option.)EP(
+  )BR(
+
+  )0 P(To perform a local installation you will need to change the
+  )SM(configure)ES( and )SM(install)ES( command lines above along
+  these lines \201see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc\202:)EP(
+
+  ) 8 46 PR(> build2\200b\200b-boot configure      ^
+  config.config.hermetic=true    ^
+  config.cxx=cl                  ^
+  config.cc.coptions=/O2         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\200build2
+
+> build2\200b\200b-boot install: build2\200 bpkg\200 bdep\200)RP(
+
+  )0 P(You will also need to build and install the standard build system
+  modules:)EP(
+
+  ) 1 55 PR(> b install: !config.install.scope=project libbuild2-*\200)RP(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 28 PR(> b noop: tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 P(To uninstall such a local installation, run:)EP(
+
+  ) 1 47 PR(> b uninstall: build2\200 bpkg\200 bdep\200 libbuild2-*\200)RP(
+
+  )0 DT()BD(4. Install)ES(
+  )DD(Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the )SM(bpkg)ES( package manager.
+  First, we create the )SM(bpkg)ES( configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  ) 11 33 PR(> cd ..  # Back to build2-build\200
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+  )BR(
+  )0 P(The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  )SM(config.bin.lib=shared)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(To add a custom prefix/suffix to the toolchain executables names, add
+  )SM(config.bin.exe.prefix=...)ES( and/or
+  )SM(config.bin.exe.suffix=...)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The )SM(config.config.hermetic=true)ES( configuration variable in
+  the above command makes sure the embedded )SM(~host)ES( and
+  )SM(~build2)ES( configurations include the current environment. This is
+  especially important for )SM(~build2)ES( which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.)EP(
+  )BR(
+
+  )0 P(Next, we add the package repository, build, and install:)EP(
+
+  ) 4 49 PR(> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all)RP(
+
+  )BR(
+  )0 P(By default )SM(bpkg)ES( will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:)EP(
+
+  ) 1 67 PR(> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z)RP(
+  )BR(
+
+  )0 P(To verify the result, run:)EP(
+
+  ) 12 22 PR(> where b
+C:\200build2\200bin\200b.exe
+
+> where bpkg
+C:\200build2\200bin\200bpkg.exe
+
+> where bdep
+C:\200build2\200bin\200bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version)RP(
+
+  )0 P(Finally, we build and install the standard build system modules:)EP(
+
+  ) 3 63 PR(> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*)RP(
+
+  )BR(
+  )0 P(To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:)EP(
+
+  ) 2 30 PR(> cd ..\200build2-toolchain-X.Y.Z
+> dir /B libbuild2-*)RP(
+  )BR(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 54 PR(> b noop: ..\200build2-toolchain-X.Y.Z\200tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 DT()BD(5. Clean)ES(
+  )DD(The last thing we need to do is uninstall the staged tools:
+
+  ) 2 52 PR(> cd ..\200build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\200 bpkg\200)RP(
+  )LD(
+
+  )0 2 4 H(2.2)WB 15 Sn()WB 6 Sn( Bootstrapping on Windows with
+  Clang)EH(
+
+  )0 P(Continuing from )0 4 1 A(Bootstrapping on
+  Windows)4 0 TN TL()Ec /AF f D(, there are two common ways to obtain Clang on Windows: bundled
+  with the MSVC installation or as a separate installation. If you are using a
+  separate installation, then the Clang compiler is most likely already in
+  your )SM(PATH)ES( environment variable and, after confirming this is
+  the case, you can continue using the command prompt started on the previous
+  step:)EP(
+
+  ) 1 15 PR(> where clang++)RP(
+
+  )0 P(Otherwise, if you are using Clang that is bundled with MSVC \201and haven't
+  manually added its compiler to )SM(PATH)ES(\202, start the Visual Studio
+  "x64 Native Tools Command Prompt" and set the )SM(PATH)ES( environment
+  variable:)EP(
+
+  ) 2 62 PR(> set "PATH=C:\200build2\200bin;%VCINSTALLDIR%Tools\200Llvm\200bin;%PATH%"
+> where clang++)RP(
+
+  )0 P(To build with Clang you can either perform the following steps manually
+  or, if after reviewing the steps you are happy with using the defaults, run
+  the )SM(build-clang.bat)ES( batch file. It performs \201and echoes\202 the
+  same set of steps as outlined below but only allows you to customize the
+  installation directory and a few other things \201run )SM(build-clang.bat
+  /?)ES( for usage\202.)EP(
+
+  )0 P(For example, you could run this batch file \201from the above-mentioned
+  command prompt\202 like this:)EP(
+
+  ) 1 19 PR(> .\200build-clang.bat)RP(
+
+  )BR(
+  )0 P(Note that at about half way through \201)SM(bpkg fetch)ES( at step 4
+  below\202 the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the )SM(--trust)ES( option \201see
+  )SM(build-clang.bat /?)ES( for details\202.)EP(
+  )BR(
+
+  )0 P(The end result of the bootstrap process \201performed either with the script
+  or manually\202 is the installed toolchain as well as the )SM(bpkg)ES(
+  configuration in )SM(build2-toolchain-X.Y\200)ES( that can be used to )0 10 1 A(upgrade)10 0 TN TL()Ec /AF f D( to newer versions. It can also be used to
+  uninstall the toolchain:)EP(
+
+  ) 2 25 PR(> cd build2-toolchain-X.Y
+> bpkg uninstall --all)RP(
+
+  )BR(
+  )0 P(Note that in both cases \201manual or scripted bootstrap\202, if something goes
+  wrong and you need to restart the process, you )BD(must)ES( start with a
+  clean toolchain source by unpacking it afresh from the archive.)EP(
+  )BR(
+
+  )0 P(The rest of this section outlines the manual bootstrap process.)EP(
+
+  )0 DL(  )0 DT()BD(1. Bootstrap, Phase 1)ES(
+  )DD(First, we build a minimal build system with the provided
+  )SM(bootstrap-clang.bat)ES( batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run )SM(bootstrap-clang.bat /?)ES( and see
+  the )SM(build2\200INSTALL)ES( file for details.
+
+  ) 4 39 PR(> cd build2
+> .\200bootstrap-clang.bat clang++ -m64 -w
+
+> b\200b-boot --version)RP(
+
+  )0 P(Alternatively, we can use the )SM(bootstrap.gmake)ES( GNU makefile
+  to bootstrap in parallel:)EP(
+
+  ) 4 69 PR(> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=clang++ "CXXFLAGS=-m64 -w"
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(2. Bootstrap, Phase
+  2)ES(
+  )DD(Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  ) 8 30 PR(> b\200b-boot                  ^
+  "config.cxx=clang++ -m64" ^
+  config.bin.lib=static     ^
+  b\200exe{b}
+
+> move /y b\200b.exe b\200b-boot.exe
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(3. Stage)ES(
+  )DD(At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  ) 10 42 PR(> cd ..  # Back to build2-toolchain-X.Y.Z\200
+
+> build2\200b\200b-boot configure           ^
+  "config.cxx=clang++ -m64"           ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\200build2       ^
+  config.install.data_root=root\200stage
+
+> build2\200b\200b-boot install: build2\200 bpkg\200)RP(
+
+  )0 P(The strange-looking )SM(config.install.data_root=root\200stage)ES(
+  means install data files \201as opposed to executable files\202 into the
+  )SM(stage\200)ES( subdirectory of wherever
+  )SM(config.install.root)ES( points to \201so in our case it will be
+  )SM(C:\200build2\200stage\200)ES(\202. This subdirectory is temporary and will be
+  removed in a few steps.)EP(
+
+  )0 P(Verify that the toolchain binaries can be found and work \201this relies on
+  the )SM(PATH)ES( environment variable we have set earlier\202:)EP(
+
+  ) 8 28 PR(> where b-stage
+C:\200build2\200bin\200b-stage.exe
+
+> where bpkg-stage
+C:\200build2\200bin\200bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version)RP(
+
+  )0 P(At the next step we will use )SM(bpkg)ES( to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  \201for example, because the machine is offline\202, then you can convert this
+  step into a local installation and skip the rest of the steps.)EP(
+
+  )BR(
+  )0 P(To perform a local installation with the )SM(build-clang.bat)ES(
+  batch file, pass the )SM(--local)ES( option.)EP(
+  )BR(
+
+  )0 P(To perform a local installation you will need to change the
+  )SM(configure)ES( and )SM(install)ES( command lines above along
+  these lines \201see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc\202:)EP(
+
+  ) 8 46 PR(> build2\200b\200b-boot configure      ^
+  config.config.hermetic=true    ^
+  "config.cxx=clang++ -m64"      ^
+  config.cc.coptions=-O2         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\200build2
+
+> build2\200b\200b-boot install: build2\200 bpkg\200 bdep\200)RP(
+
+  )0 P(You will also need to build and install the standard build system
+  modules:)EP(
+
+  ) 1 55 PR(> b install: !config.install.scope=project libbuild2-*\200)RP(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 28 PR(> b noop: tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 P(To uninstall such a local installation, run:)EP(
+
+  ) 1 47 PR(> b uninstall: build2\200 bpkg\200 bdep\200 libbuild2-*\200)RP(
+
+  )0 DT()BD(4. Install)ES(
+  )DD(Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the )SM(bpkg)ES( package manager.
+  First, we create the )SM(bpkg)ES( configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  ) 11 33 PR(> cd ..  # Back to build2-build\200
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  "config.cxx=clang++ -m64"     ^
+  config.cc.coptions=-O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+  )BR(
+  )0 P(The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  )SM(config.bin.lib=shared)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(To add a custom prefix/suffix to the toolchain executables names, add
+  )SM(config.bin.exe.prefix=...)ES( and/or
+  )SM(config.bin.exe.suffix=...)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The )SM(config.config.hermetic=true)ES( configuration variable in
+  the above command makes sure the embedded )SM(~host)ES( and
+  )SM(~build2)ES( configurations include the current environment. This is
+  especially important for )SM(~build2)ES( which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.)EP(
+  )BR(
+
+  )0 P(Next, we add the package repository, build, and install:)EP(
+
+  ) 4 49 PR(> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all)RP(
+
+  )BR(
+  )0 P(By default )SM(bpkg)ES( will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:)EP(
+
+  ) 1 67 PR(> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z)RP(
+  )BR(
+
+  )0 P(To verify the result, run:)EP(
+
+  ) 12 22 PR(> where b
+C:\200build2\200bin\200b.exe
+
+> where bpkg
+C:\200build2\200bin\200bpkg.exe
+
+> where bdep
+C:\200build2\200bin\200bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version)RP(
+
+  )0 P(Finally, we build and install the standard build system modules:)EP(
+
+  ) 3 63 PR(> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*)RP(
+
+  )BR(
+  )0 P(To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:)EP(
+
+  ) 2 30 PR(> cd ..\200build2-toolchain-X.Y.Z
+> dir /B libbuild2-*)RP(
+  )BR(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 54 PR(> b noop: ..\200build2-toolchain-X.Y.Z\200tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 DT()BD(5. Clean)ES(
+  )DD(The last thing we need to do is uninstall the staged tools:
+
+  ) 2 52 PR(> cd ..\200build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\200 bpkg\200)RP(
+  )LD(
+
+  )0 2 5 H(2.3)WB 16 Sn()WB 7 Sn( Bootstrapping on Windows with
+  MinGW)EH(
+
+  )0 P(Continuing from )0 4 1 A(Bootstrapping on
+  Windows)4 0 TN TL()Ec /AF f D(, if you are using your own MinGW distribution, then the
+  resulting )SM(build2)ES( binaries will most likely require a number of
+  DLLs in order to run. It is therefore recommended that you copy the
+  following files from your MinGW )SM(bin\200)ES( subdirectory to
+  )SM(C:\200build2\200bin\200)ES( \201)SM(*)ES( in the last name will normally
+  be )SM(dw2-1)ES(, )SM(seh-1)ES(, or )SM(sjlj-1)ES(\202:)EP(
+
+  ) 3 19 PR(libwinpthread-1.dll
+libstdc++-6.dll
+libgcc_s_*.dll)RP(
+
+  )0 P(To build with MinGW you can either perform the following steps manually
+  or, if after reviewing the steps, you are happy with using the defaults, run
+  the )SM(build-mingw.bat)ES( batch file. It performs \201and echoes\202 the
+  same set of steps as outlined below but only allows you to customize the
+  compiler, installation directory, and a few other things \201run
+  )SM(build-mingw.bat /?)ES( for usage\202.)EP(
+
+  )0 P(For example, if your MinGW distribution is in )SM(C:\200mingw\200)ES(,
+  then you could run it \201from the command prompt that we have started earlier\202
+  like this:)EP(
+
+  ) 1 36 PR(> .\200build-mingw.bat C:\200mingw\200bin\200g++)RP(
+
+  )0 P(If you are using the )SM(build2-mingw)ES( package then you should be
+  able to use just )SM(g++)ES( for the compiler:)EP(
+
+  ) 1 23 PR(> .\200build-mingw.bat g++)RP(
+
+  )0 P(If you would like to speed the process up by compiling in parallel, then
+  you can instruct )SM(build-mingw.bat)ES( to bootstrap using GNU make
+  \201comes in the )SM(build2-mingw)ES( package\202, for example:)EP(
+
+  ) 1 54 PR(> .\200build-mingw.bat --make mingw32-make --make -j8 g++)RP(
+
+  )BR(
+  )0 P(Note that at about half way through \201)SM(bpkg fetch)ES( at step 4
+  below\202 the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the )SM(--trust)ES( option \201see
+  )SM(build-mingw.bat /?)ES( for details\202.)EP(
+  )BR(
+
+  )0 P(The end result of the bootstrap process \201performed either with the script
+  or manually\202 is the installed toolchain as well as the )SM(bpkg)ES(
+  configuration in )SM(build2-toolchain-X.Y\200)ES( that can be used to )0 10 1 A(upgrade)10 0 TN TL()Ec /AF f D( to newer versions. It can also be used to
+  uninstall the toolchain:)EP(
+
+  ) 2 25 PR(> cd build2-toolchain-X.Y
+> bpkg uninstall --all)RP(
+
+  )BR(
+  )0 P(Note that in both cases \201manual or scripted bootstrap\202, if something goes
+  wrong and you need to restart the process, you )BD(must)ES( start with a
+  clean toolchain source by unpacking it afresh from the archive.)EP(
+  )BR(
+
+  )0 P(The rest of this section outlines the manual bootstrap process.)EP(
+
+  )0 DL(  )0 DT()BD(1. Bootstrap, Phase 1)ES(
+  )DD(First, we build a minimal build system with the provided
+  )SM(bootstrap-mingw.bat)ES( batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run )SM(bootstrap-mingw.bat /?)ES( and see
+  the )SM(build2\200INSTALL)ES( file for details.
+
+  ) 4 38 PR(> cd build2
+> .\200bootstrap-mingw.bat g++ -w -static
+
+> b\200b-boot --version)RP(
+
+  )0 P(Alternatively, we can use the )SM(bootstrap.gmake)ES( GNU makefile
+  to bootstrap in parallel:)EP(
+
+  ) 4 74 PR(> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w LDFLAGS=-static
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(2. Bootstrap, Phase
+  2)ES(
+  )DD(Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  ) 4 56 PR(> b\200b-boot config.cxx=g++ config.bin.lib=static b\200exe{b}
+> move /y b\200b.exe b\200b-boot.exe
+
+> b\200b-boot --version)RP(
+
+  )0 DT()BD(3. Stage)ES(
+  )DD(At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  ) 10 42 PR(> cd ..  # Back to build2-toolchain-X.Y.Z\200
+
+> build2\200b\200b-boot configure           ^
+  config.cxx=g++                      ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\200build2       ^
+  config.install.data_root=root\200stage
+
+> build2\200b\200b-boot install: build2\200 bpkg\200)RP(
+
+  )0 P(The strange-looking )SM(config.install.data_root=root\200stage)ES(
+  means install data files \201as opposed to executable files\202 into the
+  )SM(stage\200)ES( subdirectory of wherever
+  )SM(config.install.root)ES( points to \201so in our case it will be
+  )SM(C:\200build2\200stage\200)ES(\202. This subdirectory is temporary and will be
+  removed in a few steps.)EP(
+
+  )0 P(Verify that the toolchain binaries can be found and work \201this relies on
+  the )SM(PATH)ES( environment variable we have set earlier\202:)EP(
+
+  ) 8 28 PR(> where b-stage
+C:\200build2\200bin\200b-stage.exe
+
+> where bpkg-stage
+C:\200build2\200bin\200bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version)RP(
+
+  )0 P(At the next step we will use )SM(bpkg)ES( to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  \201for example, because the machine is offline\202, then you can convert this
+  step into a local installation and skip the rest of the steps.)EP(
+
+  )BR(
+  )0 P(To perform a local installation with the )SM(build-mingw.bat)ES(
+  batch file, pass the )SM(--local)ES( option.)EP(
+  )BR(
+
+  )0 P(To perform a local installation you will need to change the
+  )SM(configure)ES( and )SM(install)ES( command lines above along
+  these lines \201see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc\202:)EP(
+
+  ) 8 46 PR(> build2\200b\200b-boot configure ^
+  config.config.hermetic=true    ^
+  config.cxx=g++                 ^
+  config.cc.coptions=-O3         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\200build2
+
+> build2\200b\200b-boot install: build2\200 bpkg\200 bdep\200)RP(
+
+  )0 P(You will also need to build and install the standard build system
+  modules:)EP(
+
+  ) 1 55 PR(> b install: !config.install.scope=project libbuild2-*\200)RP(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 28 PR(> b noop: tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 P(To uninstall such a local installation, run:)EP(
+
+  ) 1 47 PR(> b uninstall: build2\200 bpkg\200 bdep\200 libbuild2-*\200)RP(
+
+  )0 DT()BD(4. Install)ES(
+  )DD(Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the )SM(bpkg)ES( package manager.
+  First, we create the )SM(bpkg)ES( configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  ) 11 33 PR(> cd ..  # Back to build2-build\200
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+  )BR(
+  )0 P(The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  )SM(config.bin.lib=shared)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(To add a custom prefix/suffix to the toolchain executables names, add
+  )SM(config.bin.exe.prefix=...)ES( and/or
+  )SM(config.bin.exe.suffix=...)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The )SM(config.config.hermetic=true)ES( configuration variable in
+  the above command makes sure the embedded )SM(~host)ES( and
+  )SM(~build2)ES( configurations include the current environment. This is
+  especially important for )SM(~build2)ES( which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.)EP(
+  )BR(
+
+  )0 P(Next, we add the package repository, build, and install:)EP(
+
+  ) 4 49 PR(> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all)RP(
+
+  )BR(
+  )0 P(By default )SM(bpkg)ES( will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:)EP(
+
+  ) 1 67 PR(> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z)RP(
+  )BR(
+
+  )0 P(To verify the result, run \201note that the )SM(where)ES( command is
+  not available on Windows XP without the Resource Kit installed\202:)EP(
+
+  ) 12 22 PR(> where b
+C:\200build2\200bin\200b.exe
+
+> where bpkg
+C:\200build2\200bin\200bpkg.exe
+
+> where bdep
+C:\200build2\200bin\200bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version)RP(
+
+  )0 P(Finally, we build and install the standard build system modules:)EP(
+
+  ) 3 63 PR(> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*)RP(
+
+  )BR(
+  )0 P(To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:)EP(
+
+  ) 2 30 PR(> cd ..\200build2-toolchain-X.Y.Z
+> dir /B libbuild2-*)RP(
+  )BR(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 54 PR(> b noop: ..\200build2-toolchain-X.Y.Z\200tests\200libbuild2-*\200)RP(
+  )BR(
+
+  )0 DT()BD(5. Clean)ES(
+  )DD(The last thing we need to do is uninstall the staged tools:
+
+  ) 2 52 PR(> cd ..\200build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\200 bpkg\200)RP(
+  )LD(
+
+  )0 1 6 H(3)WB 17 Sn()WB 8 Sn( Bootstrapping on Mac OS X)EH(
+
+  )0 P(The )SM(build2)ES( toolchain requires Mac OS version 10.5 \201Leopard\202
+  or later. We will also be using the system C++ toolchain that comes with the
+  Xcode Command Line Tools. You should be able to use other/custom C++
+  toolchains, however, this is the only configuration that is tested and
+  guaranteed to work.)EP(
+
+  )0 P(To verify that Command Line Tools are installed, run:)EP(
+
+  ) 1 19 PR($ clang++ --version)RP(
+
+  )0 P(It should produce something along these lines:)EP(
+
+  ) 1 60 PR(Apple LLVM version X.Y.Z \201clang-A.B.C\202 \201based on LLVM M.N.P\202)RP(
+
+  )0 P(To install Command Line Tools, run:)EP(
+
+  ) 1 24 PR($ xcode-select --install)RP(
+
+  )0 P(Once this is done continue with )0 9 1 A(Bootstrapping
+  on UNIX)9 0 TN TL()Ec /AF f D(.)EP(
+
+  )0 1 7 H(4)WB 18 Sn()WB 9 Sn( Bootstrapping on UNIX)EH(
+
+  )0 P(The following instructions are for bootstrapping )SM(build2)ES( on
+  UNIX-like operating systems \201GNU/Linux, FreeBSD, etc\202. For Mac OS X first
+  see )0 8 1 A(Bootstrapping on Mac OS X)8 0 TN TL()Ec /AF f D(. These
+  instructions should also be used for UNIX emulation layers on Windows \201for
+  example, WSL, MSYS, or Cygwin\202 where you already have a UNIX shell with
+  standard utilities.)EP(
+
+  )0 DL(  )0 DT()BD(1. Create Build Directory)ES(
+  )DD(You will want to keep this directory around in order to upgrade to new
+  toolchain versions in the future. In this guide we use
+  )SM(~/build2-build/)ES( as the build directory and
+  )SM(/usr/local/)ES( as the installation directory but you can use other
+  paths.
+
+  ) 3 20 PR($ cd
+$ mkdir build2-build
+$ cd build2-build)RP(
+
+  )0 DT()BD(2. Download, Verify, and
+  Unpack)ES(
+  )DD(Download )SM(build2-toolchain-X.Y.Z.tar.xz)ES( \201or its
+  )SM(.tar.gz)ES( variant if you don't have )SM()BD(xz\2011\202)ES()ES(\202 as
+  well as its )SM(.sha256)ES( checksum from )R2 2 A(Download)EA( page.
+
+  )0 P(Place everything into )SM(~/build2-build/)ES( \201build directory\202 and
+  verify the archive checksum matches:)EP(
+
+  ) 12 55 PR(# Linux, WSL, MSYS, Cygwin:
+#
+$ sha256sum -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+# Mac OS X:
+#
+$ shasum -a 256 -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+# FreeBSD \201compare visually\202:
+#
+$ cat build2-toolchain-X.Y.Z.tar.xz.sha256
+$ sha256 -r build2-toolchain-X.Y.Z.tar.xz)RP(
+
+  )0 P(Unpack the archive and change to its directory:)EP(
+
+  ) 2 39 PR(> tar -xf build2-toolchain-X.Y.Z.tar.xz
+> cd build2-toolchain-X.Y.Z)RP(
+  )LD(
+
+  )0 P(Next you can either perform the rest of the steps manually or, if after
+  reviewing the steps, you are happy with using the defaults, run the
+  )SM(build.sh)ES( shell script. It performs \201and echoes\202 the same set of
+  steps as outlined below but only allows you to customize the compiler,
+  installation directory, and a few other things \201run )SM(build.sh -h)ES(
+  for usage\202.)EP(
+
+  )0 P(For example, this command will use )SM(g++)ES( and install the
+  toolchain into )SM(/usr/local/)ES(.)EP(
+
+  ) 1 16 PR($ ./build.sh g++)RP(
+
+  )0 P(While this will use Clang and install into )SM(/opt/build2)ES(:)EP(
+
+  ) 1 58 PR($ ./build.sh --install-dir /opt/build2 --sudo sudo clang++)RP(
+
+  )0 P(If you would like to speed the process up by compiling in parallel, then
+  you can instruct )SM(build.sh)ES( to bootstrap using GNU make \201can be
+  called )SM(gmake)ES( instead of )SM(make)ES( on some platforms\202,
+  for example:)EP(
+
+  ) 1 39 PR($ ./build.sh --make make --make -j8 g++)RP(
+
+  )BR(
+  )0 P(Note that at about half way through \201)SM(bpkg fetch)ES( at step 4
+  below\202 the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the )SM(--trust)ES( option \201see
+  )SM(build.sh -h)ES( for details\202.)EP(
+  )BR(
+
+  )0 P(The end result of the bootstrap process \201performed either with the script
+  or manually\202 is the installed toolchain as well as the )SM(bpkg)ES(
+  configuration in )SM(build2-toolchain-X.Y/)ES( that can be used to )0 10 1 A(upgrade)10 0 TN TL()Ec /AF f D( to newer versions. It can also be used to
+  uninstall the toolchain:)EP(
+
+  ) 2 25 PR($ cd build2-toolchain-X.Y
+$ bpkg uninstall --all)RP(
+
+  )BR(
+  )0 P(Note that in both cases \201manual or scripted bootstrap\202, if something goes
+  wrong and you need to restart the process, you )BD(must)ES( start with a
+  clean toolchain source by unpacking it afresh from the archive.)EP(
+  )BR(
+
+  )0 P(The rest of this section outlines the manual bootstrap process.)EP(
+
+  )BR(
+  )0 P(You should either run )SM(build.sh)ES( or the manual commands below,
+  but not both.)EP(
+  )BR(
+
+  )0 DL(  )0 DT()BD(1. Bootstrap, Phase 1)ES(
+  )DD(First, we build a minimal build system with the provided
+  )SM(bootstrap.sh)ES( script. Normally, the only argument you will pass
+  to this script is the C++ compiler to use but there is also a way to specify
+  compile options and a few other things; run )SM(bootstrap.sh -h)ES( and
+  see the )SM(build2/INSTALL)ES( file for details.
+
+  ) 4 23 PR($ cd build2
+$ ./bootstrap.sh g++ -w
+
+$ b/b-boot --version)RP(
+
+  )0 P(Alternatively, we can use the )SM(bootstrap.gmake)ES( GNU makefile
+  to bootstrap in parallel:)EP(
+
+  ) 4 50 PR($ cd build2
+$ make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w
+
+$ b/b-boot --version)RP(
+
+  )0 DT()BD(2. Bootstrap, Phase
+  2)ES(
+  )DD(Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  ) 4 56 PR($ b/b-boot config.cxx=g++ config.bin.lib=static b/exe{b}
+$ mv b/b b/b-boot
+
+$ b/b-boot --version)RP(
+
+  )0 DT()BD(3. Stage)ES(
+  )DD(At this step the build system and package manager are built with shared
+  libraries and then staged. Here you may want to adjust a few things, such as
+  the installation directory or the )SM(sudo)ES( program \201remove the
+  )SM(config.install.sudo)ES( line if you don't need one\202.
+
+  )0 P(You may also need to remove the )SM(config.bin.rpath)ES( line if
+  your target doesn't support )I(rpath)ES(. Specifically, if building on
+  Windows \201with MSYS or Cygwin\202, remove both )SM(.rpath)ES( and
+  )SM(.sudo)ES(. But if unsure, leave )SM(.rpath)ES( in \235 if
+  your target doesn't support it, you will get an error and will need to
+  reconfigure without it.)EP(
+
+  ) 12 42 PR($ cd ..  # Back to build2-toolchain-X.Y.Z/
+
+$ build2/b/b-boot configure           \200
+  config.cxx=g++                      \200
+  config.bin.lib=shared               \200
+  config.bin.suffix=-stage            \200
+  config.bin.rpath=/usr/local/lib     \200
+  config.install.root=/usr/local      \200
+  config.install.data_root=root/stage \200
+  config.install.sudo=sudo
+
+$ build2/b/b-boot install: build2/ bpkg/)RP(
+
+  )0 P(The strange-looking )SM(config.install.data_root=root/stage)ES(
+  means install data files \201as opposed to executable files\202 into the
+  )SM(stage/)ES( subdirectory of wherever
+  )SM(config.install.root)ES( points to \201so in our case it will be
+  )SM(/usr/local/stage/)ES(\202. Note that this subdirectory is temporary
+  and will be removed in a few steps. But if you don't like the default
+  location, feel free to change it \201for example, to
+  )SM(/tmp/stage)ES(\202.)EP(
+
+  )0 P(Depending on the installation directory, the installed
+  )SM(build2)ES( binaries may not be automatically found. On most
+  platforms )SM(/usr/local/bin/)ES( is in the )SM(PATH)ES(
+  environment variable by default and you should be able to run:)EP(
+
+  ) 8 25 PR($ which b-stage
+/usr/local/bin/b-stage
+
+$ which bpkg-stage
+/usr/local/bin/bpkg-stage
+
+$ b-stage --version
+$ bpkg-stage --version)RP(
+
+  )0 P(If, however, you installed, say, into )SM(/opt/build2)ES(, then you
+  will need to add its )SM(bin/)ES( subdirectory to )SM(PATH)ES(
+  \201re-run the above commands to verify\202:)EP(
+
+  ) 1 37 PR($ export PATH="/opt/build2/bin:$PATH")RP(
+
+  )0 P(Strictly speaking this is not absolutely necessary and you can adjust the
+  rest of the commands to use absolute paths. This, however, does not make for
+  very readable examples so below we assume the installation's
+  )SM(bin/)ES( subdirectory is in )SM(PATH)ES(.)EP(
+
+  )0 P(At the next step we will use )SM(bpkg)ES( to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  \201for example, because the machine is offline\202, then you can convert this
+  step into a local installation and skip the rest of the steps.)EP(
+
+  )BR(
+  )0 P(To perform a local installation with the )SM(build.sh)ES( script,
+  pass the )SM(--local)ES( option.)EP(
+  )BR(
+
+  )0 P(To perform a local installation you will need to change the
+  )SM(configure)ES( and )SM(install)ES( command lines above along
+  these lines \201see also notes on the following step about only building shared
+  libraries, toolchain executables prefix/suffix, etc\202:)EP(
+
+  ) 10 46 PR($ build2/b/b-boot configure       \200
+  config.config.hermetic=true     \200
+  config.cxx=g++                  \200
+  config.cc.coptions=-O3          \200
+  config.bin.lib=shared           \200
+  config.bin.rpath=/usr/local/lib \200
+  config.install.root=/usr/local  \200
+  config.install.sudo=sudo
+
+$ build2/b/b-boot install: build2/ bpkg/ bdep/)RP(
+
+  )0 P(You will also need to build and install the standard build system
+  modules:)EP(
+
+  ) 1 57 PR($ b install: '!config.install.scope=project' libbuild2-*/)RP(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 28 PR($ b noop: tests/libbuild2-*/)RP(
+  )BR(
+
+  )0 P(To uninstall such a local installation, run:)EP(
+
+  ) 1 47 PR($ b uninstall: build2/ bpkg/ bdep/ libbuild2-*/)RP(
+
+  )0 DT()BD(4. Install)ES(
+  )DD(Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the )SM(bpkg)ES( package manager.
+  First, we create the )SM(bpkg)ES( configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  ) 13 35 PR($ cd ..  # Back to build2-build/
+$ mkdir build2-toolchain-X.Y
+$ cd build2-toolchain-X.Y
+
+$ bpkg-stage create               \200
+  cc                              \200
+  config.config.hermetic=true     \200
+  config.cxx=g++                  \200
+  config.cc.coptions=-O3          \200
+  config.bin.lib=shared           \200
+  config.bin.rpath=/usr/local/lib \200
+  config.install.root=/usr/local  \200
+  config.install.sudo=sudo)RP(
+
+  )BR(
+  )0 P(The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  )SM(config.bin.lib=shared)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(To add a custom prefix/suffix to the toolchain executables names, add
+  )SM(config.bin.exe.prefix=...)ES( and/or
+  )SM(config.bin.exe.suffix=...)ES(.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The )SM(config.config.hermetic=true)ES( configuration variable in
+  the above command makes sure the embedded )SM(~host)ES( and
+  )SM(~build2)ES( configurations include the current environment. This is
+  especially important for )SM(~build2)ES( which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.)EP(
+  )BR(
+
+  )0 P(Next, we add the package repository, build, and install:)EP(
+
+  ) 4 49 PR($ bpkg-stage add https://pkg.cppget.org/1/alpha
+$ bpkg-stage fetch
+$ bpkg-stage build --for install build2 bpkg bdep
+$ bpkg-stage install --all)RP(
+
+  )BR(
+  )0 P(By default )SM(bpkg)ES( will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:)EP(
+
+  ) 1 67 PR($ bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z)RP(
+  )BR(
+
+  )0 P(To verify the result, run:)EP(
+
+  ) 12 19 PR($ which b
+/usr/local/bin/b
+
+$ which bpkg
+/usr/local/bin/bpkg
+
+$ which bdep
+/usr/local/bin/bdep
+
+$ b --version
+$ bpkg --version
+$ bdep --version)RP(
+
+  )0 P(Finally, we build and install the standard build system modules:)EP(
+
+  ) 3 63 PR($ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \200
+  --all-pattern=libbuild2-*)RP(
+
+  )BR(
+  )0 P(To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:)EP(
+
+  ) 2 30 PR($ cd ../build2-toolchain-X.Y.Z
+$ ls -d libbuild2-*)RP(
+  )BR(
+
+  )BR(
+  )0 P(To verify the build system modules installation you can load them with
+  the following command:)EP(
+
+  ) 1 54 PR($ b noop: ../build2-toolchain-X.Y.Z/tests/libbuild2-*/)RP(
+  )BR(
+
+  )0 DT()BD(5. Clean)ES(
+  )DD(The last thing we need to do is uninstall the staged tools:
+
+  ) 2 52 PR($ cd ../build2-toolchain-X.Y.Z  # Back to bootstrap.
+$ b uninstall: build2/ bpkg/)RP(
+  )LD(
+
+  )0 1 8 H(5)WB 19 Sn()WB 10 Sn( Upgrading)EH(
+
+  )0 P(At this point we assume that you have the build2 toolchain installed and
+  would like to upgrade it to a newer version. We also expect that you have
+  the toolchain )SM(bpkg)ES( configuration in the
+  )SM(build2-toolchain-X.Y/)ES( directory, as produced by the bootstrap
+  process. If you don't have the )SM(bpkg)ES( configuration but do have
+  the toolchain installed somehow \201for example, using your distribution's
+  package manager\202, then you can create the configuration as shown at the end.
+  If you have neither, then you will need to go through the bootstrap
+  process.)EP(
+
+  )0 P(There are two ways to upgrade: dirty \201but quick\202 and staged \201but more
+  involved\202. In the )I(dirty upgrade)ES( we override the existing installation
+  without first uninstalling it. If some installed files no longer exist in
+  the new version, they will remain "installed" until cleaned up manually.
+  Also, with this approach we never get a chance to make sure the new build is
+  functional.)EP(
+
+  )0 P(In the )I(staged upgrade)ES( we first install a )SM(-stage)ES( build
+  of the new toolchain \201similar to what we did during bootstrap\202, test it,
+  uninstall the old toolchain, install the new toolchain as "final", and
+  finally uninstall )SM(-stage)ES(.)EP(
+
+  )0 P(We recommend that you use a dirty upgrade for toolchain patch releases
+  with the same )SM(X.Y)ES( \201)SM(MAJOR.MINOR)ES(\202 version and a
+  staged upgrade otherwise. With patch releases we guarantee not to alter the
+  installation file set.)EP(
+
+  )BR(
+  )0 P(Without periodic upgrades your version of the toolchain may become too
+  old to be able to upgrade itself. In this case you will have to fall back
+  onto the bootstrap process.)EP(
+  )BR(
+
+  )BR(
+  )0 P(The below upgrade process does not cover upgrading the
+  )SM(baseutils)ES( and )SM(mingw)ES( packages on Windows \201see )0 4 1 A(Bootstrapping on Windows)4 0 TN TL()Ec /AF f D( for details\202. We
+  recommend using the bootstrap process to upgrade these packages since all
+  the straightforward upgrade sequences would lead to either the old toolchain
+  using the new utilities or vice versa.)EP(
+  )BR(
+
+  )BR(
+  )0 P(For both ways of upgrading we need to make sure that the build system
+  modules are built and installed with the new version of the toolchain. The
+  set of build system modules can also change from version to version.)EP(
+  )BR(
+
+  )BR(
+  )0 P(If using the Windows command prompt, the
+  )SM(!config.install.scope=project)ES( command line argument should not
+  be quoted.)EP(
+  )BR(
+
+  )0 P(The dirty upgrade is straightforward:)EP(
+
+  ) 10 63 PR($ cd build2-toolchain-X.Y
+$ bpkg uninstall '!config.install.scope=project' \200
+  --all-pattern=libbuild2-*
+$ bpkg drop --all-pattern=libbuild2-*
+$ bpkg fetch
+$ bpkg build --for install -pr
+$ bpkg install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \200
+  --all-pattern=libbuild2-*)RP(
+
+  )BR(
+  )0 P(The )SM(-pr)ES( options stands for )SM(--patch)ES( and
+  )SM(--recursive)ES( \235 upgrade the built packages and their
+  dependencies to the latest patch version, recursively. See )0 2 A()SM()BD(bpkg-pkg-build\2011\202)ES()ES()EA(
+  for details.)EP(
+  )BR(
+
+  )0 P(You can also issue the )SM(status)ES( command after
+  )SM(fetch)ES( to examine which versions are available. The above
+  )SM(build)ES( command will upgrade all the packages to the latest
+  available patch versions but you can override this by specifying the desired
+  packages and/or versions explicitly, for example:)EP(
+
+  ) 5 52 PR($ bpkg status
+!build2 configured 1.0.0 available 1.0.1 1.0.2 2.0.0
+...
+
+$ bpkg build --for install build2/1.0.1)RP(
+
+  )0 P(The staged upgrade consists of several steps:)EP(
+
+  )0 DL(  )0 DT()BD(0. Check for Updates)ES(
+  )DD(There is no harm in running )SM(bpkg fetch)ES( in the existing
+  configuration so we can use it to determine if any updates are available,
+  whether we can use the simpler dirty upgrade, and, if not, the target
+  )SM(X.Y)ES( \201)SM(MAJOR.MINOR)ES(\202 version for the staged upgrade:
+
+  ) 3 30 PR($ cd build2-toolchain-X.Y
+$ bpkg fetch
+$ bpkg status build2 bpkg bdep)RP(
+
+  )0 P(Let's say the new version is X.Z.)EP(
+
+  )0 DT()BD(1. Create New
+  Configuration)ES(
+  )DD(First we make a copy of the old configuration. We will need the original
+  later to cleanly uninstall the old toolchain, and, maybe, to rollback the
+  installation if the new version doesn't work out.
+
+  ) 2 50 PR($ cd ..
+$ cp -rp build2-toolchain-X.Y build2-toolchain-X.Z)RP(
+
+  )0 P(Or, using Windows command prompt:)EP(
+
+  ) 2 58 PR(> cd ..
+> xcopy /s /q /i build2-toolchain-X.Y build2-toolchain-X.Z)RP(
+
+  )0 DT()BD(2. Build and Install as
+  )SM(-stage)ES()ES(
+  )DD(This step is similar to the dirty upgrade except that we use the copied
+  configuration, upgrade \201)SM(--upgrade|-u)ES(\202 instead of patching
+  \201)SM(--patch|-p)ES(\202, and install the new toolchain with the
+  )SM(-stage)ES( suffix:
+
+  ) 3 37 PR($ cd build2-toolchain-X.Z
+$ bpkg drop --all-pattern=libbuild2-*
+$ bpkg build --for install -ur)RP(
+
+  )0 P(Once this is done, we can proceed to installing:)EP(
+
+  ) 4 39 PR($ bpkg install                        \200
+  config.bin.suffix=-stage            \200
+  config.install.data_root=root/stage \200
+  --all)RP(
+
+  )BR(
+  )0 P(If during installation you have added a custom prefix/suffix to the
+  toolchain executables names with )SM(config.bin.exe.prefix)ES( and/or
+  )SM(config.bin.exe.suffix)ES(, add
+  )SM(config.bin.exe.prefix=[null])ES( and/or
+  )SM(config.bin.exe.suffix=[null])ES( to suppress them in the
+  executables being staged.)EP(
+  )BR(
+
+  )0 P(You can also specify the desired packages and/or versions explicitly,
+  again, similar to the dirty upgrade.)EP(
+
+  )0 DT()BD(3. Test Staged)ES(
+  )DD(Now you can test the new toolchain on your projects, etc. Remember to
+  use the )SM(-stage)ES(-suffixed binaries \201)SM(bdep-stage)ES( will
+  automatically use )SM(bpkg-stage)ES( which in turn will use
+  )SM(b-stage)ES(\202:
+
+  ) 3 22 PR($ b-stage --version
+$ bpkg-stage --version
+$ bdep-stage --version)RP(
+
+  )0 DT()BD(4. Uninstall Old, Install
+  New)ES(
+  )DD(Once we are satisfied that the new toolchain works, we can uninstall the
+  old one and install the new one:
+
+  ) 8 63 PR($ cd ../build2-toolchain-X.Y
+$ bpkg uninstall --all
+
+$ cd ../build2-toolchain-X.Z
+$ bpkg-stage install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \200
+  --all-pattern=libbuild2-*)RP(
+
+  )0 DT()BD(5. Uninstall Staged)ES(
+  )DD(Finally, we clean up by removing the staged toolchain \201hint: use the
+  command line history to find the corresponding )SM(install)ES( command
+  and change it to )SM(uninstall)ES(; see also a note at step 2 about
+  toolchain executables prefix/suffix\202:
+
+  ) 4 39 PR($ bpkg uninstall                      \200
+  config.bin.suffix=-stage            \200
+  config.install.data_root=root/stage \200
+  --all)RP(
+
+  )0 P(You can also remove the old configuration in
+  )SM(build2-toolchain-X.Y/)ES( if you think you no longer need
+  it.)EP(
+  )LD(
+
+  )0 P(If you ever need to \201re-\202create the )SM(bpkg)ES( configuration for
+  the toolchain from scratch, it is fairly simple \201you may need to adjust the
+  compiler, options, installation directory, etc; see the bootstrap steps for
+  details\202:)EP(
+
+  )0 P(For UNIX-like operating systems \201GNU/Linux, Mac OS X, FreeBSD, etc\202:)EP(
+
+  ) 10 33 PR($ bpkg-stage create             \200
+cc                              \200
+config.config.hermetic=true     \200
+config.cxx=g++                  \200
+config.cc.coptions=-O3          \200
+config.bin.lib=shared           \200
+config.bin.rpath=/usr/local/lib \200
+config.install.root=/usr/local  \200
+config.install.private=build2   \200
+config.install.sudo=sudo)RP(
+
+  )0 P(For Windows with MSVC \201from the Visual Studio "x64 Native Tools Command
+  Prompt"\202:)EP(
+
+  ) 7 33 PR(> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+  )0 P(For Windows with Clang \201from a suitable command prompt, see )0 6 1 A(Bootstrapping on Windows with Clang)6 0 TN TL()Ec /AF f D( for
+  details\202:)EP(
+
+  ) 7 33 PR(> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  "config.cxx=clang++ -m64"     ^
+  config.cc.coptions=-O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+  )0 P(For Windows with MinGW \201from the command prompt\202:)EP(
+
+  ) 7 33 PR(> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\200build2)RP(
+
+)BR(
+
+)WB NL
+/TE t D NP /OU t D TU PM 1 eq and{/Pn () D showpage}if end restore

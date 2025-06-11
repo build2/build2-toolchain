@@ -429,6 +429,10 @@ if "_%local%_" == "__" (
   )
 )
 
+rem Note that it is important our path is added first since this value
+rem ends up in the host configuration and makes sure we use our C/C++
+rem toolchain.
+rem
 set "PATH=%idir%\bin;%PATH%"
 
 rem Show the steps we are performing.

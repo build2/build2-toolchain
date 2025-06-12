@@ -1,0 +1,4103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="version" content="0.18"/>
+  <meta name="subject" content="toolchain"/>
+  <meta name="title" content="Toolchain Introduction"/>
+  <meta name="copyright" content="2014-2025 the build2 authors"/>
+
+  <title>The build2 Toolchain Introduction</title>
+
+  <style type="text/css">
+/* file      : common.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+html
+{
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 1.4em;
+  letter-spacing: 0.01em;
+
+  color: #292929;
+}
+
+body {margin: 0;} /* There is non-0 default margin for body. */
+
+/* See notes on what's going on here. */
+body {min-width: 17em;}
+@media only screen and (min-width: 360px)
+{
+  body {min-width: 19em;}
+}
+
+/*
+ * Header (optional).
+ */
+
+#header-bar
+{
+  width: 100%;
+
+  background: rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+  padding: .4em 0 .42em 0;
+  margin: 0 0 1.4em 0;
+}
+
+#header
+{
+  /* Same as in #content. */
+  max-width: 41em;
+  margin: 0 auto 0 auto;
+  padding: 0 .4em 0 .4em;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  width: 100%;
+  display: table;
+  border: none;
+  border-collapse: collapse;
+}
+
+#header-logo, #header-menu
+{
+  display: table-cell;
+  border: none;
+  padding: 0;
+  vertical-align: middle;
+}
+
+#header-logo {text-align: left;}
+#header-menu {text-align: right;}
+
+/* These overlap with #header's margin because of border collapsing. */
+#header-logo {padding-left: .4em;}
+#header-menu {padding-right: .4em;}
+
+#header-logo a
+{
+  color: #000;
+  text-decoration: none;
+  outline: none;
+}
+#header-logo a:visited {color: #000;}
+#header-logo a:hover, #header-logo a:active {color: #000;}
+
+#header-menu a
+{
+  font-size: 0.889em;
+  line-height: 1.4em;
+  text-align: right;
+  margin-left: 1.2em;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+#header-menu a
+{
+  color: #000;
+  outline: none;
+}
+#header-menu a:visited {color: #000;}
+#header-menu a:hover, #header-menu a:active
+{
+  color: #3870c0;
+  text-decoration: none;
+}
+
+/* Flexbox-based improvements though the above works reasonably well. */
+#header-menu-body
+{
+  width: 100%;
+
+  display: -webkit-inline-flex;
+  display: inline-flex;
+
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+/* Whether we want it (and at which point) depends on the size of the menu. */
+/*
+@media only screen and (max-width: 567px)
+{
+  #header-menu-body
+  {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+}
+*/
+
+/*
+ * Content.
+ */
+
+#content
+{
+  max-width: 41em;
+  margin: 0 auto 0 auto;
+  padding: 0 .4em 0 .4em; /* Space between text and browser frame. */
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/*
+ * Footer (optional).
+ */
+
+#footer
+{
+  color: #767676;
+  font-size: 0.7223em;
+  line-height: 1.3em;
+  margin: 2.2em 0 1em 0;
+  text-align: center;
+}
+
+#footer a
+{
+  color: #767676;
+  text-decoration: underline;
+}
+#footer a:visited {color: #767676;}
+#footer a:hover, #footer a:active {color: #3870c0;}
+
+/* Screen size indicator in the footer. The before/after content is in case
+   we don't have any content in the footer. Margin is to actually see the
+   border separate from the browser frame. */
+
+/*
+#footer:before {content: "\A0";}
+#footer:after {content: "\A0";}
+
+#footer
+{
+  border-left: 1px solid;
+  border-right: 1px solid;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+@media only screen and (max-width: 359px)
+{
+  #footer {border-color: red;}
+}
+
+@media only screen and (min-width: 360px) and (max-width: 567px)
+{
+  #footer {border-color: orange;}
+}
+
+@media only screen and (min-width: 568px) and (max-width: 1023px)
+{
+  #footer {border-color: blue;}
+}
+
+@media only screen and (min-width: 1024px)
+{
+  #footer {border-color: green;}
+}
+*/
+
+/*
+ * Common elements.
+ */
+
+p, li, dd {text-align: justify;}
+.code {text-align: left;} /* Manually aligned. */
+pre {text-align: left;}   /* If it is inside li/dd. */
+
+/* Notes. */
+
+.note
+{
+  color: #606060;
+}
+
+div.note
+{
+  margin: 2em 0 2em 0; /* The same top/bottom margings as pre box. */
+
+  padding-left: 0.5em;
+  border: 0.25em;
+  border-left-style: solid;
+  border-color: #808080;
+
+  page-break-inside: avoid;
+}
+
+div.note :first-child {margin-top:    0;}
+div.note :last-child  {margin-bottom: 0;}
+
+span.note::before {content: "[Note: "}
+span.note::after  {content: "]"}
+
+/* Links. */
+a
+{
+  color: #3870c0;
+  /*color: #4078c0;*/
+  text-decoration: none;
+}
+
+a:hover, a:active
+{
+/*color: #006fbf;*/
+/*color: #0087e7;*/
+  text-decoration: underline;
+}
+
+a:visited
+{
+/*color: #003388;*/
+  color: #00409c;
+}
+
+/* Standard paragraph. */
+
+p, pre {margin: 1em 0 1em 0;}
+
+/* Standard lists. */
+ul, ol, dl {margin: 1em 0 1em 0;}
+ul li, ol li {margin: 0 0 .4em 0;}
+ul li {list-style-type: circle;}
+dl dt {margin: 0 0 0 0;}
+dl dd {margin: 0 0 .6em 1.8em;}
+
+code, pre
+{
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.92em;
+  letter-spacing: 0;
+}
+
+pre {white-space: pre-wrap;}
+@media only screen and (max-width: 567px)
+{
+  pre {word-break: break-all;}
+}
+
+/* Use page rather than system font settings. */
+input
+{
+  font-family: inherit;
+  font-weight: inherit;
+  font-size:   inherit;
+  line-height: inherit;
+}
+
+/* file      : pre-box.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Note: see also p-code-box.css. */
+
+pre
+{
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.2em;
+  padding: .8em .4em .8em .4em;
+  margin: 2em -.4em 2em -.4em; /* Use margins of #content. */
+}
+
+/* file      : code-box.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Note: see also p-code-box.css if changing anything here. */
+
+code
+{
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.2em;
+  padding: .2em .32em .18em .32em;
+}
+
+/* file      : toc.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+table.toc
+{
+  border-style      : none;
+  border-collapse   : separate;
+  border-spacing    : 0;
+
+  margin            : 0.2em 0 0.2em 0;
+  padding           : 0 0 0 0;
+}
+
+table.toc tr
+{
+  padding           : 0 0 0 0;
+  margin            : 0 0 0 0;
+}
+
+table.toc * td, table.toc * th {
+  border-style      : none;
+  margin            : 0 0 0 0;
+  vertical-align    : top;
+}
+
+table.toc * th
+{
+  font-weight       : normal;
+  padding           : 0 0.8em 0 0;
+  text-align        : left;
+  white-space       : nowrap;
+}
+
+table.toc * table.toc th
+{
+  padding-left      : 1em;
+}
+
+table.toc * td
+{
+  padding           : 0 0 0 0;
+  text-align        : left;
+}
+
+table.toc * td.preface
+{
+  padding-left      : 1.35em;
+}
+
+/* file      : intro.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Bases:
+ *
+ * common.css
+ * pre-box.css
+ * code-box.css
+ *
+ */
+
+#content
+{
+  max-width: 43.6em;
+  padding-left: 3em; /* Reserve for headings. */
+}
+
+h1
+{
+  font-weight: normal;
+  font-size: 2em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -1.4em;
+}
+
+h1.preface
+{
+  margin-left: -.56em;
+}
+
+h2
+{
+  font-weight: normal;
+  font-size: 1.556em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -.8em;
+}
+
+h3
+{
+  font-weight: normal;
+  font-size: 1.3em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -.2em;
+}
+
+/* Title page */
+
+#titlepage {
+  margin: 0 0 4em 0;
+  border-bottom: 1px solid black;
+}
+
+#titlepage .title {
+  font-weight: normal;
+  font-size: 2.333em;
+  line-height: 1.4em;
+  letter-spacing: 0;
+  text-align: center;
+  margin: 2em 0 2em 0;
+}
+
+#titlepage p {
+  font-size: 0.889em;
+  line-height: 1.4em;
+  margin: 2em 0 .6em 0;
+}
+
+  </style>
+
+</head>
+<body>
+<div id="content">
+
+  <div class="noprint"> <!-- Exclude from html2ps. -->
+
+  <div id="titlepage">
+    <div class="title">The <code>build2</code> Toolchain Introduction</div>
+
+    <p id="revision">Revision <code>0.18</code>, May 2025<br/>
+    This revision of the document describes the <a href="https://build2.org"><code>build2</code></a>
+    toolchain <code>0.18.X</code> series and is available in the
+    following formats:
+    <a href="build2-toolchain-intro.xhtml">XHTML</a>,
+    <a href="build2-toolchain-intro-a4.pdf">PDF/A4</a>,
+    <a href="build2-toolchain-intro-letter.pdf">PDF/Letter</a>,
+    <a href="build2-toolchain-intro-a4.ps">PostScript/A4</a>, and
+    <a href="build2-toolchain-intro-letter.ps">PostScript/Letter</a>.</p>
+
+    <p>Copyright &#169; 2014-2025 the build2 authors.<br/>
+    Permission is granted to copy, distribute and/or modify this document
+    under the terms of the MIT License.</p>
+  </div>
+
+  <h1>Table of Contents</h1>
+
+  <table class="toc">
+    <tr><td class="preface" colspan="2"><a
+href="#preface">Preface</a></td></tr>
+    <tr><th>1</th><td><a href="#guide">Getting Started Guide</a>
+      <table class="toc">
+        <tr><th>1.1</th><td><a href="#guide-hello">Hello, World</a></td></tr>
+        <tr><th>1.2</th><td><a href="#guide-repositories">Package
+Repositories</a></td></tr>
+        <tr><th>1.3</th><td><a href="#guide-add-remove-deps">Adding and
+Removing Dependencies</a></td></tr>
+        <tr><th>1.4</th><td><a href="#guide-upgrade-downgrade-deps">Upgrading
+and Downgrading Dependencies</a></td></tr>
+        <tr><th>1.5</th><td><a href="#guide-build-time-linked">Build-Time
+Dependencies and Linked Configurations</a></td></tr>
+        <tr><th>1.6</th><td><a href="#guide-versioning-releasing">Versioning
+and Release Management</a></td></tr>
+        <tr><th>1.7</th><td><a href="#guide-dev-multi">Developing Multiple
+Packages and Projects</a></td></tr>
+        <tr><th>1.8</th><td><a href="#guide-consume-pkg">Package
+Consumption</a></td></tr>
+        <tr><th>1.9</th><td><a href="#guide-system-deps">Using
+System-Installed Dependencies</a></td></tr>
+        <tr><th>1.10</th><td><a href="#guide-unpackaged-deps">Using Unpackaged
+Dependencies</a></td></tr>
+      </table>
+    </td></tr>
+    <tr><th>2</th><td><a href="#proj-struct">Canonical Project Structure</a>
+      <table class="toc">
+        <tr><th>2.1</th><td><a href="#proj-struct-src-dir">Source
+Subdirectory</a></td></tr>
+        <tr><th>2.2</th><td><a href="#proj-struct-src-name">Source
+Naming</a></td></tr>
+        <tr><th>2.3</th><td><a href="#proj-struct-src-content">Source
+Contents</a></td></tr>
+        <tr><th>2.4</th><td><a href="#proj-struct-tests">Tests</a></td></tr>
+        <tr><th>2.5</th><td><a href="#proj-struct-build-out">Build Output</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+
+  </div> <!-- noprint -->
+  <h1 id="preface" class="preface">Preface</h1>
+
+  <p>This document is an overall introduction to the <code>build2</code>
+  toolchain that shows how the main components, namely the build system, the
+  package dependency manager, and the project dependency manager are used
+  together to handle the entire C/C++ project development lifecycle: creation,
+  development, testing, and delivery. For additional information, including
+  documentation for individual toolchain components, man pages, HOWTOs, etc.,
+  refer to the <code>build2</code> project <a
+  href="https://build2.org/doc.xhtml">Documentation</a> page.</p>
+
+  <h1 id="guide">1 Getting Started Guide</h1>
+
+  <p>The aim of this guide is to get you started developing C/C++ projects
+  with the <code>build2</code> toolchain. All the examples in this section
+  include the relevant command output so if you just want to get a sense of
+  what <code>build2</code> is about, then you don't have to install the
+  toolchain and run the commands in order to follow along. Or, alternatively,
+  you can take a short detour to the <a
+  href="https://build2.org/install.xhtml">Installation Instructions</a> and
+  then try the examples for yourself.</p>
+
+  <p>One of the primary goals of the <code>build2</code> toolchain is to
+  provide a uniform interface across all the platforms and compilers. While
+  most of the examples in this document assume a UNIX-like operation system,
+  they will look pretty similar if you are on Windows. You just have to use
+  appropriate paths, compilers, and options.</p>
+
+  <p>The question we will try to answer in this section can be summarized
+  as:</p>
+
+  <pre>$ git clone .../hello.git &amp;&amp; now-what?</pre>
+
+  <p>That is, we clone an existing C/C++ project or would like to create a new
+  one and then start hacking on it. We want to spend as little time and energy
+  as possible on the initial and ongoing infrastructure maintenance: setting
+  up build configurations, managing dependencies, continuous integration and
+  testing, release management, etc. Or, as one C++ user aptly put it, "<i>All
+  I want to do is program.</i>"</p>
+
+  <h2 id="guide-hello">1.1 Hello, World</h2>
+
+  <p>Let's see what programming with <code>build2</code> feels like by
+  starting with a customary <i>"Hello, World!"</i> program (here we assume our
+  current working directory is <code>/tmp</code>):</p>
+
+  <pre>$ bdep new -l c++ -t exe hello
+created new executable project hello in /tmp/hello/</pre>
+
+  <p>The <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command creates a <code>build2</code> project. In this case it is an
+  executable implemented in C++.</p>
+
+  <div class="note">
+  <p>To create a library, pass <code>-t&#160;lib</code>. By default
+  <code>new</code> also initializes a <code>git</code> repository and
+  generates suitable <code>.gitignore</code> files (pass
+  <code>-s&#160;none</code> if you don't want that). And for details on naming
+  your projects, see <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#package-name">Package
+  Name</a>.</p>
+  </div>
+
+  <div class="note">
+  <p>Note to Windows users: the <code>build2-baseutils</code> package includes
+  core <code>git</code> utilities that are sufficient for the
+  <code>bdep</code> functionality.</p>
+  </div>
+
+  <p>Let's take a look inside our new project:</p>
+
+  <pre>$ tree hello
+hello/
+├── .git/
+├── .bdep/
+├── build/
+├── hello/
+│   ├── hello.cxx
+│   ├── buildfile
+│   └── testscript
+├── buildfile
+├── manifest
+├── README.md
+└── repositories.manifest</pre>
+
+  <div class="note">
+  <p>See <a href="#proj-struct">Canonical Project Structure</a> for a detailed
+  discussion and rationale behind this layout. While it is recommended,
+  especially for new projects, <code>build2</code> is flexible enough to
+  support various arrangements used in today's C and C++ projects.
+  Furthermore, the <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command provides a number of customization options and chances are good you
+  will be able to create your preferred layout automatically. See <a
+  href="../../bdep/doc/bdep-new.xhtml#src-layout">SOURCE LAYOUT</a> for more
+  information and examples.</p>
+  </div>
+
+  <p>Similar to version control tools, we normally run all <code>build2</code>
+  tools from the project's source directory or one of its subdirectories,
+  so:</p>
+
+  <pre>$ cd hello</pre>
+
+  <p>While the project layout is discussed in more detail in later sections,
+  let's examine a couple of interesting files to get a sense of what's going
+  on. We start with the source file which should look familiar:</p>
+
+  <pre>$ cat hello/hello.cxx
+
+#include &lt;iostream>
+
+int main (int argc, char* argv[])
+{
+  using namespace std;
+
+  if (argc &lt; 2)
+  {
+    cerr &lt;&lt; "error: missing name" &lt;&lt; endl;
+    return 1;
+  }
+
+  cout &lt;&lt; "Hello, " &lt;&lt; argv[1] &lt;&lt; '!' &lt;&lt; endl;
+}</pre>
+
+  <div class="note">
+  <p>If you prefer the <code>.?pp</code> extensions over <code>.?xx</code> for
+  your C++ source files, pass <code>-l&#160;c++,cpp</code> to the
+  <code>new</code> command. See <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a> for
+  details on this and other customization options.</p>
+  </div>
+
+  <p>Let's take a look at the accompanying <code>buildfile</code>:</p>
+
+  <pre>$ cat hello/buildfile
+
+libs =
+#import libs += libhello%lib{hello}
+
+exe{hello}: {hxx ixx txx cxx}{**} $libs testscript</pre>
+
+  <p>As the name suggests, this file describes how to build things. While its
+  content might look a bit cryptic, let's try to infer a couple of points
+  without going into too much detail (for details see the build system <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro">Introduction</a>).</p>
+
+  <p>That <code>exe{hello}</code> on the left of <code>:</code> is a
+  <i>target</i> (executable named <code>hello</code>) and what we have on the
+  right are <i>prerequisites</i> (C++ source files, libraries, etc). This
+  <code>buildfile</code> uses wildcard patterns (that <code>**</code>) to
+  automatically locate all the C++ source files. This means we don't have to
+  edit our <code>buildfile</code> every time we add, remove, or rename a
+  source file in our project. There also appears to be some (commented out)
+  infrastructure for importing and linking libraries (that <code>libs</code>
+  variable). We will see how to use it in a moment.</p>
+
+  <div class="note">
+  <p>In simple projects that follow the canonical structure we can often
+  completely ignore the presence of the build definition files thus
+  approaching the <i>build system-less</i> workflow found in languages like
+  Rust and Go.</p>
+  </div>
+
+  <p>Finally, the <code>buildfile</code> also lists <code>testscript</code> as
+  a prerequisite of <code>hello</code>. This file tests our target. Let's take
+  a look inside:</p>
+
+  <pre>$ cat hello/testscript
+
+: basics
+:
+$* 'World' >'Hello, World!'
+
+: missing-name
+:
+$* 2>>EOE != 0
+error: missing name
+EOE</pre>
+
+  <p>Again, we are not going into detail here (see <a
+  href="../../build2/doc/build2-testscript-manual.xhtml#intro">Testscript
+  Introduction</a> for a proper introduction), but to give you an idea, here
+  we have two tests: the first (with id <code>basics</code>) verifies that our
+  program prints the expected greeting while the second makes sure it handles
+  the missing name error condition. Tests written in Testscript are concise,
+  portable, and executed in parallel.</p>
+
+  <p>Next up is <code>manifest</code>:</p>
+
+  <pre>$ cat manifest
+: 1
+name: hello
+version: 0.1.0-a.0.z
+language: c++
+summary: hello C++ executable
+license: other: proprietary
+description-file: README.md
+url: https://example.org/hello
+email: you@example.org
+#depends: libhello ^1.0.0</pre>
+
+  <p>The <code>manifest</code> file is what makes a build system project a
+  <i>package</i>. It contains all the metadata that a user of a package might
+  need to know: its name, version, license, dependencies, etc., all in one
+  place.</p>
+
+  <div class="note">
+  <p>Refer to <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-format">Manifest
+  Format</a> for the general format of <code>build2</code> manifest files and
+  to <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package">Package
+  Manifest</a> for details on the package manifest values.</p>
+  </div>
+
+  <p>As you can see, <code>manifest</code> created by <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  contains some dummy values which you would want to adjust before publishing
+  your package. Specifically, you would want to review <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-summary"><code>summary</code></a>,
+  <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-license"><code>license</code></a>,
+  <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-url"><code>url</code></a>,
+  and <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-email"><code>email</code></a>
+  as well as the <code>README.md</code> file referenced by <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-description"><code>description-file</code></a>.
+  Let's, however, resist the urge to adjust that strange looking
+  <code>0.1.0-a.0.z</code> until we discuss package versioning.</p>
+
+  <div class="note">
+  <p>Next to <code>manifest</code> you might have noticed the
+  <code>repositories.manifest</code> file &#8211; we will discuss its function
+  later, when we talk about dependencies and where they come from.</p>
+  </div>
+
+  <p>Project in hand, let's build it. Unlike other programming languages, C++
+  development usually involves juggling a handful of build configurations:
+  several compilers and/or targets (<code>build2</code> is big on
+  cross-compiling), debug/release, different sanitizers and/or static analysis
+  tools, and so on. As a result, <code>build2</code> is optimized for
+  multi-configuration usage. However, as we will see shortly, one build
+  configuration can be designated as the default with additional
+  conveniences.</p>
+
+  <p>The <a
+  href="../../bdep/doc/bdep-init.xhtml"><code><b>bdep-init(1)</b></code></a>
+  command is used to initialize a project in a build configuration. As a
+  shortcut, it can also create a new build configuration in the process, which
+  is just what we need here.</p>
+
+  <div class="note">
+  <p>To create build configurations separately from initialization and to
+  manage them after that, use the <a
+  href="../../bdep/doc/bdep-config.xhtml"><code><b>bdep-config(1)</b></code></a>
+  subcommands.</p>
+  </div>
+
+  <p>Let's start with GCC (remember we are in the project's root
+  directory):</p>
+
+  <pre>$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+initializing in project /tmp/hello/
+created configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000</pre>
+
+  <p>The <code>--config-create|-C</code> option instructs <code>init</code> to
+  create a new configuration in the specified directory
+  (<code>../hello-gcc</code> in our case). To make referring to configurations
+  easier, we can give it a name, which is what we do with
+  <code>@gcc</code>.</p>
+
+  <div class="note">
+  <p>Note to Windows users: a command line argument with leading
+  <code>@</code> has a special meaning in PowerShell. To work around this, you
+  can use the alternative <code>-@gcc</code> syntax or the
+  <code>-n&#160;gcc</code> option.</p>
+  </div>
+
+  <p>The next argument (<code>cc</code>, stands for <i>C-common</i>) is the
+  build system module we would like to configure. It implements compilation
+  and linking rules for the C and C++ languages. Finally,
+  <code>config.cxx=g++</code> is (one of) this module's configuration
+  variables that specifies the C++ compiler we would like to use (the
+  corresponding C compiler will be determined automatically). Let's for now
+  also ignore that <code>synchronizing:...</code> bit along with
+  strange-looking <code>19700101000000</code> in the version &#8211; it will
+  become clear what's going on here in a moment.</p>
+
+  <div class="note">
+  <p>If you would like to generate a JSON compilation database for this
+  project so that, for example, you can edit its source files from your IDE,
+  then change the above <code>init</code> command to read:</p>
+
+  <pre>$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ -- \
+  config.cc.compiledb=./</pre>
+
+  <p>Once you build this project for the first time (see below), you will find
+  the <code>compile_commands.json</code> file in its root directory. See <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#cc-compiledb">Compilation
+  Database</a> for details on this functionality.</p>
+  </div>
+
+  <p>Now the same for Clang:</p>
+
+  <pre>$ bdep init -C ../hello-clang @clang cc config.cxx=clang++
+initializing in project /tmp/hello/
+created configuration @clang /tmp/hello-clang/ auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000</pre>
+
+  <p>If we check the parent directory, we should now see two build
+  configurations next to our project:</p>
+
+  <pre>$ ls ..
+hello/
+hello-gcc/
+hello-clang/</pre>
+
+  <div class="note">
+  <p>If, as in the above examples, our configuration directories are next to
+  the project and their names are in the
+  <code><i>prj-name</i><b>-</b><i>cfg-name</i></code> form, then we can use
+  the shortcut version of the <code>init</code> command:</p>
+
+  <pre>$ bdep init -C @clang cc config.cxx=clang++</pre>
+  </div>
+
+  <p>Things will also look pretty similar if you are on Windows instead of a
+  UNIX-like operating system. For example, to initialize our project on
+  Windows with Visual Studio, start a command prompt and then run:</p>
+
+  <pre>> bdep init -C ..\hello-debug @debug cc ^
+  "config.cxx=cl /MDd"                  ^
+  "config.cc.coptions=/Od /Zi"          ^
+  config.cc.loptions=/DEBUG:FULL
+
+> bdep init -C ..\hello-release @release cc ^
+  config.cxx=cl                             ^
+  config.cc.coptions=/O2</pre>
+
+  <div class="note">
+  <p>For Visual Studio, <code>build2</code> by default will use the latest
+  available version and build for the <code>x86_64</code> target
+  (<code>x64</code> in the Microsoft's terminology). You can, however,
+  override these defaults by either running from a suitable Visual Studio
+  development command prompt or by specifying an absolute path to
+  <code>cl.exe</code> that you wish to use. For example:</p>
+
+  <pre>> bdep init -C ..\hello-debug-32 @debug-32 cc                       ^
+  "config.cxx=...\VC\Tools\MSVC\14.23.28105\bin\Hostx64\x86\cl.exe"
+  ...</pre>
+
+  <p>In case of the command prompt, you may also want to make your
+  configuration <i>hermetic</i> (<a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-config-hermetic">Hermetic
+  Build Configurations</a>):</p>
+
+  <pre>> bdep init -C ... cc ... config.config.hermetic=true</pre>
+
+  <p>Hermetically configuring our project in a suitable Visual Studio command
+  prompt makes us free to build it from any other prompt or shell, IDE,
+  etc.</p>
+  </div>
+
+  <div class="note">
+  <p>Besides the <code>coptions</code> (compile options) and
+  <code>loptions</code> (link options), other commonly used <code>cc</code>
+  module configuration variables are <code>poptions</code> (preprocess
+  options) and <code>libs</code> (extra libraries to link). Here is the
+  complete list with their rough <code>make</code> equivalents:</p>
+
+  <pre>*.poptions   preprocess        CPPFLAGS
+*.coptions   compile           CFLAGS/CXXFLAGS
+*.loptions   link              LDFLAGS
+*.aoptions   archive           ARFLAGS
+*.libs       extra libraries   LIBS/LDLIBS</pre>
+
+  <p>We can also use their <code>config.c.*</code> (C compilation) and
+  <code>config.cxx.*</code> (C++ compilation) variants if we only want them
+  applied during the respective language compilation/linking. For example:</p>
+
+  <pre>$ bdep init ... cc                       \
+  config.cxx=g++                         \
+  config.cc.poptions=-D_FORTIFY_SOURCE=2 \
+  config.cxx.poptions=-D_GLIBCXX_ASSERTIONS</pre>
+
+  <p>Finally, we can specify the "compiler mode" options as part of the
+  compiler executable in <code>config.c</code> and <code>config.cxx</code>.
+  Such options cannot be modified by buildfiles and they will appear last on
+  the command lines. For example:</p>
+
+  <pre>$ bdep init ... cc      \
+  config.c="clang -m32" \
+  config.cxx="clang++ -m32 -stdlib=libc++"</pre>
+
+  <p>The compiler mode options are also the correct place to specify
+  <i>system-like</i> header (<code>-I</code>) and library (<code>-L</code>,
+  <code>/LIBPATH</code>) search paths. Where by system-like we mean common
+  installation directories like <code>/usr/include</code> or
+  <code>/usr/local/lib</code> which may contain older versions of the
+  libraries we are trying to build and/or use. By specifying these paths as
+  part of the mode options (as opposed to <code>config.*.poptions</code> and
+  <code>config.*.loptions</code>) we make sure they will be considered last,
+  similar to the compiler's build-in search paths. For example:</p>
+
+  <pre>$ bdep init ... cc config.cxx="g++ -L/opt/install"</pre>
+  </div>
+
+  <p>One difference you might have noticed when creating the <code>gcc</code>
+  and <code>clang</code> configurations above is that the first one was
+  designated as the default. The default configuration is used by
+  <code>bdep</code> commands if no configuration is specified explicitly (see
+  <a
+  href="../../bdep/doc/bdep-projects-configs.xhtml"><code><b>bdep-projects-configs(1)</b></code></a>
+  for details). It is also the configuration that is used if we run the build
+  system in the project's source directory. So, normally, you would make your
+  every day development configuration the default. Let's try that:</p>
+
+  <pre>$ bdep status
+hello configured 0.1.0-a.0.19700101000000
+
+$ b
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/
+
+$ b test
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+$ hello/hello World
+Hello, World!</pre>
+
+  <div class="note">
+  <p>To see the actual compilation command lines, run <code>b&#160;-v</code>
+  and for even more details, run <code>b&#160;-V</code>. See <a
+  href="../../build2/doc/b.xhtml"><code><b>b(1)</b></code></a> for more
+  information on these and other build system options.</p>
+  </div>
+
+  <p>In contrast, the Clang configuration has to be requested explicitly:</p>
+
+  <pre>$ bdep status @clang
+hello configured 0.1.0-a.0.19700101000000
+
+$ b ../hello-clang/hello/
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello}
+
+$ b test: ../hello-clang/hello/
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}
+
+$ ../hello-clang/hello/hello/hello World
+Hello, World!</pre>
+
+  <p>As you can see, using the build system directly on configurations other
+  than the default requires explicitly specifying their paths. It would have
+  been more convenient if we could refer to them by names. The <a
+  href="../../bdep/doc/bdep-update.xhtml"><code><b>bdep-update(1)</b></code></a>
+  and <a
+  href="../../bdep/doc/bdep-test.xhtml"><code><b>bdep-test(1)</b></code></a>
+  commands allow us to do exactly that:</p>
+
+  <pre>$ bdep test @clang
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}</pre>
+
+  <p>And we can also perform the desired build system operation on several (or
+  <code>--all|-a</code>) configurations at once:</p>
+
+  <pre>$ bdep test @gcc @clang
+in configuration @gcc:
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+in configuration @clang:
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}</pre>
+
+  <div class="note">
+  <p>As we will see later, the <a
+  href="../../bdep/doc/bdep-test.xhtml"><code><b>bdep-test(1)</b></code></a>
+  command also allows us to test immediate (<code>--immediate|-i</code>) or
+  all (<code>--recursive|-r</code>) dependencies of our project. We call it
+  <i>deep testing</i>.</p>
+  </div>
+
+  <p>While we are here, let's also check how hard it would be to
+  cross-compile:</p>
+
+  <pre>$ bdep init -C @mingw cc config.cxx=x86_64-w64-mingw32-g++
+initializing in project /tmp/hello/
+created configuration @mingw /tmp/hello-mingw/ auto-synchronized
+synchronizing:
+  new hello/0.1.0-a.0.19700101000000
+
+$ bdep update @mingw
+c++ hello/cxx{hello} -> ../hello-mingw/hello/hello/obje{hello}
+ld ../hello-mingw/hello/hello/exe{hello}</pre>
+
+  <p>As you can see, cross-compiling in <code>build2</code> is nothing
+  special. In our case, on a properly setup GNU/Linux machine (that
+  automatically uses <code>wine</code> as an <code>.exe</code> interpreter) we
+  can even run tests (in <code>build2</code> this is called
+  <i>cross-testing</i>):</p>
+
+  <pre>$ bdep test @mingw
+test ../hello-mingw/hello/hello/exe{hello} +
+     hello/testscript{testscript}
+
+$ ../hello-mingw/hello/hello/hello.exe Windows
+Hello, Windows!</pre>
+
+  <p>Let's review what it takes to initialize a project's infrastructure and
+  perform the first build. For an existing project:</p>
+
+  <pre>$ git clone .../hello.git
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b</pre>
+
+  <p>For a new project:</p>
+
+  <pre>$ bdep new -l c++ -t exe hello
+$ cd hello
+$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++
+$ b</pre>
+
+  <p>If you prefer, the <code>new</code> and <code>init</code> steps can be
+  combined into a single command:</p>
+
+  <pre>$ bdep new -l c++ -t exe hello -C hello-gcc @gcc cc config.cxx=g++</pre>
+
+  <p>And if you need to deinitialize a project in one or more build
+  configurations, there is the <a
+  href="../../bdep/doc/bdep-deinit.xhtml"><code><b>bdep-deinit(1)</b></code></a>
+  command for that:</p>
+
+  <pre>$ bdep deinit @gcc @clang
+deinitializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  drop hello
+
+in configuration @clang:
+synchronizing:
+  drop hello</pre>
+
+  <div class="note">
+  <p>By default <code>bdep</code> initializes a project for development by
+  automatically passing <code>config.&lt;project>.develop=true</code> unless a
+  custom value is specified. For example:</p>
+
+  <pre>$ bdep init ... @gcc cc config.cxx=g++ config.hello.develop=false</pre>
+
+  <p>To change the development mode of an already initialized project, use <a
+  href="../../bdep/doc/bdep-sync.xhtml"><code><b>bdep-sync(1)</b></code></a>:</p>
+
+  <pre>$ bdep sync @gcc config.hello.develop=false</pre>
+
+  <p>See <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#proj-config">Project
+  Configuration</a> for background on the development mode.</p>
+  </div>
+
+  <p>As mentioned earlier, by default <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  initializes a <code>git</code> repository for us. Now that we have
+  successfully built and tested our project, it might be a good idea to make a
+  first commit and publish it to a remote repository where others can find it.
+  Using GitHub as an example:</p>
+
+  <pre>$ git add .
+$ git commit -m "Initial implementation"
+$ git remote add origin git@github.com:john-doe/hello.git
+$ git push -u</pre>
+
+  <p>We could have also done it the other way around: first created a project
+  on one of the hosting services (GitHub, GitLab, etc) cloned it, and then ran
+  <code>new</code> on that. One advantage of this approach is the
+  <code>new</code> command's ability to automatically extract the license and
+  description from the existing <code>LICENSE</code> and
+  <code>README.md</code> files and use that to generate the
+  <code>manifest</code> file. This way we only need to specify things once and
+  everything is nice and consistent. Here is an example of this streamlined
+  project creation workflow (notice also the omitted project name in the
+  <code>new</code> command):</p>
+
+  <pre># Create a project with LICENSE and README.md on one of the Git
+# hosting services (GitHub, GitLab, etc) and then:
+
+$ git clone .../hello.git
+$ cd hello
+
+$ bdep new -l c++ -t exe</pre>
+
+  <p>While we have managed to test a couple of platforms (Linux and Windows)
+  and compiler versions (Clang and GCC) locally, there are quite a few
+  combinations that we haven't tried (Mac OS with Apple Clang and Windows with
+  MSVC, to name the major ones). We could test them manually, some with the
+  help of virtualization while for others (such as Mac OS) we may need
+  physical hardware. Add a few versions for each compiler and we are looking
+  at a dozen build configurations. Needless to say, testing on all of them
+  manually is a lot of work. Now that we have our project available from a
+  public remote repository, we can instead use the remote testing
+  functionality offered by the <a
+  href="../../bdep/doc/bdep-ci.xhtml"><code><b>bdep-ci(1)</b></code></a>
+  command. For example:</p>
+
+  <pre>$ bdep ci
+submitting:
+  to:      https://ci.cppget.org
+  in:      https://github.com/john-doe/hello.git#master@93e1dbc94baa
+  package: hello
+  version: 0.1.0-a.0.20180907091517.93e1dbc94baa
+continue? [y/n] y
+############################################################# 100.0%
+CI request is queued:
+  https://ci.cppget.org/@d6ee90f4-21a9-47a0-ab5a-7cd2f521d3d8</pre>
+
+  <p>Let's see what's going on here. By default <code>ci</code> submits a test
+  request to <a href="https://ci.cppget.org">ci.cppget.org</a>, a public CI
+  service run by the <code>build2</code> project (see available <a
+  href="https://ci.cppget.org?build-configs">Build Configurations</a> and <a
+  href="https://ci.cppget.org?ci">Use Policies</a>). In our case it will be
+  testing the current working tree state (branch and commit) of our package
+  which should be available from our remote repository (on GitHub in this
+  example) since that's where the CI service expects to get it from. In
+  response we get a URL where we can see the build and test results, logs,
+  etc.</p>
+
+  <div class="note">
+  <p>This <i>push</i> CI model works particularly well with the "feature
+  branch" development workflow. Specifically, you would develop a new feature
+  in a separate branch, publishing and remote-testing it as necessary. When
+  the feature is ready, you would merge any changes from <code>master</code>,
+  test the result one more time, and then merge (fast-forward) the feature
+  into master.</p>
+  </div>
+
+  <p>Now is a good time to get an overview of the <code>build2</code>
+  toolchain. After all, we have already used two of its tools
+  (<code>bdep</code> and <code>b</code>) without a clear understanding of what
+  they actually are.</p>
+
+  <p>Unlike most other programming languages that encapsulate the build
+  system, package dependency manager, and project dependency manager into a
+  single tool (such as Rust's <code>cargo</code> or Go's <code>go</code>),
+  <code>build2</code> is a hierarchy of several tools that you will be using
+  directly and which together with your version control system (VCS) will
+  constitute the core of your project management toolset.</p>
+
+  <div class="note">
+  <p>While <code>build2</code> can work without a VCS, this will result in
+  reduced functionality.</p>
+  </div>
+
+  <p>At the bottom of the hierarchy is the <code>build2</code> build system,
+  which we invoke using the <a
+  href="../../build2/doc/b.xhtml"><code><b>b(1)</b></code></a> driver. Next
+  comes the package dependency manager, <a
+  href="../../bpkg/doc/bpkg.xhtml"><code><b>bpkg(1)</b></code></a>. It is
+  primarily used for <i>package consumption</i> and depends on the build
+  system. The top of the hierarchy is the project dependency manager, <a
+  href="../../bdep/doc/bdep.xhtml"><code><b>bdep(1)</b></code></a>. It is used
+  for <i>project development</i> and relies on <code>bpkg</code> for building
+  project packages and their dependencies.</p>
+
+  <div class="note">
+  <p>The main reason for this separation is modularity and the resulting
+  flexibility: there are situations where we only need the build system (for
+  example, when building a package for a system package manager where all the
+  dependencies should be satisfied from the system repository), or only the
+  build system and package manager (for example, when a build bot is building
+  a package for testing).</p>
+
+  <p>Note also that strictly speaking <code>build2</code> is not
+  C/C++-specific; its build model is general enough to handle any DAG-based
+  operations and its package/project dependency management can be used for any
+  compiled language.</p>
+  </div>
+
+  <div class="note">
+  <p>As we will see in a moment, <code>build2</code> also integrates with your
+  VCS in order to automate project versioning. Note that currently only
+  <code>git(1)</code> is supported.</p>
+  </div>
+
+  <p>Now that we understand the tooling, let's also revisit the notion of
+  <i>build configuration</i> (those <code>hello-gcc</code> and
+  <code>hello-clang</code> directories). While we often talk of build
+  configurations in the abstract, as a set of common options used to build our
+  code, in <code>build2</code> this term also has a very concrete meaning
+  &#8211; a directory where our projects and their dependencies are built with
+  such a set of common options.</p>
+
+  <p>The concept of a build configuration appears prominently throughout the
+  toolchain: a <code>bdep</code> build configuration is actually a
+  <code>bpkg</code> build configuration which, in the build system terms, is a
+  special kind of an <i>amalgamation</i> &#8211; a project that contains
+  <i>subprojects</i>. In our case, the subprojects in these amalgamations will
+  be the projects we have initialized with <code>init</code> and, as we will
+  see in a moment, packages that they depend on. For example, here is what our
+  <code>hello-gcc</code> contains:</p>
+
+  <pre>$ tree hello-gcc
+hello-gcc/
+├── .bpkg/
+├── build/
+│   └── config.build
+└── hello/
+    ├── build/
+    │   └── config.build
+    └── hello/
+        ├── hello
+        └── hello.o</pre>
+
+  <div class="note">
+  <p>Underneath <a
+  href="../../bdep/doc/bdep-init.xhtml"><code><b>bdep-init(1)</b></code></a>
+  with the <code>--config-create|-C</code> option calls <a
+  href="../../bpkg/doc/bpkg-cfg-create.xhtml"><code><b>bpkg-cfg-create(1)</b></code></a>
+  which, in turn, performs the build system <code>create</code> meta-operation
+  (see <a href="../../build2/doc/b.xhtml"><code><b>b(1)</b></code></a> for
+  details).</p>
+
+  <p>The important point here is that the <code>bdep</code> build
+  configuration is not a black box that you should never look inside of. On
+  the contrary, it is a well-defined concept of the package manager and the
+  build system and as long as you understand what you are doing, you should
+  feel free to interact with it directly.</p>
+  </div>
+
+  <p>Let's now move on to the reason why there is <i>dep</i> in the
+  <code>bdep</code> name: dependency management.</p>
+
+  <h2 id="guide-repositories">1.2 Package Repositories</h2>
+
+  <p>Say we have realized that writing <i>"Hello, World!"</i> programs is a
+  fairly common task and that someone must have written a library to help with
+  that. So let's see if we can find something suitable to use in our
+  project.</p>
+
+  <p>Where should we look? That's a good question. But before we can try to
+  answer it, we need to understand where <code>build2</code> can source
+  dependencies. In <code>build2</code> packages usually come from <i>package
+  repositories</i>. Two commonly used repository types are <i>version
+  control</i> and <i>archive</i>-based (see <a
+  href="../../bpkg/doc/bpkg-repository-types.xhtml"><code><b>bpkg-repository-types(1)</b></code></a>
+  for details).</p>
+
+  <p>As the name suggests, a version control-based repository uses a VCS as
+  its distribution mechanism. <span class="note">Currently, only
+  <code>git</code> is supported.</span> Such a repository normally contains
+  multiple versions of a single package or, perhaps, of a few related
+  packages.</p>
+
+  <p>An archive-based repository contains multiple, potentially unrelated
+  packages/versions as archives along with some metadate (package list,
+  prerequisite/complement repositories, signatures, etc) that are all
+  accessible via HTTP(S).</p>
+
+  <p>Version control and archive-based repositories have different trade-offs.
+  Version control-based repositories are great for package developers since
+  with services like GitHub they are trivial to setup. In fact, your project's
+  (already existing) VCS repository will normally be the <code>build2</code>
+  package repository &#8211; you might need to add a few files, but that's
+  about it.</p>
+
+  <p>However, version control-based repositories are not without drawbacks: It
+  will be hard for your users to discover your packages (try searching for
+  "hello library" on GitHub &#8211; most of the results are not even in C++
+  let alone packaged for <code>build2</code>). There is also the issue of
+  continuous availability: users can delete their repositories, services may
+  change their policies or go out of business, and so on. Version
+  control-based repositories also lack repository authentication and package
+  signing. Finally, obtaining the available package list for such repositories
+  can be slow.</p>
+
+  <p>A central, archive-based repository would address all these drawbacks: It
+  would be a single place to search for packages. Published packages will
+  never disappear and can be easily mirrored. Packages are signed and the
+  repository is authenticated (see <a
+  href="../../bpkg/doc/bpkg-repository-signing.xhtml"><code><b>bpkg-repository-signing(1)</b></code></a>
+  for details). And, last, but not least, archive-based repositories are
+  fast.</p>
+
+  <p><a href="https://cppget.org">cppget.org</a> is the <code>build2</code>
+  community's central package repository. While centralized, it is also easy
+  to mirror since its contents are accessible via plain HTTPS (you can browse
+  <a href="https://pkg.cppget.org">pkg.cppget.org</a> to get an idea). As an
+  added benefit, packages on <a href="https://cppget.org">cppget.org</a> are
+  continuously <a href="https://cppget.org/?builds">built and tested</a> on
+  all the major platform/compiler combinations with the results available as
+  part of the package description.</p>
+
+  <div class="note">
+  <p>The main drawback of archive-based repositories is the setup cost.
+  Getting a basic repository going is relatively easy &#8211; all you need is
+  an HTTP(S) server. Adding a repository web interface like that on <a
+  href="https://cppget.org">cppget.org</a> will require running <a
+  href="https://cppget.org/brep"><code>brep</code></a>. And adding CI will
+  require running a bunch of build bots (<a
+  href="https://cppget.org/bbot"><code>bbot</code></a>). Note also that in
+  <code>build2</code> archive-based repositories can be federated with
+  different sections of the repository being hosted/managed potentially
+  independently.</p>
+  </div>
+
+  <p>To summarize, version control-based repositories are great for package
+  developers while a central, archive-based repository is convenient for
+  package consumers. A reasonable strategy then is for package developers to
+  publish their releases to a central repository. Package consumers can then
+  decide which repository to use based on their needs. For example, one could
+  use <a href="https://cppget.org">cppget.org</a> as a (fast, reliable, and
+  secure) source of stable versions but also add, say, <code>git</code>
+  repositories for select packages (perhaps with the <code>#HEAD</code>
+  fragment filter to improve download speed) for testing development
+  snapshots. In this model the two repository types complement each other.</p>
+
+  <div class="note">
+  <p>Publishing of packages to archive-based repositories is discussed in <a
+  href="#guide-versioning-releasing">Versioning and Release
+  Management</a>.</p>
+  </div>
+
+  <p>Let's see how all this works in practice. Go over to <a
+  href="https://cppget.org">cppget.org</a> and type "hello library" in the
+  search box. At the top of the search result you should see the <a
+  href="https://cppget.org/libhello"><code>libhello</code></a> package and if
+  you follow the link you will see the package description page along with a
+  list of available versions. Pick a version that you like and you will see
+  the package version description page with quite a bit of information,
+  including the list of platform/compiler combinations that this version has
+  been successfully (or unsuccessfully) tested with. If you like what you see,
+  copy the <code>repository</code> value &#8211; this is the repository
+  location where this package version can be sourced from.</p>
+
+  <div class="note">
+  <p>The <a href="https://cppget.org">cppget.org</a> repository is split into
+  several sections: <code>stable</code>, <code>testing</code>,
+  <code>beta</code>, <code>alpha</code> and <code>legacy</code>, with each
+  section having its own repository location (see the repository's <a
+  href="https://cppget.org/?about">about</a> page for details on each
+  section's policies). Note also that <code>testing</code> is complemented by
+  <code>stable</code>, <code>beta</code> by <code>testing</code>, and so on,
+  so you only need to choose the lowest stability level and you will
+  automatically "see" packages from the more stable sections.</p>
+  </div>
+
+  <div class="note">
+  <p>The <a href="https://cppget.org">cppget.org</a> <code>stable</code>
+  sections will always contain the <code>libhello</code> library version
+  <code>1.0.X</code> that was generated using the following <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command line:</p>
+
+  <pre>$ bdep new -l c++ -t lib libhello</pre>
+
+  <p>It can be used as a predictable test dependency when setting up new
+  projects.</p>
+  </div>
+
+  <p>Let's say we've visited the <code>libhello</code> project's <a
+  href="https://git.build2.org/cgit/hello/libhello/">home page</a> (for
+  example by following a link from the package details page) and noticed that
+  it is being developed in a <code>git</code> repository. How can we see
+  what's available there? If the releases are tagged, then we can infer the
+  available released versions from the tags. But that doesn't tell us anything
+  about what's happening on the <code>HEAD</code> or in the branches. For that
+  we can use the package manager's <a
+  href="../../bpkg/doc/bpkg-rep-info.xhtml"><code><b>bpkg-rep-info(1)</b></code></a>
+  command:</p>
+
+  <pre>$ bpkg rep-info https://git.build2.org/hello/libhello.git
+libhello/1.0.0
+libhello/1.1.0</pre>
+
+  <p>As you can see, besides <code>1.0.0</code> that we have seen in
+  <code>cppget.org/stable</code>, there is also <code>1.1.0</code> (which is
+  perhaps being tested in <code>cppget.org/testing</code>). We can also check
+  what might be available on the <code>HEAD</code> (see <a
+  href="../../bpkg/doc/bpkg-repository-types.xhtml"><code><b>bpkg-repository-types(1)</b></code></a>
+  for details on the <code>git</code> repository URL format):</p>
+
+  <pre>$ bpkg rep-info https://git.build2.org/hello/libhello.git#HEAD
+libhello/1.1.1-a.0.20180504111511.2e82f7378519</pre>
+
+  <div class="note">
+  <p>We can also use the <code>rep-info</code> command on archive-based
+  repositories, however, if available, the web interface is usually more
+  convenient and provides more information.</p>
+  </div>
+
+  <p>To summarize, we found two repositories for the <code>libhello</code>
+  package: the archive-based <a href="https://cppget.org">cppget.org</a> that
+  contains the released versions as well as its development <code>git</code>
+  repository where we can get the bleeding edge stuff. Let's now see how we
+  can add <code>libhello</code> to our project.</p>
+
+  <h2 id="guide-add-remove-deps">1.3 Adding and Removing Dependencies</h2>
+
+  <p>So we found <code>libhello</code> that we would like to use in our
+  <code>hello</code> project. First, we edit the
+  <code>repositories.manifest</code> file found in the root directory of our
+  project and add one of the <code>libhello</code> repositories as a
+  prerequisite. Let's start with <a
+  href="https://cppget.org">cppget.org</a>:</p>
+
+  <pre>role: prerequisite
+location: https://pkg.cppget.org/1/stable</pre>
+
+  <div class="note">
+  <p>Refer to <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-repository">Repository
+  Manifest</a> for details on the repository manifest values.</p>
+  </div>
+
+  <p>Next, we edit the <code>manifest</code> file (again, found in the root of
+  our project) and specify the dependency on <code>libhello</code> with
+  optional version constraint. For example:</p>
+
+  <pre>depends: libhello ^1.0.0</pre>
+
+  <p>Let's briefly discuss version constraints (for details see the <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-depends"><code>depends</code></a>
+  value documentation). A version constraint can be expressed with a
+  comparison operator (<code>==</code>, <code>></code>, <code>&lt;</code>,
+  <code>>=</code>, <code>&lt;=</code>), a range shortcut operator
+  (<code>~</code> and <code>^</code>), or a range. Here are a few
+  examples:</p>
+
+  <pre>depends: libhello == 1.2.3
+depends: libhello >= 1.2.3
+
+depends: libhello ~1.2.3
+depends: libhello ^1.2.3
+
+depends: libhello [1.2.3 1.2.9)</pre>
+
+  <p>You may already be familiar with the tilde (<code>~</code>) and caret
+  (<code>^</code>) constraints from dependency managers for other languages.
+  To recap, tilde allows upgrades to any further patch versions while caret
+  also allows upgrades to further minor versions. They are equivalent to the
+  following ranges:</p>
+
+  <pre>~X.Y.Z  [X.Y.Z  X.Y+1.0)
+
+^X.Y.Z  [X.Y.Z  X+1.0.0)  if X >  0
+^0.Y.Z  [0.Y.Z  0.Y+1.0)  if X == 0</pre>
+
+  <div class="note">
+  <p>Zero major version component is customarily used during early development
+  where the minor version effectively becomes major. As a result, the caret
+  constraint has a special treatment of this case.</p>
+  </div>
+
+  <p>Unless you have good reasons not to (for example, a dependency does not
+  use semantic versioning), we suggest that you use the <code>^</code>
+  constraint which provides a good balance between compatibility and
+  upgradability with <code>~</code> being a more conservative option.</p>
+
+  <p>Besides the version constraint, the dependency declaration supports a
+  number of more advanced features, including conditional dependencies,
+  dependency alternatives, and dependency configuration. For details, see the
+  <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-depends"><code>depends</code></a>
+  value documentation.</p>
+
+  <p>Ok, we've specified where our package comes from
+  (<code>repositories.manifest</code>) and which versions we find acceptable
+  (<code>manifest</code>). The next step is to edit
+  <code>hello/buildfile</code> and import the <code>libhello</code> library
+  into our build:</p>
+
+  <pre>import libs += libhello%lib{hello}</pre>
+
+  <p>Finally, we modify our source code to use the library:</p>
+
+  <pre>#include &lt;libhello/hello.hxx>
+...
+
+int main (int argc, char* argv[])
+{
+  ...
+  hello::say_hello (cout, argv[1]);
+}</pre>
+
+  <div class="note">
+  <p>You are probably wondering why we have to specify this repeating
+  information in so many places. Let's start with the source code: we can't
+  specify the version constraint or location there because it will have to be
+  repeated in every source file that uses the dependency.</p>
+
+  <p>Moving up, <code>buildfile</code> is also not a good place to specify
+  this information for the same reason (a library can be imported in multiple
+  buildfiles) plus the build system doesn't really know anything about version
+  constraints or repositories which is the purview of the dependency
+  management tools.</p>
+
+  <p>Finally, we have to separate the version constraint and the location
+  because the same package can be present in multiple repositories with
+  different policies. For example, when a package from a version control-based
+  repository is published in an archive-based repository, its
+  <code>repositories.manifest</code> file is ignored and all its dependencies
+  should be available from the archive-based repository itself (or its fixed
+  set of prerequisite repositories). In other words, <code>manifest</code>
+  belongs to a package while <code>repositories.manifest</code> &#8211; to a
+  repository.</p>
+
+  <p>Also note that this is unlikely to become burdensome since adding new
+  dependencies is not something that happens often. There are also ideas to
+  automate this with a <code>bdep-add(1)</code> command in the future.</p>
+  </div>
+
+  <p>To summarize, these are the files we had to modify to add a dependency to
+  our project:</p>
+
+  <pre>repositories.manifest   # add https://pkg.cppget.org/1/stable
+manifest                # add 'depends: libhello ^1.0.0'
+buildfile               # import libhello library
+hello.cxx               # include libhello header (or import module)</pre>
+
+  <div class="note">
+  <p>While the repository URL and package name are easy to find on the <a
+  href="https://cppget.org">cppget.org</a>'s package description page, the
+  C/C++ library ecosystem unfortunately does not follow any predictable
+  library or header naming scheme. If the library documentation does not
+  provide any clues, then another place to check are the library tests and
+  examples that can often be found in the package source directory (or source
+  repository). In particular, every library in the <code>stable</code> section
+  of the <a href="https://cppget.org">cppget.org</a> repository should provide
+  at least a basic test.</p>
+  </div>
+
+  <p>With a new dependency added, let's check the status of our project:</p>
+
+  <pre>$ bdep status
+fetching pkg:cppget.org/stable (prerequisite of dir:/tmp/hello)
+warning: authenticity of the certificate for pkg:cppget.org/stable
+         cannot be established
+certificate is for cppget.org, "Code Synthesis" &lt;admin@cppget.org>
+certificate SHA256 fingerprint:
+70:64:FE:E4:E0:F3:60:F1:B4:&lt;...>:E5:C2:68:63:4C:A6:47:39:43
+trust this certificate? [y/n] y
+
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.19700101000000#1</pre>
+
+  <p>The <a
+  href="../../bdep/doc/bdep-status.xhtml"><code><b>bdep-status(1)</b></code></a>
+  command has detected that the dependency information has changed and tells
+  us that a new <i>iteration</i> of our project (that <code>#1</code>) is now
+  available for <i>synchronization</i> with the build configuration.</p>
+
+  <p>We've also been prompted to authenticate the prerequisite repository.
+  This will have to happen once for every build configuration we initialize
+  our project in and can quickly become tedious. To overcome this, we can
+  mention the certificate fingerprint that we wish to automatically trust in
+  the <code>repositories.manifest</code> file (replace it with the actual
+  fingerprint from the repository's about page):</p>
+
+  <pre>role: prerequisite
+location: https://pkg.cppget.org/1/stable
+trust: 70:64:FE:E4:E0:F3:60:F1:B4:&lt;...>:E5:C2:68:63:4C:A6:47:39:43</pre>
+
+  <p>To synchronize a project with one or more build configurations we use the
+  <a
+  href="../../bdep/doc/bdep-sync.xhtml"><code><b>bdep-sync(1)</b></code></a>
+  command:</p>
+
+  <pre>$ bdep sync
+synchronizing:
+  new libhello/1.0.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#1</pre>
+
+  <p>Or we could just build the project without an explicit <code>sync</code>
+  &#8211; if necessary, it will be automatically synchronized:</p>
+
+  <pre>$ b
+synchronizing:
+  new libhello/1.0.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#1
+c++ ../hello-gcc/libhello-1.0.0/libhello/cxx{hello} ->
+    ../hello-gcc/libhello-1.0.0/libhello/objs{hello}
+ld ../hello-gcc/libhello-1.0.0/libhello/libs{hello}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello}
+ln ../hello-gcc/hello/hello/exe{hello} -> hello/</pre>
+
+  <p>The synchronization as performed by the <code>sync</code> command is
+  two-way: dependency packages are first added, removed, upgraded, or
+  downgraded in build configurations according to the project's version
+  constraints and user input. Then the actual versions of the dependencies
+  present in the build configurations are recorded in the project's
+  <code>lockfile</code> so that if desired, the build can be reproduced
+  exactly. <span class="note">The <code>lockfile</code> functionality is not
+  yet implemented.</span> For a new dependency the latest available version
+  that satisfies the version constraint is used.</p>
+
+  <div class="note">
+  <p>Synchronization is also the last step in the <a
+  href="../../bdep/doc/bdep-init.xhtml"><code><b>bdep-init(1)</b></code></a>
+  command's logic.</p>
+  </div>
+
+  <p>Let's now examine the status in all (<code>--all|-a</code>) the build
+  configurations and include the immediate dependencies
+  (<code>--immediate|-i</code>):</p>
+
+  <pre>$ bdep status -ai
+in configuration @gcc:
+hello configured 0.1.0-a.0.19700101000000#1
+  libhello ^1.0.0 configured 1.0.0
+
+in configuration @clang:
+hello configured 0.1.0-a.0.19700101000000
+      available 0.1.0-a.0.19700101000000#1</pre>
+
+  <p>Since we didn't specify a configuration explicitly, only the default
+  (<code>gcc</code>) was synchronized. Normally, you would try a new
+  dependency in one configuration, make sure everything looks good, then
+  synchronize the rest with <code>--all|-a</code> (or, again, just build what
+  you need directly). Here are a few examples (see <a
+  href="../../bdep/doc/bdep-projects-configs.xhtml"><code><b>bdep-projects-configs(1)</b></code></a>
+  for details):</p>
+
+  <pre>$ bdep sync -a
+$ bdep sync @gcc @clang
+$ bdep sync -c ../hello-mingw</pre>
+
+  <p>After adding a new (or upgrading/downgrading existing) dependency, it's a
+  good idea to <i>deep-test</i> our project: run not only our own tests but
+  also of its immediate (<code>--immediate|-i</code>) or even all
+  (<code>--recursive|-r</code>) dependencies. For example:</p>
+
+  <pre>$ bdep test -ai
+in configuration @gcc:
+test ../hello-gcc/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}
+
+in configuration @clang:
+test ../hello-clang/libhello-1.0.0/tests/basics/exe{driver}
+test ../hello-clang/hello/hello/exe{hello} +
+     hello/testscript{testscript}</pre>
+
+  <p>To get rid of a dependency, we simply remove it from the
+  <code>manifest</code> file and synchronize the project. For example,
+  assuming <code>libhello</code> is no longer mentioned as a dependency in our
+  <code>manifests</code>:</p>
+
+  <pre>$ bdep status
+hello configured 0.1.0-a.0.19700101000000#1
+      available  0.1.0-a.0.19700101000000#2
+
+$ bdep sync
+synchronizing:
+  drop libhello/1.0.0 (unused)
+  upgrade hello/0.1.0-a.0.19700101000000#2</pre>
+
+  <div class="note">
+  <p>If instead of building a dependency from source you would prefer to use a
+  version that is installed by your system package manager, see <a
+  href="#guide-system-deps">Using System-Installed Dependencies</a>. And for
+  information on using dependencies that are not <code>build2</code> packages
+  refer to <a href="#guide-unpackaged-deps">Using Unpackaged
+  Dependencies</a>.</p>
+  </div>
+
+  <h2 id="guide-upgrade-downgrade-deps">1.4 Upgrading and Downgrading
+  Dependencies</h2>
+
+  <p>Let's say we would like to try that <code>1.1.0</code> version we have
+  seen in the <code>libhello</code> <code>git</code> repository. First, we
+  need to add the repository to the <code>repositories.manifest</code>
+  file:</p>
+
+  <pre>role: prerequisite
+location: https://git.build2.org/hello/libhello.git</pre>
+
+  <div class="note">
+  <p>Note that we don't need the <code>trust</code> value since
+  <code>git</code> repositories are not authenticated.</p>
+  </div>
+
+  <p>To refresh the list of available dependency versions we use the <a
+  href="../../bdep/doc/bdep-fetch.xhtml"><code><b>bdep-fetch(1)</b></code></a>
+  command (or the <code>--fetch|-f</code> option to <code>status</code>):</p>
+
+  <pre>$ bdep fetch
+$ bdep status libhello
+libhello configured 1.0.0 available [1.1.0]</pre>
+
+  <p>To upgrade (or downgrade) dependencies we again use the <a
+  href="../../bdep/doc/bdep-sync.xhtml"><code><b>bdep-sync(1)</b></code></a>
+  command. We can upgrade one or more specific dependencies by listing them as
+  arguments to <code>sync</code>:</p>
+
+  <pre>$ bdep sync libhello
+synchronizing:
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  upgrade libhello/1.1.0
+  upgrade hello/0.1.0-a.0.19700101000000#3</pre>
+
+  <p>Without an explicit version or the <code>--patch|-p</code> option,
+  <code>sync</code> will upgrade the specified dependencies to the latest
+  available versions. For example, if we don't like version
+  <code>1.1.0</code>, we can downgrade it back to <code>1.0.0</code> by
+  specifying the version explicitly (we pass <code>--old-available|-o</code>
+  to <code>status</code> to see the old versions):</p>
+
+  <pre>$ bdep status -o libhello
+libhello configured 1.1.0 available (1.1.0) [1.0.0]
+
+$ bdep sync libhello/1.0.0
+synchronizing:
+  drop libprint/1.0.0 (unused)
+  drop libformat/1.0.0 (unused)
+  downgrade libhello/1.0.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3</pre>
+
+  <div class="note">
+  <p>The available versions are listed in the descending order with
+  <code>[]</code> indicating that the version is only available as a
+  dependency and <code>()</code> marking the current version.</p>
+  </div>
+
+  <p>Instead of specific dependencies we can also upgrade
+  (<code>--upgrade|-u</code>) or patch (<code>--patch|-p</code>) immediate
+  (<code>--immediate|-i</code>) or all (<code>--recursive|-r</code>)
+  dependencies of our project.</p>
+
+  <p>As a more realistic example, version <code>1.1.0</code> of
+  <code>libhello</code> depends on two other libraries: <code>libformat</code>
+  and <code>libprint</code>. Here is our project's dependency tree while we
+  were still using that version:</p>
+
+  <pre>$ bdep status -r
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello ^1.0.0 configured 1.1.0
+    libformat ^1.0.0 configured 1.0.0
+    libprint ^1.0.0 configured 1.0.0</pre>
+
+  <p>A typical conservative dependency management workflow would look like
+  this:</p>
+
+  <pre>$ bdep status -fi  # refresh and examine immediate dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.2] [1.1.1]
+
+$ bdep sync -pi    # upgrade immediate to latest patch version
+synchronizing:
+  upgrade libhello/1.1.2
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y</pre>
+
+  <p>Notice that in case of such mass upgrades you are prompted for
+  confirmation before anything is actually changed (unless you pass
+  <code>--yes|-y</code>).</p>
+
+  <p>In contrast, the following would be a fairly aggressive workflow where we
+  upgrade everything to the latest available version (version constraints
+  permitting; here we assume <code>^1.0.0</code> was used for all the
+  dependencies):</p>
+
+  <pre>$ bdep status -fr  # refresh and examine all dependencies
+hello configured 0.1.0-a.0.19700101000000#3
+  libhello configured 1.1.0 available [2.0.0] [1.2.0] [1.1.1]
+    libprint configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+    libformat configured 1.0.0 available [2.0.0] [1.1.0] [1.0.1]
+
+$ bdep sync -ur    # upgrade all to latest available version
+synchronizing:
+  upgrade libprint/1.1.0
+  upgrade libformat/1.1.0
+  upgrade libhello/1.2.0
+  reconfigure hello/0.1.0-a.0.19700101000000#3
+continue? [Y/n] y</pre>
+
+  <p>We can also have something in between: patch all
+  (<code>sync&#160;-pr</code>), upgrade immediate
+  (<code>sync&#160;-ui</code>), or even upgrade immediate and patch the rest
+  (<code>sync&#160;-ui</code> followed by <code>sync&#160;-pr</code>).</p>
+
+  <h2 id="guide-build-time-linked">1.5 Build-Time Dependencies and Linked
+  Configurations</h2>
+
+  <p>The <code>libhello</code> dependency we've been playing with in the
+  previous two sections is a <i>runtime dependency</i>, that is, our
+  <code>hello</code> executable needs it at run-time. This is typical of
+  libraries and most of our dependencies will be of this kind. However,
+  sometimes we may only wish to use a dependency during the build, typically a
+  tool, such as a source code generator. This kind of dependency is called a
+  <i>build-time dependency</i>.</p>
+
+  <div class="note">
+  <p>Build-time dependencies are an advanced topic and if you don't have an
+  immediate need for this functionality, you may skip this section without any
+  loss of continuity.</p>
+  </div>
+
+  <p>Why do we need to distinguish between the two kinds of dependencies? The
+  primary reason is cross-compilation: if we build a tool in the same
+  (cross-compiling) build configuration as our project, then we will not be
+  able to execute it during the build (since it's built for a different target
+  than what we are running). But even if you are not planning to
+  cross-compile, there are other good reasons: if you have multiple build
+  configurations for your project, you may want to share a single build of
+  your tool between them (why waste time building the same thing multiple
+  times). And even if you only have a single build of your project, you may
+  want to build the tool with different options (for example, optimized
+  instead of debug).</p>
+
+  <p>You can probably see where this is going: in order to properly support
+  build-time dependencies, we need to distinguish them from runtime and we
+  need an ability to build them in a separate build configuration.</p>
+
+  <p>Let's see how all this works using the <a
+  href="https://cppget.org/xxd"><code>xxd</code></a> tool as an example. If
+  you are not familiar, <code>xxd</code> is a hexdump utility which can be
+  used to embed external binary data into C/C++ code in a portable manner.
+  Specifically, it can read a binary file and produce a C array definition of
+  its contents. For example:</p>
+
+  <pre>$ xxd -i names.txt
+
+unsigned char names_txt[] = {
+  0x57, 0x6f, 0x72, 0x6c, 0x64, 0x0a, 0x55, 0x6e, 0x69, 0x76, 0x65,
+  0x72, 0x73, 0x65, 0x0a, 0x50, 0x65, 0x6f, 0x70, 0x6c, 0x65, 0x0a,
+  0x4d, 0x61, 0x72, 0x74, 0x69, 0x61, 0x6e, 0x73, 0x0a
+};
+unsigned int names_txt_len = 31;</pre>
+
+  <div class="note">
+  <p>While the above output is a bit old school (using <code>unsigned
+  int</code> instead of <code>size_t</code>) and the array/length names are
+  derived from the input file name (including directories), <code>xxd</code>
+  can also produce just the array values allowing us to wrap it into an array
+  of our choice. See the <a href="https://cppget.org/xxd"><code>xxd</code></a>
+  package description for examples of <code>build2</code> recipes that do
+  that.</p>
+  </div>
+
+  <p>So here is an idea: instead of failing if the user did not specify the
+  name to greet, let's improve our <code>hello</code> program to greet a
+  random generic name from a pre-defined list. To make this list easier to
+  maintain, let's keep it in a separate file called <code>names.txt</code> and
+  use <code>xxd</code> to embed it into our <code>hello</code> executable. We
+  can use the one name per line format, for example:</p>
+
+  <pre>$ cat names.txt
+World
+Universe
+People
+Martians</pre>
+
+  <p>The first step in our plan is to add a build-time dependency on
+  <code>xxd</code> to our project's <code>manifest</code>, similar to how we
+  did for <code>libhello</code>:</p>
+
+  <pre>...
+depends: libhello ^1.0.0
+depends: * xxd >= 8.2.0</pre>
+
+  <p>The <code>*</code> mark in front of the <code>xxd</code> name indicates
+  that it's a build-time dependency.</p>
+
+  <p>Next we import <code>xxd</code> in our <code>buildfile</code>:</p>
+
+  <pre>...
+
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+...</pre>
+
+  <p>There are two main differences compared to the way we import the
+  <code>libhello</code> library: we request metadata (<code>[metadata]</code>)
+  and we do immediate importation (<code>import!</code>). Let's briefly
+  discuss what this means (for details, refer to <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-import">Target
+  Importation</a> in the build system manual). Metadata for an executable
+  contains information that helps the build system do a better job when an
+  executable is used as part of the build. For example, it includes the
+  uniform program name to be used for low-verbosity diagnostics as well as the
+  version, checksum, and environment that are used to detect changes. And
+  immediate importation instructs the build system to skip rule-specific
+  importation (for example, search for libraries in compiler-specific search
+  paths) and import the target here and now, failing if that's not possible.
+  It is usually appropriate for importing executables. Note also that the
+  metadata can only be requested in immediate importation.</p>
+
+  <div class="note">
+  <p>While requesting the metadata means that you will have a simpler
+  <code>buildfile</code> and a more reliable build, it also likely means that
+  you won't be able to use the system-installed version of the executable
+  since it needs to be patched to provide the metadata.</p>
+  </div>
+
+  <p>Now that we have the <code>xxd</code> tool, let's use it from an ad hoc
+  recipe to convert <code>names.txt</code> to <code>names.cxx</code>. Here is
+  the complete <code>buildfile</code> for our <code>hello</code>
+  executable:</p>
+
+  <pre>libs =
+import libs += libhello%lib{hello}
+
+import! [metadata] xxd = xxd%exe{xxd}
+
+exe{hello}: {hxx ixx txx cxx}{** -names} cxx{names} $libs testscript
+
+cxx{names}: file{names.txt} $xxd
+{{
+  i = $path($&lt;[0])
+  env --cwd $directory($i) -- $xxd -i $leaf($i) >$path($>)
+}}</pre>
+
+  <p>The last bit that we need to do is to modify <code>hello.cxx</code> to
+  use the list of fallback names (the actual implementation is left as an
+  exercise for the reader):</p>
+
+  <pre>#include &lt;iostream>
+
+extern unsigned char names_txt[];
+extern unsigned int names_txt_len;
+
+int main (int argc, char* argv[])
+{
+  using namespace std;
+
+  if (argc &lt; 2)
+  {
+    // TODO: pick a random name from names_txt using newline as
+    //       a name separator.
+  }
+
+  ...
+}</pre>
+
+  <p>Let's recap what we've achieved so far: we've added a build-time
+  dependency on <code>xxd</code>, we've imported it in our
+  <code>buildfile</code> and used it in an ad hoc recipe to generate
+  <code>names.cxx</code>, and we've modified <code>hello.cxx</code> to use the
+  generated list of names. The only step left is to actually try to build it.
+  But before doing that, let's also print the list of build configurations we
+  currently have associated with our project (see the <code>list</code>
+  subcommand in <a
+  href="../../bdep/doc/bdep-config.xhtml"><code><b>bdep-config(1)</b></code></a>):</p>
+
+  <pre>$ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized</pre>
+
+  <pre>$ b
+creating configuration of host type in /tmp/hello-host/ and
+associating it with project(s):
+  /tmp/hello/
+as if by executing command(s):
+  bdep config create @host --type host --no-default /tmp/hello-host \
+  cc config.config.load=~host
+while searching for configuration for build-time dependency xxd of
+package hello/0.1.0-a.0.19700101000000#4
+while synchronizing configuration /tmp/hello-gcc/
+continue? [Y/n] y
+
+synchronizing /tmp/hello-gcc/:
+  new xxd/8.2.3075 [/tmp/hello-host/] (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+c ../hello-host/xxd-8.2.3075+1/c{xxd} ->
+  ../hello-host/xxd-8.2.3075+1/obje{xxd}
+ld ../hello-host/xxd-8.2.3075/exe{xxd}
+xxd hello/file{names.txt} -> ../hello-gcc/hello/hello/cxx{names}
+c++ ../hello-gcc/hello/hello/cxx{names} ->
+    ../hello-gcc/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/hello/hello/exe{hello}</pre>
+
+  <p>While the diagnostics is hopefully fairly self-explanatory, let's go over
+  the key points. The first part goes exactly as in the previous section:
+  because we've added a new dependency, the build configuration needs to be
+  synchronized with the project state. However, this is a build-time
+  dependency and build-time dependencies are built in configurations of type
+  <code>host</code>. So <code>bdep</code> first looks for such a configuration
+  among the configurations already associated with the project. In our case
+  there isn't one (from the listing above we can see that all our
+  configurations are of type <code>target</code>). In this case,
+  <code>bdep</code> offers to create one automatically. We accept this offer
+  by answering <code>y</code> at the prompt and the rest should again look
+  familiar: the new dependency is configured and built (but now in the host
+  configuration) and our project is updated (which involves running the new
+  dependency). If we now again print the list of build configurations
+  associated with our project, we will see the new configuration among
+  them:</p>
+
+  <pre>$ bdep config list
+@gcc /tmp/hello-gcc/ 1 target default,forwarded,auto-synchronized
+@clang /tmp/hello-clang/ 2 target auto-synchronized
+@host /tmp/hello-host/ 3 host forwarded,auto-synchronized</pre>
+
+  <p>Let's also try to update our project in the <code>clang</code>
+  configuration:</p>
+
+  <pre>$ bdep update @clang
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#4
+
+xxd hello/file{names.txt} -> ../hello-clang/hello/hello/cxx{names}
+c++ ../hello-clang/hello/hello/cxx{names} ->
+    ../hello-clang/hello/hello/obje{names}
+c++ hello/cxx{hello} -> ../hello-clang/hello/hello/obje{hello}
+ld ../hello-clang/hello/hello/exe{hello}</pre>
+
+  <p>This time we are neither prompted to create another configuration nor is
+  a new instance of <code>xxd</code> built &#8211; as we would have expected,
+  the existing host configuration with the already built <code>xxd</code> is
+  reused.</p>
+
+  <p>From the above output we can see that <code>bdep</code> creates the host
+  configuration using the default host compiler and build options
+  (<code>~host</code>) which means the result will most likely be optimized.
+  But if we don't like something about the host configuration that
+  <code>bdep</code> offers us to create, we can answer <code>n</code> at the
+  prompt, create one ourselves (by perhaps copying and tweaking the command
+  line <code>bdep</code> was going to use), and then restart the build.</p>
+
+  <p>Besides the <code>target</code> and <code>host</code> types, the third
+  pre-defined configuration type is <code>build2</code>, which is used for
+  build system modules. If you would like to try a build-time dependency on a
+  build system module, there is a dummy <code>libbuild2-hello</code> module
+  that you can use. Simply add the following line to your
+  <code>manifest</code>:</p>
+
+  <pre>depends: * libbuild2-hello</pre>
+
+  <p>And the following line somewhere in your <code>buildfile</code>:</p>
+
+  <pre>using hello</pre>
+
+  <p>Then build the project and see what happens.</p>
+
+  <div class="note">
+  <p>The <code>target</code> type signifies a configuration for the end-result
+  of our build. If no type is specified during the configuration creation with
+  the <code>--type</code> option (or <code>--config-type</code> if using
+  <code>bdep-new</code>), then <code>target</code> is assumed.</p>
+
+  <p>The <code>host</code> type signifies a configuration corresponding to the
+  host machine, that is, the machine on which the build is performed. It is
+  expected that an executable built in the host configuration can be executed.
+  Oftentimes, target and host are the same. In this case, if you would prefer
+  not to have separate configurations, then you can make your target
+  configuration <i>self-hosted</i> by using the <code>host</code> type rather
+  than <code>target</code>. For example:</p>
+
+  <pre>$ bdep init -C ../hello-gcc @gcc --type host cc config.cxx=g++</pre>
+
+  <p>The <code>build2</code> type is a special kind of host configuration that
+  is used to build build system modules. It cannot be self-hosted.</p>
+  </div>
+
+  <p>Building build-time dependencies in separate configurations is just one
+  application of the more general configuration linking mechanism which allows
+  us to build a package in one configuration while its dependencies &#8211; in
+  one or more linked configurations. This, for example, can be used to create
+  a "base" configuration with common dependencies that are shared between
+  multiple configurations (sometimes also referred to as build configuration
+  overlaying).</p>
+
+  <p>Let's see how this works on our <code>hello</code> project. Imagine
+  <code>libhello</code> that we depend on is very big and takes a while to
+  compile. We also aren't really interested in building it in both
+  <code>gcc</code> and <code>clang</code> configurations (it's our project
+  that we are interested in building with different compilers). Since these
+  two compilers are ABI-compatible (at least on Linux), we could build
+  <code>libhello</code> with just one of them and reuse the result with the
+  other. Let's see how we can achieve this with linked configurations (refer
+  to <a
+  href="../../bdep/doc/bdep-config.xhtml"><code><b>bdep-config(1)</b></code></a>
+  for details on subcommands involved):</p>
+
+  <pre>$ bdep config create ../hello-base @base --no-default cc config.cxx=g++
+$ bdep config create ../hello-gcc @gcc --default cc config.cxx=g++
+$ bdep config create ../hello-clang @clang cc config.cxx=clang++
+
+$ bdep config link @gcc @base
+$ bdep config link @clang @base
+
+$ bdep init @gcc { @base }+ ?libhello
+$ bdep init @clang</pre>
+
+  <p>Most of the commands are hopefully self-explanatory except for the
+  <code>{ @base }+ ?libhello</code> part. Here <code>?</code> is a package
+  flag that instructs <code>bdep</code> to treat <code>libhello</code> as a
+  dependency. And <code>{ @base }+</code> tells it to build this dependency in
+  the <code>base</code> configuration (we don't have to do the same for
+  <code>clang</code> since the dependency is already built). See <a
+  href="../../bdep/doc/bdep-sync.xhtml"><code><b>bdep-sync(1)</b></code></a>
+  for details on this syntax.</p>
+
+  <h2 id="guide-versioning-releasing">1.6 Versioning and Release
+  Management</h2>
+
+  <p>Let's now discuss versioning and release management and, yes, that
+  strange-looking <code>0.1.0-a.0.19700101000000</code> we keep seeing. While
+  a build system project doesn't need a version and a <code>bpkg</code>
+  package can use custom versioning schemes (see <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#package-version">Package
+  Version</a>), a project managed by <code>bdep</code> must use <i>standard
+  versioning</i>. <span class="note">A dependency, which is a
+  <code>bpkg</code> package, need not use standard versioning.</span></p>
+
+  <p>Standard versioning (<i>stdver</i>) is a <a
+  href="https://semver.org">semantic versioning</a> (<i>semver</i>) scheme
+  with a more precisely defined pre-release component and without any build
+  metadata.</p>
+
+  <div class="note">
+  <p>If you believe that <i>semver</i> is just
+  <code><i>major</i>.<i>minor</i>.<i>patch</i></code>, then in your worldview
+  <i>stdver</i> would be the same as <i>semver</i>. In reality, <i>semver</i>
+  also allows loosely defined pre-release and build metadata components. For
+  example, <code>1.2.3-beta.1+build.23456</code> is a valid <i>semver</i>.</p>
+  </div>
+
+  <p>A standard version has the following form:</p>
+
+  <p
+  class="code"><code><i>major</i><b>.</b><i>minor</i><b>.</b><i>patch</i>[<b>-</b><i>prerel</i>]</code></p>
+
+  <p>The <code><i>major</i></code>, <code><i>minor</i></code>, and
+  <code><i>patch</i></code> components have the same meaning as in
+  <i>semver</i>. The <code><i>prerel</i></code> component is used to provide
+  <i>continuous versioning</i> of our project between releases. Specifically,
+  during development of a new version we may want to publish several
+  pre-releases, for example, alpha or beta. In between those we may also want
+  to publish a number of snapshots, for example, for CI. With continuous
+  versioning all these releases, pre-releases, and snapshots are assigned
+  unique, properly ordered versions.</p>
+
+  <div class="note">
+  <p>Continuous versioning is a cornerstone of the <code>build2</code> project
+  dependency management. In case of snapshots, an appropriate version is
+  assigned automatically in cooperation with your VCS.</p>
+  </div>
+
+  <p>The <code><i>prerel</i></code> component for a pre-release has the
+  following form:</p>
+
+  <p class="code"><code>(<b>a</b>|<b>b</b>)<b>.</b><i>num</i></code></p>
+
+  <p>Here <code><b>a</b></code> stands for alpha, <code><b>b</b></code> stands
+  for beta, and <code><i>num</i></code> is the alpha/beta number. For
+  example:</p>
+
+  <pre>1.1.0        # final              release  for 1.1.0
+1.2.0-a.1    # first  alpha   pre-release  for 1.2.0
+1.2.0-a.2    # second alpha   pre-release  for 1.2.0
+1.2.0-b.1    # first  beta    pre-release  for 1.2.0
+1.2.0        # final              release  for 1.2.0</pre>
+
+  <p>The <code><i>prerel</i></code> component for a snapshot has the following
+  form:</p>
+
+  <p
+  class="code"><code>(<b>a</b>|<b>b</b>)<b>.</b><i>num</i><b>.</b><i>snapsn</i>[<b>.</b><i>snapid</i>]</code></p>
+
+  <p>Where <code><i>snapsn</i></code> is the snapshot sequence number and
+  <code><i>snapid</i></code> is the snapshot id. In case of <code>git</code>,
+  <code><i>snapsn</i></code> is the commit timestamp in the
+  <code>YYYYMMDDhhmmss</code> form and UTC timezone while
+  <code><i>snapid</i></code> is a 12-character abbreviated commit id. For
+  example:</p>
+
+  <pre>1.2.3-a.1.20180319215815.26efe301f4a7</pre>
+
+  <p>Notice also that a snapshot version is ordered <i>after</i> the
+  corresponding pre-release version. That is,
+  <code>1.2.3-a.1&#160;&lt;&#160;1.2.3-a.1.1</code>. As a result, it is
+  customary to start the development of a new version with
+  <code>X.Y.Z-a.0.z</code>, that is, a snapshot after the (non-existent)
+  zero'th alpha release. <span class="note">We will explain the meaning of
+  <code><b>z</b></code> in this version momentarily.</span> The following
+  chronologically-ordered versions illustrate a typical release flow of a
+  project that uses <code>git</code> as its VCS:</p>
+
+  <pre>0.1.0-a.0.19700101000000               # snapshot (no commits yet)
+0.1.0-a.0.20180319215815.26efe301f4a7  # snapshot (first commit)
+...                                    # more commits/snapshots
+0.1.0-a.1                              # pre-release (first alpha)
+0.1.0-a.1.20180319221826.a6f0f41205b8  # snapshot
+...                                    # more commits/snapshots
+0.1.0-a.2                              # pre-release (second alpha)
+0.1.0-a.2.20180319231937.b701052316c9  # snapshot
+...                                    # more commits/snapshots
+0.1.0-b.1                              # pre-release (first beta)
+0.1.0-b.1.20180319242038.c812163417da  # snapshot
+...                                    # more commits/snapshots
+0.1.0                                  # release
+0.2.0-a.0.20180319252139.d923274528eb  # snapshot (first in 0.2.0)
+...</pre>
+
+  <p>For a more detailed discussion of standard versioning and its support in
+  <code>build2</code> refer to <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-version"><code>version</code>
+  Module</a>.</p>
+
+  <p>Let's now see how this works in practice by publishing a couple of
+  versions for our <code>hello</code> project. By now it should be clear what
+  that <code>0.1.0-a.0.19700101000000</code> means &#8211; it is the first
+  snapshot version of our project. Since there are no commits yet, it has the
+  UNIX epoch as its commit timestamp. Let's see what changes after we've made
+  our first commit:</p>
+
+  <pre>$ git add .
+$ git commit -m "Initial implementation"
+
+$ bdep status
+hello configured 0.1.0-a.0.19700101000000
+      available  0.1.0-a.0.20180507062614.ee006880fc7e</pre>
+
+  <p>Just like with changes to dependency information, <code>status</code> has
+  detected that a new (snapshot) version of our project is available for
+  synchronization.</p>
+
+  <div class="note">
+  <p>Another way to view the project's version (which works even if we are not
+  using <code>bdep</code>) is with the build system's <code>info</code>
+  meta-operation:</p>
+
+  <pre>$ b info
+project: hello
+version: 0.1.0-a.0.20180507062614.ee006880fc7e
+summary: hello C++ executable
+...</pre>
+  </div>
+
+  <p>Let's synchronize with the default build configuration:</p>
+
+  <pre>$ bdep sync
+synchronizing:
+  upgrade hello/0.1.0-a.0.20180507062614.ee006880fc7e
+
+$ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e</pre>
+
+  <div class="note">
+  <p>Notice that we didn't have to manually change the version anywhere. All
+  we had to do was commit our changes and a new snapshot version was
+  automatically derived by <code>build2</code> from the new <code>git</code>
+  commit. Without this automation continuous versioning would hardly be
+  practical.</p>
+  </div>
+
+  <p>If we now make another commit, we will see a similar picture:</p>
+
+  <pre>$ bdep status
+hello configured 0.1.0-a.0.20180507062614.ee006880fc7e
+      available  0.1.0-a.0.20180507062615.8fb9de05b38f</pre>
+
+  <div class="note">
+  <p>Note that you don't need to manually run <code>sync</code> after every
+  commit. As discussed earlier, you can simply run the build system to update
+  your project and things will get automatically synchronized if
+  necessary.</p>
+  </div>
+
+  <p>Ok, time for our first release. Let's start with <code>0.1.0-a.1</code>.
+  Unlike snapshots, for pre-releases as well as final releases we have to
+  change the version in the <code>manifest</code> file:</p>
+
+  <pre>version: 0.1.0-a.1</pre>
+
+  <div class="note">
+  <p>The <code>manifest</code> file is the singular place where we specify the
+  package version. The build system's <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-version"><code>version</code>
+  module</a> makes it available in various forms in buildfiles and even source
+  code.</p>
+  </div>
+
+  <p>To ensure continuous versioning, this change to version must be the last
+  commit for this (pre-)release which itself must be immediately followed by a
+  second change to the version starting the development of the next
+  (pre-)release. We also recommend that you tag the release commit with a tag
+  name in the <code><b>v</b><i>X</i>.<i>Y</i>.<i>Z</i></code> form.</p>
+
+  <div class="note">
+  <p>Having regular release tag names with the <code><b>v</b></code> prefix
+  allows one to distinguish them from other tags, for example, with wildcard
+  patterns.</p>
+  </div>
+
+  <p>Here is the release workflow for our example:</p>
+
+  <pre>$ git commit -a -m "Release version 0.1.0-a.1"
+$ git tag -a v0.1.0-a.1 -m "Tag version 0.1.0-a.1"
+$ git push --follow-tags
+
+# Version 0.1.0-a.1 is now public.
+
+$ edit manifest  # change 'version: 0.1.0-a.1.z'
+$ git commit -a -m "Change version to 0.1.0-a.1.z"
+$ git push
+
+# Master is now open for business.</pre>
+
+  <p>Notice also that when specifying a snapshot version in
+  <code>manifest</code> we use the special <code><b>z</b></code> snapshot
+  value (for example, <code>0.1.0-a.1.z</code>) which is recognized and
+  automatically replaced by <code>build2</code> with, in case of
+  <code>git</code>, the current commit timestamp and id (refer to <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-version"><code>version</code>
+  Module</a> for details).</p>
+
+  <p>While not particularly complicated, performing the release steps manually
+  is both tedious and error-prone. Instead, this process can be automated with
+  the <a
+  href="../../bdep/doc/bdep-release.xhtml"><code><b>bdep-release(1)</b></code></a>
+  command. Specifically, in its default mode, this command will update the
+  version in the <code>manifest</code> file, commit and tag this change, open
+  the next development cycle (again, by changing <code>manifest</code> and
+  committing), and, finally, if <code>--push</code> is specified, push
+  everything to the remote. So, instead of the above manual steps, we could
+  have simply run:</p>
+
+  <pre>$ bdep release --alpha --push
+releasing:
+  package: hello
+  current: 0.1.0-a.0.z
+  release: 0.1.0-a.1
+  open:    0.1.0-a.1.z
+  commit:  yes
+  tag:     v0.1.0-a.1
+  push:    origin/master
+continue? [y/n] y
+[master 82a7e65] Release version 0.1.0-a.1
+[master e6cf3c0] Change version to 0.1.0-a.1.z
+pushing branch master, tag v0.1.0-a.1
+To github.com:john-doe/hello.git
+   26ec5c9..e6cf3c0  master -> master
+ * [new tag]         v0.1.0-a.1 -> v0.1.0-a.1</pre>
+
+  <div class="note">
+  <p>The <code>release</code> command has a number of alternative modes, such
+  as for releasing a package revision, as well as a number of options that
+  control which version will be released and which version will be opened. See
+  <a
+  href="../../bdep/doc/bdep-release.xhtml"><code><b>bdep-release(1)</b></code></a>
+  for details.</p>
+  </div>
+
+  <p>Publishing the final release to the version control repository is exactly
+  the same. This time, however, let's see how we can also publish it to an
+  archive-based repository. The first step is again to make the release, which
+  we will do with the help of the <code>release</code> command. Except now we
+  will delay opening the next development cycle by passing
+  <code>--no-open</code> (there is also no <code>--alpha</code> since this is
+  the final release):</p>
+
+  <pre>$ bdep release --no-open --push
+releasing:
+  package: hello
+  current: 0.1.0-a.1.z
+  release: 0.1.0
+  commit:  yes
+  tag:     v0.1.0
+  push:    origin/master
+continue? [y/n] y
+[master 00ed45a] Release version 0.1.0
+pushing branch master, tag v0.1.0
+To github.com:john-doe/hello.git
+   5d5094c..00ed45a  master -> master
+ * [new tag]         v0.1.0 -> v0.1.0</pre>
+
+  <p>To publish our project to an archive-based repository we use the <a
+  href="../../bdep/doc/bdep-publish.xhtml"><code><b>bdep-publish(1)</b></code></a>
+  command. For example:</p>
+
+  <pre>$ bdep publish
+publishing:
+  to:      https://cppget.org
+  as:      John Doe &lt;john@example.org>
+  package: hello
+  version: 0.1.0
+  project: hello
+  section: alpha
+  control: https://github.com/john-doe/hello.git
+continue? [y/n] y
+pushing branch build2-control
+submitting hello-0.1.0.tar.gz
+############################################################# 100.0%
+package submission is queued: https://queue.cppget.org/hello/0.1.0
+reference: 0c596fca2017</pre>
+
+  <p>Let's see what's going on here. By default <code>publish</code> submits
+  to the <a href="https://cppget.org">cppget.org</a> repository. On
+  <code>cppget.org</code> package names are assigned on a first come first
+  serve basis. But instead of using logins or emails to authenticate package
+  ownership, <code>cppget.org</code> uses your version control repository as a
+  proxy. In a nutshell, when we submit a package for the first time, its
+  control repository is associated with its name and all subsequent
+  submissions have to use the same control repository (the authentication
+  part). When submitting a package, <code>publish</code> also adds a file to
+  the <code>build2-control</code> branch of the control repository with the
+  package archive checksum. On the other side, <code>cppget.org</code> checks
+  for the presence of this file to make sure that whomever is making this
+  submission has write access to the control repository (the authorization
+  part). See <a
+  href="../../bdep/doc/bdep-publish.xhtml"><code><b>bdep-publish(1)</b></code></a>
+  for details.</p>
+
+  <p>The rest should be pretty straightforward: <code>publish</code> prepares
+  and uploads a distribution of our package which goes into the
+  <code>alpha</code> section of the repository (because it has <code>0</code>
+  major version). In response we get a URL which we can use to check the
+  status of our submission on <a
+  href="https://queue.cppget.org">queue.cppget.org</a>. And after some basic
+  testing and verification, our package should appear on
+  <code>cppget.org</code> (the exact steps are described in <a
+  href="https://cppget.org?submit">Submission Policies</a>). Note also that
+  package submissions to <code>cppget.org</code> are public and permanent and
+  cannot be removed under any circumstances.</p>
+
+  <p>Finally, we also shouldn't forget to increment the version for the next
+  development cycle. For that we can use the <code>--open</code> mode of the
+  <code>release</code> command. For example:</p>
+
+  <pre>$ bdep release --open --push
+opening:
+  package: hello
+  current: 0.1.0
+  open:    0.2.0-a.0.z
+  commit:  yes
+  push:    origin/master
+continue? [y/n] y
+[master ace2f6e] Change version to 0.2.0-a.0.z
+pushing branch master
+To github.com:john-doe/hello.git
+   00ed45a..ace2f6e  master -> master</pre>
+
+  <div class="note">
+  <p>One sticky point of continuous versioning is choosing the next version.
+  For example, above should we continue with <code>0.1.1-a.0</code>,
+  <code>0.2.0-a.0</code>, or <code>1.0.0-a.0</code>? The important rule to
+  keep in mind is that we can jump forward to any further version at any time
+  and without breaking continuous versioning. But we can never jump
+  backwards.</p>
+
+  <p>For example, we can start with <code>0.2.0-a.0</code> but if we later
+  realize that this will actually be a new major release, we can easily change
+  it to <code>1.0.0-a.0</code>. As a result, the general guideline is to start
+  conservatively by either incrementing the patch or the minor version
+  component. And the recommended strategy is to increment the minor component
+  and, if required, release patch versions from a separate branch (created by
+  branching off from the release commit). This is the default behavior of the
+  <code>release</code> command.</p>
+
+  <p>Note also that you don't have to make any pre-releases if you don't need
+  them. While during development you would still keep the version as
+  <code>X.Y.Z-a.0</code>, at release you simply change it directly to the
+  final <code>X.Y.Z</code>.</p>
+  </div>
+
+  <p>When publishing the final release you may also want to clean up now
+  obsolete pre-release tags. For example:</p>
+
+  <pre>$ git tag -l 'v0.1.0-*' | xargs git push --delete origin
+$ git tag -l 'v0.1.0-*' | xargs git tag --delete</pre>
+
+  <div class="note">
+  <p>While at first removing such tags may seem like a bad idea, pre-releases
+  are by nature temporary and their use only makes sense until the final
+  release is published.</p>
+
+  <p>Also note that having a <code>git</code> repository with a large number
+  of published but unused version tags may result in a significant download
+  overhead.</p>
+  </div>
+
+  <p>Let's also briefly discuss in which situations we should increment each
+  of the version components. While <i>semver</i> gives basic guidelines, there
+  are several ways to apply them in the context of C/C++ where there is a
+  distinction between binary and source compatibility. We recommend that you
+  reserve <i>patch</i> releases for specific bug fixes and security issues
+  that you can guarantee with a high level of certainty to be
+  binary-compatible. Otherwise, if the changes are source-compatible,
+  increment <i>minor</i>. And if they are breaking (that is, the user code
+  likely will need adjustments), increment <i>major</i>. During early
+  development, when breaking changes are frequent, it is customary to use the
+  <code>0.Y.Z</code> versions where <code>Y</code> effectively becomes the
+  <i>major</i> component. Again, refer to the <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-version"><code>version</code>
+  Module</a> for a more detailed discussion of this topic.</p>
+
+  <h2 id="guide-dev-multi">1.7 Developing Multiple Packages and Projects</h2>
+
+  <p>How does a library like <code>libhello</code> get developed? It's
+  possible someone woke up one day and realized that they were going to build
+  a useful library that everyone was going to use. But somehow this doesn't
+  feel like how it really works. In the real world things start organically:
+  someone had a project like <code>hello</code> and then needed the same
+  functionality in another project. Or someone else needed it and asked the
+  author to factor it out into a library. For this approach to work, however,
+  moving such common functionality into a library and then continue its
+  parallel development must be a simple, frictionless process. Let's see how
+  this works in <code>build2</code>.</p>
+
+  <p>First, we need to decide whether to make <code>libhello</code> another
+  package in our <code>hello</code> project (that is, in the same
+  <code>git</code> repository) or a separate project (with a separate
+  repository). Both arrangements are equally well supported.</p>
+
+  <div class="note">
+  <p>A multi-package project works best if all the packages have the same
+  version and are released together. While the packages themselves can have
+  different versions (since each has its own <code>manifest</code>), in this
+  scenario following the release tagging recommendations discussed earlier
+  will be problematic.</p>
+  </div>
+
+  <p>Let's start with a separate project since it is simpler. As the first
+  step we use <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a> to
+  create a new library project next to our <code>hello</code>:</p>
+
+  <pre>$ bdep new -l c++ -t lib libhello
+created new library project libhello in /tmp/libhello/
+
+$ ls
+hello/
+libhello/
+hello-gcc/
+hello-clang/
+
+$ tree libhello
+libhello/
+├── build/
+│   └── ...
+├── libhello/
+│   ├── hello.hxx
+│   ├── hello.cxx
+│   └── buildfile
+├── buildfile
+├── manifest
+├── README.md
+└── repositories.manifest</pre>
+
+  <div class="note">
+  <p>Similar to the executable project, this layout is not mandatory and <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a> can
+  create a number of alternative library structures. For example, if you
+  prefer the <code>include/src</code> split, try:</p>
+
+  <pre>$ bdep new -l c++ -t lib,split libhello</pre>
+
+  <p>See <a href="../../bdep/doc/bdep-new.xhtml#src-layout">SOURCE LAYOUT</a>
+  for more examples.</p>
+  </div>
+
+  <p>Let's edit the generated <code>manifest</code> file and add the
+  <code>project</code> value (customarily after <code>version</code>) to
+  indicate that our library belongs to the same overall project as our
+  executable:</p>
+
+  <pre>$ cat libhello/manifest
+: 1
+name: libhello
+version: 0.1.0-a.0.z
+project: hello
+summary: hello C++ library
+...</pre>
+
+  <div class="note">
+  <p>The <code>project</code> value is used to group related packages together
+  in order to help with their organization and discovery. For example, if
+  later we create <code>libhello2</code> or <code>libhello-extra</code>, then
+  it would make sense for them to also belong to the <code>hello</code>
+  project. See the <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-project"><code>project</code></a>
+  value documentation for details.</p>
+  </div>
+
+  <p>Our two projects will be sharing the same set of build configurations, so
+  next we initialize <code>libhello</code> in <code>hello-gcc</code> and
+  <code>hello-clang</code> (notice the use of <code>--config-add|-A</code>
+  instead of <code>--config-create|-C</code>):</p>
+
+  <pre>$ cd libhello
+
+$ bdep init -A ../hello-gcc @gcc
+initializing in project /tmp/libhello/
+added configuration @gcc /tmp/hello-gcc/ default,auto-synchronized
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000
+
+$ bdep init -A ../hello-clang @clang
+initializing in project /tmp/libhello/
+added configuration @clang /tmp/hello-clang/ auto-synchronized
+synchronizing:
+  new libhello/0.1.0-a.0.19700101000000</pre>
+
+  <div class="note">
+  <p>If two or more projects share the same build configuration, then all of
+  them are always synchronized at once, regardless of the originating project.
+  It also makes sense to have the same default configuration and use identical
+  configuration names in all the projects.</p>
+  </div>
+
+  <p>The last step is to move the desired functionality from
+  <code>hello</code> to <code>libhello</code> and at the same time add a
+  dependency on <code>libhello</code>, just as we did earlier (add a
+  <code>depends</code> entry to <code>manifest</code>, then import the library
+  in <code>buildfile</code>, and so on). One interesting question is what to
+  put as a prerequisite repository in <code>repositories.manifest</code>. Our
+  own setup will work even if we don't put anything there &#8211; the
+  dependency will be automatically resolved to our local version of
+  <code>libhello</code> since we have initialized it in all our build
+  configurations. However, in case our <code>hello</code> repository is used
+  by someone else, it's a good idea to add the remote <code>git</code>
+  repository for <code>libhello</code> as a prerequisite.</p>
+
+  <div class="note">
+  <p>By now you have probably realized that our project directory is just
+  another type of package repository. See <a
+  href="../../bpkg/doc/bpkg-repository-types.xhtml"><code><b>bpkg-repository-types(1)</b></code></a>
+  for more information.</p>
+  </div>
+
+  <p>And that's it, now we can build and test our new arrangement:</p>
+
+  <pre>$ cd ../hello   # back to hello project root
+$ bdep test -i
+c++ ../libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ ../libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} + hello/testscript{testscript}</pre>
+
+  <p>This is also the approach we would use if we wanted to fix a bug in
+  someone else's library. That is, we would clone their library repository and
+  initialize it in the build configurations of our project which will
+  "upgrade" the dependency to use the local version. Then we make the fix,
+  submit it upstream, and continue using the local version until our fix is
+  merged/published, at which point we deinitialize their library repository
+  and our project will be automatically switched back to using the new
+  upstream version of the library. Here is the summary of the steps in this
+  workflow:</p>
+
+  <pre>$ cd hello/                      # Our project.
+$ bdep init -C @gcc ...          # Configures libhello as a dependency.
+
+$ git clone .../libhello.git     # Need to fix a bug in libhello.
+$ cd libhello
+$ bdep init -A ../hello-gcc @gcc # Upgrades libhello to local version.
+
+# Fix the bug in libhello, test, and submit upstream.
+# Continue using local libhello until the bugfix is published.
+
+$ cd libhello                    # Bugfix has been published.
+$ bdep deinit @gcc               # Switches libhello back to dependency.
+
+$ rm -r libhello                 # If no longer needed.</pre>
+
+  <p>Let's now examine the second option: making <code>libhello</code> a
+  package inside <code>hello</code>. Here is the original structure of our
+  <code>hello</code> project:</p>
+
+  <pre>hello/
+├── .git/
+├── build/
+├── hello/
+│   ├── hello.cxx
+│   └── buildfile
+├── buildfile
+├── manifest
+├── README.md
+└── repositories.manifest</pre>
+
+  <p>As the first step, we move the <code>hello</code> program into its own
+  subdirectory:</p>
+
+  <pre>hello/
+├── .git/
+├── hello/
+│   ├── build/
+│   ├── hello/
+│   │   ├── hello.cxx
+│   │   └── buildfile
+│   ├── buildfile
+│   ├── manifest
+│   └── README.md
+└── repositories.manifest</pre>
+
+  <p>Next we again use <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a> to
+  create a new library but this time as a package inside an already existing
+  project:</p>
+
+  <pre>$ cd hello
+$ bdep new --package -l c++ -t lib libhello
+created new library package libhello in /tmp/hello/libhello/</pre>
+
+  <p>Let's see what our project looks like now:</p>
+
+  <pre>hello/
+├── .git/
+├── hello/
+│   ├── ...
+│   └── manifest
+├── libhello/
+│   ├── ...
+│   └── manifest
+├── buildfile
+├── packages.manifest
+└── repositories.manifest</pre>
+
+  <div class="note">
+  <p>Notice that, as discussed earlier, <code>repositories.manifest</code>
+  belongs to the project (repository) while <code>manifest</code> &#8211; to
+  the package.</p>
+  </div>
+
+  <p>Besides the <code>libhello</code> directory the <code>new</code> command
+  also created the <code>buildfile</code> and <code>packages.manifest</code>
+  files in the root directory of our project. First let's take a look inside
+  <code>buildfile</code>:</p>
+
+  <pre>import pkgs = */
+
+./: $pkgs</pre>
+
+  <p>This is what we call a <i>glue <code>buildfile</code></i>. Its purpose is
+  to "pull" together several packages so that we are able to invoke the build
+  system driver from the project root. See <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-import">Target
+  Importation</a> for details.</p>
+
+  <p>Now let's examine <code>packages.manifest</code>:</p>
+
+  <pre>$ cat packages.manifest
+: 1
+location: libhello/</pre>
+
+  <p>Up until now our <code>hello</code> was a simple, single-package project
+  that didn't need this file &#8211; <code>manifest</code> in its root
+  directory was sufficient (see <a
+  href="../../bpkg/doc/bpkg-repository-types.xhtml"><code><b>bpkg-repository-types(1)</b></code></a>
+  for details on the project repository structure). But now it contains
+  several packages and we need to specify where they are located within the
+  project. So let's go ahead and add the location of the <code>hello</code>
+  package:</p>
+
+  <pre>$ cat packages.manifest
+: 1
+location: libhello/
+:
+location: hello/</pre>
+
+  <div class="note">
+  <p>Packages in a project can reside next to each other or in subdirectories
+  but they cannot nest. When published to an archive-based repository, each
+  such package will be placed into its own archive.</p>
+  </div>
+
+  <p>Next we initialize the new package in all our build configurations:</p>
+
+  <pre>$ cd libhello
+$ bdep init -a
+initializing in project /tmp/hello/
+in configuration @gcc:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000
+
+in configuration @clang:
+synchronizing:
+  upgrade hello/0.1.0-a.0.19700101000000#1
+  new libhello/0.1.0-a.0.19700101000000</pre>
+
+  <div class="note">
+  <p>Notice that the <code>hello</code> package has been "upgraded" to reflect
+  its new location.</p>
+  </div>
+
+  <p>Finally, as before, we move the desired functionality from
+  <code>hello</code> to <code>libhello</code> and at the same time add a
+  dependency on <code>libhello</code>. Note, however, that in this case we
+  don't need to add anything to <code>repositories.manifest</code> since both
+  packages are in the same project (repository). And that's it, now we can
+  build and test our new arrangement:</p>
+
+  <pre>$ cd ..      # back to hello project root
+$ bdep test
+c++ libhello/libhello/cxx{hello} ->
+    ../hello-gcc/libhello/libhello/objs{hello}
+c++ libhello/tests/basics/cxx{driver} ->
+    ../hello-gcc/libhello/tests/basics/obje{driver}
+c++ hello/hello/cxx{hello} -> ../hello-gcc/hello/hello/obje{hello}
+ld ../hello-gcc/libhello/libhello/libs{hello}
+ld ../hello-gcc/libhello/tests/basics/exe{driver}
+ld ../hello-gcc/hello/hello/exe{hello}
+test ../hello-gcc/libhello/tests/basics/exe{driver}
+test ../hello-gcc/hello/hello/exe{hello} +
+     hello/hello/testscript{testscript}</pre>
+
+  <div class="note">
+  <p>A multi-package project could have several files, such as
+  <code>README.md</code> and <code>LICENSE</code>, which, while shared by all
+  the packages, must nevertheless reside within each package's directory. The
+  recommended way to avoid the duplication is to use symlinks. For
+  example:</p>
+
+  <pre>hello/
+├── .git/
+├── hello/
+│   ├── ...
+│   ├── LICENSE  -> ../LICENSE
+│   └── manifest
+├── libhello/
+│   ├── ...
+│   ├── LICENSE  -> ../LICENSE
+│   └── manifest
+├── LICENSE
+├── buildfile
+├── packages.manifest
+└── repositories.manifest</pre>
+
+  <p>See <a href="https://build2.org/article/symlinks.xhtml">Using Symlinks in
+  <code>build2</code> Projects</a> for details.</p>
+  </div>
+
+  <h2 id="guide-consume-pkg">1.8 Package Consumption</h2>
+
+  <p>Ok, now that we have published a few releases of <code>hello</code>, how
+  would the users of our project get them? While they could clone the
+  repository and use <code>bdep</code> just like we did, this is more of a
+  development than a consumption workflow. For consumption it is much easier
+  to use the package dependency manager, <a
+  href="../../bpkg/doc/bpkg.xhtml"><code><b>bpkg(1)</b></code></a>,
+  directly.</p>
+
+  <div class="note">
+  <p>Note that this approach also works for libraries in case you wish to use
+  them in a project with a build system other than <code>build2</code>. See <a
+  href="#guide-unpackaged-deps">Using Unpackaged Dependencies</a> for
+  background on cross-build system library consumption.</p>
+  </div>
+
+  <p>First, we create a suitable build configuration with the <a
+  href="../../bpkg/doc/bpkg-cfg-create.xhtml"><code><b>bpkg-cfg-create(1)</b></code></a>
+  command. We can use the same place for building all our tools so let's call
+  the directory <code>tools</code>. Seeing that we are only interested in
+  using (rather than developing) such tools, let's build them optimized and
+  also configure a suitable installation location:</p>
+
+  <pre>$ bpkg create -d tools cc        \
+  config.cxx=g++                 \
+  config.cc.coptions=-O3         \
+  config.install.root=/usr/local \
+  config.install.sudo=sudo
+created new configuration in /tmp/tools/</pre>
+
+  <p>The same step on Windows using Visual Studio would look like this:</p>
+
+  <pre>$ bpkg create -d tools cc ^
+  config.cxx=cl           ^
+  config.cc.coptions=/O2  ^
+  config.install.root= C:\install</pre>
+
+  <p>To fetch and build packages (as well as all their dependencies) we use
+  the <a
+  href="../../bpkg/doc/bpkg-pkg-build.xhtml"><code><b>bpkg-pkg-build(1)</b></code></a>
+  command. We can use either an archive-based repository like <a
+  href="https://cppget.org">cppget.org</a> or build directly from
+  <code>git</code>:</p>
+
+  <pre>$ cd tools
+
+$ bpkg build hello@https://git.build2.org/hello/hello.git
+fetching from https://git.build2.org/hello/hello.git
+  new libformat/1.0.0 (required by libhello)
+  new libprint/1.0.0 (required by libhello)
+  new libhello/1.1.0 (required by hello)
+  new hello/1.0.0
+continue? [Y/n] y
+configured libformat/1.0.0
+configured libprint/1.0.0
+configured libhello/1.1.0
+configured hello/1.0.0
+c++ libprint-1.0.0/libprint/cxx{print} ->
+    libprint-1.0.0/libprint/objs{print}
+c++ hello-1.0.0/hello/cxx{hello} -> hello-1.0.0/hello/obje{hello}
+c++ libhello-1.1.0/libhello/cxx{hello} ->
+    libhello-1.1.0/libhello/objs{hello}
+c++ libformat-1.0.0/libformat/cxx{format} ->
+    libformat-1.0.0/libformat/objs{format}
+ld libprint-1.0.0/libprint/libs{print}
+ld libformat-1.0.0/libformat/libs{format}
+ld libhello-1.1.0/libhello/libs{hello}
+ld hello-1.0.0/hello/exe{hello}
+updated hello/1.0.0</pre>
+
+  <div class="note">
+  <p>Passing a repository URL to the <code>build</code> command is a shortcut
+  to the following sequence of commands:</p>
+
+  <pre>$ bpkg add https://git.build2.org/hello/hello.git  # add repository
+$ bpkg fetch                             # fetch package list
+$ bpkg build hello                       # build package by name</pre>
+  </div>
+
+  <div class="note">
+  <p>If building a package involves building a build-time dependency and no
+  configuration of type <code>host</code> (or <code>build2</code>, if the
+  dependency is a build system module) is linked with the target
+  configuration, then a private configuration of a suitable type is
+  automatically created and linked. See <a
+  href="#guide-build-time-linked">Build-Time Dependencies and Linked
+  Configurations</a> for background on build-time dependencies and <a
+  href="../../bpkg/doc/bpkg-cfg-create.xhtml"><code><b>bpkg-cfg-create(1)</b></code></a>
+  for more information on <code>bpkg</code> configuration linking.</p>
+  </div>
+
+  <p>Once built, we can install the package to the location that we have
+  specified with <code>config.install.root</code> using the <a
+  href="../../bpkg/doc/bpkg-pkg-install.xhtml"><code><b>bpkg-pkg-install(1)</b></code></a>
+  command:</p>
+
+  <pre>$ bpkg install hello
+...
+install libformat-1.0.0/libformat/libs{format} -> /usr/local/lib/
+install libprint-1.0.0/libprint/libs{print} -> /usr/local/lib/
+install libhello-1.1.0/libhello/libs{hello} -> /usr/local/lib/
+install hello-1.0.0/hello/exe{hello} -> /usr/local/bin/
+
+$ hello World
+Hello, World!</pre>
+
+  <div class="note">
+  <p>If on your system the installed executables don't run from
+  <code>/usr/local</code> because of the unresolved shared libraries (or if
+  you are installing somewhere else, such as <code>/opt</code>), then the
+  easiest way to fix this is with <i>rpath</i>. Simply add the following
+  configuration variable when creating the build configuration (or as an
+  argument to the <code>install</code> command):</p>
+
+  <pre>config.bin.rpath=/usr/local/lib</pre>
+
+  <p>Note to Windows users: this is not an issue on this platform since
+  executables and shared (DLL) libraries are installed into the same
+  subdirectory (<code>bin</code>) of the installation directory.</p>
+  </div>
+
+  <p>The installation contents and layout under
+  <code>config.install.root</code> would be along these lines:</p>
+
+  <pre>/usr/local/
+├── bin/
+│   └── hello
+├── lib/
+│   ├── libformat-1.0.so
+│   ├── libhello-1.1.so
+│   └── libprint-1.0.so
+└── share/
+    └── doc/
+        └── hello/
+            ├── manifest
+            └── README.md</pre>
+
+  <div class="note">
+  <p>The installation locations of various types of files (executables,
+  libraries, headers, documentation, etc) can be customized using a number of
+  the <code>config.install.*</code> variables with the most commonly used ones
+  and their defaults (relative to <code>config.install.root</code>) listed
+  below (see the <code>install</code> build system module documentation for
+  the complete list).</p>
+
+  <pre>config.install.bin     = root/bin/
+config.install.lib     = root/lib/
+config.install.doc     = root/share/doc/
+config.install.man     = root/share/man/
+config.install.include = root/include/</pre>
+  </div>
+
+  <p>If we need to uninstall a previously installed package, there is the <a
+  href="../../bpkg/doc/bpkg-pkg-uninstall.xhtml"><code><b>bpkg-pkg-uninstall(1)</b></code></a>
+  command:</p>
+
+  <pre>$ bpkg uninstall hello
+uninstall hello-1.0.0/hello/exe{hello} &lt;- /usr/local/bin/
+uninstall libhello-1.1.0/libhello/libs{hello} &lt;- /usr/local/lib/
+uninstall libprint-1.0.0/libprint/libs{print} &lt;- /usr/local/lib/
+uninstall libformat-1.0.0/libformat/libs{format} &lt;- /usr/local/lib/
+...</pre>
+
+  <div class="note">
+  <p>From the above listing we can gather that only the shared library
+  binaries were installed. In particular, neither static library binaries nor
+  headers and other development-related files (such as non-versioned shared
+  library symlinks, <code>pkg-config</code> <code>.pc</code> files, etc) were
+  installed.</p>
+
+  <p>The reason for this behavior is that by default the <a
+  href="../../bpkg/doc/bpkg-pkg-install.xhtml"><code><b>bpkg-pkg-install(1)</b></code></a>
+  command only instructs the build system to install packages that were
+  specified on the command line (<code>hello</code> in out case) while the
+  build system in turn installs from dependency packages only what's necessary
+  for the packages it was instructed to install. In our case, installing the
+  <code>hello</code> also requires installing the shared library binaries that
+  it uses but none of the development-related files (we don't need library
+  headers in order to run an executable).</p>
+
+  <p>However, this default behavior of <a
+  href="../../bpkg/doc/bpkg-pkg-install.xhtml"><code><b>bpkg-pkg-install(1)</b></code></a>
+  (and <a
+  href="../../bpkg/doc/bpkg-pkg-uninstall.xhtml"><code><b>bpkg-pkg-uninstall(1)</b></code></a>)
+  can be changed with the <code>--recursive</code> option, which instructs
+  <code>bpkg</code> to additionally fully install/uninstall dependency
+  packages.</p>
+  </div>
+
+  <p>Rather than installing the package locally we could instead generate a
+  <i>binary distribution package</i> for it using the <a
+  href="../../bpkg/doc/bpkg-pkg-bindist.xhtml"><code><b>bpkg-pkg-bindist(1)</b></code></a>
+  command. Such a binary package can then be installed on a different machine.
+  Currently, the <code>bindist</code> command supports producing Debian (and
+  alike, such as Ubuntu) and Fedora (and alike, such as RHEL) packages as well
+  as installation archives for all operating systems. For example, to generate
+  a Debian package for our <code>hello</code> (running on Debian or
+  alike):</p>
+
+  <pre>$ bpkg bindist --recursive=auto --private -o /tmp/hello-deb/ hello
+...
+generated debian package for hello/1.0.0:
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello-dbgsym_1.0.0-0~debian12_amd64.deb
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.buildinfo
+  /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.changes
+
+$ sudo apt-get install /tmp/hello-deb/hello_1.0.0-0~debian12_amd64.deb</pre>
+
+  <p>And to generate a Fedora package (running on Fedora or alike):</p>
+
+  <pre>$ bpkg bindist --recursive=auto --private hello
+...
+generated fedora package for hello/1.0.0:
+  ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm
+  ~/rpmbuild/RPMS/x86_64/hello-debuginfo-1.0.0-1.fc38.x86_64.rpm
+
+$ sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.fc38.x86_64.rpm</pre>
+
+  <p>And to generate an installation archive (running on Windows in this
+  example):</p>
+
+  <pre>$ bpkg bindist --recursive=auto   ^
+  --private                       ^
+  --distribution=archive          ^
+  -o C:\tmp\hello-zip\            ^
+  config.install.relocatable=true ^
+  hello
+...
+generated archive package for hello/1.0.0:
+  C:\tmp\hello-zip\hello-1.0.0-x86_64-windows10.zip</pre>
+
+  <p>To upgrade or downgrade packages we again use the <code>build</code>
+  command. Here is a typical upgrade workflow:</p>
+
+  <pre>$ bpkg fetch              # refresh available package list
+$ bpkg status             # see if new versions are available
+
+$ bpkg uninstall hello    # uninstall old version
+$ bpkg build     hello    # upgrade to the latest version
+$ bpkg install   hello    # install new version</pre>
+
+  <p>Similar to <code>bdep</code>, to downgrade we have to specify the desired
+  version explicitly. There are also the <code>--upgrade|-u</code> and
+  <code>--patch|-p</code> as well as <code>--immediate|-i</code> and
+  <code>--recursive|-r</code> options that allow us to upgrade or patch
+  packages that we have built and/or their immediate or all dependencies (see
+  <a
+  href="../../bpkg/doc/bpkg-pkg-build.xhtml"><code><b>bpkg-pkg-build(1)</b></code></a>
+  for details). For example, to make sure everything is patched, run:</p>
+
+  <pre>$ bpkg fetch
+$ bpkg build -pr</pre>
+
+  <p>If a package is no longer needed, we can remove it from the configuration
+  with <a
+  href="../../bpkg/doc/bpkg-pkg-drop.xhtml"><code><b>bpkg-pkg-drop(1)</b></code></a>:</p>
+
+  <pre>$ bpkg drop hello
+following dependencies were automatically built but
+will no longer be used:
+  libhello
+  libformat
+  libprint
+drop unused packages? [Y/n] y
+  drop hello
+  drop libhello
+  drop libformat
+  drop libprint
+continue? [Y/n] y
+purged hello
+purged libhello
+purged libformat
+purged libprint</pre>
+
+  <h2 id="guide-system-deps">1.9 Using System-Installed Dependencies</h2>
+
+  <p>Our operating system might already have a package manager (which we will
+  refer to as <i>system package manager</i>) and for various reasons we may
+  want to use the system-installed version of a dependency rather than
+  building one from source.</p>
+
+  <div class="note">
+  <p>Using system-installed versions works best for mature rather than
+  rapidly-developed packages since for the latter you often need to track the
+  latest version (which may not yet be available from the system repository)
+  and/or test with multiple versions (which is not something that many system
+  package managers support).</p>
+
+  <p>We can also have some build configurations using a system-installed
+  version of a dependency while in others building it from source, for
+  example, for testing.</p>
+  </div>
+
+  <p>We can instruct <code>build2</code> to configure a dependency package as
+  available from the system rather than building it from source. Specifically,
+  we can install a suitable version manually (for example, using the system
+  package manager) and then communicate this fact as well as the version
+  installed to <code>build2</code> so that it can use this information when
+  resolving version constraints. Furthermore, for Debian (and alike, such as
+  Ubuntu) and Fedora (and alike, such as RHEL) <code>build2</code> can
+  automatically query the system package manager for the installed version
+  and, if requested, automatically install a suitable version from the system
+  repository if none is already installed.</p>
+
+  <p>Let's see how all this works in an example. Say, we want to use <a
+  href="https://cppget.org/libsqlite3"><code>libsqlite3</code></a> in our
+  <code>hello</code> project.</p>
+
+  <p>The first step is to add it as a dependency, just like we did for
+  <code>libhello</code>. That is, add another <code>depends</code> entry to
+  <code>manifest</code>, then import it in <code>buildfile</code>, and so
+  on.</p>
+
+  <p>Now, if we just run <code>sync</code> or try to build our project,
+  <code>build2</code> will download and build the new dependency from source,
+  just like it did for <code>libhello</code>. Instead, we can issue an
+  explicit <code>sync</code> command that configures the
+  <code>libsqlite3</code> package as coming from the system:</p>
+
+  <pre>$ bdep sync ?sys:libsqlite3</pre>
+
+  <p>Here <code>?</code> is a package flag that instructs <code>build2</code>
+  to treat it as a dependency and <code>sys</code> is a package scheme that
+  tells <code>build2</code> it comes from the system. See <a
+  href="../../bpkg/doc/bpkg-pkg-build.xhtml"><code><b>bpkg-pkg-build(1)</b></code></a>
+  for details.</p>
+
+  <p>Now what exactly happens in this case depends on which operating system
+  we are running as well as whether <code>libsqlite3</code> is already
+  installed. Let's examine each combination in turn.</p>
+
+  <p>If we are running on an operating system for which there is
+  <code>build2</code> support for the system package manager interactions
+  (currently Debian, Fedora, or alike) and <code>libsqlite3</code> is already
+  installed, then <code>build2</code> will get its version from the system
+  package manager and use that when resolving version constraints.  For
+  example, running the above command on Debian with
+  <code>libsqlite3-dev</code> version <code>3.42.0</code> already
+  installed:</p>
+
+  <pre>$ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/3.42.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3</pre>
+
+  <p>If, on the other hand, we are running on an operating system for which
+  there is <code>build2</code> support for the system package manager
+  interactions but <code>libsqlite3</code> is not installed, then
+  <code>build2</code> will fail:</p>
+
+  <pre>$ bdep sync ?sys:libsqlite3
+error: no installed system package for libsqlite3
+  info: specify --sys-install to try to install it
+  info: specify libsqlite3/* if package is not installed with system
+        package manager
+  info: specify --sys-no-query to disable system package manager
+        interactions</pre>
+
+  <p>As you can see, <code>build2</code> will not attempt to automatically
+  install system packages unless explicitly requested with the
+  <code>--sys-install</code> option. Let's try to add that (again, running on
+  Debian):</p>
+
+  <pre>$ bdep sync --sys-install ?sys:libsqlite3
+updating debian package index...
+synchronizing:
+  sys-install libsqlite3-0/3.42.0-1 (required by sys:libsqlite3)
+  configure sys:libsqlite3/3.42.0 (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3
+installing debian packages...
+The following NEW packages will be installed:
+  libsqlite3-dev
+The following packages will be upgraded:
+  libsqlite3-0 sqlite3
+Do you want to continue? [Y/n] y
+...
+Setting up libsqlite3-0:amd64 (3.42.0-1) ...
+Setting up libsqlite3-dev:amd64 (3.42.0-1) ...
+Setting up sqlite3 (3.42.0-1) ...</pre>
+
+  <div class="note">
+  <p>You can suppress the system package manager confirmation prompt with the
+  <code>--sys-yes</code> option. By default <code>build2</code> uses
+  <code>sudo</code> for system package manager interactions that normally
+  require administrative privileges (fetch package metadata, install packages,
+  etc). This can be customized with the <code>--sys-sudo</code> option.</p>
+  </div>
+
+  <p>Finally, if we are running on an operating system for which there is no
+  <code>build2</code> support for the system package manager interactions,
+  then, as mentioned earlier, it is the user's responsibility to make sure a
+  suitable package is installed and, optionally, communicate its version. In
+  this case, unless we specify the installed version explicitly, a
+  system-installed package is assumed to satisfy any dependency constraint
+  (indicated with the <code>*</code> wildcard instead of the version):</p>
+
+  <pre>$ bdep sync ?sys:libsqlite3
+synchronizing:
+  configure sys:libsqlite3/* (required by hello)
+  upgrade hello/0.1.0-a.0.19700101000000#3</pre>
+
+  <div class="note">
+  <p>You can reduce the supported system package manager case to this case by
+  disabling the system package manager interactions with the
+  <code>--sys-no-query</code> option.</p>
+  </div>
+
+  <div class="note">
+  <p>The system-installed dependency doesn't really have to come from the
+  system package manager. It can also be manually installed and, as discussed
+  in <a href="#guide-unpackaged-deps">Using Unpackaged Dependencies</a>, not
+  necessarily into the system-default location like
+  <code>/usr/local</code>.</p>
+  </div>
+
+  <p>In the above examples our dependency (<code>libsqlite3</code>) still has
+  to be packaged and available from one of the project's prerequisite
+  repositories. But it can be a <i>stub</i> &#8211; a package that does not
+  contain any source code and that can only be "obtained" from the system.</p>
+
+  <div class="note">
+  <p>The purpose of a stub is to provide the <code>build2</code> package to
+  system package name and version mapping, in case it cannot be deduced
+  automatically. See <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#package-version">Package
+  Version</a> and <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-distribution"><code>*-{name,
+  version, to-downstream-version}</code></a> package manifest values for
+  details.</p>
+  </div>
+
+  <p>If we would like to use a completely unpackaged dependency, then, for the
+  supported system package manager case, we will need to pass the
+  <code>--sys-no-stub</code> option:</p>
+
+  <pre>$ bdep sync --sys-install --sys-no-stub ?sys:libsqlite3</pre>
+
+  <p>And for the unsupported system package manager case we will have to
+  specify the system version explicitly either as the actual version or as the
+  <code>*</code> wildcard, for example:</p>
+
+  <pre>$ bdep sync ?sys:libsqlite3/* ?sys:libcurl/7.47.0</pre>
+
+  <div class="note">
+  <p>The reason at least a stub is required by default is due to the automatic
+  mapping between <code>build2</code> and system packages often being
+  unreliable.</p>
+  </div>
+
+  <h2 id="guide-unpackaged-deps">1.10 Using Unpackaged Dependencies</h2>
+
+  <p>Generally, we will have a much better time if all our dependencies come
+  as <code>build2</code> packages. Unfortunately, this won't always be the
+  case in the real world and some libraries that you may need will use other
+  build systems.</p>
+
+  <div class="note">
+  <p>There is also the opposite problem: you may want to consume a library
+  that uses <code>build2</code> in a project that uses a different build
+  system. For that refer to <a href="#guide-consume-pkg">Package
+  Consumption</a>.</p>
+  </div>
+
+  <p>The standard way to consume such unpackaged libraries is to install them
+  (not necessarily into a system-default location like
+  <code>/usr/local</code>) so that we have a single directory with their
+  headers and a single directory with their libraries. We can then configure
+  our builds to use these directories when searching for imported
+  libraries.</p>
+
+  <div class="note">
+  <p>Needless to say, none of the <code>build2</code> dependency management
+  mechanisms such as version constraints or upgrade/downgrade will work on
+  such unpackaged libraries. You will have to manage all these yourself
+  manually.</p>
+  </div>
+
+  <p>Let's see how this all works in an example. Say, we want to use
+  <code>libextra</code> that uses a different build system in our
+  <code>hello</code> project. The first step is to manually build and install
+  this library for each build configuration that we have. For example, we can
+  install all such unpackaged libraries into <code>unpkg-gcc</code> and
+  <code>unpkg-clang</code>, next to our <code>hello-gcc</code> and
+  <code>hello-clang</code> build configurations:</p>
+
+  <pre>$ ls
+hello/
+hello-gcc/
+unpkg-gcc/
+hello-clang/
+unpkg-clang/</pre>
+
+  <div class="note">
+  <p>If you would like to try this out but don't have a suitable
+  <code>libextra</code>, you can create and install one with these
+  commands:</p>
+
+  <pre>$ bdep new -l c++ -t lib libextra -C libextra-gcc cc config.cxx=g++
+$ b install: libextra-gcc/ config.install.root=/tmp/unpkg-gcc</pre>
+  </div>
+
+  <p>If we look inside one of these <code>unpkg-*</code> directories, we
+  should see something like this:</p>
+
+  <pre>$ tree unpkg-gcc
+unpkg-gcc/
+├── include/
+│   └── libextra/
+│       └── extra.hxx
+└── lib/
+    ├── libextra.a
+    ├── libextra.so
+    └── pkgconfig/
+        └── libextra.pc</pre>
+
+  <p>Notice that <code>libextra.pc</code> &#8211; it's a
+  <code><b>pkg-config(1)</b></code> file that contains any extra compile and
+  link options that may be necessary to consume this library. This is the
+  <i>de facto</i> standard for build systems to communicate library build
+  information to each other and is today supported by most commonly used
+  implementations. Speaking of <code>build2</code>, it both recognizes
+  <code>.pc</code> files when consuming third-party libraries and
+  automatically produces them when installing its own.</p>
+
+  <div class="note">
+  <p>While this may all seem foreign to Windows users, there is nothing
+  platform-specific about this approach, including support for
+  <code>pkg-config</code>, which, at least in case of <code>build2</code>,
+  works equally well on Windows.</p>
+  </div>
+
+  <p>Next, we create a build configuration and configure it to use one of
+  these <code>unpkg-*</code> directories (replace <code>...</code> with the
+  absolute path):</p>
+
+  <pre>$ bdep init -C ../hello-gcc @gcc cc config.cxx=g++ \
+  config.cc.poptions=-I.../unpkg-gcc/include       \
+  config.cc.loptions=-L.../unpkg-gcc/lib</pre>
+
+  <div class="note">
+  <p>If using Visual Studio, replace <code>-I</code> with <code>/I</code> and
+  <code>-L</code> with <code>/LIBPATH:</code>.</p>
+  </div>
+
+  <p>Alternatively, if you want to reconfigure one of the existing build
+  configurations, then simply edit the <code>build/config.build</code> file
+  (that is, <code>hello-gcc/build/config.build</code> in our case) and adjust
+  the <code>poptions</code> and <code>loptions</code> values. Or you can use
+  the build system directly to reconfigure the build configuration (see <a
+  href="../../build2/doc/b.xhtml"><code><b>b(1)</b></code></a> for
+  details):</p>
+
+  <pre>b configure: ../hello-gcc/                    \
+  config.cc.poptions+=-I.../unpkg-gcc/include \
+  config.cc.loptions+=-L.../unpkg-gcc/lib</pre>
+
+  <div class="note">
+  <p>If all the unpackaged libraries included <code>.pc</code> files, then the
+  <code>-L</code> alone would have been sufficient. However, it doesn't hurt
+  to also add <code>-I</code>, for good measure.</p>
+  </div>
+
+  <p>Once this is done, adjust your <code>buildfile</code> to import the
+  library:</p>
+
+  <pre>import libs += libextra%lib{extra}</pre>
+
+  <p>And your source code to use it:</p>
+
+  <pre>#include &lt;libextra/extra.hxx></pre>
+
+  <div class="note">
+  <p>Notice that we don't add the corresponding <code>depends</code> value to
+  the project's <code>manifest</code> since this library is not a package.
+  However, it is a good idea to instead add a <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#manifest-package-requires"><code>requires</code></a>
+  entry as a documentation to users of our project.</p>
+  </div>
+
+  <h1 id="proj-struct">2 Canonical Project Structure</h1>
+
+  <p>The goal of establishing a canonical <code>build2</code> project
+  structure is to create an ecosystem of packages that can coexist, are easy
+  to comprehend by both humans and tools, scale to complex, real-world
+  requirements, and, last but not least, are pleasant to work with.</p>
+
+  <div class="note">
+  <p>Here by <i>canonical</i> we mean a structure that on balance achieves
+  these objectives in the simplest possible way. However, not everyone agrees
+  with where that balance should be struck. As a result, this structure is
+  only recommended and <code>build2</code> is flexible enough to support
+  various arrangements used in modern C and C++ projects. Furthermore, the <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command provides a number of customization options and chances are you will
+  be able to create your preferred layout automatically. See <a
+  href="../../bdep/doc/bdep-new.xhtml#src-layout">SOURCE LAYOUT</a> for more
+  information and examples.</p>
+  </div>
+
+  <p>This canonical structure is primarily meant for a package &#8211; a
+  single library or program (or, sometimes, a collection of related libraries
+  or programs) with a specific and well-defined function. While it may be less
+  suitable for more elaborate, multi-library/program <i>end-products</i> that
+  are not meant to be packaged, most of the recommendations discussed below
+  would still apply. Oftentimes, you would start with a canonical project and
+  expand from there. Note also that while the discussion below focuses on C++,
+  most of it applies equally to C projects.</p>
+
+  <div class="note">
+  <p>We often find ourselves factoring common functionality out of such
+  end-products and into separate packages, for example, in order to be reused
+  in another end-product. In this light, it can be helpful to organize a new
+  end-product project as a composition of individual packages or source
+  subdirectories that follow the canonical structure. The <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  <code>--package</code> and <code>--source</code> modes can be used to
+  automate this process.</p>
+  </div>
+
+  <p>By default, projects created by the <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command have the canonical structure. The overall layouts for executable
+  (<code>-t&#160;exe</code>) and library (<code>-t&#160;lib</code>) projects
+  are presented below.</p>
+
+  <pre>&lt;name>/
+├── build/
+├── &lt;name>/
+│   ├── &lt;name>.cxx
+│   ├── &lt;name>.test.cxx
+│   ├── testscript
+│   └── buildfile
+├── buildfile
+├── manifest
+└── README.md</pre>
+
+  <pre>lib&lt;name>/
+├── build/
+├── lib&lt;name>/
+│   ├── &lt;name>.hxx
+│   ├── &lt;name>.cxx
+│   ├── &lt;name>.test.cxx
+│   ├── export.hxx
+│   ├── version.hxx.in
+│   └── buildfile
+├── tests/
+├── buildfile
+├── manifest
+└── README.md</pre>
+
+  <p>The canonical structure for both project types is discussed in detail in
+  the following sections with a short summary of the key points presented
+  below.</p>
+
+  <ul>
+  <li style="margin-top:2em"><i>Header and source files (or module interface
+  and implementation files) are next to each other (no <code>include/</code>
+  and <code>src/</code> split).</i></li>
+
+  <li style="margin-top:1em"><i>Headers are included with <code>&lt;></code>
+  and contain the project name as a subdirectory prefix, for example,
+  <code>&lt;libhello/hello.hxx></code>.</i></li>
+
+  <li style="margin-top:1em"><i>Header and source file extensions are either
+  <code>.hpp/.cpp</code> or <code>.hxx/.cxx</code> (<code>.mpp</code> or
+  <code>.mxx</code> for module interfaces).</i></li>
+
+  <li style="margin-top:1em;margin-bottom:2em"><i>No special characters other
+  than <code>_</code> and <code>-</code> in file names with <code>.</code>
+  only used for extensions.</i></li>
+  </ul>
+
+  <p>Let's start with naming our projects: A project name should only contain
+  ASCII alphabetic characters (<code>[a-zA-Z]</code>), digits
+  (<code>[0-9]</code>), underscores (<code>_</code>), plus/minus
+  (<code>+-</code>), and dots (<code>.</code>) as well as be at least two
+  characters long (see <a
+  href="../../bpkg/doc/build2-package-manager-manual.xhtml#package-name">Package
+  Name</a> for additional restrictions and recommendations).</p>
+
+  <p>If a project consists of a library and an executable, then they should be
+  split into separate packages (see <a href="#guide-dev-multi">Developing
+  Multiple Packages and Projects</a> for some common arrangements). In this
+  case, by convention, the library name should start with the <code>lib</code>
+  prefix, for example, <code>libhello</code> and <code>hello</code>. It is
+  also recommended (but not required) to follow this convention in new
+  projects, even if there are no plans to have a related executable.</p>
+
+  <div class="note">
+  <p>Using the <code>lib</code> prefix consistently offers several
+  benefits:</p>
+
+  <ol>
+  <li style="margin-top:1em">It is clear from the name to both humans and
+  tools what kind of project it is.</li>
+
+  <li style="margin-top:1em">All libraries are consistently named (as opposed
+  to some with the <code>lib</code> prefix and some without).</li>
+
+  <li style="margin-top:1em">All library names are future-proofed to co-exist
+  with executables. If one starts with a library without the <code>lib</code>
+  prefix but later decides to add an executable, renaming the library would
+  unlikely be an option. And there is no need to spend mental energy on
+  thinking whether it's possible that an executable will be added later.</li>
+  </ol>
+  </div>
+
+  <p>The project's root directory should contain the root
+  <code>buildfile</code> and package <code>manifest</code> file. Other
+  recommended top-level subdirectory names are <code>examples/</code> (for
+  libraries it is normally a subproject like <code>tests/</code>, as discussed
+  below), <code>doc/</code>, and <code>etc/</code> (sample configurations,
+  scripts, third-party contributions, etc). See also build system <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-proj-struct">Project
+  Structure</a> for details on the build-related files
+  (<code>buildfile</code>) and subdirectories (<code>build/</code>) as well as
+  the available alternative naming scheme.</p>
+
+  <h2 id="proj-struct-src-dir">2.1 Source Subdirectory</h2>
+
+  <p>The project's source code is placed into a subdirectory of the root
+  directory named the same as the project, for example,
+  <code>hello/hello/</code> or <code>libhello/libhello/</code>. It is called
+  the project's <i>source subdirectory</i>.</p>
+
+  <p>There are several reasons for this layout: It implements the canonical
+  inclusion scheme (discussed below) where each header is prefixed with its
+  project name as a subdirectory. It also has a predictable name where users
+  (and tools) can expect to find our project's source code. Finally, this
+  layout prevents clutter in the project's root directory which usually
+  contains various other files (like <code>README</code>,
+  <code>LICENSE</code>) and directories (like <code>doc/</code>,
+  <code>tests/</code>, <code>examples/</code>).</p>
+
+  <div class="note">
+  <p>Another popular approach is to place public headers into the
+  <code>include/</code> subdirectory and source files as well as private
+  headers into <code>src/</code>. The cited advantage of this layout is the
+  predictable location (<code>include/</code>) that contains only the
+  project's public headers (that is, its API). This can make the project
+  easier to navigate and understand while harder to misuse, for example, by
+  including a private header.</p>
+
+  <p>However, this split layout is not without drawbacks:</p>
+
+  <ul>
+  <li>Navigating between corresponding headers and sources is cumbersome. This
+  affects editing, grep'ing, as well as code browsing (for example, on
+  GitHub).</li>
+
+  <li>Implementing the canonical inclusion scheme would require an extra level
+  of subdirectories (for example, <code>include/libhello/</code> and
+  <code>src/libhello/</code>), which only amplifies the previous issue.</li>
+
+  <li>Supporting generated source code can be challenging: Source code
+  generators rarely provide support for writing headers and sources into
+  different directories. Even if we can move things around post-generation,
+  build systems may not support this arrangement (for example,
+  <code>build2</code> does not currently support target groups with members in
+  different directories).</li>
+  </ul>
+
+  <p>Also, the stated advantage of this layout &#8211; separation of public
+  headers from private &#8211; is not as clear cut as it may seem at first.
+  The common assumption of the split layout is that only headers from
+  <code>include/</code> are installed and, conversely, to use the headers
+  in-place, all one has to do is add <code>-I</code> pointing to
+  <code>include/</code>. On the other hand, it is common for public headers to
+  include private headers to, for example, call an implementation detail
+  function in inline or template code (note that the same applies to private
+  modules imported in public module interfaces). Which means such private (or
+  probably now more accurately called <i>implementation detail</i>) headers
+  have to be placed in the <code>include/</code> directory as well, perhaps
+  into a subdirectory (such as <code>details/</code>) or with a file name
+  suffix (such as <code>-impl</code>) to signal to the user that they are
+  still "private". Needless to say, in an actively developed project, keeping
+  track of which private headers can still stay in <code>src/</code> and which
+  have to be moved to <code>include/</code> (and vice versa) is a tedious,
+  error-prone task. As a result, practically, the split layout quickly
+  degrades into the "all headers in <code>include/</code>" arrangement which
+  negates its main advantage.</p>
+
+  <p>It is also not clear how the split layout will translate to modularized
+  projects. With modules, both the interface and implementation (including
+  non-inline/template function definitions) can reside in the same file with a
+  substantial number of C++ developers finding this arrangement appealing. If
+  a project consists of only such single-file modules, then
+  <code>include/</code> and <code>src/</code> have effectively become the same
+  thing (note that there couldn't be any "private" modules in
+  <code>src/</code> since there would be nobody to import them). In a sense,
+  we already have this situation with header-only libraries except that, in
+  the case of modules, calling the directory <code>include/</code> would be an
+  anachronism.</p>
+
+  <p>To summarize, the split directory arrangement offers little benefit over
+  the combined directory layout, has a number of real drawbacks, and does not
+  fit modularized projects well. In practice, private headers are placed into
+  <code>include/</code>, often either in a subdirectory or with a special file
+  name suffix, a mechanism that is readily available in the combined directory
+  layout.</p>
+  </div>
+
+  <p>All headers within a project should be included using the
+  <code>&lt;></code> style inclusion and contain the project name as a
+  subdirectory prefix. And all headers means <i>all headers</i> &#8211;
+  public, private, or implementation detail, in executables or in
+  libraries.</p>
+
+  <p>As an example, let's say we've added <code>utility.hxx</code> to our
+  <code>hello</code> project. This is how it should be included in
+  <code>hello.cxx</code>:</p>
+
+  <pre>// #include "utility.hxx"           // Wrong.
+// #include &lt;utility.hxx>           // Wrong.
+// #include "../hello/utility.hxx"  // Wrong.
+
+#include &lt;hello/utility.hxx></pre>
+
+  <p>Similarly, if we want to include <code>hello.hxx</code> from
+  <code>libhello</code>, then the inclusion should look like this:</p>
+
+  <pre>#include &lt;libhello/hello.hxx></pre>
+
+  <div class="note">
+  <p>The problem with the <code>""</code> style inclusion is if the header is
+  not found relative to the including file, most compilers will continue
+  looking for it in the include search paths, the same as for
+  <code>&lt;></code>. As a result, if the header is not present in the right
+  place (for example, because it was mistakenly not listed as to be
+  installed), chances are that a completely unrelated header with the same
+  name will be found and included. Needless to say, debugging situations like
+  these is unpleasant.</p>
+
+  <p>Prefixing all inclusions with the project name as subdirectory also makes
+  sure that headers with common names (for example, <code>utility.hxx</code>)
+  can coexist (for example, when installed into a system-wide directory, such
+  as <code>/usr/include</code>). The subdirectory prefix also plays an
+  important role in supporting auto-generated headers.</p>
+
+  <p>Note also that this header inclusion scheme is consistent with the module
+  importation, for example:</p>
+
+  <pre>import hello.utility;</pre>
+
+  <p>Finally, note that while adding the subdirectory prefix to the
+  <code>""</code> style inclusion (for example,
+  <code>"libhello/hello.hxx"</code>) will make finding an unrelated header
+  unlikely, there is still a possibility. And it is not clear why take the
+  chance when there are no benefits. So let's imagine the <code>""</code>
+  style inclusion does not exist and we will all have a much better time.</p>
+  </div>
+
+  <p>If you have to disregard every rule and recommendation in this section
+  but one, for example, because you are working on an existing library, then
+  at minimum insist on this: <b>public header inclusions must use the library
+  name as a subdirectory prefix</b>.</p>
+
+  <p>The project's source subdirectory can have subdirectories of its own, for
+  example, to organize the code into components. Naturally, header inclusions
+  will need to contain such subdirectories, for example
+  <code>&lt;libhello/core/hello.hxx></code>. When the project's headers are
+  installed (for example, into <code>/usr/include</code>), this subdirectory
+  hierarchy is automatically recreated.</p>
+
+  <p>If you would like to separate public API headers/modules from
+  implementation details, the convention is to place them into the
+  <code>details/</code> subdirectory. For example:</p>
+
+  <pre>libhello/
+└── libhello/
+    ├── details/
+    │   └── utility.hxx
+    └── ...</pre>
+
+  <div class="note">
+  <p>If a project has truly private headers (for example, proprietary code)
+  that must be clearly separated from public and implementation detail
+  headers, then they can be placed into the <code>private/</code>
+  subdirectory, next to <code>details/</code>. In a sense, this arrangement
+  mimics the C++ public/protected/private member access.</p>
+  </div>
+
+  <p>It is recommended that you still install the implementation detail
+  headers and modules for the reasons discussed above. If, however, you would
+  like to disable their installation, you can add the following line to your
+  source subdirectory <code>buildfile</code>:</p>
+
+  <pre>details/hxx{*}: install = false</pre>
+
+  <div class="note">
+  <p>If you are creating a <i>family of libraries</i> with a common name
+  prefix, then it may make sense to use a nested source subdirectory layout
+  with a common top-level directory. As an example, let's say we have the
+  <code>libstud-path</code> and <code>libstud-url</code> libraries that belong
+  to the same <code>libstud</code> family. Their source subdirectory layouts
+  could look like this:</p>
+
+  <pre>libstud-path/
+└── libstud/
+    └── path/
+        ├── path.hxx
+        ├── path-io.hxx
+        ├── ...
+        └── buildfile
+
+libstud-url/
+└── libstud/
+    └── url/
+        ├── url.hxx
+        ├── url-io.hxx
+        ├── ...
+        └── buildfile</pre>
+
+  <p>With the header inclusion paths adjusted accordingly:</p>
+
+  <pre>#include &lt;libstud/path/path.hxx>
+#include &lt;libstud/url/url.hxx></pre>
+
+  <p>The <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command provides the <code>subdir</code> project type sub-option that allows
+  us to customize the source subdirectory within a project. For example:</p>
+
+  <pre>$ bdep new -l c++ -t lib,subdir=libstud/path libstud-path</pre>
+  </div>
+
+  <h2 id="proj-struct-src-name">2.2 Source Naming</h2>
+
+  <p>When naming source files, only use ASCII alphabetic characters, digits,
+  as well as <code>_</code> (underscore) and <code>-</code> (minus). Use
+  <code>.</code> (dot) only for extensions, that is, trailing parts of the
+  name that <i>classify</i> your files. Examples of good names:</p>
+
+  <pre>SmallVector.hxx
+small-vector.hxx
+small_vector.hxx
+small-vector.test.cxx</pre>
+
+  <p>Examples of bad names:</p>
+
+  <pre>small+vector.hxx
+small.vector.hxx</pre>
+
+  <div class="note">
+  <p>If you are using <code>_</code> or <code>-</code> as word separators in
+  filesystem names, pick one and use it consistently throughout the
+  project.</p>
+  </div>
+
+  <p>The C source file extensions are always <code>.h</code>/<code>.c</code>.
+  The two alternative C++ source file extension schemes are <code>.?pp</code>
+  and <code>.?xx</code>:</p>
+
+  <pre>file        .?pp  .?xx
+
+header      .hpp  .hxx
+module      .mpp  .mxx
+inline      .ipp  .ixx
+template    .tpp  .txx
+source      .cpp  .cxx</pre>
+
+  <div class="note">
+  <p>The <code>.mxx</code>/<code>.mpp</code> extension is for the module
+  interface translation units with module implementation units (if any) using
+  the <code>.cxx</code>/<code>.cpp</code> extension. If both are present, then
+  it makes sense to use the same base name, similar to headers. For
+  example:</p>
+
+  <pre>hello-core.mxx
+hello-core.cxx</pre>
+  </div>
+
+  <p>The use of inline and template files is a matter of taste. If used, they
+  are included at the end of the header/module files and contain definitions
+  of inline and non-inline template functions, respectively. The
+  <code>.?xx</code>/<code>.?pp</code> files with the same name (or, sometimes,
+  name prefix) are assumed to be related and are collectively called a
+  <i>module</i>. <span class="note">This term is meant to correspond directly
+  to a C++ module.</span></p>
+
+  <p>By default the <a
+  href="../../bdep/doc/bdep-new.xhtml"><code><b>bdep-new(1)</b></code></a>
+  command uses the naming <code>.?xx</code> scheme. To use <code>.?pp</code>
+  instead, pass <code>-t&#160;c++,cpp</code>.</p>
+
+  <div class="note">
+  <p>There are several reasons not to "reuse" the <code>.h</code> C header
+  extension for C++ files:</p>
+
+  <ul>
+  <li>There can be a need for both C and C++ headers for the same module.</li>
+
+  <li>It allows tools to accurately determine the language from the file
+  name.</li>
+
+  <li>It is easier to search for C++ source code using wildcard patterns
+  (<code>*.?pp</code>).</li>
+  </ul>
+
+  <p>The last two reasons are also why headers without extensions are probably
+  not worth the trouble.</p>
+  </div>
+
+  <p>Source files corresponding to C++ modules need to embed a sufficient
+  amount of "module name tail" in their names to unambiguously resolve all the
+  modules used in a project. When deriving file names from C++ module names,
+  <code>.</code> (dot) should be replaced with either <code>_</code>
+  (underscore), <code>-</code> (minus), a case change, or a directory
+  separator, according to your project's file naming scheme. For example, if
+  our <code>libhello</code> had two modules, <code>hello.core</code> and
+  <code>hello.extra</code>, then their interface units could be named as
+  follows:</p>
+
+  <pre>hello-core.mxx
+hello-extra.mxx
+
+hello_core.mxx
+hello_extra.mxx
+
+HelloCore.mxx
+HelloExtra.mxx
+
+hello/core.mxx
+hello/extra.mxx
+
+core.mxx
+extra.mxx</pre>
+
+  <p>As discussed in the next section, public module names should start with
+  the project name and for such modules it is customary to omit this first
+  component from file names (the last variant in the above example). See also
+  <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#cxx-modules-build">Building
+  Modules</a> for a more detailed discussion of the module name to file name
+  mapping.</p>
+
+  <h2 id="proj-struct-src-content">2.3 Source Contents</h2>
+
+  <p>Let's now move inside our source files. All macros defined by a project,
+  such as include guards, version and symbol export macros, etc., must all
+  start with the project name (including the <code>lib</code> prefix for
+  libraries), for example <code>LIBHELLO_VERSION</code>. Similarly, the
+  library's namespace and module names (both public and implementation detail)
+  should all start with the library name but without the <code>lib</code>
+  prefix. For example:</p>
+
+  <pre>// libhello/hello.mxx
+
+export module hello.core;
+
+namespace hello
+{
+  ...
+}</pre>
+
+  <p>An executable project may use a namespace (in which case it is natural to
+  name it after the project) and its (private) modules shouldn't be qualified
+  with the project name (in order not to clash with similarly named modules
+  from the corresponding library, if any). <span class="note">A library may
+  also have private modules in which case they shouldn't be qualified
+  either.</span></p>
+
+  <div class="note">
+  <p>Hopefully by now the recommendation for the <code>lib</code> prefix
+  should be easy to understand: oftentimes executables and libraries come in
+  pairs, for example <code>hello</code> and <code>libhello</code>, with the
+  reusable functionality being factored out from the executable into the
+  library. It is natural to want to use the same name <i>stem</i>
+  (<code>hello</code> in our case) for both.</p>
+
+  <p>The above naming scheme (with the <code>lib</code> prefix present in some
+  names but not others) is carefully chosen to allow such library/executable
+  pairs to coexist and be used together without too much friction. For
+  example, both the library and executable can have a header called
+  <code>utility.hxx</code> with the executable being able to include both and
+  even get the "merged" functionality without extra effort (since they use the
+  same namespace):</p>
+
+  <pre>// hello/hello.cxx
+
+#include &lt;hello/utility.hxx>
+#include &lt;libhello/utility.hxx>
+
+namespace hello
+{
+  // Contains names from both utilities.
+}</pre>
+  </div>
+
+  <p>A canonical library project contains two special headers:
+  <code>export.hxx</code> (or <code>export.hpp</code>) that defines the
+  library's symbol exporting macro as well as <code>version.hxx</code> (or
+  <code>version.hpp</code>) that defines the library's version macros (see <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#module-version"><code>version</code>
+  Module</a> for details).</p>
+
+  <h2 id="proj-struct-tests">2.4 Tests</h2>
+
+  <p>A project may have <i>unit</i> and/or <i>functional/integration</i>
+  tests. Unit tests exercise each module's (potentially private) functionality
+  in isolation. In contrast, functional/integration tests exercise the project
+  via its public API, just like the real users of the project would.</p>
+
+  <p>A source file that implements a module's unit tests should be placed next
+  to that module's files and be called with the module's name plus the
+  <code>.test</code> second-level extension. It is expected to implement an
+  executable (that is, define <code>main()</code>). If a module uses
+  Testscript for unit testing, then the corresponding file should be called
+  with the module's name plus the <code>.test.testscript</code> extension. For
+  example:</p>
+
+  <pre>libhello/
+└── libhello/
+    ├── hello.hxx
+    ├── hello.cxx
+    ├── hello.test.cxx
+    └── hello.test.testscript</pre>
+
+  <div class="note">
+  <p>All source files (that is, headers, modules, etc) with the
+  <code>.test</code> second-level extension are assumed to belong to unit
+  tests and are automatically excluded from the library/executable
+  sources.</p>
+  </div>
+
+  <p>A library's functional/integration tests should go into the
+  <code>tests/</code> subdirectory. Each such test should reside in a separate
+  subdirectory, potentially organized into nested subdirectories (for
+  instance, to correspond to the source subdirectory components). For example,
+  if we were creating an XML parsing and serialization library, then our
+  <code>tests/</code> could have the following layout:</p>
+
+  <pre>tests/
+├── basics/
+│   ├── driver.cxx
+│   └── buildfile
+├── parser/
+│   ├── pull/
+│   │   ├── driver.cxx
+│   │   └── buildfile
+│   └── push/
+│       ├── driver.cxx
+│       └── buildfile
+└── serializer/
+    └── ...</pre>
+
+  <p>In the canonical library project created by <code>bdep-new</code> the
+  <code>tests/</code> subdirectory is an unnamed subproject (in the build
+  system terms). This allows us to build and run tests against an installed
+  version of the library (see <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-operations-test">Testing</a>
+  for more information on the contents of this directory).</p>
+
+  <div class="note">
+  <p>The <code>build2</code> CI implementation will automatically perform the
+  installation test if a project contains the <code>tests/</code> subproject.
+  See <code>bbot</code> <a
+  href="../../bbot/doc/build2-build-bot-manual.xhtml#arch-worker">Worker
+  Logic</a> for details.</p>
+  </div>
+
+  <p>By default executable projects do not have the <code>tests/</code>
+  subprojects instead placing integration tests next to the source code (the
+  <code>testscript</code> file; see <a
+  href="../../build2/doc/build2-testscript-manual.xhtml">The build2 Testscript
+  Language</a> for details). However, if desired, executable projects can have
+  the <code>tests/</code> subproject, the same as libraries.</p>
+
+  <div class="note">
+  <p>By default projects created by <code>bdep-new</code> include support for
+  functional/integration testing but exclude support for unit testing. These
+  defaults, however, can be overridden with <code>no-tests</code> and
+  <code>unit-tests</code> options, respectively. For example:</p>
+
+  <pre>$ bdep new -l c++ -t lib,unit-tests libhello</pre>
+
+  <p>The rationale behind these defaults is that if a functionality can be
+  tested through the public API, then we should generally prefer integration
+  to unit testing. And in simple projects the entire functionality is often
+  exposed through the public API. At the same time, support for unit testing
+  adds extra complexity to the build infrastructure. Note also that it is
+  fairly straightforward to add support for unit testing at a later stage. The
+  relevant build logic is localized in the source subdirectory
+  <code>buildfile</code> so you can simply generate a new project with unit
+  tests enabled and copy over the relevant parts.</p>
+  </div>
+
+  <h2 id="proj-struct-build-out">2.5 Build Output</h2>
+
+  <p>There are no <code>bin/</code> or <code>obj/</code> subdirectories: build
+  output (object files, libraries, executables, etc) go into a parallel
+  directory structure (in case of an out of source build) or next to the
+  sources (in case of an in source build). See <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-dirs-scopes">Output
+  Directories and Scopes</a> for details on in and out of source builds.</p>
+
+  <p>Projects managed with <a
+  href="../../bdep/doc/bdep.xhtml"><code><b>bdep(1)</b></code></a> are always
+  built out of source. However, by default, the source directory is configured
+  as <i>forwarded</i> to one of the out of source builds. This has two
+  effects: we can run the build system driver <a
+  href="../../build2/doc/b.xhtml"><code><b>b(1)</b></code></a> directly in the
+  source directory and certain "interesting" targets (such as executables,
+  documentation, test results, etc) will be automatically <i>backlinked</i> to
+  the source directory (see <a
+  href="../../build2/doc/build2-build-system-manual.xhtml#intro-operations-config">Configuration</a>
+  for details on forwarded configurations). The following listing illustrates
+  this setup for our <code>hello</code> project (executables are marked with
+  <code>*</code>):</p>
+
+  <pre>                 hello-gcc/
+hello/    ~~>    └── hello/
+├── build/    ~~>    ├── build/
+└── hello/    ~~>    └── hello/
+    ├── hello.cxx        ├── hello.o
+    └── hello     -->    └── *hello</pre>
+
+  <p>The result is an <i>as-if</i> in source build with all the benefits (such
+  as having both source and relevant output in the same directory) but without
+  any of the drawbacks (such as the inability to have multiple builds or
+  source directory cluttered with object files).</p>
+
+  <div class="note">
+  <p>The often cited motivation for placing executables into <code>bin/</code>
+  is that in many build systems it is the only way to make things runnable in
+  a reasonably cross-platform manner. The major drawback of this arrangement
+  is the need for unique executable names which is especially constraining
+  when writing tests where it is convenient to call the executable just
+  <code>driver</code> or <code>test</code>.</p>
+
+  <p>In <code>build2</code> there is no such restriction and all executables
+  can run <i>in-place</i>. This is achieved with <code>rpath</code> which is
+  emulated with DLL assemblies on Windows.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

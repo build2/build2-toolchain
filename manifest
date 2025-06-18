@@ -13,7 +13,7 @@ url: https://build2.org
 doc-url: https://build2.org/doc.xhtml
 src-url: https://git.build2.org/cgit/build2-toolchain/tree/
 email: users@build2.org
-build-warning-email: builds@build2.org
+build-error-email: builds@build2.org
 depends: * build2 >= 0.18.0-
 depends: * bpkg >= 0.18.0-
 

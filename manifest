@@ -181,6 +181,9 @@ b.create:config.cc.coptions="-Wall -O3"
 
 !config.build2_toolchain.bindist=true
 
+{ config.build2.host_c='C:\bin\gcc' config.build2.host_cxx='C:\bin\g++' }+ \
+{ ?build2 }
+
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }
 \
@@ -206,7 +209,7 @@ bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
 # Override the default archive layout, removing the /usr/local/ subdirectory,
 # so that bin/, lib/, etc subdirectories were located right under the root
 # archive directory. Note that this is consistent with the Windows archives
-# default layout.
+# default layout. @@ TMP: redo.
 #
 bpkg.bindist.archive:--archive-install-root=/
 bpkg.bindist.archive:config.bin.rpath=/lib

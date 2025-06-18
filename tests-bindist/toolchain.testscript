@@ -21,7 +21,7 @@
     ./: h{config}: in{config}
     EOI
 
-  bdep init -C @cfg -d hello/ cc 2>! &hello-cfg/***
+  bdep init -C @cfg -d hello/ cc config.config.load=~host 2>! &hello-cfg/***
 
   b hello/ 2>>~%EOE%
     %(mkdir|autoconf|c\+\+|ld|ln) .+%{5}

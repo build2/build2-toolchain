@@ -142,6 +142,8 @@ b.create:config.cc.coptions="/W2 /O2"
 
 !config.build2_toolchain.bindist=true
 
+{ config.build2.default_c=cl config.build2.default_cxx=cl }+ ?build2
+
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }
 \
@@ -182,7 +184,7 @@ b.create:config.cc.coptions="-Wall -O3"
 !config.build2_toolchain.bindist=true
 
 { config.build2.host_c='C:\bin\gcc' config.build2.host_cxx='C:\bin\g++' }+ \
-{ ?build2 }
+?build2
 
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }

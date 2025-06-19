@@ -76,12 +76,12 @@ bpkg.create:config.bin.lib=shared
 # These are identical to archive options from buildtabs (more precisely,
 # common subset across supported Debian/Ubuntu versions).
 #
-{ config.build2.host_c_poptions= "-D_FORTIFY_SOURCE=2"                  \
-  config.build2.host_c_coptions= "-Wall -O2 -fstack-protector-strong"   \
-  config.build2.host_c_loptions= "-Wl,-z,now"                           \
-  config.build2.host_cxx_poptions= "-D_FORTIFY_SOURCE=2"                \
-  config.build2.host_cxx_coptions= "-Wall -O2 -fstack-protector-strong" \
-  config.build2.host_cxx_loptions= "-Wl,-z,now"                         \
+{ config.build2.host_c_poptions="-D_FORTIFY_SOURCE=2"                  \
+  config.build2.host_c_coptions="-Wall -O2 -fstack-protector-strong"   \
+  config.build2.host_c_loptions="-Wl,-z,now"                           \
+  config.build2.host_cxx_poptions="-D_FORTIFY_SOURCE=2"                \
+  config.build2.host_cxx_coptions="-Wall -O2 -fstack-protector-strong" \
+  config.build2.host_cxx_loptions="-Wl,-z,now"                         \
 }+ ?build2
 
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
@@ -119,12 +119,12 @@ bpkg.create:config.bin.lib=shared
 # These are identical to archive options from buildtabs (more precisely,
 # common subset across supported Fedora/RHEL versions).
 #
-{ config.build2.host_c_poptions= "-D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS" \
-  config.build2.host_c_coptions= "-Wall -O2 -fstack-protector-strong"        \
-  config.build2.host_c_loptions= "-Wl,-z,now"                                \
-  config.build2.host_cxx_poptions= "-D_FORTIFY_SOURCE=2"                     \
-  config.build2.host_cxx_coptions= "-Wall -O2 -fstack-protector-strong"      \
-  config.build2.host_cxx_loptions= "-Wl,-z,relro -Wl,-z,now"                 \
+{ config.build2.host_c_poptions="-D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS" \
+  config.build2.host_c_coptions="-Wall -O2 -fstack-protector-strong"        \
+  config.build2.host_c_loptions="-Wl,-z,now"                                \
+  config.build2.host_cxx_poptions="-D_FORTIFY_SOURCE=2"                     \
+  config.build2.host_cxx_coptions="-Wall -O2 -fstack-protector-strong"      \
+  config.build2.host_cxx_loptions="-Wl,-z,relro -Wl,-z,now"                 \
 }+ ?build2
 
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \

@@ -73,6 +73,17 @@ bpkg.create:config.bin.lib=shared
 
 !config.build2_toolchain.bindist=true
 
+# These are identical to archive options from buildtabs (more precisely,
+# common subset across supported Debian/Ubuntu versions).
+#
+{ config.build2.host_c_poptions= "-D_FORTIFY_SOURCE=2"                  \
+  config.build2.host_c_coptions= "-Wall -O2 -fstack-protector-strong"   \
+  config.build2.host_c_loptions= "-Wl,-z,now"                           \
+  config.build2.host_cxx_poptions= "-D_FORTIFY_SOURCE=2"                \
+  config.build2.host_cxx_coptions= "-Wall -O2 -fstack-protector-strong" \
+  config.build2.host_cxx_loptions= "-Wl,-z,now"                         \
+}+ ?build2
+
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }
 \
@@ -105,9 +116,62 @@ bpkg.create:config.bin.lib=shared
 
 !config.build2_toolchain.bindist=true
 
+# These are identical to archive options from buildtabs (more precisely,
+# common subset across supported Fedora/RHEL versions).
+#
+{ config.build2.host_c_poptions= "-D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS" \
+  config.build2.host_c_coptions= "-Wall -O2 -fstack-protector-strong"        \
+  config.build2.host_c_loptions= "-Wl,-z,now"                                \
+  config.build2.host_cxx_poptions= "-D_FORTIFY_SOURCE=2"                     \
+  config.build2.host_cxx_coptions= "-Wall -O2 -fstack-protector-strong"      \
+  config.build2.host_cxx_loptions= "-Wl,-z,relro -Wl,-z,now"                 \
+}+ ?build2
+
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }
 \
+
+# Generic linux package (built using oldest Debian we support).
+#
+bindist-linux-builds: bindist : &oldest
+bindist-linux-build-include: linux_debian*-**
+bindist-linux-build-exclude: **
+bindist-linux-build-config:
+\
++bpkg.bindist.archive:
++bbot.bindist.upload:
+-bpkg.test:
+
+bpkg.bindist.archive:--recursive=auto
+bpkg.bindist.archive:--recursive=?build2=full
+bpkg.bindist.archive:--recursive=?bpkg=full
+bpkg.bindist.archive:--recursive=?bdep=full
+bpkg.bindist.archive:--recursive=?libbuild2-autoconf=full
+bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
+
+# Override the default archive layout, removing the /usr/local/ subdirectory,
+# so that bin/, lib/, etc subdirectories were located right under the root
+# archive directory. Note that this is consistent with the Windows archives
+# default layout. @@ TMP: redo.
+#
+bpkg.bindist.archive:--archive-install-root=/
+bpkg.bindist.archive:config.bin.rpath=/lib
+bbot.sys-install.tar.extract:--directory=/usr/local
+
+bpkg.bindist.archive:config.install.relocatable=true
+
+bpkg.create:config.bin.lib=shared
+
+# @@ TMP: Why do we need this? The default (-Wall -O2) is derived from
+#         how Debian builds it.
+# b.create:config.cc.coptions="-Wall -O3"
+
+!config.build2_toolchain.bindist=true
+
+{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
+{ ?libbuild2-autoconf ?libbuild2-kconfig }
+\
+
 
 # Windows with MSVC.
 #
@@ -185,44 +249,6 @@ b.create:config.cc.coptions="-Wall -O3"
 
 { config.build2.host_c='C:\bin\gcc' config.build2.host_cxx='C:\bin\g++' }+ \
 ?build2
-
-{ config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
-{ ?libbuild2-autoconf ?libbuild2-kconfig }
-\
-
-# Generic linux package (built using oldest Debian we support).
-#
-bindist-linux-builds: bindist : &oldest
-bindist-linux-build-include: linux_debian*-**
-bindist-linux-build-exclude: **
-bindist-linux-build-config:
-\
-+bpkg.bindist.archive:
-+bbot.bindist.upload:
--bpkg.test:
-
-bpkg.bindist.archive:--recursive=auto
-bpkg.bindist.archive:--recursive=?build2=full
-bpkg.bindist.archive:--recursive=?bpkg=full
-bpkg.bindist.archive:--recursive=?bdep=full
-bpkg.bindist.archive:--recursive=?libbuild2-autoconf=full
-bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
-
-# Override the default archive layout, removing the /usr/local/ subdirectory,
-# so that bin/, lib/, etc subdirectories were located right under the root
-# archive directory. Note that this is consistent with the Windows archives
-# default layout. @@ TMP: redo.
-#
-bpkg.bindist.archive:--archive-install-root=/
-bpkg.bindist.archive:config.bin.rpath=/lib
-bbot.sys-install.tar.extract:--directory=/usr/local
-
-bpkg.bindist.archive:config.install.relocatable=true
-
-bpkg.create:config.bin.lib=shared
-b.create:config.cc.coptions="-Wall -O3"
-
-!config.build2_toolchain.bindist=true
 
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \
 { ?libbuild2-autoconf ?libbuild2-kconfig }

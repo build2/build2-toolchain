@@ -1,0 +1,75 @@
+One of the primary goals of the build2 toolchain is to provide a uniform build
+interface across all the platforms and compilers. As a result, if you already
+have the toolchain installed and would like to upgrade to a newer version, then
+there is a single set of upgrade instructions (UPGRADE file) for all the
+platforms.
+
+If, however, you need to install the toolchain for the first time, then it has
+to be bootstrapped and that process is platform-specific. The rest of this
+section discusses a few general bootstrap considerations and then directs you
+to the appropriate platform-specific instructions.
+
+In the rest of this guide we use the $ symbol for a UNIX shell prompt and > for
+the Windows command prompt. Similarly, we use \ for UNIX command line
+continuations and ^ for Windows. Usually you should be able to copy and paste
+(sans the prompt) example commands in order to execute them but sometimes you
+might need to change a thing or two (for example, replace X.Y.Z with the actual
+version). Once we are able to use the build2 toolchain, the command line
+interface becomes regular and we usually only show the UNIX version of the
+commands. In this case making a Windows version is a simple matter of adjusting
+paths and, if used, line continuations.
+
+The build2 toolchain requires a C++14 compiler. From the commonly-used options,
+GCC 4.9, Clang 3.7, and MSVC 14 (2015) Update 3 or any later versions of these
+compilers should work.
+
+| Note that the C++ compiler that you use to build the build2 toolchain and the
+| one that you will use to build your projects need not be the same. For
+| example, if you are using MSVC 12 (2013) (which cannot build build2), it is
+| perfectly fine to get a minimal MinGW toolchain and use that to build build2;
+| you will still be able to use MSVC 12 to build your own code.
+
+At the high level, the bootstrap process involves the following 5 steps.
+
+1. Bootstrap, Phase 1
+
+    First, a minimal build system executable is built using provided shell
+    scripts/batch files or a GNU makefile. The result is only guaranteed to be
+    able to rebuild the build system itself.
+
+2. Bootstrap, Phase 2
+
+    Then, the build system is rebuilt with static libraries. The result is only
+    guaranteed to be able to build the build system and the package manager.
+
+3. Stage
+
+    At this step the build system and package manager are built with shared
+    libraries and then staged.
+
+4. Install
+
+    Next, the staged tools are used to build and install the entire toolchain
+    from the package repository with the package manager.
+
+5. Clean
+
+    Finally, the staged at step 3 tools are uninstalled.
+
+The end result of the bootstrap process is the installed toolchain as well as
+the package manager configuration (created at step 4) that can be used to
+upgrade to newer versions.
+
+| You can skip step 4 and instead install at step 3 if for some reason you
+| prefer not to build from packages (for example, because the machine is
+| offline).
+
+For Windows, if you are using either MSVC, Clang, or MinGW, continue with
+Bootstrapping on Windows (BOOTSTRAP-WINDOWS file). If using WSL, MSYS, or
+Cygwin, then instead refer to Bootstrapping on UNIX (BOOTSTRAP-UNIX file).
+
+For Mac OS X, continue with Bootstrapping on Mac OS X (BOOTSTRAP-MACOSX file).
+
+For other UNIX-like operating systems (GNU/Linux, FreeBSD, etc; this also
+includes WSL, MSYS, and Cygwin), continue with Bootstrapping on UNIX
+(BOOTSTRAP-UNIX file).

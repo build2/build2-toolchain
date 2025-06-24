@@ -1,0 +1,2109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="version" content="0.18"/>
+  <meta name="subject" content="toolchain"/>
+  <meta name="title" content="Toolchain Installation and Upgrade"/>
+  <meta name="copyright" content="2014-2025 the build2 authors"/>
+
+  <title>The build2 Toolchain Installation and Upgrade</title>
+
+  <style type="text/css">
+/* file      : common.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+html
+{
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 1.4em;
+  letter-spacing: 0.01em;
+
+  color: #292929;
+}
+
+body {margin: 0;} /* There is non-0 default margin for body. */
+
+/* See notes on what's going on here. */
+body {min-width: 17em;}
+@media only screen and (min-width: 360px)
+{
+  body {min-width: 19em;}
+}
+
+/*
+ * Header (optional).
+ */
+
+#header-bar
+{
+  width: 100%;
+
+  background: rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+  padding: .4em 0 .42em 0;
+  margin: 0 0 1.4em 0;
+}
+
+#header
+{
+  /* Same as in #content. */
+  max-width: 41em;
+  margin: 0 auto 0 auto;
+  padding: 0 .4em 0 .4em;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  width: 100%;
+  display: table;
+  border: none;
+  border-collapse: collapse;
+}
+
+#header-logo, #header-menu
+{
+  display: table-cell;
+  border: none;
+  padding: 0;
+  vertical-align: middle;
+}
+
+#header-logo {text-align: left;}
+#header-menu {text-align: right;}
+
+/* These overlap with #header's margin because of border collapsing. */
+#header-logo {padding-left: .4em;}
+#header-menu {padding-right: .4em;}
+
+#header-logo a
+{
+  color: #000;
+  text-decoration: none;
+  outline: none;
+}
+#header-logo a:visited {color: #000;}
+#header-logo a:hover, #header-logo a:active {color: #000;}
+
+#header-menu a
+{
+  font-size: 0.889em;
+  line-height: 1.4em;
+  text-align: right;
+  margin-left: 1.2em;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+#header-menu a
+{
+  color: #000;
+  outline: none;
+}
+#header-menu a:visited {color: #000;}
+#header-menu a:hover, #header-menu a:active
+{
+  color: #3870c0;
+  text-decoration: none;
+}
+
+/* Flexbox-based improvements though the above works reasonably well. */
+#header-menu-body
+{
+  width: 100%;
+
+  display: -webkit-inline-flex;
+  display: inline-flex;
+
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+/* Whether we want it (and at which point) depends on the size of the menu. */
+/*
+@media only screen and (max-width: 567px)
+{
+  #header-menu-body
+  {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+}
+*/
+
+/*
+ * Content.
+ */
+
+#content
+{
+  max-width: 41em;
+  margin: 0 auto 0 auto;
+  padding: 0 .4em 0 .4em; /* Space between text and browser frame. */
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/*
+ * Footer (optional).
+ */
+
+#footer
+{
+  color: #767676;
+  font-size: 0.7223em;
+  line-height: 1.3em;
+  margin: 2.2em 0 1em 0;
+  text-align: center;
+}
+
+#footer a
+{
+  color: #767676;
+  text-decoration: underline;
+}
+#footer a:visited {color: #767676;}
+#footer a:hover, #footer a:active {color: #3870c0;}
+
+/* Screen size indicator in the footer. The before/after content is in case
+   we don't have any content in the footer. Margin is to actually see the
+   border separate from the browser frame. */
+
+/*
+#footer:before {content: "\A0";}
+#footer:after {content: "\A0";}
+
+#footer
+{
+  border-left: 1px solid;
+  border-right: 1px solid;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+@media only screen and (max-width: 359px)
+{
+  #footer {border-color: red;}
+}
+
+@media only screen and (min-width: 360px) and (max-width: 567px)
+{
+  #footer {border-color: orange;}
+}
+
+@media only screen and (min-width: 568px) and (max-width: 1023px)
+{
+  #footer {border-color: blue;}
+}
+
+@media only screen and (min-width: 1024px)
+{
+  #footer {border-color: green;}
+}
+*/
+
+/*
+ * Common elements.
+ */
+
+p, li, dd {text-align: justify;}
+.code {text-align: left;} /* Manually aligned. */
+pre {text-align: left;}   /* If it is inside li/dd. */
+
+/* Notes. */
+
+.note
+{
+  color: #606060;
+}
+
+div.note
+{
+  margin: 2em 0 2em 0; /* The same top/bottom margings as pre box. */
+
+  padding-left: 0.5em;
+  border: 0.25em;
+  border-left-style: solid;
+  border-color: #808080;
+
+  page-break-inside: avoid;
+}
+
+div.note :first-child {margin-top:    0;}
+div.note :last-child  {margin-bottom: 0;}
+
+span.note::before {content: "[Note: "}
+span.note::after  {content: "]"}
+
+/* Links. */
+a
+{
+  color: #3870c0;
+  /*color: #4078c0;*/
+  text-decoration: none;
+}
+
+a:hover, a:active
+{
+/*color: #006fbf;*/
+/*color: #0087e7;*/
+  text-decoration: underline;
+}
+
+a:visited
+{
+/*color: #003388;*/
+  color: #00409c;
+}
+
+/* Standard paragraph. */
+
+p, pre {margin: 1em 0 1em 0;}
+
+/* Standard lists. */
+ul, ol, dl {margin: 1em 0 1em 0;}
+ul li, ol li {margin: 0 0 .4em 0;}
+ul li {list-style-type: circle;}
+dl dt {margin: 0 0 0 0;}
+dl dd {margin: 0 0 .6em 1.8em;}
+
+code, pre
+{
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.92em;
+  letter-spacing: 0;
+}
+
+pre {white-space: pre-wrap;}
+@media only screen and (max-width: 567px)
+{
+  pre {word-break: break-all;}
+}
+
+/* Use page rather than system font settings. */
+input
+{
+  font-family: inherit;
+  font-weight: inherit;
+  font-size:   inherit;
+  line-height: inherit;
+}
+
+/* file      : pre-box.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Note: see also p-code-box.css. */
+
+pre
+{
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.2em;
+  padding: .8em .4em .8em .4em;
+  margin: 2em -.4em 2em -.4em; /* Use margins of #content. */
+}
+
+/* file      : code-box.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Note: see also p-code-box.css if changing anything here. */
+
+code
+{
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.2em;
+  padding: .2em .32em .18em .32em;
+}
+
+/* file      : toc.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+table.toc
+{
+  border-style      : none;
+  border-collapse   : separate;
+  border-spacing    : 0;
+
+  margin            : 0.2em 0 0.2em 0;
+  padding           : 0 0 0 0;
+}
+
+table.toc tr
+{
+  padding           : 0 0 0 0;
+  margin            : 0 0 0 0;
+}
+
+table.toc * td, table.toc * th {
+  border-style      : none;
+  margin            : 0 0 0 0;
+  vertical-align    : top;
+}
+
+table.toc * th
+{
+  font-weight       : normal;
+  padding           : 0 0.8em 0 0;
+  text-align        : left;
+  white-space       : nowrap;
+}
+
+table.toc * table.toc th
+{
+  padding-left      : 1em;
+}
+
+table.toc * td
+{
+  padding           : 0 0 0 0;
+  text-align        : left;
+}
+
+table.toc * td.preface
+{
+  padding-left      : 1.35em;
+}
+
+/* file      : intro.css
+ * license   : MIT; see accompanying LICENSE file
+ */
+
+/* Bases:
+ *
+ * common.css
+ * pre-box.css
+ * code-box.css
+ *
+ */
+
+#content
+{
+  max-width: 43.6em;
+  padding-left: 3em; /* Reserve for headings. */
+}
+
+h1
+{
+  font-weight: normal;
+  font-size: 2em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -1.4em;
+}
+
+h1.preface
+{
+  margin-left: -.56em;
+}
+
+h2
+{
+  font-weight: normal;
+  font-size: 1.556em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -.8em;
+}
+
+h3
+{
+  font-weight: normal;
+  font-size: 1.3em;
+  line-height: 1.4em;
+  margin: 1.6em 0 .6em -.2em;
+}
+
+/* Title page */
+
+#titlepage {
+  margin: 0 0 4em 0;
+  border-bottom: 1px solid black;
+}
+
+#titlepage .title {
+  font-weight: normal;
+  font-size: 2.333em;
+  line-height: 1.4em;
+  letter-spacing: 0;
+  text-align: center;
+  margin: 2em 0 2em 0;
+}
+
+#titlepage p {
+  font-size: 0.889em;
+  line-height: 1.4em;
+  margin: 2em 0 .6em 0;
+}
+
+  </style>
+
+</head>
+<body>
+<div id="content">
+
+  <div class="noprint"> <!-- Exclude from html2ps. -->
+
+  <div id="titlepage">
+    <div class="title">The <code>build2</code> Toolchain Installation and Upgrade</div>
+
+    <p id="revision">Revision <code>0.18</code>, May 2025<br/>
+    This revision of the document describes the <a href="https://build2.org"><code>build2</code></a>
+    toolchain <code>0.18.X</code> series and is available in the
+    following formats:
+    <a href="build2-toolchain-install.xhtml">XHTML</a>,
+    <a href="build2-toolchain-install-a4.pdf">PDF/A4</a>,
+    <a href="build2-toolchain-install-letter.pdf">PDF/Letter</a>,
+    <a href="build2-toolchain-install-a4.ps">PostScript/A4</a>, and
+    <a href="build2-toolchain-install-letter.ps">PostScript/Letter</a>.</p>
+
+    <p>Copyright &#169; 2014-2025 the build2 authors.<br/>
+    Permission is granted to copy, distribute and/or modify this document
+    under the terms of the MIT License.</p>
+  </div>
+
+  <h1>Table of Contents</h1>
+
+  <table class="toc">
+    <tr><td class="preface" colspan="2"><a href="#preface">Preface</a></td></tr>
+    <tr><th>1</th><td><a href="#install">Introduction</a></td></tr>
+    <tr><th>2</th><td><a href="#bootstrap-windows">Bootstrapping on
+Windows</a>
+      <table class="toc">
+        <tr><th>2.1</th><td><a href="#bootstrap-windows-msvc">Bootstrapping on
+Windows with MSVC</a></td></tr>
+        <tr><th>2.2</th><td><a href="#bootstrap-windows-clang">Bootstrapping
+on Windows with Clang</a></td></tr>
+        <tr><th>2.3</th><td><a href="#bootstrap-windows-mingw">Bootstrapping
+on Windows with MinGW</a></td></tr>
+      </table>
+    </td></tr>
+    <tr><th>3</th><td><a href="#bootstrap-macosx">Bootstrapping on Mac OS
+X</a></td></tr>
+    <tr><th>4</th><td><a href="#bootstrap-unix">Bootstrapping on UNIX</a></td></tr>
+    <tr><th>5</th><td><a href="#upgrade">Upgrading</a></td></tr>
+  </table>
+
+  </div> <!-- noprint -->
+  <h1 id="preface" class="preface">Preface</h1>
+
+  <p>The recommended way to install and upgrade the <code>build2</code>
+  toolchain in most circumstances is using the automated install scripts as
+  described on the <a href="https://build2.org/install.xhtml">Install</a>
+  page. This document describes the manual installation and upgrade process
+  which offers greater control that can be helpful in situations where the
+  automated scripts cannot be used (packaging for system package managers,
+  unsupported by the install scripts platform/compiler, etc).</p>
+
+  <h1 id="install">1 Introduction</h1>
+
+  <p>One of the primary goals of the <code>build2</code> toolchain is to
+  provide a uniform build interface across all the platforms and compilers. As
+  a result, if you already have the toolchain installed and would like to
+  upgrade to a newer version, then there is a single set of <a
+  href="#upgrade">upgrade instructions</a> for all the platforms.</p>
+
+  <p>If, however, you need to install the toolchain for the first time, then
+  it has to be bootstrapped and that process is platform-specific. The rest of
+  this section discusses a few general bootstrap considerations and then
+  directs you to the appropriate platform-specific instructions.</p>
+
+  <p>In the rest of this guide we use the <code>$</code> symbol for a UNIX
+  shell prompt and <code>></code> for the Windows command prompt. Similarly,
+  we use <code>\</code> for UNIX command line continuations and <code>^</code>
+  for Windows. Usually you should be able to copy and paste (sans the prompt)
+  example commands in order to execute them but sometimes you might need to
+  change a thing or two (for example, replace <code>X.Y.Z</code> with the
+  actual version). Once we are able to use the <code>build2</code> toolchain,
+  the command line interface becomes regular and we usually only show the UNIX
+  version of the commands. In this case making a Windows version is a simple
+  matter of adjusting paths and, if used, line continuations.</p>
+
+  <p>The <code>build2</code> toolchain requires a C++14 compiler. From the
+  commonly-used options, GCC 4.9, Clang 3.7, and MSVC 14 (2015) Update 3 or
+  any later versions of these compilers should work.</p>
+
+  <div class="note">
+  <p>Note that the C++ compiler that you use to build the <code>build2</code>
+  toolchain and the one that you will use to build your projects need not be
+  the same. For example, if you are using MSVC 12 (2013) (which cannot build
+  <code>build2</code>), it is perfectly fine to get a minimal MinGW toolchain
+  and use that to build <code>build2</code>; you will still be able to use
+  MSVC 12 to build your own code.</p>
+  </div>
+
+  <p>At the high level, the bootstrap process involves the following 5
+  steps.</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Bootstrap, Phase 1</b></dt>
+  <dd>First, a minimal build system executable is built using provided shell
+  scripts/batch files or a GNU makefile. The result is only guaranteed to be
+  able to rebuild the build system itself.</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Bootstrap, Phase
+  2</b></dt>
+  <dd>Then, the build system is rebuilt with static libraries. The result is
+  only guaranteed to be able to build the build system and the package
+  manager.</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Stage</b></dt>
+  <dd>At this step the build system and package manager are built with shared
+  libraries and then staged.</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Install</b></dt>
+  <dd>Next, the staged tools are used to build and install the entire
+  toolchain from the package repository with the package manager.</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Clean</b></dt>
+  <dd>Finally, the staged at step 3 tools are uninstalled.</dd>
+  </dl>
+
+  <p>The end result of the bootstrap process is the installed toolchain as
+  well as the package manager configuration (created at step 4) that can be
+  used to upgrade to newer versions.</p>
+
+  <div class="note">
+  <p>You can skip step 4 and instead install at step 3 if for some reason you
+  prefer not to build from packages (for example, because the machine is
+  offline).</p>
+  </div>
+
+  <p>For Windows, if you are using either MSVC, Clang, or MinGW, continue with
+  <a href="#bootstrap-windows">Bootstrapping on Windows</a>. If using WSL,
+  MSYS, or Cygwin, then instead refer to <a
+  href="#bootstrap-unix">Bootstrapping on UNIX</a>.</p>
+
+  <p>For Mac OS X, continue with <a href="#bootstrap-macosx">Bootstrapping on
+  Mac OS X</a>.</p>
+
+  <p>For other UNIX-like operating systems (GNU/Linux, FreeBSD, etc; this also
+  includes WSL, MSYS, and Cygwin), continue with <a
+  href="#bootstrap-unix">Bootstrapping on UNIX</a>.</p>
+
+  <h1 id="bootstrap-windows">2 Bootstrapping on Windows</h1>
+
+  <p>The following instructions are for bootstrapping <code>build2</code> from
+  the Windows command prompt with either MSVC, Clang (targeting the MSVC
+  runtime), or MinGW. If you are using any kind of UNIX emulation layer (for
+  example, WSL, MSYS, or Cygwin) and already have a UNIX shell with standard
+  utilities, then you most likely should follow <a
+  href="#bootstrap-unix">Bootstrapping on UNIX</a> instead.</p>
+
+  <div class="note">
+  <p>Note that if you continue with these instructions but you already have
+  your own installation of MSYS and/or MinGW, then make sure that their paths
+  are not in your <code>PATH</code> environment variable when building and
+  using <code>build2</code> since they may provide conflicting DLLs.</p>
+  </div>
+
+  <p>The <code>build2</code> toolchain on Windows requires a set of extra
+  utilities (<code>install</code>, <code>diff</code>, <code>curl</code>,
+  <code>tar</code>, etc). These are provided by the
+  <code>build2-baseutils</code> package (see the <code>README</code> file
+  inside for details). Normally, the <code>build2</code> toolchain itself is
+  installed into the same directory as the utilities in order to produce the 
+  combined installation.</p>
+
+  <p>To build on Windows you will need either MSVC 14 Update 3 or later, Clang
+  8 or later (either bundled with MSVC or installed separately), or MinGW GCC
+  4.9 or later. If you don't already have a suitable C++ compiler, then you
+  can use the <code>build2-mingw</code> package which provides a minimal
+  MinGW-W64 GCC distribution (see the <code>README</code> file inside for
+  details). If used, then it should be unpacked into the same directory as
+  <code>build2-baseutils</code>.</p>
+
+  <div class="note">
+  <p>If using your own MinGW GCC installation, make sure it is configured with
+  the <code>posix</code> threading model (this is currently the only
+  configuration that implements C++11 threads; run <code>g++ -v</code> to
+  verify).</p>
+  </div>
+
+  <div class="note">
+  <p>Only 64-bit variants of the <code>baseutils</code> and <code>mingw</code>
+  packages are provided and they <b>must</b> match the width of the
+  <code>build2</code> toolchain. Note also that the 64-bit <code>build2</code>
+  toolchain can be used to build 32-bit applications without any
+  restrictions.</p>
+  </div>
+
+  <p>To bootstrap on Windows with either MSVC, Clang, or MinGW start with the
+  following common steps:</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Open Command Prompt</b></dt>
+  <dd>Start the standard Windows Command Prompt. If you plan to build with
+  MSVC or Clang bundled with MSVC, then you may go ahead and start the Visual
+  Studio "x64 Native Tools Command Prompt" (or wait for MSVC/Clang-specific
+  instructions).</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Create Build
+  Directory</b></dt>
+  <dd>You will want to keep this directory around in order to upgrade to new
+  toolchain versions in the future. In this guide we use
+  <code>C:\build2-build\</code> as the build directory and
+  <code>C:\build2\</code> as the installation directory but you can use other
+  paths.
+
+  <pre>> cd /D C:\
+> mkdir build2-build
+> cd build2-build</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Download
+  Archives</b></dt>
+  <dd>Download the following files as well as their <code>.sha256</code>
+  checksums from the <a href="https://build2.org/download.xhtml">Download</a>
+  page:
+
+  <pre>build2-baseutils-X.Y.Z-x86_64-windows.zip
+build2-mingw-X.Y.Z-x86_64-windows.tar.xz   (if required)
+build2-toolchain-X.Y.Z.tar.xz</pre>
+
+  <p>Place everything into <code>C:\build2-build\</code> (build
+  directory).</p></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Verify Archive
+  Checksums</b></dt>
+  <dd>Verify archive checksums match (compare visually):
+
+  <pre>> type *.sha256
+> for %f in (*.zip *.xz) do certutil -hashfile %f SHA256</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Unpack
+  <code>build2-baseutils</code></b></dt>
+  <dd>Unpack the <code>build2-baseutils-X.Y.Z-x86_64-windows.zip</code>
+  archive into <code>C:\</code> using Windows Explorer (for example, copy the
+  archive directory and then paste it). Rename it to <code>C:\build2\</code>.
+  This will be the toolchain installation directory.</dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>6. Set
+  <code>PATH</code></b></dt>
+  <dd>Set the <code>PATH</code> environment variable and verify that the
+  utilities are found and work:
+
+  <pre>> set "PATH=C:\build2\bin;%PATH%"
+> where tar
+> tar --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>7. Unpack
+  <code>build2-mingw</code> (optional)</b></dt>
+  <dd>If required, unpack the
+  <code>build2-mingw-X.Y.Z-x86_64-windows.tar.xz</code> archive into
+  <code>C:\build2\</code>:
+
+  <pre>> xz -d build2-mingw-X.Y.Z-x86_64-windows.tar.xz
+> tar -xf build2-mingw-X.Y.Z-x86_64-windows.tar ^
+  --one-top-level=C:\build2 --strip-components=1</pre>
+
+  <p>Verify that the MinGW GCC is found and works:</p>
+
+  <pre>> where g++
+> g++ --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>8. Unpack
+  <code>build2-toolchain</code></b></dt>
+  <dd>Unpack the <code>build2-toolchain-X.Y.Z.tar.xz</code> archive and change
+  to its directory:
+
+  <pre>> xz -d build2-toolchain-X.Y.Z.tar.xz
+> tar -xf build2-toolchain-X.Y.Z.tar
+> cd build2-toolchain-X.Y.Z</pre></dd>
+  </dl>
+
+  <p>If building with MSVC, continue with <a
+  href="#bootstrap-windows-msvc">Bootstrapping on Windows with MSVC</a>.</p>
+
+  <p>If building with Clang, continue with <a
+  href="#bootstrap-windows-clang">Bootstrapping on Windows with Clang</a>.</p>
+
+  <p>If building with MinGW, continue with <a
+  href="#bootstrap-windows-mingw">Bootstrapping on Windows with MinGW</a>.</p>
+
+  <h2 id="bootstrap-windows-msvc">2.1 Bootstrapping on Windows with MSVC</h2>
+
+  <p>Continuing from <a href="#bootstrap-windows">Bootstrapping on
+  Windows</a>, if you have already started an appropriate Visual Studio
+  command prompt, then you can continue using it. Otherwise, start the Visual
+  Studio "x64 Native Tools Command Prompt". Also set the <code>PATH</code>
+  environment variable as on the previous steps:</p>
+
+  <pre>> set "PATH=C:\build2\bin;%PATH%"</pre>
+
+  <p>To build with MSVC you can either perform the following steps manually
+  or, if after reviewing the steps you are happy with using the defaults, run
+  the <code>build-msvc.bat</code> batch file. It performs (and echoes) the
+  same set of steps as outlined below but only allows you to customize the
+  installation directory and a few other things (run <code>build-msvc.bat
+  /?</code> for usage).</p>
+
+  <p>For example, you could run this batch file (from the above-mentioned
+  command prompt) like this:</p>
+
+  <pre>> .\build-msvc.bat</pre>
+
+  <div class="note">
+  <p>Note that at about half way through (<code>bpkg fetch</code> at step 4
+  below) the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the <code>--trust</code> option (see
+  <code>build-msvc.bat /?</code> for details).</p>
+  </div>
+
+  <p>The end result of the bootstrap process (performed either with the script
+  or manually) is the installed toolchain as well as the <code>bpkg</code>
+  configuration in <code>build2-toolchain-X.Y\</code> that can be used to <a
+  href="#upgrade">upgrade</a> to newer versions. It can also be used to
+  uninstall the toolchain:</p>
+
+  <pre>> cd build2-toolchain-X.Y
+> bpkg uninstall --all</pre>
+
+  <div class="note">
+  <p>Note that in both cases (manual or scripted bootstrap), if something goes
+  wrong and you need to restart the process, you <b>must</b> start with a
+  clean toolchain source by unpacking it afresh from the archive.</p>
+  </div>
+
+  <p>The rest of this section outlines the manual bootstrap process.</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Bootstrap, Phase 1</b></dt>
+  <dd>First, we build a minimal build system with the provided
+  <code>bootstrap-msvc.bat</code> batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run <code>bootstrap-msvc.bat /?</code> and see
+  the <code>build2\INSTALL</code> file for details.
+
+  <pre>> cd build2
+> .\bootstrap-msvc.bat cl /w /MP8
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Bootstrap, Phase
+  2</b></dt>
+  <dd>Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  <pre>> b\b-boot config.cxx=cl config.bin.lib=static b\exe{b}
+> move /y b\b.exe b\b-boot.exe
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Stage</b></dt>
+  <dd>At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  <pre>> cd ..  # Back to build2-toolchain-X.Y.Z\
+
+> build2\b\b-boot configure           ^
+  config.cxx=cl                       ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\build2       ^
+  config.install.data_root=root\stage
+
+> build2\b\b-boot install: build2\ bpkg\</pre>
+
+  <p>The strange-looking <code>config.install.data_root=root\stage</code>
+  means install data files (as opposed to executable files) into the
+  <code>stage\</code> subdirectory of wherever
+  <code>config.install.root</code> points to (so in our case it will be
+  <code>C:\build2\stage\</code>). This subdirectory is temporary and will be
+  removed in a few steps.</p>
+
+  <p>Verify that the toolchain binaries can be found and work (this relies on
+  the <code>PATH</code> environment variable we have set earlier):</p>
+
+  <pre>> where b-stage
+C:\build2\bin\b-stage.exe
+
+> where bpkg-stage
+C:\build2\bin\bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version</pre>
+
+  <p>At the next step we will use <code>bpkg</code> to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  (for example, because the machine is offline), then you can convert this
+  step into a local installation and skip the rest of the steps.</p>
+
+  <div class="note">
+  <p>To perform a local installation with the <code>build-msvc.bat</code>
+  batch file, pass the <code>--local</code> option.</p>
+  </div>
+
+  <p>To perform a local installation you will need to change the
+  <code>configure</code> and <code>install</code> command lines above along
+  these lines (see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc):</p>
+
+  <pre>> build2\b\b-boot configure      ^
+  config.config.hermetic=true    ^
+  config.cxx=cl                  ^
+  config.cc.coptions=/O2         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\build2
+
+> build2\b\b-boot install: build2\ bpkg\ bdep\</pre>
+
+  <p>You will also need to build and install the standard build system
+  modules:</p>
+
+  <pre>> b install: !config.install.scope=project libbuild2-*\</pre>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: tests\libbuild2-*\</pre>
+  </div>
+
+  <p>To uninstall such a local installation, run:</p>
+
+  <pre>> b uninstall: build2\ bpkg\ bdep\ libbuild2-*\</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Install</b></dt>
+  <dd>Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the <code>bpkg</code> package manager.
+  First, we create the <code>bpkg</code> configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  <pre>> cd ..  # Back to build2-build\
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+  <div class="note">
+  <p>The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  <code>config.bin.lib=shared</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>To add a custom prefix/suffix to the toolchain executables names, add
+  <code>config.bin.exe.prefix=...</code> and/or
+  <code>config.bin.exe.suffix=...</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>The <code>config.config.hermetic=true</code> configuration variable in
+  the above command makes sure the embedded <code>~host</code> and
+  <code>~build2</code> configurations include the current environment. This is
+  especially important for <code>~build2</code> which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.</p>
+  </div>
+
+  <p>Next, we add the package repository, build, and install:</p>
+
+  <pre>> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all</pre>
+
+  <div class="note">
+  <p>By default <code>bpkg</code> will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:</p>
+
+  <pre>> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z</pre>
+  </div>
+
+  <p>To verify the result, run:</p>
+
+  <pre>> where b
+C:\build2\bin\b.exe
+
+> where bpkg
+C:\build2\bin\bpkg.exe
+
+> where bdep
+C:\build2\bin\bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version</pre>
+
+  <p>Finally, we build and install the standard build system modules:</p>
+
+  <pre>> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*</pre>
+
+  <div class="note">
+  <p>To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:</p>
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z
+> dir /B libbuild2-*</pre>
+  </div>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: ..\build2-toolchain-X.Y.Z\tests\libbuild2-*\</pre>
+  </div></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Clean</b></dt>
+  <dd>The last thing we need to do is uninstall the staged tools:
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\ bpkg\</pre></dd>
+  </dl>
+
+  <h2 id="bootstrap-windows-clang">2.2 Bootstrapping on Windows with
+  Clang</h2>
+
+  <p>Continuing from <a href="#bootstrap-windows">Bootstrapping on
+  Windows</a>, there are two common ways to obtain Clang on Windows: bundled
+  with the MSVC installation or as a separate installation. If you are using a
+  separate installation, then the Clang compiler is most likely already in
+  your <code>PATH</code> environment variable and, after confirming this is
+  the case, you can continue using the command prompt started on the previous
+  step:</p>
+
+  <pre>> where clang++</pre>
+
+  <p>Otherwise, if you are using Clang that is bundled with MSVC (and haven't
+  manually added its compiler to <code>PATH</code>), start the Visual Studio
+  "x64 Native Tools Command Prompt" and set the <code>PATH</code> environment
+  variable:</p>
+
+  <pre>> set "PATH=C:\build2\bin;%VCINSTALLDIR%Tools\Llvm\bin;%PATH%"
+> where clang++</pre>
+
+  <p>To build with Clang you can either perform the following steps manually
+  or, if after reviewing the steps you are happy with using the defaults, run
+  the <code>build-clang.bat</code> batch file. It performs (and echoes) the
+  same set of steps as outlined below but only allows you to customize the
+  installation directory and a few other things (run <code>build-clang.bat
+  /?</code> for usage).</p>
+
+  <p>For example, you could run this batch file (from the above-mentioned
+  command prompt) like this:</p>
+
+  <pre>> .\build-clang.bat</pre>
+
+  <div class="note">
+  <p>Note that at about half way through (<code>bpkg fetch</code> at step 4
+  below) the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the <code>--trust</code> option (see
+  <code>build-clang.bat /?</code> for details).</p>
+  </div>
+
+  <p>The end result of the bootstrap process (performed either with the script
+  or manually) is the installed toolchain as well as the <code>bpkg</code>
+  configuration in <code>build2-toolchain-X.Y\</code> that can be used to <a
+  href="#upgrade">upgrade</a> to newer versions. It can also be used to
+  uninstall the toolchain:</p>
+
+  <pre>> cd build2-toolchain-X.Y
+> bpkg uninstall --all</pre>
+
+  <div class="note">
+  <p>Note that in both cases (manual or scripted bootstrap), if something goes
+  wrong and you need to restart the process, you <b>must</b> start with a
+  clean toolchain source by unpacking it afresh from the archive.</p>
+  </div>
+
+  <p>The rest of this section outlines the manual bootstrap process.</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Bootstrap, Phase 1</b></dt>
+  <dd>First, we build a minimal build system with the provided
+  <code>bootstrap-clang.bat</code> batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run <code>bootstrap-clang.bat /?</code> and see
+  the <code>build2\INSTALL</code> file for details.
+
+  <pre>> cd build2
+> .\bootstrap-clang.bat clang++ -m64 -w
+
+> b\b-boot --version</pre>
+
+  <p>Alternatively, we can use the <code>bootstrap.gmake</code> GNU makefile
+  to bootstrap in parallel:</p>
+
+  <pre>> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=clang++ "CXXFLAGS=-m64 -w"
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Bootstrap, Phase
+  2</b></dt>
+  <dd>Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  <pre>> b\b-boot                  ^
+  "config.cxx=clang++ -m64" ^
+  config.bin.lib=static     ^
+  b\exe{b}
+
+> move /y b\b.exe b\b-boot.exe
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Stage</b></dt>
+  <dd>At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  <pre>> cd ..  # Back to build2-toolchain-X.Y.Z\
+
+> build2\b\b-boot configure           ^
+  "config.cxx=clang++ -m64"           ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\build2       ^
+  config.install.data_root=root\stage
+
+> build2\b\b-boot install: build2\ bpkg\</pre>
+
+  <p>The strange-looking <code>config.install.data_root=root\stage</code>
+  means install data files (as opposed to executable files) into the
+  <code>stage\</code> subdirectory of wherever
+  <code>config.install.root</code> points to (so in our case it will be
+  <code>C:\build2\stage\</code>). This subdirectory is temporary and will be
+  removed in a few steps.</p>
+
+  <p>Verify that the toolchain binaries can be found and work (this relies on
+  the <code>PATH</code> environment variable we have set earlier):</p>
+
+  <pre>> where b-stage
+C:\build2\bin\b-stage.exe
+
+> where bpkg-stage
+C:\build2\bin\bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version</pre>
+
+  <p>At the next step we will use <code>bpkg</code> to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  (for example, because the machine is offline), then you can convert this
+  step into a local installation and skip the rest of the steps.</p>
+
+  <div class="note">
+  <p>To perform a local installation with the <code>build-clang.bat</code>
+  batch file, pass the <code>--local</code> option.</p>
+  </div>
+
+  <p>To perform a local installation you will need to change the
+  <code>configure</code> and <code>install</code> command lines above along
+  these lines (see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc):</p>
+
+  <pre>> build2\b\b-boot configure      ^
+  config.config.hermetic=true    ^
+  "config.cxx=clang++ -m64"      ^
+  config.cc.coptions=-O2         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\build2
+
+> build2\b\b-boot install: build2\ bpkg\ bdep\</pre>
+
+  <p>You will also need to build and install the standard build system
+  modules:</p>
+
+  <pre>> b install: !config.install.scope=project libbuild2-*\</pre>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: tests\libbuild2-*\</pre>
+  </div>
+
+  <p>To uninstall such a local installation, run:</p>
+
+  <pre>> b uninstall: build2\ bpkg\ bdep\ libbuild2-*\</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Install</b></dt>
+  <dd>Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the <code>bpkg</code> package manager.
+  First, we create the <code>bpkg</code> configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  <pre>> cd ..  # Back to build2-build\
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  "config.cxx=clang++ -m64"     ^
+  config.cc.coptions=-O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+  <div class="note">
+  <p>The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  <code>config.bin.lib=shared</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>To add a custom prefix/suffix to the toolchain executables names, add
+  <code>config.bin.exe.prefix=...</code> and/or
+  <code>config.bin.exe.suffix=...</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>The <code>config.config.hermetic=true</code> configuration variable in
+  the above command makes sure the embedded <code>~host</code> and
+  <code>~build2</code> configurations include the current environment. This is
+  especially important for <code>~build2</code> which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.</p>
+  </div>
+
+  <p>Next, we add the package repository, build, and install:</p>
+
+  <pre>> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all</pre>
+
+  <div class="note">
+  <p>By default <code>bpkg</code> will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:</p>
+
+  <pre>> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z</pre>
+  </div>
+
+  <p>To verify the result, run:</p>
+
+  <pre>> where b
+C:\build2\bin\b.exe
+
+> where bpkg
+C:\build2\bin\bpkg.exe
+
+> where bdep
+C:\build2\bin\bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version</pre>
+
+  <p>Finally, we build and install the standard build system modules:</p>
+
+  <pre>> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*</pre>
+
+  <div class="note">
+  <p>To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:</p>
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z
+> dir /B libbuild2-*</pre>
+  </div>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: ..\build2-toolchain-X.Y.Z\tests\libbuild2-*\</pre>
+  </div></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Clean</b></dt>
+  <dd>The last thing we need to do is uninstall the staged tools:
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\ bpkg\</pre></dd>
+  </dl>
+
+  <h2 id="bootstrap-windows-mingw">2.3 Bootstrapping on Windows with
+  MinGW</h2>
+
+  <p>Continuing from <a href="#bootstrap-windows">Bootstrapping on
+  Windows</a>, if you are using your own MinGW distribution, then the
+  resulting <code>build2</code> binaries will most likely require a number of
+  DLLs in order to run. It is therefore recommended that you copy the
+  following files from your MinGW <code>bin\</code> subdirectory to
+  <code>C:\build2\bin\</code> (<code>*</code> in the last name will normally
+  be <code>dw2-1</code>, <code>seh-1</code>, or <code>sjlj-1</code>):</p>
+
+  <pre>libwinpthread-1.dll
+libstdc++-6.dll
+libgcc_s_*.dll</pre>
+
+  <p>To build with MinGW you can either perform the following steps manually
+  or, if after reviewing the steps, you are happy with using the defaults, run
+  the <code>build-mingw.bat</code> batch file. It performs (and echoes) the
+  same set of steps as outlined below but only allows you to customize the
+  compiler, installation directory, and a few other things (run
+  <code>build-mingw.bat /?</code> for usage).</p>
+
+  <p>For example, if your MinGW distribution is in <code>C:\mingw\</code>,
+  then you could run it (from the command prompt that we have started earlier)
+  like this:</p>
+
+  <pre>> .\build-mingw.bat C:\mingw\bin\g++</pre>
+
+  <p>If you are using the <code>build2-mingw</code> package then you should be
+  able to use just <code>g++</code> for the compiler:</p>
+
+  <pre>> .\build-mingw.bat g++</pre>
+
+  <p>If you would like to speed the process up by compiling in parallel, then
+  you can instruct <code>build-mingw.bat</code> to bootstrap using GNU make
+  (comes in the <code>build2-mingw</code> package), for example:</p>
+
+  <pre>> .\build-mingw.bat --make mingw32-make --make -j8 g++</pre>
+
+  <div class="note">
+  <p>Note that at about half way through (<code>bpkg fetch</code> at step 4
+  below) the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the <code>--trust</code> option (see
+  <code>build-mingw.bat /?</code> for details).</p>
+  </div>
+
+  <p>The end result of the bootstrap process (performed either with the script
+  or manually) is the installed toolchain as well as the <code>bpkg</code>
+  configuration in <code>build2-toolchain-X.Y\</code> that can be used to <a
+  href="#upgrade">upgrade</a> to newer versions. It can also be used to
+  uninstall the toolchain:</p>
+
+  <pre>> cd build2-toolchain-X.Y
+> bpkg uninstall --all</pre>
+
+  <div class="note">
+  <p>Note that in both cases (manual or scripted bootstrap), if something goes
+  wrong and you need to restart the process, you <b>must</b> start with a
+  clean toolchain source by unpacking it afresh from the archive.</p>
+  </div>
+
+  <p>The rest of this section outlines the manual bootstrap process.</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Bootstrap, Phase 1</b></dt>
+  <dd>First, we build a minimal build system with the provided
+  <code>bootstrap-mingw.bat</code> batch file. Normally, the only argument you
+  will pass to this script is the C++ compiler to use but there is also a way
+  to specify compile options; run <code>bootstrap-mingw.bat /?</code> and see
+  the <code>build2\INSTALL</code> file for details.
+
+  <pre>> cd build2
+> .\bootstrap-mingw.bat g++ -w -static
+
+> b\b-boot --version</pre>
+
+  <p>Alternatively, we can use the <code>bootstrap.gmake</code> GNU makefile
+  to bootstrap in parallel:</p>
+
+  <pre>> cd build2
+> mingw32-make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w LDFLAGS=-static
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Bootstrap, Phase
+  2</b></dt>
+  <dd>Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  <pre>> b\b-boot config.cxx=g++ config.bin.lib=static b\exe{b}
+> move /y b\b.exe b\b-boot.exe
+
+> b\b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Stage</b></dt>
+  <dd>At this step the build system and package manager are built with shared
+  libraries and then staged:
+
+  <pre>> cd ..  # Back to build2-toolchain-X.Y.Z\
+
+> build2\b\b-boot configure           ^
+  config.cxx=g++                      ^
+  config.bin.lib=shared               ^
+  config.bin.suffix=-stage            ^
+  config.install.root=C:\build2       ^
+  config.install.data_root=root\stage
+
+> build2\b\b-boot install: build2\ bpkg\</pre>
+
+  <p>The strange-looking <code>config.install.data_root=root\stage</code>
+  means install data files (as opposed to executable files) into the
+  <code>stage\</code> subdirectory of wherever
+  <code>config.install.root</code> points to (so in our case it will be
+  <code>C:\build2\stage\</code>). This subdirectory is temporary and will be
+  removed in a few steps.</p>
+
+  <p>Verify that the toolchain binaries can be found and work (this relies on
+  the <code>PATH</code> environment variable we have set earlier):</p>
+
+  <pre>> where b-stage
+C:\build2\bin\b-stage.exe
+
+> where bpkg-stage
+C:\build2\bin\bpkg-stage.exe
+
+> b-stage --version
+> bpkg-stage --version</pre>
+
+  <p>At the next step we will use <code>bpkg</code> to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  (for example, because the machine is offline), then you can convert this
+  step into a local installation and skip the rest of the steps.</p>
+
+  <div class="note">
+  <p>To perform a local installation with the <code>build-mingw.bat</code>
+  batch file, pass the <code>--local</code> option.</p>
+  </div>
+
+  <p>To perform a local installation you will need to change the
+  <code>configure</code> and <code>install</code> command lines above along
+  these lines (see also a note on the following step about only building
+  shared libraries, toolchain executables prefix/suffix, etc):</p>
+
+  <pre>> build2\b\b-boot configure ^
+  config.config.hermetic=true    ^
+  config.cxx=g++                 ^
+  config.cc.coptions=-O3         ^
+  config.bin.lib=shared          ^
+  config.install.root=C:\build2
+
+> build2\b\b-boot install: build2\ bpkg\ bdep\</pre>
+
+  <p>You will also need to build and install the standard build system
+  modules:</p>
+
+  <pre>> b install: !config.install.scope=project libbuild2-*\</pre>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: tests\libbuild2-*\</pre>
+  </div>
+
+  <p>To uninstall such a local installation, run:</p>
+
+  <pre>> b uninstall: build2\ bpkg\ bdep\ libbuild2-*\</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Install</b></dt>
+  <dd>Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the <code>bpkg</code> package manager.
+  First, we create the <code>bpkg</code> configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  <pre>> cd ..  # Back to build2-build\
+> md build2-toolchain-X.Y
+> cd build2-toolchain-X.Y
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+  <div class="note">
+  <p>The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  <code>config.bin.lib=shared</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>To add a custom prefix/suffix to the toolchain executables names, add
+  <code>config.bin.exe.prefix=...</code> and/or
+  <code>config.bin.exe.suffix=...</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>The <code>config.config.hermetic=true</code> configuration variable in
+  the above command makes sure the embedded <code>~host</code> and
+  <code>~build2</code> configurations include the current environment. This is
+  especially important for <code>~build2</code> which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.</p>
+  </div>
+
+  <p>Next, we add the package repository, build, and install:</p>
+
+  <pre>> bpkg-stage add https://pkg.cppget.org/1/alpha
+> bpkg-stage fetch
+> bpkg-stage build --for install build2 bpkg bdep
+> bpkg-stage install --all</pre>
+
+  <div class="note">
+  <p>By default <code>bpkg</code> will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:</p>
+
+  <pre>> bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z</pre>
+  </div>
+
+  <p>To verify the result, run (note that the <code>where</code> command is
+  not available on Windows XP without the Resource Kit installed):</p>
+
+  <pre>> where b
+C:\build2\bin\b.exe
+
+> where bpkg
+C:\build2\bin\bpkg.exe
+
+> where bdep
+C:\build2\bin\bdep.exe
+
+> b --version
+> bpkg --version
+> bdep --version</pre>
+
+  <p>Finally, we build and install the standard build system modules:</p>
+
+  <pre>> bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+> bpkg install !config.install.scope=project ^
+  --all-pattern=libbuild2-*</pre>
+
+  <div class="note">
+  <p>To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:</p>
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z
+> dir /B libbuild2-*</pre>
+  </div>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>> b noop: ..\build2-toolchain-X.Y.Z\tests\libbuild2-*\</pre>
+  </div></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Clean</b></dt>
+  <dd>The last thing we need to do is uninstall the staged tools:
+
+  <pre>> cd ..\build2-toolchain-X.Y.Z  # Back to bootstrap.
+> b uninstall: build2\ bpkg\</pre></dd>
+  </dl>
+
+  <h1 id="bootstrap-macosx">3 Bootstrapping on Mac OS X</h1>
+
+  <p>The <code>build2</code> toolchain requires Mac OS version 10.5 (Leopard)
+  or later. We will also be using the system C++ toolchain that comes with the
+  Xcode Command Line Tools. You should be able to use other/custom C++
+  toolchains, however, this is the only configuration that is tested and
+  guaranteed to work.</p>
+
+  <p>To verify that Command Line Tools are installed, run:</p>
+
+  <pre>$ clang++ --version</pre>
+
+  <p>It should produce something along these lines:</p>
+
+  <pre>Apple LLVM version X.Y.Z (clang-A.B.C) (based on LLVM M.N.P)</pre>
+
+  <p>To install Command Line Tools, run:</p>
+
+  <pre>$ xcode-select --install</pre>
+
+  <p>Once this is done continue with <a href="#bootstrap-unix">Bootstrapping
+  on UNIX</a>.</p>
+
+  <h1 id="bootstrap-unix">4 Bootstrapping on UNIX</h1>
+
+  <p>The following instructions are for bootstrapping <code>build2</code> on
+  UNIX-like operating systems (GNU/Linux, FreeBSD, etc). For Mac OS X first
+  see <a href="#bootstrap-macosx">Bootstrapping on Mac OS X</a>. These
+  instructions should also be used for UNIX emulation layers on Windows (for
+  example, WSL, MSYS, or Cygwin) where you already have a UNIX shell with
+  standard utilities.</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Create Build Directory</b></dt>
+  <dd>You will want to keep this directory around in order to upgrade to new
+  toolchain versions in the future. In this guide we use
+  <code>~/build2-build/</code> as the build directory and
+  <code>/usr/local/</code> as the installation directory but you can use other
+  paths.
+
+  <pre>$ cd
+$ mkdir build2-build
+$ cd build2-build</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Download, Verify, and
+  Unpack</b></dt>
+  <dd>Download <code>build2-toolchain-X.Y.Z.tar.xz</code> (or its
+  <code>.tar.gz</code> variant if you don't have <code><b>xz(1)</b></code>) as
+  well as its <code>.sha256</code> checksum from <a
+  href="https://build2.org/download.xhtml">Download</a> page.
+
+  <p>Place everything into <code>~/build2-build/</code> (build directory) and
+  verify the archive checksum matches:</p>
+
+  <pre># Linux, WSL, MSYS, Cygwin:
+#
+$ sha256sum -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+# Mac OS X:
+#
+$ shasum -a 256 -c build2-toolchain-X.Y.Z.tar.xz.sha256
+
+# FreeBSD (compare visually):
+#
+$ cat build2-toolchain-X.Y.Z.tar.xz.sha256
+$ sha256 -r build2-toolchain-X.Y.Z.tar.xz</pre>
+
+  <p>Unpack the archive and change to its directory:</p>
+
+  <pre>> tar -xf build2-toolchain-X.Y.Z.tar.xz
+> cd build2-toolchain-X.Y.Z</pre></dd>
+  </dl>
+
+  <p>Next you can either perform the rest of the steps manually or, if after
+  reviewing the steps, you are happy with using the defaults, run the
+  <code>build.sh</code> shell script. It performs (and echoes) the same set of
+  steps as outlined below but only allows you to customize the compiler,
+  installation directory, and a few other things (run <code>build.sh -h</code>
+  for usage).</p>
+
+  <p>For example, this command will use <code>g++</code> and install the
+  toolchain into <code>/usr/local/</code>.</p>
+
+  <pre>$ ./build.sh g++</pre>
+
+  <p>While this will use Clang and install into <code>/opt/build2</code>:</p>
+
+  <pre>$ ./build.sh --install-dir /opt/build2 --sudo sudo clang++</pre>
+
+  <p>If you would like to speed the process up by compiling in parallel, then
+  you can instruct <code>build.sh</code> to bootstrap using GNU make (can be
+  called <code>gmake</code> instead of <code>make</code> on some platforms),
+  for example:</p>
+
+  <pre>$ ./build.sh --make make --make -j8 g++</pre>
+
+  <div class="note">
+  <p>Note that at about half way through (<code>bpkg fetch</code> at step 4
+  below) the script will stop and prompt you to verify the authenticity of the
+  repository certificate. To run the script unattended you can specify the
+  certificate fingerprint with the <code>--trust</code> option (see
+  <code>build.sh -h</code> for details).</p>
+  </div>
+
+  <p>The end result of the bootstrap process (performed either with the script
+  or manually) is the installed toolchain as well as the <code>bpkg</code>
+  configuration in <code>build2-toolchain-X.Y/</code> that can be used to <a
+  href="#upgrade">upgrade</a> to newer versions. It can also be used to
+  uninstall the toolchain:</p>
+
+  <pre>$ cd build2-toolchain-X.Y
+$ bpkg uninstall --all</pre>
+
+  <div class="note">
+  <p>Note that in both cases (manual or scripted bootstrap), if something goes
+  wrong and you need to restart the process, you <b>must</b> start with a
+  clean toolchain source by unpacking it afresh from the archive.</p>
+  </div>
+
+  <p>The rest of this section outlines the manual bootstrap process.</p>
+
+  <div class="note">
+  <p>You should either run <code>build.sh</code> or the manual commands below,
+  but not both.</p>
+  </div>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>1. Bootstrap, Phase 1</b></dt>
+  <dd>First, we build a minimal build system with the provided
+  <code>bootstrap.sh</code> script. Normally, the only argument you will pass
+  to this script is the C++ compiler to use but there is also a way to specify
+  compile options and a few other things; run <code>bootstrap.sh -h</code> and
+  see the <code>build2/INSTALL</code> file for details.
+
+  <pre>$ cd build2
+$ ./bootstrap.sh g++ -w
+
+$ b/b-boot --version</pre>
+
+  <p>Alternatively, we can use the <code>bootstrap.gmake</code> GNU makefile
+  to bootstrap in parallel:</p>
+
+  <pre>$ cd build2
+$ make -f bootstrap.gmake -j 8 CXX=g++ CXXFLAGS=-w
+
+$ b/b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Bootstrap, Phase
+  2</b></dt>
+  <dd>Then, we rebuild the build system with the result of Phase 1 linking
+  libraries statically.
+
+  <pre>$ b/b-boot config.cxx=g++ config.bin.lib=static b/exe{b}
+$ mv b/b b/b-boot
+
+$ b/b-boot --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Stage</b></dt>
+  <dd>At this step the build system and package manager are built with shared
+  libraries and then staged. Here you may want to adjust a few things, such as
+  the installation directory or the <code>sudo</code> program (remove the
+  <code>config.install.sudo</code> line if you don't need one).
+
+  <p>You may also need to remove the <code>config.bin.rpath</code> line if
+  your target doesn't support <i>rpath</i>. Specifically, if building on
+  Windows (with MSYS or Cygwin), remove both <code>.rpath</code> and
+  <code>.sudo</code>. But if unsure, leave <code>.rpath</code> in &#8211; if
+  your target doesn't support it, you will get an error and will need to
+  reconfigure without it.</p>
+
+  <pre>$ cd ..  # Back to build2-toolchain-X.Y.Z/
+
+$ build2/b/b-boot configure           \
+  config.cxx=g++                      \
+  config.bin.lib=shared               \
+  config.bin.suffix=-stage            \
+  config.bin.rpath=/usr/local/lib     \
+  config.install.root=/usr/local      \
+  config.install.data_root=root/stage \
+  config.install.sudo=sudo
+
+$ build2/b/b-boot install: build2/ bpkg/</pre>
+
+  <p>The strange-looking <code>config.install.data_root=root/stage</code>
+  means install data files (as opposed to executable files) into the
+  <code>stage/</code> subdirectory of wherever
+  <code>config.install.root</code> points to (so in our case it will be
+  <code>/usr/local/stage/</code>). Note that this subdirectory is temporary
+  and will be removed in a few steps. But if you don't like the default
+  location, feel free to change it (for example, to
+  <code>/tmp/stage</code>).</p>
+
+  <p>Depending on the installation directory, the installed
+  <code>build2</code> binaries may not be automatically found. On most
+  platforms <code>/usr/local/bin/</code> is in the <code>PATH</code>
+  environment variable by default and you should be able to run:</p>
+
+  <pre>$ which b-stage
+/usr/local/bin/b-stage
+
+$ which bpkg-stage
+/usr/local/bin/bpkg-stage
+
+$ b-stage --version
+$ bpkg-stage --version</pre>
+
+  <p>If, however, you installed, say, into <code>/opt/build2</code>, then you
+  will need to add its <code>bin/</code> subdirectory to <code>PATH</code>
+  (re-run the above commands to verify):</p>
+
+  <pre>$ export PATH="/opt/build2/bin:$PATH"</pre>
+
+  <p>Strictly speaking this is not absolutely necessary and you can adjust the
+  rest of the commands to use absolute paths. This, however, does not make for
+  very readable examples so below we assume the installation's
+  <code>bin/</code> subdirectory is in <code>PATH</code>.</p>
+
+  <p>At the next step we will use <code>bpkg</code> to build and install the
+  entire toolchain. If for some reason you prefer not to build from packages
+  (for example, because the machine is offline), then you can convert this
+  step into a local installation and skip the rest of the steps.</p>
+
+  <div class="note">
+  <p>To perform a local installation with the <code>build.sh</code> script,
+  pass the <code>--local</code> option.</p>
+  </div>
+
+  <p>To perform a local installation you will need to change the
+  <code>configure</code> and <code>install</code> command lines above along
+  these lines (see also notes on the following step about only building shared
+  libraries, toolchain executables prefix/suffix, etc):</p>
+
+  <pre>$ build2/b/b-boot configure       \
+  config.config.hermetic=true     \
+  config.cxx=g++                  \
+  config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
+  config.bin.rpath=/usr/local/lib \
+  config.install.root=/usr/local  \
+  config.install.sudo=sudo
+
+$ build2/b/b-boot install: build2/ bpkg/ bdep/</pre>
+
+  <p>You will also need to build and install the standard build system
+  modules:</p>
+
+  <pre>$ b install: '!config.install.scope=project' libbuild2-*/</pre>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>$ b noop: tests/libbuild2-*/</pre>
+  </div>
+
+  <p>To uninstall such a local installation, run:</p>
+
+  <pre>$ b uninstall: build2/ bpkg/ bdep/ libbuild2-*/</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Install</b></dt>
+  <dd>Next, we use the staged tools to build and install the entire toolchain
+  from the package repository with the <code>bpkg</code> package manager.
+  First, we create the <code>bpkg</code> configuration. The configuration
+  values are pretty similar to the previous step and you may want/need to make
+  similar adjustments.
+
+  <pre>$ cd ..  # Back to build2-build/
+$ mkdir build2-toolchain-X.Y
+$ cd build2-toolchain-X.Y
+
+$ bpkg-stage create               \
+  cc                              \
+  config.config.hermetic=true     \
+  config.cxx=g++                  \
+  config.cc.coptions=-O3          \
+  config.bin.lib=shared           \
+  config.bin.rpath=/usr/local/lib \
+  config.install.root=/usr/local  \
+  config.install.sudo=sudo</pre>
+
+  <div class="note">
+  <p>The above configuration will only build shared libraries. If you would
+  like to build both shared and static, remove
+  <code>config.bin.lib=shared</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>To add a custom prefix/suffix to the toolchain executables names, add
+  <code>config.bin.exe.prefix=...</code> and/or
+  <code>config.bin.exe.suffix=...</code>.</p>
+  </div>
+
+  <div class="note">
+  <p>The <code>config.config.hermetic=true</code> configuration variable in
+  the above command makes sure the embedded <code>~host</code> and
+  <code>~build2</code> configurations include the current environment. This is
+  especially important for <code>~build2</code> which is used to dynamically
+  build and load ad hoc recipes and build system modules and must therefore
+  match the environment that was used to build the build system itself.</p>
+  </div>
+
+  <p>Next, we add the package repository, build, and install:</p>
+
+  <pre>$ bpkg-stage add https://pkg.cppget.org/1/alpha
+$ bpkg-stage fetch
+$ bpkg-stage build --for install build2 bpkg bdep
+$ bpkg-stage install --all</pre>
+
+  <div class="note">
+  <p>By default <code>bpkg</code> will build the latest available version of
+  each package. You can, however, specify the desired versions explicitly, for
+  example:</p>
+
+  <pre>$ bpkg-stage build --for install build2/X.Y.Z bpkg/X.Y.Z bdep/X.Y.Z</pre>
+  </div>
+
+  <p>To verify the result, run:</p>
+
+  <pre>$ which b
+/usr/local/bin/b
+
+$ which bpkg
+/usr/local/bin/bpkg
+
+$ which bdep
+/usr/local/bin/bdep
+
+$ b --version
+$ bpkg --version
+$ bdep --version</pre>
+
+  <p>Finally, we build and install the standard build system modules:</p>
+
+  <pre>$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*</pre>
+
+  <div class="note">
+  <p>To get a list of the standard pre-installed build system modules in a
+  specific version of the toolchain, run:</p>
+
+  <pre>$ cd ../build2-toolchain-X.Y.Z
+$ ls -d libbuild2-*</pre>
+  </div>
+
+  <div class="note">
+  <p>To verify the build system modules installation you can load them with
+  the following command:</p>
+
+  <pre>$ b noop: ../build2-toolchain-X.Y.Z/tests/libbuild2-*/</pre>
+  </div></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Clean</b></dt>
+  <dd>The last thing we need to do is uninstall the staged tools:
+
+  <pre>$ cd ../build2-toolchain-X.Y.Z  # Back to bootstrap.
+$ b uninstall: build2/ bpkg/</pre></dd>
+  </dl>
+
+  <h1 id="upgrade">5 Upgrading</h1>
+
+  <p>At this point we assume that you have the build2 toolchain installed and
+  would like to upgrade it to a newer version. We also expect that you have
+  the toolchain <code>bpkg</code> configuration in the
+  <code>build2-toolchain-X.Y/</code> directory, as produced by the bootstrap
+  process. If you don't have the <code>bpkg</code> configuration but do have
+  the toolchain installed somehow (for example, using your distribution's
+  package manager), then you can create the configuration as shown at the end.
+  If you have neither, then you will need to go through the bootstrap
+  process.</p>
+
+  <p>There are two ways to upgrade: dirty (but quick) and staged (but more
+  involved). In the <i>dirty upgrade</i> we override the existing installation
+  without first uninstalling it. If some installed files no longer exist in
+  the new version, they will remain "installed" until cleaned up manually.
+  Also, with this approach we never get a chance to make sure the new build is
+  functional.</p>
+
+  <p>In the <i>staged upgrade</i> we first install a <code>-stage</code> build
+  of the new toolchain (similar to what we did during bootstrap), test it,
+  uninstall the old toolchain, install the new toolchain as "final", and
+  finally uninstall <code>-stage</code>.</p>
+
+  <p>We recommend that you use a dirty upgrade for toolchain patch releases
+  with the same <code>X.Y</code> (<code>MAJOR.MINOR</code>) version and a
+  staged upgrade otherwise. With patch releases we guarantee not to alter the
+  installation file set.</p>
+
+  <div class="note">
+  <p>Without periodic upgrades your version of the toolchain may become too
+  old to be able to upgrade itself. In this case you will have to fall back
+  onto the bootstrap process.</p>
+  </div>
+
+  <div class="note">
+  <p>The below upgrade process does not cover upgrading the
+  <code>baseutils</code> and <code>mingw</code> packages on Windows (see <a
+  href="#bootstrap-windows">Bootstrapping on Windows</a> for details). We
+  recommend using the bootstrap process to upgrade these packages since all
+  the straightforward upgrade sequences would lead to either the old toolchain
+  using the new utilities or vice versa.</p>
+  </div>
+
+  <div class="note">
+  <p>For both ways of upgrading we need to make sure that the build system
+  modules are built and installed with the new version of the toolchain. The
+  set of build system modules can also change from version to version.</p>
+  </div>
+
+  <div class="note">
+  <p>If using the Windows command prompt, the
+  <code>!config.install.scope=project</code> command line argument should not
+  be quoted.</p>
+  </div>
+
+  <p>The dirty upgrade is straightforward:</p>
+
+  <pre>$ cd build2-toolchain-X.Y
+$ bpkg uninstall '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
+$ bpkg drop --all-pattern=libbuild2-*
+$ bpkg fetch
+$ bpkg build --for install -pr
+$ bpkg install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*</pre>
+
+  <div class="note">
+  <p>The <code>-pr</code> options stands for <code>--patch</code> and
+  <code>--recursive</code> &#8211; upgrade the built packages and their
+  dependencies to the latest patch version, recursively. See <a
+  href="../../bpkg/doc/bpkg-pkg-build.xhtml"><code><b>bpkg-pkg-build(1)</b></code></a>
+  for details.</p>
+  </div>
+
+  <p>You can also issue the <code>status</code> command after
+  <code>fetch</code> to examine which versions are available. The above
+  <code>build</code> command will upgrade all the packages to the latest
+  available patch versions but you can override this by specifying the desired
+  packages and/or versions explicitly, for example:</p>
+
+  <pre>$ bpkg status
+!build2 configured 1.0.0 available 1.0.1 1.0.2 2.0.0
+...
+
+$ bpkg build --for install build2/1.0.1</pre>
+
+  <p>The staged upgrade consists of several steps:</p>
+
+  <dl>
+  <dt style="margin-bottom:1em"><b>0. Check for Updates</b></dt>
+  <dd>There is no harm in running <code>bpkg fetch</code> in the existing
+  configuration so we can use it to determine if any updates are available,
+  whether we can use the simpler dirty upgrade, and, if not, the target
+  <code>X.Y</code> (<code>MAJOR.MINOR</code>) version for the staged upgrade:
+
+  <pre>$ cd build2-toolchain-X.Y
+$ bpkg fetch
+$ bpkg status build2 bpkg bdep</pre>
+
+  <p>Let's say the new version is X.Z.</p></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>1. Create New
+  Configuration</b></dt>
+  <dd>First we make a copy of the old configuration. We will need the original
+  later to cleanly uninstall the old toolchain, and, maybe, to rollback the
+  installation if the new version doesn't work out.
+
+  <pre>$ cd ..
+$ cp -rp build2-toolchain-X.Y build2-toolchain-X.Z</pre>
+
+  <p>Or, using Windows command prompt:</p>
+
+  <pre>> cd ..
+> xcopy /s /q /i build2-toolchain-X.Y build2-toolchain-X.Z</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>2. Build and Install as
+  <code>-stage</code></b></dt>
+  <dd>This step is similar to the dirty upgrade except that we use the copied
+  configuration, upgrade (<code>--upgrade|-u</code>) instead of patching
+  (<code>--patch|-p</code>), and install the new toolchain with the
+  <code>-stage</code> suffix:
+
+  <pre>$ cd build2-toolchain-X.Z
+$ bpkg drop --all-pattern=libbuild2-*
+$ bpkg build --for install -ur</pre>
+
+  <p>Once this is done, we can proceed to installing:</p>
+
+  <pre>$ bpkg install                        \
+  config.bin.suffix=-stage            \
+  config.install.data_root=root/stage \
+  --all</pre>
+
+  <div class="note">
+  <p>If during installation you have added a custom prefix/suffix to the
+  toolchain executables names with <code>config.bin.exe.prefix</code> and/or
+  <code>config.bin.exe.suffix</code>, add
+  <code>config.bin.exe.prefix=[null]</code> and/or
+  <code>config.bin.exe.suffix=[null]</code> to suppress them in the
+  executables being staged.</p>
+  </div>
+
+  <p>You can also specify the desired packages and/or versions explicitly,
+  again, similar to the dirty upgrade.</p></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>3. Test Staged</b></dt>
+  <dd>Now you can test the new toolchain on your projects, etc. Remember to
+  use the <code>-stage</code>-suffixed binaries (<code>bdep-stage</code> will
+  automatically use <code>bpkg-stage</code> which in turn will use
+  <code>b-stage</code>):
+
+  <pre>$ b-stage --version
+$ bpkg-stage --version
+$ bdep-stage --version</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>4. Uninstall Old, Install
+  New</b></dt>
+  <dd>Once we are satisfied that the new toolchain works, we can uninstall the
+  old one and install the new one:
+
+  <pre>$ cd ../build2-toolchain-X.Y
+$ bpkg uninstall --all
+
+$ cd ../build2-toolchain-X.Z
+$ bpkg-stage install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*</pre></dd>
+
+  <dt style="margin-top:1em;margin-bottom:1em"><b>5. Uninstall Staged</b></dt>
+  <dd>Finally, we clean up by removing the staged toolchain (hint: use the
+  command line history to find the corresponding <code>install</code> command
+  and change it to <code>uninstall</code>; see also a note at step 2 about
+  toolchain executables prefix/suffix):
+
+  <pre>$ bpkg uninstall                      \
+  config.bin.suffix=-stage            \
+  config.install.data_root=root/stage \
+  --all</pre>
+
+  <p>You can also remove the old configuration in
+  <code>build2-toolchain-X.Y/</code> if you think you no longer need
+  it.</p></dd>
+  </dl>
+
+  <p>If you ever need to (re-)create the <code>bpkg</code> configuration for
+  the toolchain from scratch, it is fairly simple (you may need to adjust the
+  compiler, options, installation directory, etc; see the bootstrap steps for
+  details):</p>
+
+  <p>For UNIX-like operating systems (GNU/Linux, Mac OS X, FreeBSD, etc):</p>
+
+  <pre>$ bpkg-stage create             \
+cc                              \
+config.config.hermetic=true     \
+config.cxx=g++                  \
+config.cc.coptions=-O3          \
+config.bin.lib=shared           \
+config.bin.rpath=/usr/local/lib \
+config.install.root=/usr/local  \
+config.install.private=build2   \
+config.install.sudo=sudo</pre>
+
+  <p>For Windows with MSVC (from the Visual Studio "x64 Native Tools Command
+  Prompt"):</p>
+
+  <pre>> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+  <p>For Windows with Clang (from a suitable command prompt, see <a
+  href="#bootstrap-windows-clang">Bootstrapping on Windows with Clang</a> for
+  details):</p>
+
+  <pre>> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  "config.cxx=clang++ -m64"     ^
+  config.cc.coptions=-O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+  <p>For Windows with MinGW (from the command prompt):</p>
+
+  <pre>> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2</pre>
+
+</div>
+
+</body>
+</html>

@@ -152,10 +152,9 @@ bpkg.bindist.archive:--recursive=?libbuild2-kconfig=full
 # Override the default archive layout, removing the /usr/local/ subdirectory,
 # so that bin/, lib/, etc subdirectories were located right under the root
 # archive directory. Note that this is consistent with the Windows archives
-# default layout. @@ TMP: redo.
+# default layout.
 #
-bpkg.bindist.archive:--archive-install-root=/
-bpkg.bindist.archive:config.bin.rpath=/lib
+bpkg.bindist.archive:--archive-strip-comps=2
 bbot.sys-install.tar.extract:--directory=/usr/local
 
 bpkg.bindist.archive:config.install.relocatable=true

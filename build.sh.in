@@ -685,6 +685,13 @@ $system_config
   exit 0
 fi
 
+# Disable the fetch cache since it doesn't buy us much. Moreover, not doing so
+# may mess up the user's cache by migrating its database schema before the
+# toolchain is even installed.
+#
+BPKG_FETCH_CACHE="0"
+export BPKG_FETCH_CACHE
+
 # Build and stage the build system and the package manager.
 #
 run build2/b/b-boot $verbose configure \

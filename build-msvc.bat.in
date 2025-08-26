@@ -530,6 +530,12 @@ goto end
 @rem
 :stage
 
+@rem Disable the fetch cache since it doesn't buy us much. Moreover, not doing
+@rem so may mess up the user's cache by migrating its database schema before
+@rem the toolchain is even installed.
+@rem
+set "BPKG_FETCH_CACHE=0"
+
 build2\b\b-boot %verbose% configure^
  config.cxx=%cxx%^
  config.bin.lib=shared^

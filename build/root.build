@@ -23,7 +23,7 @@ using c
 #
 using? cli
 
-if! $cli.configured
+if! $cli.build.configured
 {
   define cli: file
   cli{*}: extension = cli

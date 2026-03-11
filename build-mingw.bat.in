@@ -450,7 +450,7 @@ set "BUILD2_DEF_OPT=0"
 set "BPKG_DEF_OPT=0"
 set "BDEP_DEF_OPT=0"
 
-@rem Bootstrap.
+@rem Bootstrap, stage 1.
 @rem
 @rem Note: disable all warnings since we cannot do anything more granular
 @rem during bootstrap stage 1.
@@ -479,7 +479,13 @@ cmd /C bootstrap-mingw.bat %cxx% -w -static
 b\b-boot --version
 @if errorlevel 1 goto error
 
-b\b-boot %verbose% %jobs% config.cxx=%cxx% config.bin.lib=static b\exe{b}
+@rem Bootstrap, stage 2.
+@rem
+b\b-boot %verbose% %jobs%^
+ config.build2_toolchain.build.readonly=true^
+ config.cxx=%cxx%^
+ config.bin.lib=static^
+ b\exe{b}
 @if errorlevel 1 goto error
 
 move /y b\b.exe b\b-boot.exe
@@ -495,6 +501,7 @@ cd ..
 @if "_%local%_" == "__" goto stage
 
 build2\b\b-boot %verbose% configure^
+ config.build2_toolchain.build.readonly=true^
  config.config.hermetic=true^
  config.cxx=%cxx%^
  %coptions%^
@@ -587,6 +594,7 @@ goto end
 set "BPKG_FETCH_CACHE=0"
 
 build2\b\b-boot %verbose% configure^
+ config.build2_toolchain.build.readonly=true^
  config.cxx=%cxx%^
  config.bin.lib=shared^
  config.bin.suffix=%stage_suffix%^

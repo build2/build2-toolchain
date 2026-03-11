@@ -92,9 +92,10 @@ Then, we rebuild the build system with the result of Phase 1 linking libraries
 statically.
 
 \
-> b\b-boot                  ^
-  \"config.cxx=clang++ -m64\" ^
-  config.bin.lib=static     ^
+> b\b-boot                                    ^
+  config.build2_toolchain.build.readonly=true ^
+  \"config.cxx=clang++ -m64\"                   ^
+  config.bin.lib=static                       ^
   b\exe{b}
 
 > move /y b\b.exe b\b-boot.exe
@@ -112,11 +113,12 @@ libraries and then staged:
 \
 > cd ..  # Back to build2-toolchain-X.Y.Z\
 
-> build2\b\b-boot configure           ^
-  \"config.cxx=clang++ -m64\"           ^
-  config.bin.lib=shared               ^
-  config.bin.suffix=-stage            ^
-  config.install.root=C:\build2       ^
+> build2\b\b-boot configure                   ^
+  config.build2_toolchain.build.readonly=true ^
+  \"config.cxx=clang++ -m64\"                   ^
+  config.bin.lib=shared                       ^
+  config.bin.suffix=-stage                    ^
+  config.install.root=C:\build2               ^
   config.install.data_root=root\stage
 
 > build2\b\b-boot install: build2\ bpkg\
@@ -156,11 +158,12 @@ following step about only building shared libraries, toolchain executables
 prefix/suffix, etc):
 
 \
-> build2\b\b-boot configure      ^
-  config.config.hermetic=true    ^
-  \"config.cxx=clang++ -m64\"      ^
-  config.cc.coptions=-O2         ^
-  config.bin.lib=shared          ^
+> build2\b\b-boot configure                   ^
+  config.build2_toolchain.build.readonly=true ^
+  config.config.hermetic=true                 ^
+  \"config.cxx=clang++ -m64\"                   ^
+  config.cc.coptions=-O2                      ^
+  config.bin.lib=shared                       ^
   config.install.root=C:\build2
 
 > build2\b\b-boot install: build2\ bpkg\ bdep\

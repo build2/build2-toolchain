@@ -612,7 +612,13 @@ run b/b-boot --version
 
 # Bootstrap, stage 2.
 #
-run b/b-boot $verbose $jobs config.cxx="$cxx" config.bin.lib=static $bootstrap_system_config b/exe{b}
+run b/b-boot $verbose $jobs \
+config.build2_toolchain.build.readonly=true \
+config.cxx="$cxx" \
+config.bin.lib=static \
+$bootstrap_system_config \
+b/exe{b}
+
 mv b/b b/b-boot
 run b/b-boot --version
 
@@ -623,6 +629,7 @@ run cd ..
 if test "$local" = true; then
 
   run build2/b/b-boot $verbose configure \
+config.build2_toolchain.build.readonly=true \
 config.config.hermetic=true \
 config.cxx="$cxx" \
 config.cc.coptions="${compile_ops# }" \
@@ -695,6 +702,7 @@ export BPKG_FETCH_CACHE
 # Build and stage the build system and the package manager.
 #
 run build2/b/b-boot $verbose configure \
+config.build2_toolchain.build.readonly=true \
 config.cxx="$cxx" \
 config.bin.lib=shared \
 config.bin.suffix="$stage_suffix" \

@@ -43,14 +43,31 @@ toolchain_name = [dir_path] $regex.match(                                       
 ifn $toolchain_name
   exit "unable to extract top directory name from build2 toolchain archive path '$toolchain_path'"
 
+# Deduce the base toolchain URL from the value of the build2_repo variable
+# set in the root buildfile.
+#
+# @@ Note that it would be cleaner to get the package source directory from the
+#    environment variable, which is currently not supported by the bbot worker.
+#
+src_dir = [dir_path] $directory($0)/..
+
+sed -n -e 's/^\s*build2_repo\s*=\s*"(.+)"\s*$/\1/p' <$src_dir/buildfile | \
+  set build2_repo
+
+ife $build2_repo
+  exit "unable to extract build2_repo variable value from $src_dir/buildfile"
+
+if $string.contains($build2_repo, 'stage')
+  base_url = 'https://stage.build2.org/0'
+elif $string.contains($build2_repo, 'queue')
+  base_url = 'https://download.build2.org/queue'
+else
+  base_url = 'https://download.build2.org'
+
 # Discover the URL of the base utilities archive (assumed to be named as
 # build2-baseutils-X.Y.Z-x86_64-windows.zip). While at it, retrieve the
 # archive checksum.
 #
-base_url = ($shell.version.stage           \
-            ? 'https://stage.build2.org/0' \
-            : 'https://download.build2.org')
-
 u = "$base_url/toolchain.sha256"
 
 $info "fetching $u"

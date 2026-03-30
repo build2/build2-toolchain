@@ -16,8 +16,8 @@ assert ($bindist                             || \
 #
 # NOTE: make the same change in repositories.manifest
 #
-build2_repo="https://stage.build2.org/1"
-#build2_repo="https://pkg.cppget.org/1/queue/alpha"
+#build2_repo="https://stage.build2.org/1"
+build2_repo="https://pkg.cppget.org/1/queue/alpha"
 #build2_repo="https://pkg.cppget.org/1/alpha"
 
 # Only specify the bundled subprojects as prerequisites when they are declared

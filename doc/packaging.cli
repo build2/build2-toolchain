@@ -4496,15 +4496,15 @@ separate, long-lived branch for this work.
 As an example, let's say we need to release another revision or a patch
 version for an already released \c{2.1.0} while our \c{master} branch has
 already moved on to \c{2.2.0}. In this case we create a new branch, called
-\c{2.1}, to continue with the \c{2.1.Z} release series. The starting point of
-this branch should be the latest released version/revision in the \c{2.1}
-series. Let's say in our case it is \c{2.1.0+2}, meaning we have released two
-revisions for \c{2.1.0} on the \c{master} branch before upgrading to
-\c{2.2.0}. Therefore we use the \c{v2.1.0+2} release tag to start the
-\c{2.1} branch:
+\c{release-series/2.1}, to continue with the \c{2.1.Z} release series. The
+starting point of this branch should be the latest released version/revision
+in the \c{2.1} series. Let's say in our case it is \c{2.1.0+2}, meaning we
+have released two revisions for \c{2.1.0} on the \c{master} branch before
+upgrading to \c{2.2.0}. Therefore we use the \c{v2.1.0+2} release tag to start
+the \c{release-series/2.1} branch:
 
 \
-$ git checkout -b 2.1 v2.1.0+2
+$ git checkout -b release-series/2.1 v2.1.0+2
 \
 
 Once this is done, we continue with the same steps as in
@@ -4519,9 +4519,10 @@ rewrite its history, etc).
 \N|It is less likely but possible that you may need to release a new minor
 version in an old release series. For example, the master branch may have
 moved on to \c{3.0.0} and you want to release \c{2.2.0} after the already
-released \c{2.1.0}. In this case it makes sense to call the branch \c{2} since
-it corresponds to the \c{2.Y.Z} release series. If you already have the
-\c{2.1} branch, then it makes sense to rename it to \c{2}.|
+released \c{2.1.0}. In this case it makes sense to call the branch
+\c{release-series/2} since it corresponds to the \c{2.Y.Z} release series. If
+you already have the \c{release-series/2.1} branch, then it makes sense to
+rename it to \c{release-series/2}.|
 
 
 \h1#dont-do|What Not to Do|

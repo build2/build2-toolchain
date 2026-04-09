@@ -3,7 +3,7 @@
 #
 : 1
 name: build2-toolchain
-version: 0.18.1-a.0.z
+version: 0.18.1
 project: build2
 summary: build2 toolchain amalgamation
 license: MIT

@@ -19,8 +19,8 @@ assert ($bindist                             || \
 # NOTE: this information is parsed by the build/bindist-archive-post.bx script.
 #
 #build2_repo="https://stage.build2.org/1"
-#build2_repo="https://pkg.cppget.org/1/queue/alpha"
-build2_repo="https://pkg.cppget.org/1/alpha"
+build2_repo="https://pkg.cppget.org/1/queue/alpha"
+#build2_repo="https://pkg.cppget.org/1/alpha"
 
 # Only specify the bundled subprojects as prerequisites when they are declared
 # as such. Note that their buildfiles may not be parsable otherwise, since may

@@ -50,7 +50,7 @@ BOOTSTRAP-WINDOWS-MSVC  \
 BOOTSTRAP-WINDOWS-CLANG \
 BOOTSTRAP-WINDOWS-MINGW
 
-./: doc/ doc{README} legal{LICENSE AUTHORS} manifest
+./: doc/ doc{README.md} legal{LICENSE AUTHORS} manifest
 
 ./: $d doc{$i tests/README} cli{$i}: include = (!$bindist)
 ./: tests-bindist/:                  include =   $bindist

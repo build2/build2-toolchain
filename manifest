@@ -8,7 +8,7 @@ project: build2
 summary: build2 toolchain amalgamation
 license: MIT
 topics: build system, build toolchain
-description-file: README
+description-file: README.md
 url: https://build2.org
 doc-url: https://build2.org/doc.xhtml
 src-url: https://git.build2.org/cgit/build2-toolchain/tree/

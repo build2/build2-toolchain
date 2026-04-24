@@ -180,7 +180,7 @@ if $bundle_mingw
 # Make some tweaks to the contents of the resulting archive.
 #
 mv $toolchain_name/README $toolchain_name/README-BASEUTILS
-cp $toolchain_name/share/doc/build2-toolchain/build2-toolchain/README $toolchain_name/
+cp $toolchain_name/share/doc/build2-toolchain/build2-toolchain/README.md $toolchain_name/
 
 # Note that on Windows bsdtar doesn't like trailing slashes, so let's use
 # $toolchain_name's string representation.

@@ -161,10 +161,6 @@ bpkg.bindist.archive:config.install.relocatable=true
 
 bpkg.create:config.bin.lib=shared
 
-# @@ TMP: Why do we need this? The default (-Wall -O2) is derived from
-#         how Debian builds it.
-# b.create:config.cc.coptions="-Wall -O3"
-
 !config.build2_toolchain.bindist=true
 
 { config.import.build2=$getenv(BBOT_MAIN_PACKAGE_CONFIG) }+ \

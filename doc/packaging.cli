@@ -5432,7 +5432,7 @@ Debian/Fedora package, etc). Another example of a similar situation would be a
 fork of upstream that uses the same name and that became more popular (e.g.,
 used by popular dependents) than the original.
 
-The underlying motive here is that we want the package to be no more (but
+The underlying motif here is that we want the package to be no more (but
 also no less) than what is expected by the broad community of users.
 
 Finally, make sure that you clearly document in \c{PACKAGE-README.md} applied

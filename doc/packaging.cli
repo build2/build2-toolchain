@@ -5426,7 +5426,7 @@ case where a new feature could be added is an unmaintained upstream with a
 well-known/popular dependent project that cannot function without a feature
 (which means that unless we add the feature in question, we won't be able to
 package the dependent). The key criterion here is \"well-known/popular
-dependent\" \- an obscure dependent does not quality. A patch with clear
+dependent\" \- an obscure dependent does not qualify. A patch with clear
 provenance is a must in this case (for example, patch saved in the dependent,
 Debian/Fedora package, etc). Another example of a similar situation would be a
 fork of upstream that uses the same name and that became more popular (e.g.,
@@ -5549,16 +5549,17 @@ subdirectory in the corresponding \c{package-owner.manifest} file.
 
 Note that your local URL will normally be SSH while the recorded URL will
 always be HTTPS. Provided that the host names match, the part to look in for
-differences is the path component. One common cause of a mismatch is the
-missing \c{.git} extension. For example (local first, recorded second):
+differences is the path component. Common causes of a mismatch are the
+differences in case and the missing \c{.git} extension. For example (local
+first, recorded second):
 
 \
-git@github.com:build2-packaging/zstd
-https://github.com/build2-packaging/zstd.git
+git@github.com:build2-packaging/ffmpeg
+https://github.com/build2-packaging/FFmpeg.git
 \
 
-In this case adding the missing extension to the local URL should fix the
-error.
+In this case adjusting the case and adding the missing extension to the local
+URL should fix the error.
 
 If, however, the discrepancy is expected, for example, because you have
 renamed the package repository or moved it to a new location, the ownership

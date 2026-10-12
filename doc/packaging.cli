@@ -4571,6 +4571,10 @@ Note that even if you do fix some issues in the \c{build2} package directly,
 try hard to also incorporate them upstream so that you don't need to maintain
 the patches forever.
 
+Note also that there are limitations on what changes are acceptable as
+discussed in \l{#faq-package-upstream-changes What changes are acceptable to
+make to upstream source?}
+
 See also \l{#dont-change-upstream Avoid changing upstream source code layout}
 and \l{#howto-patch-upstream-source How do I patch upstream source code?}
 
@@ -5391,6 +5395,50 @@ used by the linker.
 
 
 \h1#faq|Packaging FAQ|
+
+\h#faq-package|Packaging FAQ|
+
+\h2#faq-package-upstream-changes|What changes are acceptable to make to
+upstream source?|
+
+As mentioned in \l{#dont-fix-upstream Avoid fixing upstream issues in the
+build2 package}, it is best not to make any changes to upstream source
+code. However, there are valid situation where patching upstream is the only
+viable option. For example, upstream may become inactive with little chance of
+a future release.  Still, there are limitations on what changes to upstream
+are acceptable.
+
+Broadly, bug fixes that don't break the interface are generally acceptable
+while new features and other improvements are not. There are, however,
+exceptions to the latter rule.
+
+Regarding bug fixes, it is best to limit them to published fixes with clear
+provenance. Examples would include the upstream repository itself, patches or
+pull requests (PRs) submitted to the upstream repository, and patches applied
+by well-known distributions such as Debian and Fedora. Applying a fix that you
+authored yourself is a lot riskier and it is a good idea to first submit it as
+a PR or at least as an issue to upstream.
+
+Adding new features and other improvements has a much higher bar to clear.
+You should definitely not add a new feature or improvement that only you need
+(imagine if everyone starts adding their special features to a package). One
+case where a new feature could be added is an unmaintained upstream with a
+well-known/popular dependent project that cannot function without a feature
+(which means that unless we add the feature in question, we won't be able to
+package the dependent). The key criterion here is \"well-known/popular
+dependent\" \- an obscure dependent does not quality. A patch with clear
+provenance is a must in this case (for example, patch saved in the dependent,
+Debian/Fedora package, etc). Another example of a similar situation would be a
+fork of upstream that uses the same name and that became more popular (e.g.,
+used by popular dependents) than the original.
+
+The underlying motive here is that we want the package to be no more (but
+also no less) than what is expected by the broad community of users.
+
+Finally, make sure that you clearly document in \c{PACKAGE-README.md} applied
+patches and their provenance. The only patches that can be excused from this
+requirement would be bug fixes (but not features) that have already been
+applied to the upstream repository but hasn't been released yet.
 
 \h#faq-publish|Publishing FAQ|
 

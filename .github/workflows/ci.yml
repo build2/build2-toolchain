@@ -1,0 +1,103 @@
+name: Build
+
+on:
+  - push
+
+jobs:
+  Build_Clang:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2019
+          - ubuntu-20.04
+          - macOS-10.15
+    steps:
+    # Install Dependencies
+    - name: Windows Dependencies
+      if: startsWith(matrix.os,'windows')
+      shell: pwsh
+      run: |
+        echo "Clang (Visual Studio) is already included in the image"
+        $clpath = vswhere -products * -latest -prerelease -find **/Hostx64/x64/*   # for x64
+        [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$clpath", "User")
+        $clangpath = vswhere -products * -latest -prerelease -find **/Llvm/bin/*
+        [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$clangpath", "User")
+        $vcvarsallpath = vswhere -products * -latest -prerelease -find **/Auxiliary/Build/*
+        [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$vcvarsallpath", "User")
+    - name: Windows Setup Visual Studio Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Ubuntu Dependencies
+      if: startsWith(matrix.os,'ubuntu')
+      run: |
+        echo "clang 9 is already included in the image"
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 10
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 10
+        sudo update-alternatives --config clang
+        sudo update-alternatives --config clang++
+        clang++ -v
+
+    - name: MacOS Dependencies
+      if: startsWith(matrix.os,'macOS')
+      run: |
+          echo "clang 11 is already included in the image"
+          clang++ -v
+
+    # Checkout
+    - name: Checkout master branch
+      uses: actions/checkout@v2
+      with:
+        repository: 'build2/build2-toolchain'
+        submodules: recursive
+        fetch-depth: 0
+
+    # Build
+    - name: Windows Build by Clang
+      if: startsWith(matrix.os,'windows')
+      run: |
+        ./build-clang.bat.in C:/dist-windows-clang
+
+    - name: Ubuntu Build by Clang
+      if: startsWith(matrix.os,'ubuntu')
+      run: |
+        sudo sh ./build.sh.in --sudo sudo clang++ ~/dist-ubuntu-clang
+
+    - name: MacOS Build by Clang
+      if: startsWith(matrix.os,'macOS')
+      run: |
+        sudo sh ./build.sh.in --sudo sudo clang++ ~/dist-macos-clang
+
+    # Upload
+    - name: Upload dist-windows-clang
+      if: startsWith(matrix.os,'windows')
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-windows-clang
+        path: C:/dist-windows-clang
+
+    - name: Upload dist-ubuntu-clang
+      if: startsWith(matrix.os,'ubuntu')
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-ubuntu-clang
+        path: ~/dist-ubuntu-clang
+
+    - name: Upload dist-macos-clang
+      if: startsWith(matrix.os,'macOS')
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-macos-clang
+        path: ~/dist-macos-clang
+
+  Skip:
+    if: "contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip CI 🚫
+        run: echo skip CI

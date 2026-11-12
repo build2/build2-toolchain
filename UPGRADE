@@ -1,0 +1,209 @@
+At this point we assume that you have the build2 toolchain installed and would
+like to upgrade it to a newer version. We also expect that you have the
+toolchain bpkg configuration in the build2-toolchain-X.Y/ directory, as
+produced by the bootstrap process. If you don't have the bpkg configuration but
+do have the toolchain installed somehow (for example, using your distribution's
+package manager), then you can create the configuration as shown at the end. If
+you have neither, then you will need to go through the bootstrap process.
+
+There are two ways to upgrade: dirty (but quick) and staged (but more
+involved). In the dirty upgrade we override the existing installation without
+first uninstalling it. If some installed files no longer exist in the new
+version, they will remain "installed" until cleaned up manually. Also, with
+this approach we never get a chance to make sure the new build is functional.
+
+In the staged upgrade we first install a -stage build of the new toolchain
+(similar to what we did during bootstrap), test it, uninstall the old
+toolchain, install the new toolchain as "final", and finally uninstall -stage.
+
+We recommend that you use a dirty upgrade for toolchain patch releases with the
+same X.Y (MAJOR.MINOR) version and a staged upgrade otherwise. With patch
+releases we guarantee not to alter the installation file set.
+
+| Without periodic upgrades your version of the toolchain may become too old to
+| be able to upgrade itself. In this case you will have to fall back onto the
+| bootstrap process.
+
+| The below upgrade process does not cover upgrading the baseutils and mingw
+| packages on Windows (see Bootstrapping on Windows (BOOTSTRAP-WINDOWS file)
+| for details). We recommend using the bootstrap process to upgrade these
+| packages since all the straightforward upgrade sequences would lead to either
+| the old toolchain using the new utilities or vice versa.
+
+| For both ways of upgrading we need to make sure that the build system modules
+| are built and installed with the new version of the toolchain. The set of
+| build system modules can also change from version to version.
+
+| If using the Windows command prompt, the !config.install.scope=project
+| command line argument should not be quoted.
+
+The dirty upgrade is straightforward:
+
+$ cd build2-toolchain-X.Y
+$ bpkg uninstall '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
+$ bpkg drop --all-pattern=libbuild2-*
+$ bpkg fetch
+$ bpkg build --for install -pr
+$ bpkg install --all
+$ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+$ bpkg install '!config.install.scope=project' \
+  --all-pattern=libbuild2-*
+
+| The -pr options stands for --patch and --recursive -- upgrade the built
+| packages and their dependencies to the latest patch version, recursively. See
+| bpkg-pkg-build(1) for details.
+
+You can also issue the status command after fetch to examine which versions are
+available. The above build command will upgrade all the packages to the latest
+available patch versions but you can override this by specifying the desired
+packages and/or versions explicitly, for example:
+
+$ bpkg status
+!build2 configured 1.0.0 available 1.0.1 1.0.2 2.0.0
+...
+
+$ bpkg build --for install build2/1.0.1
+
+The staged upgrade consists of several steps:
+
+0. Check for Updates
+
+    There is no harm in running bpkg fetch in the existing configuration so we
+    can use it to determine if any updates are available, whether we can use
+    the simpler dirty upgrade, and, if not, the target X.Y (MAJOR.MINOR)
+    version for the staged upgrade:
+
+    $ cd build2-toolchain-X.Y
+    $ bpkg fetch
+    $ bpkg status build2 bpkg bdep
+
+    Let's say the new version is X.Z.
+
+1. Create New Configuration
+
+    First we make a copy of the old configuration. We will need the original
+    later to cleanly uninstall the old toolchain, and, maybe, to rollback the
+    installation if the new version doesn't work out.
+
+    $ cd ..
+    $ cp -rp build2-toolchain-X.Y build2-toolchain-X.Z
+
+    Or, using Windows command prompt:
+
+    > cd ..
+    > xcopy /s /q /i build2-toolchain-X.Y build2-toolchain-X.Z
+
+2. Build and Install as -stage
+
+    This step is similar to the dirty upgrade except that we use the copied
+    configuration, upgrade (--upgrade|-u) instead of patching (--patch|-p), and
+    install the new toolchain with the -stage suffix:
+
+    $ cd build2-toolchain-X.Z
+    $ bpkg drop --all-pattern=libbuild2-*
+    $ bpkg build --for install -ur
+
+    Once this is done, we can proceed to installing:
+
+    $ bpkg install                        \
+      config.bin.suffix=-stage            \
+      config.install.data_root=root/stage \
+      --all
+
+    | If during installation you have added a custom prefix/suffix to the
+    | toolchain executables names with config.bin.exe.prefix and/or
+    | config.bin.exe.suffix, add config.bin.exe.prefix=[null] and/or
+    | config.bin.exe.suffix=[null] to suppress them in the executables being
+    | staged.
+
+    You can also specify the desired packages and/or versions explicitly,
+    again, similar to the dirty upgrade.
+
+3. Test Staged
+
+    Now you can test the new toolchain on your projects, etc. Remember to use
+    the -stage-suffixed binaries (bdep-stage will automatically use bpkg-stage
+    which in turn will use b-stage):
+
+    $ b-stage --version
+    $ bpkg-stage --version
+    $ bdep-stage --version
+
+4. Uninstall Old, Install New
+
+    Once we are satisfied that the new toolchain works, we can uninstall the
+    old one and install the new one:
+
+    $ cd ../build2-toolchain-X.Y
+    $ bpkg uninstall --all
+
+    $ cd ../build2-toolchain-X.Z
+    $ bpkg-stage install --all
+    $ bpkg build --for install libbuild2-autoconf libbuild2-kconfig
+    $ bpkg install '!config.install.scope=project' \
+      --all-pattern=libbuild2-*
+
+5. Uninstall Staged
+
+    Finally, we clean up by removing the staged toolchain (hint: use the
+    command line history to find the corresponding install command and change
+    it to uninstall; see also a note at step 2 about toolchain executables
+    prefix/suffix):
+
+    $ bpkg uninstall                      \
+      config.bin.suffix=-stage            \
+      config.install.data_root=root/stage \
+      --all
+
+    You can also remove the old configuration in build2-toolchain-X.Y/ if you
+    think you no longer need it.
+
+If you ever need to (re-)create the bpkg configuration for the toolchain from
+scratch, it is fairly simple (you may need to adjust the compiler, options,
+installation directory, etc; see the bootstrap steps for details):
+
+For UNIX-like operating systems (GNU/Linux, Mac OS X, FreeBSD, etc):
+
+$ bpkg-stage create             \
+cc                              \
+config.config.hermetic=true     \
+config.cxx=g++                  \
+config.cc.coptions=-O3          \
+config.bin.lib=shared           \
+config.bin.rpath=/usr/local/lib \
+config.install.root=/usr/local  \
+config.install.private=build2   \
+config.install.sudo=sudo
+
+For Windows with MSVC (from the Visual Studio "x64 Native Tools Command
+Prompt"):
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=cl                 ^
+  config.cc.coptions=/O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2
+
+For Windows with Clang (from a suitable command prompt, see Bootstrapping on
+Windows with Clang (BOOTSTRAP-WINDOWS-CLANG file) for details):
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  "config.cxx=clang++ -m64"     ^
+  config.cc.coptions=-O2        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2
+
+For Windows with MinGW (from the command prompt):
+
+> bpkg-stage create             ^
+  cc                            ^
+  config.config.hermetic=true   ^
+  config.cxx=g++                ^
+  config.cc.coptions=-O3        ^
+  config.bin.lib=shared         ^
+  config.install.root=C:\build2
